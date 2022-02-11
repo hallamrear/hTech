@@ -1,0 +1,2 @@
+#pragma code_page(65001)
+2 /* CREATEPROCESS_MANIFEST_RESOURCE_ID */ 24 /* RT_MANIFEST */ "C:/Users/ryem_/source/repos/hTech/out/build/x86-Debug/hTech/CMakeFiles/hTech.dir/embed.manifest"
