@@ -1,13 +1,7 @@
 #include "pch.h"
 #include "Transform.h"
 
-Transform::Transform()
-{
-	this->Position = Vector2f(0.0f, 0.0f);
-	this->Rotation = 0.0f;
-}
-
-Transform::Transform(Vector2f position = Vector2f(), float rotation = 0.0f)
+Transform::Transform(Vector2f position, float rotation)
 {
 	this->Position = position;
 	this->Rotation = rotation;

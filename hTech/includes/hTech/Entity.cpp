@@ -5,14 +5,17 @@
 #include "TextureCache.h"
 
 Entity::Entity(std::string texture_path, Transform transform)
-	: mRenderer(*Game::GetRenderer())
+	: mRenderer(*Game::Renderer)
 {
 	Name = "unnamed";
 
 	mTransform = transform;
 	mIsAlive = true;
 
-	AssignTexture(texture_path);
+	if (texture_path != "")
+		AssignTexture(texture_path);
+	else
+		mTexture = nullptr;
 }
 
 Entity::~Entity()

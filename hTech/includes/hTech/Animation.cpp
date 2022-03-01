@@ -73,7 +73,7 @@ void AnimationController::Render(SDL_Renderer& renderer, Transform transform)
 	if (mAnimationSheet)
 	{
 		Vector2f srcPos = Vector2f((FrameSize.X * mCurrentFrame) + (FrameSize.X / 2.0f), (FrameSize.Y * mCurrentAnimation) + FrameSize.Y / 2.0f);
-		mAnimationSheet->Render(*Game::GetRenderer(), transform.Position, transform.Rotation, srcPos, FrameSize);
+		mAnimationSheet->Render(*Game::Renderer, transform.Position, transform.Rotation, srcPos, FrameSize);
 	}
 }
 
@@ -82,6 +82,6 @@ void AnimationController::Render(SDL_Renderer& renderer, Transform transform, bo
 	if (mAnimationSheet)
 	{
 		Vector2f srcPos = Vector2f((FrameSize.X * mCurrentFrame) + (FrameSize.X / 2.0f), (FrameSize.Y * mCurrentAnimation) + FrameSize.Y / 2.0f);
-		mAnimationSheet->Render(*Game::GetRenderer(), transform.Position, transform.Rotation, srcPos, FrameSize, flipped);
+		mAnimationSheet->Render(*Game::Renderer, transform.Position, transform.Rotation, srcPos, FrameSize, flipped);
 	}
 }

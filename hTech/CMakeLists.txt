@@ -3,6 +3,8 @@
 #
 cmake_minimum_required (VERSION 3.8)
 
+add_compile_definitions(HTECH_EXPORTS)
+
 include_directories(includes/hTech /inc)
 include_directories(SDL/include)
 include_directories(SDL/include)

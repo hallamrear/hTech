@@ -9,7 +9,8 @@ class HTECH_API Texture
 protected:
 	std::string mName;
 	SDL_Texture* mTexture;
-	//Creates the sdl texture and returns the address that will be stored in the map.
+
+	//! Creates the sdl texture and returns the address that will be stored in the map.
 	void Create(std::string texture_path);
 
 public:

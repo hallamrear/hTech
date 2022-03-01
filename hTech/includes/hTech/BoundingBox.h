@@ -1,6 +1,11 @@
 #pragma once
 #include "Collision.h"
 
+
+/// <summary>
+/// A Bounding box class used by rigidbodies for collision detection. None of the collision detection is done using this class.
+/// </summary>
+
 class HTECH_API BoundingBox
 	: public Collider
 {

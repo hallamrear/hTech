@@ -14,14 +14,14 @@
 //todo : this is not good
 //todo : abstract renderer
 //TODO : put singleton back
-//SDL_Renderer* Game::Renderer = nullptr;
+SDL_Renderer* Game::Renderer = nullptr;
 
 //todo : fix
-SDL_Renderer* Game::GetRenderer()
-{
-	static SDL_Renderer* mRenderer;
-	return mRenderer;
-}
+//SDL_Renderer* Game::GetRenderer()
+//{
+//	static SDL_Renderer* mRenderer;
+//	return mRenderer;
+//}
 
 Game::Game()
 {
@@ -111,7 +111,7 @@ void Game::TakeScreenshot(std::string name)
 	h = (int)dimensions.Y;
 
 	SDL_Surface* sshot = SDL_CreateRGBSurface(0, w, h, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
-	SDL_RenderReadPixels(Game::GetRenderer(), NULL, SDL_PIXELFORMAT_ARGB8888, sshot->pixels, sshot->pitch);
+	SDL_RenderReadPixels(Game::Renderer, NULL, SDL_PIXELFORMAT_ARGB8888, sshot->pixels, sshot->pitch);
 
 	struct tm _time;
 	std::string str = name;
@@ -185,14 +185,15 @@ bool Game::InitialiseGraphics()
 	if (!mWindow || mWindow == nullptr)
 		return false;
 
-	if (Game::GetRenderer())
-		SDL_DestroyRenderer(Game::GetRenderer());
+	if (Game::Renderer)
+		SDL_DestroyRenderer(Game::Renderer);
 
 	//todo : fix
-	SDL_Renderer* renderer = Game::GetRenderer();
-	renderer = SDL_CreateRenderer(mWindow, -1, 0);
+	//todo : this line might not be necessary and creating false renderer.
+	//SDL_Renderer* renderer = Game::GetRenderer();
+	Game::Renderer = SDL_CreateRenderer(mWindow, -1, 0);
 
-	if (Game::GetRenderer())
+	if (Game::Renderer)
 	{
 		Log::LogMessage(LogLevel::LOG_MESSAGE, "Renderer created.");
 		return true;
@@ -271,7 +272,7 @@ bool Game::InitialiseSystems(WindowDetails details)
 		if (InitialiseGraphics() == false)
 			return false;
 
-		SDL_SetRenderDrawBlendMode(Game::GetRenderer(), SDL_BLENDMODE_BLEND);
+		SDL_SetRenderDrawBlendMode(Game::Renderer, SDL_BLENDMODE_BLEND);
 
 		//Initialise image loader.
 		int flags = 0;
@@ -296,7 +297,7 @@ void Game::Shutdown()
 {
 	StateDirector::SetState(GameStateIdentifier::GAME_STATE_UNKNOWN);
 
-	SDL_DestroyRenderer(Game::GetRenderer());
+	SDL_DestroyRenderer(Game::Renderer);
 	SDL_DestroyWindow(mWindow);
 	SDL_Quit();
 	IMG_Quit();
@@ -387,12 +388,12 @@ void Game::Update(double DeltaTime)
 
 void Game::Render()
 {
-	SDL_SetRenderDrawColor(Game::GetRenderer(), 0, 0, 0, 255);
-	SDL_RenderClear(Game::GetRenderer());
-	StateDirector::Render(*Game::GetRenderer());
+	SDL_SetRenderDrawColor(Game::Renderer, 0, 0, 0, 255);
+	SDL_RenderClear(Game::Renderer);
+	StateDirector::Render(*Game::Renderer);
 
 	if (Settings::Get()->GetDrawLog())
-		Log::Render(*Game::GetRenderer());
+		Log::Render(*Game::Renderer);
 
-	SDL_RenderPresent(Game::GetRenderer());
+	SDL_RenderPresent(Game::Renderer);
 }

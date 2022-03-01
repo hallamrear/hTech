@@ -7,8 +7,7 @@ public:
 	Vector2f Position;
 	float Rotation;
 
-	Transform();
-	Transform(Vector2f position, float rotation);
+	Transform(Vector2f position = Vector2f(), float rotation = 0.0f);
 	~Transform();
 	void Reset();
 	Vector2f GetUp() const;

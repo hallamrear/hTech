@@ -3,8 +3,7 @@
 #include "pch.h"
 #include "Log.h"
 
-//todo : put singleton back
-//Log* Log::mInstance = nullptr;
+Log* Log::mInstance = nullptr;
 
 Log::Log()
 {
@@ -23,14 +22,13 @@ Log::~Log()
 {
 	mMessages.clear();
 
-	//todo : put singleton back
-	//delete mInstance;
-	//mInstance = nullptr;
+	delete mInstance;
+	mInstance = nullptr;
 }
 
 void Log::LogMessage(LogLevel indicator, const char* str)
 {
-	LogMessage(indicator, std::string(str));
+	Get()->LogMessage_Impl(indicator, std::string(str));
 }
 
 void Log::LogMessage(LogLevel indicator, std::string str)
@@ -51,12 +49,10 @@ void Log::LogMessage_Impl(LogLevel indicator, std::string str)
 
 Log* Log::Get()
 {
-	//todo : put singleton back
-	//if (!mInstance)
-	//	mInstance = new Log();
+	if (!mInstance)
+		mInstance = new Log();
 
-	static Log mInstance;
-	return &mInstance;
+	return mInstance;
 }
 
 void Log::Render_Impl(SDL_Renderer& renderer)

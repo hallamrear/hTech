@@ -45,7 +45,7 @@ void TextElement::CreateTexture()
 			Log::LogMessage(LogLevel::LOG_ERROR, TTF_GetError());
 		}
 
-		SDL_Renderer& renderer = const_cast<SDL_Renderer&>(*Game::GetRenderer());
+		SDL_Renderer& renderer = const_cast<SDL_Renderer&>(*Game::Renderer);
 		SDL_Surface* textSurface = nullptr;
 		//// Set color to black
 		SDL_Color color = { mColour.R, mColour.G, mColour.B, mColour.A };
@@ -96,7 +96,7 @@ void TextElement::Render()
 			Vector2f position = Camera::WorldToScreen(Vector2f((mTransform.Position.X) - (destRect.w / 2), (mTransform.Position.Y) - (destRect.h / 2)));
 			destRect.x = static_cast<int>(position.X);
 			destRect.y = static_cast<int>(position.Y);
-			SDL_RenderCopyEx(Game::GetRenderer(), mTextTexture, NULL, &destRect, mTransform.Rotation, NULL, SDL_FLIP_NONE);
+			SDL_RenderCopyEx(Game::Renderer, mTextTexture, NULL, &destRect, mTransform.Rotation, NULL, SDL_FLIP_NONE);
 		}
 	}
 }

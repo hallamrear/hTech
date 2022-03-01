@@ -41,8 +41,8 @@ private:
 public:
 
 	//TODO : put singleton back
-	//static struct SDL_Renderer* Renderer;
-	static struct SDL_Renderer* GetRenderer();
+	static struct SDL_Renderer* Renderer;
+	//static struct SDL_Renderer* GetRenderer();
 
 	Game();
 	~Game();

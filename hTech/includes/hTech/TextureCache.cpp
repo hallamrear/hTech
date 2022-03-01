@@ -2,8 +2,6 @@
 #include "Game.h"
 #include "Log.h"
 #include "Texture.h"
-
-#define HTECH_EXPORTS
 #include "pch.h"
 #include "TextureCache.h"
 
@@ -25,6 +23,9 @@ TextureCache::~TextureCache()
 
 Texture* TextureCache::GetTexture_Internal(const std::string& texture_path)
 {
+	if (texture_path == "")
+		return nullptr;
+
 	auto itr = mTextures.find(texture_path);
 
 	if(itr == mTextures.end())

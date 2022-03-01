@@ -16,8 +16,7 @@ class HTECH_API Log
 {
 private:
 	std::vector<TextElement*> mTextElements;
-	//todo : put singleton back
-	//static Log* mInstance;
+	static Log* mInstance;
 
 	Log();
 	~Log();

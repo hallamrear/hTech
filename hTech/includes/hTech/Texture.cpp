@@ -122,7 +122,7 @@ void Texture::Create(std::string texture_path)
 
 		// SDL_Surface is just the raw pixels
 		// Convert it to a hardware-optimzed texture so we can render it
-		mTexture = SDL_CreateTextureFromSurface(Game::GetRenderer(), surface);
+		mTexture = SDL_CreateTextureFromSurface(Game::Renderer, surface);
 		if (mTexture == nullptr)
 			Log::LogMessage(LogLevel::LOG_ERROR, std::string("Failed to load texture <" + texture_path + "> error : " + SDL_GetError() + "\n"));
 
