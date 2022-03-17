@@ -596,7 +596,7 @@ void Collision::ResolveCollision(Rigidbody& one, Rigidbody& two, CollisionManifo
 	Vector2f relativeNormal = manifold->Normal.GetNormalized();
 
 	//objects are moving apart
-	if (Dot(relativeVelocity, relativeNormal) > 0.0f)
+	if (HelperFunctions::Dot(relativeVelocity, relativeNormal) > 0.0f)
 		return;
 
 	//Equations are based on
@@ -622,7 +622,7 @@ void Collision::ResolveCollision(Rigidbody& one, Rigidbody& two, CollisionManifo
 
 	//Get minimum restitution;
 	float e = std::min(one.GetRestitution(), two.GetRestitution());
-	float impulse = -(1.0f + e) * Dot(relativeVelocity, relativeNormal);
+	float impulse = -(1.0f + e) * HelperFunctions::Dot(relativeVelocity, relativeNormal);
 	impulse /= one.GetInverseMass() + two.GetInverseMass();
 
 	one.AddVelocity(relativeNormal * impulse * -one.GetInverseMass());

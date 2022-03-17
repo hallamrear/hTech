@@ -16,7 +16,7 @@ Vector2f::Vector2f(float x, float y)
 //0deg == Vector(1.0, 0.0)
 float Vector2f::GetAngleDegrees() const
 {
-	return ConvertToDegrees(GetAngleRadians());
+	return HelperFunctions::ConvertToDegrees(GetAngleRadians());
 }
 
 //0r == Vector(1.0, 0.0)
@@ -44,7 +44,7 @@ Vector2f Vector2f::GetNormalized() const
 
 Vector2f Vector2f::GetVectorRotatedByAngle(float angleDegrees)
 {
-	float theta = ConvertToRadians(angleDegrees);
+	float theta = HelperFunctions::ConvertToRadians(angleDegrees);
 	float cs = cos(theta);
 	float sn = sin(theta);
 

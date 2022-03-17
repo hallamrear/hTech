@@ -17,10 +17,10 @@ OrientedBoundingBox::~OrientedBoundingBox()
 void OrientedBoundingBox::CalculateRotations()
 {
 	float rotation = 360.0f - Rotation;
-		 TopLeft = RotatePointAroundOriginDegrees(Vector2f(mOrigin.X - (Size.X / 2), mOrigin.Y + (Size.Y / 2)), rotation, mOrigin);
-	  BottomLeft = RotatePointAroundOriginDegrees(Vector2f(mOrigin.X - (Size.X / 2), mOrigin.Y - (Size.Y / 2)), rotation, mOrigin);
-		TopRight = RotatePointAroundOriginDegrees(Vector2f(mOrigin.X + (Size.X / 2), mOrigin.Y + (Size.Y / 2)), rotation, mOrigin);
-	 BottomRight = RotatePointAroundOriginDegrees(Vector2f(mOrigin.X + (Size.X / 2), mOrigin.Y - (Size.Y / 2)), rotation, mOrigin);
+		 TopLeft = HelperFunctions::RotatePointAroundOriginDegrees(Vector2f(mOrigin.X - (Size.X / 2), mOrigin.Y + (Size.Y / 2)), rotation, mOrigin);
+	  BottomLeft = HelperFunctions::RotatePointAroundOriginDegrees(Vector2f(mOrigin.X - (Size.X / 2), mOrigin.Y - (Size.Y / 2)), rotation, mOrigin);
+		TopRight = HelperFunctions::RotatePointAroundOriginDegrees(Vector2f(mOrigin.X + (Size.X / 2), mOrigin.Y + (Size.Y / 2)), rotation, mOrigin);
+	 BottomRight = HelperFunctions::RotatePointAroundOriginDegrees(Vector2f(mOrigin.X + (Size.X / 2), mOrigin.Y - (Size.Y / 2)), rotation, mOrigin);
 }
 
 void OrientedBoundingBox::Update(double deltaTime)
