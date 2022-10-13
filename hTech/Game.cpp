@@ -4,7 +4,7 @@
 #include "StateDirector.h"
 #include "Log.h"
 #include "Settings.h"
-#include "MyTime.h"
+#include "Time.h"
 #include "PhysicsWorld.h"
 #include <thread>
 #include <iostream>
@@ -12,6 +12,32 @@
 #include <ctime>
 
 SDL_Renderer* Game::Renderer = nullptr;
+
+int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
+{
+	return main(0, nullptr);
+}
+
+int main(int argc, char* argv[])
+{
+	WindowDetails details;
+	details.dimensions = Vector2f(1280.0f, 720.0f);
+	details.title = "hTech";
+	details.position = Vector2f(200.0f, 200.0f);
+
+	Game* game = new Game();
+	game->Initialise(argc, argv, details);
+
+	//StateDirector::SetupState(GameStateIdentifier::GAME_STATE_1, new ());
+	//StateDirector::SetState(GameStateIdentifier::GAME_STATE_1);
+
+	if (game->GetIsInitialised())
+	{
+		game->Start();
+	}
+
+	return 0;
+}
 
 Game::Game()
 {
@@ -83,9 +109,6 @@ void Game::SetFullscreen(SCREEN_STATE state)
 		auto Height = DM.h;
 		SDL_SetWindowSize(mWindow, Width, Height);
 		SDL_SetWindowFullscreen(mWindow, SDL_WINDOW_FULLSCREEN);
-		int w, h;
-		SDL_GetWindowSize(mWindow, &w, &h);
-		Settings::Get()->SetWindowDimensions(Vector2f((float)w, (float)h));
 	}
 		break;
 	case SCREEN_STATE::WINDOW_BORDERLESS_FULLSCREEN:
@@ -95,6 +118,11 @@ void Game::SetFullscreen(SCREEN_STATE state)
 		SDL_SetWindowFullscreen(mWindow, 0);
 		break;
 	}
+
+
+	int w, h;
+	SDL_GetWindowSize(mWindow, &w, &h);
+	Settings::Get()->SetWindowDimensions(Vector2f((float)w, (float)h));
 }
 
 /// <summary>

@@ -3,6 +3,7 @@
 #include "BoundingBox.h"
 #include "BoundingSphere.h"
 #include "OrientedBoundingBox.h"
+#include "BoundingPolygon.h"
 #include "Entity.h"
 #include "Rigidbody.h"
    
@@ -32,7 +33,6 @@ Vector2f Collision::FindClosestPointOnPolygon(const BoundingSphere& circle, cons
 	return result;
 }
 
-//todo : construct manifold
 bool Collision::CheckCollision_AABBvsAABB(const BoundingBox& one, const BoundingBox& two, CollisionManifold* const manifold)
 {
 	//Old
@@ -42,7 +42,6 @@ bool Collision::CheckCollision_AABBvsAABB(const BoundingBox& one, const Bounding
 	return Collision::SeperatingAxisTheory_PolygonPolygon(4, one, 4, two, manifold);
 }
 
-//todo : make SAT
 bool Collision::CheckCollision_OBBvsSPHERE(const OrientedBoundingBox& one, const BoundingSphere& two, CollisionManifold* const manifold)
 {
 	return SeperatingAxisTheory_PolygonCircle(4, one, two, manifold);
@@ -101,7 +100,6 @@ bool Collision::CheckCollision_AABBvsSPHERE(const BoundingBox& one, const Boundi
 	return SeperatingAxisTheory_PolygonCircle(4, obb, two, manifold);
 }
 
-//todo : construct manifold
 bool Collision::CheckCollision_SPHEREvsSPHERE(const BoundingSphere& one, const BoundingSphere& two, CollisionManifold* const manifold)
 {
 	Vector2f p1 = one.mOrigin;
@@ -127,7 +125,6 @@ bool Collision::CheckCollision_SPHEREvsSPHERE(const BoundingSphere& one, const B
 	return manifold->HasCollided;
 };
 
-//todo : construct manifold
 bool Collision::CheckCollision_OBBvsOBB(const OrientedBoundingBox& one, const OrientedBoundingBox& two, CollisionManifold* const manifold)
 {
 	//we know boxes have 4 points :)
@@ -146,7 +143,7 @@ bool Collision::SeperatingAxisTheory_PolygonPolygon(const int shapeOnePointCount
 	Vector2f* shapeTwoPoints = new Vector2f[shapeTwoPointCount];
 	two.GetColliderAsPoints(shapeTwoPoints);
 
-	manifold->Normal = Vector2f(0.0f, 0.0f);
+	manifold->Normal = Vector2f(FLT_MAX, FLT_MAX);
 	manifold->Depth = FLT_MAX;
 
 	//Check shape one in each direction
@@ -251,8 +248,8 @@ bool Collision::SeperatingAxisTheory_PolygonPolygon(const int shapeOnePointCount
 	}
 
 	//todo : if you uncomment this, remove the axisproj.getnormalized
-	//manifold->Depth /= manifold->Normal.GetMagnitude();
-	//manifold->Normal = manifold->Normal.GetNormalized();
+	manifold->Depth /= manifold->Normal.GetMagnitude();
+	manifold->Normal = manifold->Normal.GetNormalized();
 
 	Vector2f direction = two.mOrigin - one.mOrigin;
 
@@ -543,6 +540,22 @@ bool Collision::SeperatingAxisTheory_Depreciated(const int shapeOnePointCount, c
 	return manifold->HasCollided;
 }
 
+
+
+
+bool Collision::CheckCollision_POLYGONvsPOLYGON(const BoundingPolygon& one, const BoundingPolygon& two, CollisionManifold* const manifold)
+{
+	return SeperatingAxisTheory_PolygonPolygon(one.PointCount, one, two.PointCount, two, manifold);
+}
+
+bool Collision::CheckCollision_POLYGONvsOBB(const BoundingPolygon& one, const OrientedBoundingBox& two, CollisionManifold* const manifold)
+{
+	return SeperatingAxisTheory_PolygonPolygon(one.PointCount, one, 4, two, manifold);
+}
+
+
+
+
 //You have to pass in a created collision manifold else itll just return false.
 bool Collision::CheckCollision(const Collider& one, const Collider& two, CollisionManifold* const manifold)
 {
@@ -578,7 +591,16 @@ bool Collision::CheckCollision(const Collider& one, const Collider& two, Collisi
 	if (one.mType == COLLIDER_TYPE::COLLIDER_OBB && two.mType == COLLIDER_TYPE::COLLIDER_OBB)
 		return CheckCollision_OBBvsOBB(dynamic_cast<const OrientedBoundingBox&>(one), dynamic_cast<const OrientedBoundingBox&>(two), manifold);
 
-	throw;
+
+	if (one.mType == COLLIDER_TYPE::COLLIDER_POLYGON && two.mType == COLLIDER_TYPE::COLLIDER_POLYGON)
+		return CheckCollision_POLYGONvsPOLYGON(dynamic_cast<const BoundingPolygon&>(one), dynamic_cast<const BoundingPolygon&>(two), manifold);
+	if (one.mType == COLLIDER_TYPE::COLLIDER_POLYGON && two.mType == COLLIDER_TYPE::COLLIDER_OBB)
+		return CheckCollision_POLYGONvsOBB(dynamic_cast<const BoundingPolygon&>(one), dynamic_cast<const OrientedBoundingBox&>(two), manifold);
+	if (one.mType == COLLIDER_TYPE::COLLIDER_OBB && two.mType == COLLIDER_TYPE::COLLIDER_POLYGON)
+		return CheckCollision_POLYGONvsOBB(dynamic_cast<const BoundingPolygon&>(two), dynamic_cast<const OrientedBoundingBox&>(one), manifold);
+
+
+	//throw;
 	return false;
 }
 
@@ -606,25 +628,39 @@ void Collision::ResolveCollision(Rigidbody& one, Rigidbody& two, CollisionManifo
 	if (one.GetIsStatic() == true && two.GetIsStatic() == false)
 	{
 		two.GetTransform().AdjustPosition(relativeNormal * (manifold->Depth));
+		return;
 	}
 	//Dynamic - Static
 	else if (one.GetIsStatic() == false && two.GetIsStatic() == true)
 	{
 		one.GetTransform().AdjustPosition(relativeNormal * (-manifold->Depth));
+		return;
 	}
 	//Dynamic - Dynamic
 	//Move both away from each other.
 	else
 	{
-		one.GetTransform().AdjustPosition(relativeNormal * -1 * (manifold->Depth / 2.0f));
+		one.GetTransform().AdjustPosition((relativeNormal * -1) * (manifold->Depth / 2.0f));
 		two.GetTransform().AdjustPosition(relativeNormal * (manifold->Depth / 2.0f));
 	}
 
+	/*
 	//Get minimum restitution;
 	float e = std::min(one.GetRestitution(), two.GetRestitution());
-	float impulse = -(1.0f + e) * HelperFunctions::Dot(relativeVelocity, relativeNormal);
-	impulse /= one.GetInverseMass() + two.GetInverseMass();
+	float impulse = -(1.0f + e) * relativeVelocity.Dot(relativeNormal);
+	impulse /= (one.GetInverseMass() + two.GetInverseMass());
 
 	one.AddVelocity(relativeNormal * impulse * -one.GetInverseMass());
 	two.AddVelocity(relativeNormal * impulse * two.GetInverseMass());
+	*/
+
+
+	//Get minimum restitution;
+	float e = std::min(one.GetRestitution(), two.GetRestitution());
+	float impulse = -(1.0f + e) * relativeVelocity.Dot(relativeNormal);
+	impulse /= (one.GetInverseMass() + two.GetInverseMass());
+
+	one.AddVelocity(relativeNormal * impulse / one.GetMass());
+	two.AddVelocity(relativeNormal * impulse / two.GetMass() * -1);
+
 }

@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "MyTime.h"
+#include "Time.h"
 
 //todo : put singleton back
 //Time* Time::mInstance = nullptr;

@@ -10,8 +10,8 @@ BoundingBox::BoundingBox(Vector2f& position, float size_x, float size_y)
 	Size.X = size_x;
 	Size.Y = size_y;
 
-	TopLeft = Vector2f(position.X - (Size.X / 2.0f), position.Y + (Size.Y / 2.0f));
-	BottomRight = Vector2f(position.X + (Size.X / 2.0f), position.Y - (Size.Y / 2.0f));
+	TopLeft = Vector2f(mOrigin.X - (Size.X / 2.0f), mOrigin.Y + (Size.Y / 2.0f));
+	BottomRight = Vector2f(mOrigin.X + (Size.X / 2.0f), mOrigin.Y - (Size.Y / 2.0f));
 };
 
 BoundingBox::~BoundingBox()

@@ -9,6 +9,7 @@ class BoundingSphere;
 class BoundingBox;
 class Rigidbody;
 class OrientedBoundingBox;
+class BoundingPolygon;
 struct SDL_Renderer;
 class Entity;
 
@@ -28,7 +29,9 @@ enum class COLLIDER_TYPE
 	COLLIDER_UNKNOWN = -1,
 	COLLIDER_AABB = 0,
 	COLLIDER_SPHERE,
-	COLLIDER_OBB
+	COLLIDER_OBB,
+
+	COLLIDER_POLYGON
 };
 
 //OBB - Red outline
@@ -63,6 +66,10 @@ private:
 	static bool SeperatingAxisTheory_PolygonPolygon(const int shapeOnePointCount, const Collider& one, const int shapeTwoPointCount, const Collider& two, CollisionManifold* manifold);
 	static bool SeperatingAxisTheory_PolygonCircle(const int shapeOnePointCount, const Collider& polygonCollider, const BoundingSphere& circleCollider, CollisionManifold* manifold);
 	static bool SeperatingAxisTheory_Depreciated(const int shapeOnePointCount, const Collider& one, const int shapeTwoPointCount, const Collider& two, CollisionManifold* manifold);
+
+	static bool CheckCollision_POLYGONvsPOLYGON(const BoundingPolygon& one, const BoundingPolygon& two, CollisionManifold* const manifold);
+	static bool CheckCollision_POLYGONvsOBB(const BoundingPolygon& one, const OrientedBoundingBox& two, CollisionManifold* const manifold);
+
 
 public:
 	static bool CheckCollision(const Collider& one, const Collider& two, CollisionManifold* manifold);

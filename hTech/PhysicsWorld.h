@@ -2,7 +2,7 @@
 #include "Collision.h"
 
 #define FIXED_TIME_STEP (1.0 / 60.0)
-#define IMPULSE_ITERATION_COUNT 8
+#define IMPULSE_ITERATION_COUNT 1
 
 class Rigidbody;
 

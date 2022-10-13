@@ -27,26 +27,26 @@
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v142</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -72,23 +72,27 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <ExternalIncludePath>$(ExternalIncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>$(ExternalIncludePath);$(ProjectDir)SDL\include;$(ProjectDir)STB\include</ExternalIncludePath>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)SDL\include;$(ProjectDir)STB\include</IncludePath>
+    <ReferencePath>$(ProjectDir)SDL\lib\$(PlatformTarget);$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <ExternalIncludePath>$(ExternalIncludePath)</ExternalIncludePath>
+    <ExternalIncludePath>$(ExternalIncludePath);$(ProjectDir)SDL\include;$(ProjectDir)STB\include</ExternalIncludePath>
     <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)SDL\include;$(ProjectDir)STB\include</IncludePath>
+    <ReferencePath>$(ProjectDir)SDL\lib\$(PlatformTarget);$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <ExternalIncludePath>$(ExternalIncludePath)</ExternalIncludePath>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)SDL\include;$(ProjectDir)STB\include</IncludePath>
+    <ExternalIncludePath>$(ExternalIncludePath);$(ProjectDir)SDL\include;$(ProjectDir)STB\include</ExternalIncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <ReferencePath>$(ProjectDir)SDL\lib\$(PlatformTarget);$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <ExternalIncludePath>$(ExternalIncludePath)</ExternalIncludePath>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)SDL\include;$(ProjectDir)STB\include</IncludePath>
+    <ExternalIncludePath>$(ExternalIncludePath);$(ProjectDir)SDL\include;$(ProjectDir)STB\include</ExternalIncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
+    <ReferencePath>$(ProjectDir)SDL\lib\$(PlatformTarget);$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -100,12 +104,16 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
-      <SubSystem>
-      </SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
+      <AdditionalDependencies>SDL2.lib;SDL2_ttf.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)SDL/lib/$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y "$(ProjectDir)SDL\lib\$(LibrariesArchitecture)\SDL2.dll" "$(SolutionDir)bin\lib\$(Configuration)\$(LibrariesArchitecture)" &amp; xcopy /Y "$(OutputPath)$(TargetFileName)" "$(SolutionDir)bin\lib\$(Configuration)\$(LibrariesArchitecture)" &amp; xcopy /Y "$(ProjectDir)*.h" "$(SolutionDir)bin\include\hTech"</Command>
+      <Command>xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2.dll" "$(OutputPath)"
+xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutputPath)"</Command>
     </PostBuildEvent>
     <Lib>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_gfx.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -126,14 +134,18 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
-      <SubSystem>
-      </SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
+      <AdditionalDependencies>SDL2.lib;SDL2_ttf.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)SDL/lib/$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y "$(ProjectDir)SDL\lib\$(LibrariesArchitecture)\SDL2.dll" "$(SolutionDir)bin\lib\$(Configuration)\$(LibrariesArchitecture)" &amp; xcopy /Y "$(OutputPath)$(TargetFileName)" "$(SolutionDir)bin\lib\$(Configuration)\$(LibrariesArchitecture)" &amp; xcopy /Y "$(ProjectDir)*.h" "$(SolutionDir)bin\include\hTech"</Command>
+      <Command>xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2.dll" "$(OutputPath)"
+xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutputPath)"</Command>
     </PostBuildEvent>
     <Lib>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_gfx.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -152,12 +164,16 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
-      <SubSystem>
-      </SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
+      <AdditionalDependencies>SDL2.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)SDL/lib/$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y "$(ProjectDir)SDL\lib\$(LibrariesArchitecture)\SDL2.dll" "$(SolutionDir)bin\lib\$(Configuration)\$(LibrariesArchitecture)" &amp; xcopy /Y "$(OutputPath)$(TargetFileName)" "$(SolutionDir)bin\lib\$(Configuration)\$(LibrariesArchitecture)" &amp; xcopy /Y "$(ProjectDir)*.h" "$(SolutionDir)bin\include\hTech"</Command>
+      <Command>xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2.dll" "$(OutputPath)"
+xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutputPath)"</Command>
     </PostBuildEvent>
     <Lib>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_gfx.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -178,14 +194,18 @@
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
     </ClCompile>
     <Link>
-      <SubSystem>
-      </SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EntryPointSymbol>
+      </EntryPointSymbol>
+      <AdditionalDependencies>SDL2.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)SDL/lib/$(PlatformTarget);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>xcopy /Y "$(ProjectDir)SDL\lib\$(LibrariesArchitecture)\SDL2.dll" "$(SolutionDir)bin\lib\$(Configuration)\$(LibrariesArchitecture)" &amp; xcopy /Y "$(OutputPath)$(TargetFileName)" "$(SolutionDir)bin\lib\$(Configuration)\$(LibrariesArchitecture)" &amp; xcopy /Y "$(ProjectDir)*.h" "$(SolutionDir)bin\include\hTech"</Command>
+      <Command>xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2.dll" "$(OutputPath)"
+xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutputPath)"</Command>
     </PostBuildEvent>
     <Lib>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_gfx.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -197,6 +217,7 @@
   <ItemGroup>
     <ClInclude Include="Animation.h" />
     <ClInclude Include="BoundingBox.h" />
+    <ClInclude Include="BoundingPolygon.h" />
     <ClInclude Include="BoundingSphere.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collision.h" />
@@ -208,7 +229,7 @@
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="MenuObject.h" />
-    <ClInclude Include="MyTime.h" />
+    <ClInclude Include="Time.h" />
     <ClInclude Include="OrientedBoundingBox.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PhysicsProperties.h" />
@@ -226,6 +247,7 @@
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="BoundingBox.cpp" />
+    <ClCompile Include="BoundingPolygon.cpp" />
     <ClCompile Include="BoundingSphere.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Collision.cpp" />
@@ -237,7 +259,7 @@
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="MenuObject.cpp" />
-    <ClCompile Include="MyTime.cpp" />
+    <ClCompile Include="Time.cpp" />
     <ClCompile Include="OrientedBoundingBox.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
