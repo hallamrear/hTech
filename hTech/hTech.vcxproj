@@ -113,7 +113,9 @@
     </Link>
     <PostBuildEvent>
       <Command>xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2.dll" "$(OutputPath)"
-xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutputPath)"</Command>
+xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutputPath)"
+xcopy /Y /E /H /C /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
+</Command>
     </PostBuildEvent>
     <Lib>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_gfx.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -145,7 +147,9 @@ xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutputPath)"</
     </Link>
     <PostBuildEvent>
       <Command>xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2.dll" "$(OutputPath)"
-xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutputPath)"</Command>
+xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutputPath)"
+xcopy /Y /E /H /C /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
+</Command>
     </PostBuildEvent>
     <Lib>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_gfx.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -173,7 +177,9 @@ xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutputPath)"</
     </Link>
     <PostBuildEvent>
       <Command>xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2.dll" "$(OutputPath)"
-xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutputPath)"</Command>
+xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutputPath)"
+xcopy /Y /E /H /C /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
+</Command>
     </PostBuildEvent>
     <Lib>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_gfx.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -205,7 +211,9 @@ xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutputPath)"</
     </Link>
     <PostBuildEvent>
       <Command>xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2.dll" "$(OutputPath)"
-xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutputPath)"</Command>
+xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutputPath)"
+xcopy /Y /E /H /C /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
+</Command>
     </PostBuildEvent>
     <Lib>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_gfx.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -243,6 +251,7 @@ xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutputPath)"</
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
+    <ClInclude Include="World.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Animation.cpp" />
@@ -277,6 +286,7 @@ xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutputPath)"</
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="Vector3.cpp" />
+    <ClCompile Include="World.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -2,7 +2,7 @@
 #include <map>
 #include "GameStates.h"
 
-enum class GameStateIdentifier
+enum class [[deprecated("Use World instead")]] GameStateIdentifier
 {	
 	GAME_STATE_UNKNOWN = -1,
 	GAME_STATE_PAUSED = 0,
@@ -28,20 +28,33 @@ private:
 	GameState* mCurrentState;
 	std::map<GameStateIdentifier, GameState*> mDirectorStates;
 
-							StateDirector();
-							~StateDirector();
-
-	void					SetState_Impl(const GameStateIdentifier state);
-	void					SetupState_Impl(GameStateIdentifier identifier, GameState* state);
-	const GameState*		GetState_Impl();
-	static StateDirector*	Get();
-	void					Update_Impl(double DeltaTime);
+	
+	[[deprecated("Use World instead")]]
+	StateDirector();
+	[[deprecated("Use World instead")]] 
+	~StateDirector();								    
+	[[deprecated("Use World instead")]]
+	void					SetState_Impl(const GameStateIdentifier state);									    
+	[[deprecated("Use World instead")]]
+	void					SetupState_Impl(GameStateIdentifier identifier, GameState* state);								    
+	[[deprecated("Use World instead")]]
+	const GameState*		GetState_Impl();								    
+	[[deprecated("Use World instead")]]
+	static StateDirector*	Get();								    
+	[[deprecated("Use World instead")]]
+	void					Update_Impl(double DeltaTime);								    
+	[[deprecated("Use World instead")]]
 	void					Render_Impl(SDL_Renderer& renderer);
 
 public:
+	[[deprecated("Use World instead")]]
 	static void				SetState(const GameStateIdentifier state);
+	[[deprecated("Use World instead")]]
 	static void				SetupState(GameStateIdentifier identifier, GameState* state);
+	[[deprecated("Use World instead")]]
 	static const GameState*	GetState();
+	[[deprecated("Use World instead")]]
 	static void				Update(double DeltaTime);
+	[[deprecated("Use World instead")]]
 	static void				Render(SDL_Renderer& renderer);
 };

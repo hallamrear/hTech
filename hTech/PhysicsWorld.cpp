@@ -2,19 +2,19 @@
 #include "PhysicsWorld.h"
 #include "Rigidbody.h"
 
-PhysicsWorld* PhysicsWorld::mInstance = nullptr;
+Physics* Physics::mInstance = nullptr;
 
-PhysicsWorld::PhysicsWorld(double fixedTimeStep)
+Physics::Physics(double fixedTimeStep)
 {
 	mFixedTimestep = fixedTimeStep;
 }
 
-PhysicsWorld::~PhysicsWorld()
+Physics::~Physics()
 {
 	mRigidbodies.clear();
 }
 
-void PhysicsWorld::FixedUpdate()
+void Physics::FixedUpdate()
 {
 	mManifolds.clear();
 
@@ -70,35 +70,40 @@ void PhysicsWorld::FixedUpdate()
 	
 	//Physics update
 	for (auto& itr : mRigidbodies)
-		itr->PhysicsUpdate(mFixedTimestep);
+	{
+		if (itr->GetIsBeingDestroyed() == false)
+		{
+			itr->PhysicsUpdate(mFixedTimestep);
+		}
+	}
 }
 
-void PhysicsWorld::Update_Impl(double deltaTime)
+void Physics::Update_Impl(double deltaTime)
 {
 	FixedUpdate();
 }
 
-void PhysicsWorld::Update(double deltaTime)
+void Physics::Update(double deltaTime)
 {
 	Get()->Update_Impl(deltaTime);
 }
 
-void PhysicsWorld::RegisterRigidbody(Rigidbody* rb)
+void Physics::RegisterRigidbody(Rigidbody* rb)
 {
 	Get()->RegisterRigidbody_Impl(rb);
 }
 
-void PhysicsWorld::RegisterRigidbody_Impl(Rigidbody* rb)
+void Physics::RegisterRigidbody_Impl(Rigidbody* rb)
 {
 	mRigidbodies.push_back(rb);
 }
 
-void PhysicsWorld::DeregisterRigidbody(Rigidbody* rb)
+void Physics::DeregisterRigidbody(Rigidbody* rb)
 {
 	Get()->DeregisterRigidbody_Impl(rb);
 }
 
-void PhysicsWorld::DeregisterRigidbody_Impl(Rigidbody* rb)
+void Physics::DeregisterRigidbody_Impl(Rigidbody* rb)
 {
 	if (mRigidbodies.size() > 0)
 	{
@@ -113,10 +118,10 @@ void PhysicsWorld::DeregisterRigidbody_Impl(Rigidbody* rb)
 	}
 }
 
-PhysicsWorld* PhysicsWorld::Get()
+Physics* Physics::Get()
 {
 	if (!mInstance)
-		mInstance = new PhysicsWorld(FIXED_TIME_STEP);
+		mInstance = new Physics(FIXED_TIME_STEP);
 
 	return mInstance;
 }

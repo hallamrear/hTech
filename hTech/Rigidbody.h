@@ -39,8 +39,17 @@ public:
 	//Do not call this outside of physics world.
 	virtual void	 PhysicsUpdate(double deltaTime);
 
-	virtual void	 Update(double deltaTime) = 0;
-	virtual void	 Render() = 0;
+	/// <summary>
+	/// Overrideable
+	/// </summary>
+	/// <param name="deltaTime"></param>
+	virtual void	 Update(double deltaTime);
+
+	/// <summary>
+	/// Overrideable
+	/// </summary>
+	virtual void	 Render();
+
 	virtual void	 OnCollision(const CollisionManifold& manifold, Rigidbody& other);
 	virtual void	 OnOverlap(const CollisionManifold& manifold, Rigidbody& other);
 

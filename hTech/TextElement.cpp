@@ -35,7 +35,7 @@ void TextElement::CreateTexture()
 	{
 		//This should not be getting recreated each frame
 		TTF_Font* font;
-		font = TTF_OpenFont("arial.ttf", (int)mFontSize);
+		font = TTF_OpenFont("Assets/arial.ttf", (int)mFontSize);
 		if (!font)
 		{
 			Log::LogMessage(LogLevel::LOG_ERROR, "FAILED TO LOAD FONT");

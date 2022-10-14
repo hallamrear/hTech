@@ -11,6 +11,8 @@ class Entity
 private:
 
 protected:
+	bool					mIsWaitingToBeDestroyed;
+
 	SDL_Renderer&			mRenderer;
 	Texture*				mTexture;
 	Transform				mTransform;
@@ -39,4 +41,6 @@ public:
 	Transform&				GetTransform()			   { return mTransform; }
 	
 	virtual void			SetAlive(const bool state) { mIsAlive = state; }
+	bool					GetIsBeingDestroyed() const;
+	void					Destroy();
 };

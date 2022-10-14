@@ -7,6 +7,8 @@
 Entity::Entity(std::string texture_path, Transform transform)
 	: mRenderer(*Game::Renderer)
 {
+	mIsWaitingToBeDestroyed = false;
+
 	Name = "unnamed";
 
 	mTransform = transform;
@@ -31,6 +33,16 @@ void Entity::AssignTexture(const std::string& texture_path)
 const Texture& Entity::GetTexture() const
 {
 	return *mTexture;
+}
+
+bool Entity::GetIsBeingDestroyed() const
+{
+	return mIsWaitingToBeDestroyed;
+}
+
+void Entity::Destroy()
+{
+	mIsWaitingToBeDestroyed = true;
 }
 
 const SDL_Renderer& Entity::GetRendererReference()

@@ -2,11 +2,13 @@
 #include "Rigidbody.h"
 #include "PhysicsWorld.h"
 #include "Log.h"
+#include "Texture.h"
+#include "Game.h"
 
 Rigidbody::Rigidbody(std::string texture_path = "",	Transform transform = Transform(), PhysicsProperties properties = PhysicsProperties())
 	: Entity(texture_path, transform)
 {
-	PhysicsWorld::RegisterRigidbody(this);
+	Physics::RegisterRigidbody(this);
 
 	mIsStatic = properties.IsStatic;
 	mGravityEnabled = properties.GravityEnabled;
@@ -45,7 +47,7 @@ void Rigidbody::CalculateInverseMass()
 
 Rigidbody::~Rigidbody()
 {
-	PhysicsWorld::DeregisterRigidbody(this);
+	Physics::DeregisterRigidbody(this);
 }
 
 void Rigidbody::PhysicsUpdate(double deltaTime)
@@ -101,6 +103,30 @@ void Rigidbody::PhysicsUpdate(double deltaTime)
 
 	mNetForce = Vector2f();
 	mExternalForce = Vector2f();
+}
+
+void Rigidbody::Update(double deltaTime)
+{
+	if (mIsWaitingToBeDestroyed == false)
+	{
+
+	}
+}
+
+void Rigidbody::Render()
+{
+	if (mIsWaitingToBeDestroyed == false)
+	{
+		if (mTexture)
+		{
+			mTexture->Render(*Game::Renderer, mTransform.Position, mTransform.Rotation);
+		}
+
+		if (mCollider)
+		{
+			mCollider->Render(*Game::Renderer);
+		}
+	}
 }
 
 void Rigidbody::OnCollision(const CollisionManifold& manifold, Rigidbody& other)

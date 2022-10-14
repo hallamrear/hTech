@@ -6,15 +6,15 @@
 
 class Rigidbody;
 
-class PhysicsWorld
+class Physics
 {
-	static PhysicsWorld* mInstance;
+	static Physics* mInstance;
 	double mFixedTimestep;
 	std::vector<Rigidbody*> mRigidbodies;
 	std::vector<CollisionManifold> mManifolds;
 
-	PhysicsWorld(double fixedTimeStep);
-	~PhysicsWorld();
+	Physics(double fixedTimeStep);
+	~Physics();
 	
 	void FixedUpdate();
 	void Update_Impl(double deltaTime);
@@ -22,7 +22,7 @@ class PhysicsWorld
 	void DeregisterRigidbody_Impl(Rigidbody* rb);
 
 protected:
-	static PhysicsWorld* Get();
+	static Physics* Get();
 
 public:
 	

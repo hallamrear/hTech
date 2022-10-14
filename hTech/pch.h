@@ -24,6 +24,7 @@
 #include <random>
 #include <cmath>
 #include <mmsystem.h>
+#include <algorithm>
 #include <cassert>
 
 #include "Helper.h"

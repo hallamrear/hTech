@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Game.h"
 #include "InputManager.h"
-#include "StateDirector.h"
+#include "World.h"
 #include "Log.h"
 #include "Settings.h"
 #include "Time.h"
@@ -27,9 +27,6 @@ int main(int argc, char* argv[])
 
 	Game* game = new Game();
 	game->Initialise(argc, argv, details);
-
-	//StateDirector::SetupState(GameStateIdentifier::GAME_STATE_1, new ());
-	//StateDirector::SetState(GameStateIdentifier::GAME_STATE_1);
 
 	if (game->GetIsInitialised())
 	{
@@ -318,8 +315,6 @@ bool Game::InitialiseSystems(WindowDetails details)
 
 void Game::Shutdown()
 {
-	StateDirector::SetState(GameStateIdentifier::GAME_STATE_UNKNOWN);
-
 	SDL_DestroyRenderer(Game::Renderer);
 	SDL_DestroyWindow(mWindow);
 	SDL_Quit();
@@ -404,8 +399,8 @@ void Game::HandleEvents()
 void Game::Update(double DeltaTime)
 {
 	InputManager::Update();
-	PhysicsWorld::Update(DeltaTime);
-	StateDirector::Update(DeltaTime);
+	Physics::Update(DeltaTime);
+	World::Update(DeltaTime);
 
 	if(Settings::Get()->GetDrawLog())
 		Log::Update(DeltaTime);
@@ -415,7 +410,8 @@ void Game::Render()
 {
 	SDL_SetRenderDrawColor(Game::Renderer, 0, 0, 0, 255);
 	SDL_RenderClear(Game::Renderer);
-	StateDirector::Render(*Game::Renderer);
+
+	World::Render(*Game::Renderer);
 
 	if (Settings::Get()->GetDrawLog())
 		Log::Render(*Game::Renderer);
