@@ -8,10 +8,10 @@ Settings::Settings()
 {
 	mMaxLogMessages = 20;
 	mDrawLog = false;
-	mWindowDimensions = Vector2f(1280.0f, 720.0f);
-	mWindowCentre = Vector2f(mWindowDimensions.X / 2.0f, mWindowDimensions.Y / 2.0f);
+	mWindowDimensions = Vector2(1280.0f, 720.0f);
+	mWindowCentre = Vector2(mWindowDimensions.X / 2.0f, mWindowDimensions.Y / 2.0f);
 	mDrawColliders = false;
-	mGravityDirection = Vector2f(0.0f, -9.81f);
+	mGravityDirection = Vector2(0.0f, -9.81f);
 }
 
 Settings::~Settings()
@@ -39,12 +39,12 @@ void Settings::SetDrawLog(bool state)
 	mDrawLog = state;
 }
 
-Vector2f Settings::GetWindowCentre() const
+Vector2 Settings::GetWindowCentre() const
 {
 	return mWindowCentre;
 }
 
-Vector2f Settings::GetWindowDimensions() const
+Vector2 Settings::GetWindowDimensions() const
 {
 	return mWindowDimensions;
 }
@@ -59,12 +59,12 @@ void Settings::SetDrawColliders(bool state)
 	mDrawColliders = state;
 }
 
-Vector2f Settings::GetGravityDirection() const
+Vector2 Settings::GetGravityDirection() const
 {
 	return mGravityDirection;
 }
 
-void Settings::SetGravityDirection(Vector2f direction)
+void Settings::SetGravityDirection(Vector2 direction)
 {
 	mGravityDirection = direction;
 }
@@ -79,8 +79,8 @@ int Settings::GetMaxLogMessages() const
 	return mMaxLogMessages;
 }
 
-void Settings::SetWindowDimensions(Vector2f dimensions)
+void Settings::SetWindowDimensions(Vector2 dimensions)
 {
 	mWindowDimensions = dimensions;
-	mWindowCentre = Vector2f(mWindowDimensions.X / 2.0f, mWindowDimensions.Y / 2.0f);
+	mWindowCentre = Vector2(mWindowDimensions.X / 2.0f, mWindowDimensions.Y / 2.0f);
 }

@@ -294,12 +294,12 @@ void InputManager::MousePositionUpdate(int x, int y)
 	mMousePositionY = y;
 }
 
-Vector2f InputManager::GetMouseScreenPosition()
+Vector2 InputManager::GetMouseScreenPosition()
 {
-	return Vector2f((float)mMousePositionX, (float)mMousePositionY);
+	return Vector2((float)mMousePositionX, (float)mMousePositionY);
 }
 
-Vector2f InputManager::GetMouseWorldPosition()
+Vector2 InputManager::GetMouseWorldPosition()
 {
 	return Camera::ScreenToWorld(GetMouseScreenPosition());
 }

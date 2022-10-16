@@ -1,7 +1,7 @@
 #pragma once
 #include <string>
 
-class Vector2f;
+class Vector2;
 struct SDL_Texture;
 
 class Texture
@@ -22,10 +22,10 @@ public:
 	SDL_Texture& GetSDLTexture();
 	const std::string& GetLocation() const;
 
-	virtual void Render(SDL_Renderer& renderer, Vector2f position, float rotation, Vector2f sourcePosition, Vector2f sourceDimensions, bool flipped);
-	virtual void Render(SDL_Renderer& renderer, Vector2f position, float rotation, Vector2f sourcePosition, Vector2f sourceDimensions);
-	virtual void Render(SDL_Renderer& renderer, Vector2f position, float rotation, bool flipped);
-	virtual void Render(SDL_Renderer& renderer, Vector2f position, float rotation);
+	virtual void Render(SDL_Renderer& renderer, Vector2 position, float rotation, Vector2 sourcePosition, Vector2 sourceDimensions, bool flipped);
+	virtual void Render(SDL_Renderer& renderer, Vector2 position, float rotation, Vector2 sourcePosition, Vector2 sourceDimensions);
+	virtual void Render(SDL_Renderer& renderer, Vector2 position, float rotation, bool flipped);
+	virtual void Render(SDL_Renderer& renderer, Vector2 position, float rotation);
 };
 
 

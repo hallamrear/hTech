@@ -6,7 +6,7 @@
 
 Camera::Camera()
 {
-	mPosition = Vector2f();
+	mPosition = Vector2();
 }
 
 Camera::~Camera()
@@ -26,50 +26,50 @@ Camera* Camera::Get()
 	return &mInstance;
 }
 
-void Camera::SetCameraPosition_Impl(Vector2f position)
+void Camera::SetCameraPosition_Impl(Vector2 position)
 {
 	mPosition = position;
 }
 
-void Camera::SetCameraPosition(Vector2f position)
+void Camera::SetCameraPosition(Vector2 position)
 {
 	Get()->SetCameraPosition_Impl(position);
 }
 
-Vector2f Camera::GetCameraPosition()
+Vector2 Camera::GetCameraPosition()
 {
 	return Get()->GetCameraPosition_Impl();
 }
 
-Vector2f Camera::GetCameraPosition_Impl()
+Vector2 Camera::GetCameraPosition_Impl()
 {
 	return mPosition;
 }
 
-Vector2f Camera::WorldToScreen(Vector2f worldPosition)
+Vector2 Camera::WorldToScreen(Vector2 worldPosition)
 {
 	return Get()->WorldToScreen_Impl(worldPosition);
 }
 
-Vector2f Camera::WorldToScreen_Impl(Vector2f worldPosition)
+Vector2 Camera::WorldToScreen_Impl(Vector2 worldPosition)
 {
-	Vector2f camPosition = mPosition;
+	Vector2 camPosition = mPosition;
 	camPosition.Y *= -1;
-	Vector2f wp = worldPosition;
+	Vector2 wp = worldPosition;
 	wp.Y *= -1;
-	return Vector2f((wp - camPosition) + Settings::Get()->GetWindowCentre());
+	return Vector2((wp - camPosition) + Settings::Get()->GetWindowCentre());
 }
 
-Vector2f Camera::ScreenToWorld(Vector2f screenPosition)
+Vector2 Camera::ScreenToWorld(Vector2 screenPosition)
 {
 	return Get()->ScreenToWorld_Impl(screenPosition);
 }
 
-Vector2f Camera::ScreenToWorld_Impl(Vector2f screenPosition)
+Vector2 Camera::ScreenToWorld_Impl(Vector2 screenPosition)
 {
-	Vector2f camPosition = mPosition;
+	Vector2 camPosition = mPosition;
 	camPosition.Y *= -1;
-	Vector2f out = Vector2f((screenPosition + camPosition) - Settings::Get()->GetWindowCentre());
+	Vector2 out = Vector2((screenPosition + camPosition) - Settings::Get()->GetWindowCentre());
 	out.Y *= -1;
 	return out;
 }

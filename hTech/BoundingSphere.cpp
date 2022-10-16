@@ -3,7 +3,7 @@
 #include "Settings.h"
 #include "Camera.h"
 
-BoundingSphere::BoundingSphere(Vector2f& position, float radius)
+BoundingSphere::BoundingSphere(Vector2& position, float radius)
 	: Collider(position)
 {
 	mType = COLLIDER_TYPE::COLLIDER_SPHERE;
@@ -25,9 +25,9 @@ void BoundingSphere::Render(SDL_Renderer& renderer)
 	if(Settings::Get()->GetDrawColliders())
 	{
 		SDL_SetRenderDrawColor(&renderer, 0, 255, 255, 255);
-		Vector2f centre = Camera::WorldToScreen(mOrigin);
+		Vector2 centre = Camera::WorldToScreen(mOrigin);
 		SDL_RenderDrawPoint(&renderer, (int)centre.X, (int)centre.Y);
-		Vector2f point;
+		Vector2 point;
 		for (double angle = 0; angle <= 2 * M_PI; angle += 0.25f)
 		{
 			point.X = mOrigin.X + Radius * (float)cos(angle);
@@ -39,12 +39,12 @@ void BoundingSphere::Render(SDL_Renderer& renderer)
 	}
 }
 
-Vector2f BoundingSphere::FindFurthestPoint(Vector2f direction) const
+Vector2 BoundingSphere::FindFurthestPoint(Vector2 direction) const
 {
 	return mOrigin + (direction.GetNormalized() * Radius);
 }
 
-void BoundingSphere::GetColliderAsPoints(Vector2f points[]) const
+void BoundingSphere::GetColliderAsPoints(Vector2 points[]) const
 {
 
 }

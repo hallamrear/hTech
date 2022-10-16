@@ -5,7 +5,7 @@ class MenuObject :
     public Rigidbody
 {
 public:
-    MenuObject(std::string texture_path, Transform transform);
+    MenuObject(std::string texture_path);
     ~MenuObject() override;
 
     void			Update(double deltaTime) override;

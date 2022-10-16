@@ -3,15 +3,16 @@
 #include "Game.h"
 #include "Texture.h"
 #include "TextureCache.h"
+#include "Component_Transform.h"
 
-Entity::Entity(std::string texture_path, Transform transform)
+Entity::Entity(std::string texture_path)
 	: mRenderer(*Game::Renderer)
 {
+	IsEnabled = true;
+	mComponents = std::vector<Component*>();
+	AddComponent<TransformComponent>();
 	mIsWaitingToBeDestroyed = false;
-
 	Name = "unnamed";
-
-	mTransform = transform;
 	mIsAlive = true;
 
 	if (texture_path != "")
@@ -22,6 +23,7 @@ Entity::Entity(std::string texture_path, Transform transform)
 
 Entity::~Entity()
 {
+	//IMPLEMENT
 	mTexture = nullptr;
 }
 
@@ -45,6 +47,11 @@ void Entity::Destroy()
 	mIsWaitingToBeDestroyed = true;
 }
 
+Transform& Entity::GetTransform()
+{
+	return GetComponent<TransformComponent>()->GetTransform();
+}
+
 const SDL_Renderer& Entity::GetRendererReference()
 {
 	return mRenderer;
@@ -52,5 +59,5 @@ const SDL_Renderer& Entity::GetRendererReference()
 
 void Entity::ClampRotation()
 {
-	mTransform.Rotation = fmod(mTransform.Rotation, 360.0f);
+	GetTransform().Rotation = fmod(GetTransform().Rotation, 360.0f);
 }

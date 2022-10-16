@@ -7,18 +7,18 @@
 #include "Entity.h"
 #include "Rigidbody.h"
    
-Vector2f Collision::FindClosestPointOnPolygon(const BoundingSphere& circle, const Collider& polygon, const int polygonVertexCount)
+Vector2 Collision::FindClosestPointOnPolygon(const BoundingSphere& circle, const Collider& polygon, const int polygonVertexCount)
 {
-	Vector2f* vertices = new Vector2f[polygonVertexCount];
+	Vector2* vertices = new Vector2[polygonVertexCount];
 	polygon.GetColliderAsPoints(vertices);
 
-	Vector2f result;
+	Vector2 result;
 	float minDistance = INFINITY;
 
 	for (int i = 0; i < polygonVertexCount; i++)
 	{
-		Vector2f v = vertices[i];
-		float distance = Vector2f(v - circle.mOrigin).GetMagnitude();
+		Vector2 v = vertices[i];
+		float distance = Vector2(v - circle.mOrigin).GetMagnitude();
 
 		if (distance < minDistance)
 		{
@@ -47,22 +47,22 @@ bool Collision::CheckCollision_OBBvsSPHERE(const OrientedBoundingBox& one, const
 	return SeperatingAxisTheory_PolygonCircle(4, one, two, manifold);
 
 	//todo : make sure this shit aint broke
-	//Vector2f corners[4];
+	//Vector2 corners[4];
 	//one.GetBoxAsPoints(corners);
 	////transform sphere center into obb spaceand perform aabb test
-	//Vector2f sphereCentreAABBSpace = two.mOrigin - one.mOrigin;
+	//Vector2 sphereCentreAABBSpace = two.mOrigin - one.mOrigin;
 	//corners[0] -= one.mOrigin;
 	//corners[1] -= one.mOrigin;
 	//corners[2] -= one.mOrigin;
 	//corners[3] -= one.mOrigin;
 	////Rotate all around 0,0 by -one.mRotaiton;
-	//sphereCentreAABBSpace = RotatePointAroundOriginDegrees(sphereCentreAABBSpace, 360.0f - one.Rotation, Vector2f());
-	//corners[0] = RotatePointAroundOriginDegrees(corners[0], 360.0f - one.Rotation, Vector2f());
-	//corners[1] = RotatePointAroundOriginDegrees(corners[1], 360.0f - one.Rotation, Vector2f());
-	//corners[2] = RotatePointAroundOriginDegrees(corners[2], 360.0f - one.Rotation, Vector2f());
-	//corners[3] = RotatePointAroundOriginDegrees(corners[3], 360.0f - one.Rotation, Vector2f());
+	//sphereCentreAABBSpace = RotatePointAroundOriginDegrees(sphereCentreAABBSpace, 360.0f - one.Rotation, Vector2());
+	//corners[0] = RotatePointAroundOriginDegrees(corners[0], 360.0f - one.Rotation, Vector2());
+	//corners[1] = RotatePointAroundOriginDegrees(corners[1], 360.0f - one.Rotation, Vector2());
+	//corners[2] = RotatePointAroundOriginDegrees(corners[2], 360.0f - one.Rotation, Vector2());
+	//corners[3] = RotatePointAroundOriginDegrees(corners[3], 360.0f - one.Rotation, Vector2());
 	//float dist = 0, minimum = INFINITY, maximum = -INFINITY;
-	//Vector2f extentsMin, extentsMax;
+	//Vector2 extentsMin, extentsMax;
 	//for (int i = 0; i < 3; i++)
 	//{
 	//	if (corners[i].X < extentsMin.X)
@@ -102,10 +102,10 @@ bool Collision::CheckCollision_AABBvsSPHERE(const BoundingBox& one, const Boundi
 
 bool Collision::CheckCollision_SPHEREvsSPHERE(const BoundingSphere& one, const BoundingSphere& two, CollisionManifold* const manifold)
 {
-	Vector2f p1 = one.mOrigin;
-	Vector2f p2 = two.mOrigin;
-	Vector2f distance = p2 - p1;
-	Vector2f distanceN = distance.GetNormalized();
+	Vector2 p1 = one.mOrigin;
+	Vector2 p2 = two.mOrigin;
+	Vector2 distance = p2 - p1;
+	Vector2 distanceN = distance.GetNormalized();
 
 	// Calculate the sum of the radii, then square it
 	float sumRadii = one.Radius + two.Radius;
@@ -119,7 +119,7 @@ bool Collision::CheckCollision_SPHEREvsSPHERE(const BoundingSphere& one, const B
 
 		//todo : contact points for sphere/sphere
 		float dtp = one.Radius - manifold->Depth;
-		Vector2f contact = one.mOrigin + distanceN * dtp;
+		Vector2 contact = one.mOrigin + distanceN * dtp;
 	}
 
 	return manifold->HasCollided;
@@ -138,12 +138,12 @@ bool Collision::CheckCollision_AABBvsOBB(const BoundingBox& one, const OrientedB
 
 bool Collision::SeperatingAxisTheory_PolygonPolygon(const int shapeOnePointCount, const Collider& one, const int shapeTwoPointCount, const Collider& two, CollisionManifold* manifold)
 {
-	Vector2f* shapeOnePoints = new Vector2f[shapeOnePointCount];
+	Vector2* shapeOnePoints = new Vector2[shapeOnePointCount];
 	one.GetColliderAsPoints(shapeOnePoints);
-	Vector2f* shapeTwoPoints = new Vector2f[shapeTwoPointCount];
+	Vector2* shapeTwoPoints = new Vector2[shapeTwoPointCount];
 	two.GetColliderAsPoints(shapeTwoPoints);
 
-	manifold->Normal = Vector2f(FLT_MAX, FLT_MAX);
+	manifold->Normal = Vector2(FLT_MAX, FLT_MAX);
 	manifold->Depth = FLT_MAX;
 
 	//Check shape one in each direction
@@ -152,7 +152,7 @@ bool Collision::SeperatingAxisTheory_PolygonPolygon(const int shapeOnePointCount
 		//wraparound
 		int b = (a + 1) % shapeOnePointCount;
 
-		Vector2f axisProj = Vector2f(-(shapeOnePoints[b].Y - shapeOnePoints[a].Y), (shapeOnePoints[b].X - shapeOnePoints[a].X));
+		Vector2 axisProj = Vector2(-(shapeOnePoints[b].Y - shapeOnePoints[a].Y), (shapeOnePoints[b].X - shapeOnePoints[a].X));
 		axisProj = axisProj.GetNormalized();
 
 		float min_r1 = INFINITY, max_r1 = -INFINITY, min_r2 = INFINITY, max_r2 = -INFINITY;
@@ -202,7 +202,7 @@ bool Collision::SeperatingAxisTheory_PolygonPolygon(const int shapeOnePointCount
 		//wraparound
 		int b = (a + 1) % shapeTwoPointCount;
 
-		Vector2f axisProj = Vector2f(-(shapeTwoPoints[b].Y - shapeTwoPoints[a].Y), (shapeTwoPoints[b].X - shapeTwoPoints[a].X));
+		Vector2 axisProj = Vector2(-(shapeTwoPoints[b].Y - shapeTwoPoints[a].Y), (shapeTwoPoints[b].X - shapeTwoPoints[a].X));
 		axisProj = axisProj.GetNormalized();
 
 		float min_r1 = INFINITY, max_r1 = -INFINITY, min_r2 = INFINITY, max_r2 = -INFINITY;
@@ -251,7 +251,7 @@ bool Collision::SeperatingAxisTheory_PolygonPolygon(const int shapeOnePointCount
 	manifold->Depth /= manifold->Normal.GetMagnitude();
 	manifold->Normal = manifold->Normal.GetNormalized();
 
-	Vector2f direction = two.mOrigin - one.mOrigin;
+	Vector2 direction = two.mOrigin - one.mOrigin;
 
 	if (direction.Dot(manifold->Normal) < 0.0f)
 	{
@@ -269,11 +269,11 @@ bool Collision::SeperatingAxisTheory_PolygonPolygon(const int shapeOnePointCount
 
 bool Collision::SeperatingAxisTheory_PolygonCircle(const int polygonVertexCount, const Collider& polygonCollider, const BoundingSphere& circleCollider, CollisionManifold* manifold)
 {
-	Vector2f* shapeOnePoints = new Vector2f[polygonVertexCount];
+	Vector2* shapeOnePoints = new Vector2[polygonVertexCount];
 	polygonCollider.GetColliderAsPoints(shapeOnePoints);
 
-	Vector2f axisProj = Vector2f(0.0f, 0.0f);
-	manifold->Normal = Vector2f(0.0f, 0.0f);
+	Vector2 axisProj = Vector2(0.0f, 0.0f);
+	manifold->Normal = Vector2(0.0f, 0.0f);
 	manifold->Depth = FLT_MAX;
 
 	//Check shape one in each direction
@@ -282,7 +282,7 @@ bool Collision::SeperatingAxisTheory_PolygonCircle(const int polygonVertexCount,
 		//wraparound
 		int b = (a + 1) % polygonVertexCount;
 
-		axisProj = Vector2f(-(shapeOnePoints[b].Y - shapeOnePoints[a].Y), (shapeOnePoints[b].X - shapeOnePoints[a].X));
+		axisProj = Vector2(-(shapeOnePoints[b].Y - shapeOnePoints[a].Y), (shapeOnePoints[b].X - shapeOnePoints[a].X));
 		axisProj = axisProj.GetNormalized();
 
 		///Projection bit
@@ -298,9 +298,9 @@ bool Collision::SeperatingAxisTheory_PolygonCircle(const int polygonVertexCount,
 		}
 		///
 		//Circle Projection
-		Vector2f directionScaled = axisProj * circleCollider.Radius;
-		Vector2f p1 = circleCollider.mOrigin + directionScaled;
-		Vector2f p2 = circleCollider.mOrigin - directionScaled;
+		Vector2 directionScaled = axisProj * circleCollider.Radius;
+		Vector2 p1 = circleCollider.mOrigin + directionScaled;
+		Vector2 p2 = circleCollider.mOrigin - directionScaled;
 		//get the min and max of the projection extents
 		min_r1 = p1.Dot(axisProj);
 		max_r1 = p2.Dot(axisProj);
@@ -332,7 +332,7 @@ bool Collision::SeperatingAxisTheory_PolygonCircle(const int polygonVertexCount,
 		}
 	}
 
-	Vector2f closestPoint = FindClosestPointOnPolygon(circleCollider, polygonCollider, polygonVertexCount);
+	Vector2 closestPoint = FindClosestPointOnPolygon(circleCollider, polygonCollider, polygonVertexCount);
 	axisProj = closestPoint - circleCollider.mOrigin;
 	axisProj = axisProj.GetNormalized();
 
@@ -349,9 +349,9 @@ bool Collision::SeperatingAxisTheory_PolygonCircle(const int polygonVertexCount,
 	}
 	///
 	//Circle Projection
-	Vector2f directionScaled = axisProj * circleCollider.Radius;
-	Vector2f p1 = circleCollider.mOrigin + directionScaled;
-	Vector2f p2 = circleCollider.mOrigin - directionScaled;
+	Vector2 directionScaled = axisProj * circleCollider.Radius;
+	Vector2 p1 = circleCollider.mOrigin + directionScaled;
+	Vector2 p2 = circleCollider.mOrigin - directionScaled;
 	//get the min and max of the projection extents
 	min_r1 = p1.Dot(axisProj);
 	max_r1 = p2.Dot(axisProj);
@@ -386,7 +386,7 @@ bool Collision::SeperatingAxisTheory_PolygonCircle(const int polygonVertexCount,
 	manifold->Depth /= manifold->Normal.GetMagnitude();
 	manifold->Normal = manifold->Normal.GetNormalized();
 
-	Vector2f direction = polygonCollider.mOrigin - circleCollider.mOrigin;
+	Vector2 direction = polygonCollider.mOrigin - circleCollider.mOrigin;
 
 	if (direction.Dot(manifold->Normal) < 0.0f)
 	{
@@ -402,12 +402,12 @@ bool Collision::SeperatingAxisTheory_PolygonCircle(const int polygonVertexCount,
 
 bool Collision::SeperatingAxisTheory_Depreciated(const int shapeOnePointCount, const Collider& one, const int shapeTwoPointCount, const Collider& two, CollisionManifold* manifold)
 {
-	Vector2f* shapeOnePoints = new Vector2f[shapeOnePointCount];
+	Vector2* shapeOnePoints = new Vector2[shapeOnePointCount];
 	one.GetColliderAsPoints(shapeOnePoints);
-	Vector2f* shapeTwoPoints = new Vector2f[shapeTwoPointCount];
+	Vector2* shapeTwoPoints = new Vector2[shapeTwoPointCount];
 	two.GetColliderAsPoints(shapeTwoPoints);
 
-	manifold->Normal = Vector2f(0.0f, 0.0f);
+	manifold->Normal = Vector2(0.0f, 0.0f);
 	manifold->Depth = FLT_MAX;
 
 	//Check shape one in each direction
@@ -416,13 +416,13 @@ bool Collision::SeperatingAxisTheory_Depreciated(const int shapeOnePointCount, c
 		//wraparound
 		int b = (a + 1) % shapeOnePointCount;
 		
-		Vector2f edge = shapeTwoPoints[b] - shapeTwoPoints[a];
+		Vector2 edge = shapeTwoPoints[b] - shapeTwoPoints[a];
 
 		//Get the axis for projection at 90 to edge
-		Vector2f axisProj = Vector2f(-edge.Y, edge.X);
+		Vector2 axisProj = Vector2(-edge.Y, edge.X);
 		axisProj = axisProj.GetNormalized();
 
-		Vector2f vertex;
+		Vector2 vertex;
 		float minS1 = INFINITY, maxS1 = -INFINITY, minS2 = INFINITY, maxS2 = -INFINITY;
 		for (int i = 0; i < shapeOnePointCount; i++)
 		{
@@ -470,13 +470,13 @@ bool Collision::SeperatingAxisTheory_Depreciated(const int shapeOnePointCount, c
 		//wraparound
 		int b = (a + 1) % shapeTwoPointCount;
 
-		Vector2f edge = shapeTwoPoints[b] - shapeTwoPoints[a];
+		Vector2 edge = shapeTwoPoints[b] - shapeTwoPoints[a];
 
 		//Get the axis for projection at 90 to edge
-		Vector2f axisProj = Vector2f(-edge.Y, edge.X);
+		Vector2 axisProj = Vector2(-edge.Y, edge.X);
 		axisProj = axisProj.GetNormalized();
 
-		Vector2f vertex;
+		Vector2 vertex;
 		float minS1 = INFINITY, maxS1 = -INFINITY, minS2 = INFINITY, maxS2 = -INFINITY;
 		for (int i = 0; i < shapeOnePointCount; i++)
 		{
@@ -523,7 +523,7 @@ bool Collision::SeperatingAxisTheory_Depreciated(const int shapeOnePointCount, c
 	manifold->Depth /= manifold->Normal.GetMagnitude();
 	manifold->Normal = manifold->Normal.GetNormalized();
 
-	Vector2f direction = two.mOrigin - one.mOrigin;
+	Vector2 direction = two.mOrigin - one.mOrigin;
 
 	if (direction.Dot(manifold->Normal) < 0.0f)
 	{
@@ -564,7 +564,7 @@ bool Collision::CheckCollision(const Collider& one, const Collider& two, Collisi
 
 	manifold->HasCollided = false;
 	manifold->Depth = 0.0f;
-	manifold->Normal = Vector2f();
+	manifold->Normal = Vector2();
 	manifold->ObjA = nullptr;
 	manifold->ObjB = nullptr;
 	
@@ -614,8 +614,8 @@ void Collision::ResolveCollision(Rigidbody& one, Rigidbody& two, CollisionManifo
 	if (one.GetIsStatic() == true && two.GetIsStatic() == true)
 		return;			  
 
-	Vector2f relativeVelocity = Vector2f(two.GetVelocity().X - one.GetVelocity().X, two.GetVelocity().Y - one.GetVelocity().Y);
-	Vector2f relativeNormal = manifold->Normal.GetNormalized();
+	Vector2 relativeVelocity = Vector2(two.GetVelocity().X - one.GetVelocity().X, two.GetVelocity().Y - one.GetVelocity().Y);
+	Vector2 relativeNormal = manifold->Normal.GetNormalized();
 
 	//objects are moving apart
 	if (HelperFunctions::Dot(relativeVelocity, relativeNormal) > 0.0f)
@@ -627,21 +627,21 @@ void Collision::ResolveCollision(Rigidbody& one, Rigidbody& two, CollisionManifo
 	////Static - Dynamic
 	if (one.GetIsStatic() == true && two.GetIsStatic() == false)
 	{
-		two.GetTransform().AdjustPosition(relativeNormal * (manifold->Depth));
+		two.GetTransform().Translate(relativeNormal * (manifold->Depth));
 		return;
 	}
 	//Dynamic - Static
 	else if (one.GetIsStatic() == false && two.GetIsStatic() == true)
 	{
-		one.GetTransform().AdjustPosition(relativeNormal * (-manifold->Depth));
+		one.GetTransform().Translate(relativeNormal * (-manifold->Depth));
 		return;
 	}
 	//Dynamic - Dynamic
 	//Move both away from each other.
 	else
 	{
-		one.GetTransform().AdjustPosition((relativeNormal * -1) * (manifold->Depth / 2.0f));
-		two.GetTransform().AdjustPosition(relativeNormal * (manifold->Depth / 2.0f));
+		one.GetTransform().Translate((relativeNormal * -1) * (manifold->Depth / 2.0f));
+		two.GetTransform().Translate(relativeNormal * (manifold->Depth / 2.0f));
 	}
 
 	/*

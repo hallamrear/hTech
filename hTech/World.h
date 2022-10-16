@@ -3,10 +3,12 @@
 struct SDL_Renderer;
 class Rigidbody;
 class Entity;
+class TextElement;
 
 class World
 {
 private:
+	TextElement*			mSceneGraphText;
 	static World*			mInstance;
 	std::vector<Entity*>	mEntityList;
 

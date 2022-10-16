@@ -10,15 +10,15 @@ class BoundingBox
 	: public Collider
 {
 public:
-	Vector2f TopLeft;
-	Vector2f BottomRight;
-	Vector2f Size;
+	Vector2 TopLeft;
+	Vector2 BottomRight;
+	Vector2 Size;
 
-	BoundingBox(Vector2f& position, float size_x, float size_y);
+	BoundingBox(Vector2& position, float size_x, float size_y);
 	virtual ~BoundingBox();
 	virtual void Update(double deltaTime);
 	virtual void Render(SDL_Renderer& renderer);
-	virtual void GetColliderAsPoints(Vector2f points[]) const;
+	virtual void GetColliderAsPoints(Vector2 points[]) const;
 
-	virtual Vector2f FindFurthestPoint(Vector2f direction) const override;
+	virtual Vector2 FindFurthestPoint(Vector2 direction) const override;
 };

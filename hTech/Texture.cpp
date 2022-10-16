@@ -36,9 +36,9 @@ const std::string& Texture::GetLocation() const
 	return mName;
 }
 
-void Texture::Render(SDL_Renderer& renderer, Vector2f position, float rotation)
+void Texture::Render(SDL_Renderer& renderer, Vector2 position, float rotation)
 {
-	Vector2f renderPosition = Camera::WorldToScreen(position);
+	Vector2 renderPosition = Camera::WorldToScreen(position);
 
 	SDL_Rect destRect{};
 	destRect.w = Width;
@@ -48,9 +48,9 @@ void Texture::Render(SDL_Renderer& renderer, Vector2f position, float rotation)
 	SDL_RenderCopyEx(&renderer, &GetSDLTexture(), NULL, &destRect, rotation, NULL, SDL_FLIP_NONE);
 }
 
-void Texture::Render(SDL_Renderer& renderer, Vector2f position, float rotation, Vector2f sourcePosition, Vector2f sourceDimensions)
+void Texture::Render(SDL_Renderer& renderer, Vector2 position, float rotation, Vector2 sourcePosition, Vector2 sourceDimensions)
 {
-	Vector2f renderPosition = Camera::WorldToScreen(position);
+	Vector2 renderPosition = Camera::WorldToScreen(position);
 
 	SDL_Rect destRect{};
 	destRect.w = sourceDimensions.X;
@@ -68,9 +68,9 @@ void Texture::Render(SDL_Renderer& renderer, Vector2f position, float rotation, 
 }
 
 
-void Texture::Render(SDL_Renderer& renderer, Vector2f position, float rotation, bool flipped)
+void Texture::Render(SDL_Renderer& renderer, Vector2 position, float rotation, bool flipped)
 {
-	Vector2f renderPosition = Camera::WorldToScreen(position);
+	Vector2 renderPosition = Camera::WorldToScreen(position);
 
 	SDL_Rect destRect{};
 	destRect.w = Width;
@@ -84,9 +84,9 @@ void Texture::Render(SDL_Renderer& renderer, Vector2f position, float rotation, 
 		SDL_RenderCopyEx(&renderer, &GetSDLTexture(), NULL, &destRect, rotation, NULL, SDL_FLIP_HORIZONTAL);
 }
 
-void Texture::Render(SDL_Renderer& renderer, Vector2f position, float rotation, Vector2f sourcePosition, Vector2f sourceDimensions, bool flipped)
+void Texture::Render(SDL_Renderer& renderer, Vector2 position, float rotation, Vector2 sourcePosition, Vector2 sourceDimensions, bool flipped)
 {
-	const Vector2f renderPosition = Camera::WorldToScreen(position);
+	const Vector2 renderPosition = Camera::WorldToScreen(position);
 
 	SDL_Rect destRect{};
 	destRect.w = sourceDimensions.X;

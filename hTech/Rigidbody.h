@@ -16,22 +16,21 @@ protected:
 	float					mDragCoefficient;
 	float					mSpeedCap; //Speed cap (u/s)
 	float					mRestitution;
-	Vector2f				mVelocity;
-	Vector2f				mAcceleration;
-	Vector2f				mNetForce;
-	Vector2f				mExternalForce;
+	Vector2					mVelocity;
+	Vector2					mAcceleration;
+	Vector2					mNetForce;
+	Vector2					mExternalForce;
 	Collider*				mCollider;
 	bool					mIsStatic;
 
 	//Recalculates the inverse mass based on the current mass
 	void					CalculateInverseMass();
-	void					AddForce(Vector2f force);
+	void					AddForce(Vector2 force);
 	void					AddForce(float X = 0.0f, float Y = 0.0f);
 
 public:
 	Rigidbody(
 		std::string texture_path, 
-		Transform transform,
 		PhysicsProperties properties);
 
 					~Rigidbody();
@@ -53,8 +52,8 @@ public:
 	virtual void	 OnCollision(const CollisionManifold& manifold, Rigidbody& other);
 	virtual void	 OnOverlap(const CollisionManifold& manifold, Rigidbody& other);
 
-	Vector2f   const GetVelocity()		 const { return mVelocity; }
-	Vector2f   const GetAcceleration()	 const { return mAcceleration; }
+	Vector2   const GetVelocity()		 const { return mVelocity; }
+	Vector2   const GetAcceleration()	 const { return mAcceleration; }
 	bool	   const GetGravityEnabled() const { return mGravityEnabled; }
 	bool	   const GetDragEnabled()	 const { return mDragEnabled; }
 	float	   const GetMass()			 const { return mMass; };
@@ -66,7 +65,7 @@ public:
 	virtual void	SetGravityEnabled(const bool state) { mGravityEnabled = state; }
 	virtual void	SetDragEnabled(const bool state) { mDragEnabled = state; }
 	//Adjusters
-	virtual void	AddVelocity(const Vector2f velocity) { mVelocity += velocity; };
-	virtual void	AddExternalForce(const Vector2f force) { mExternalForce += force; };
+	virtual void	AddVelocity(const Vector2 velocity) { mVelocity += velocity; };
+	virtual void	AddExternalForce(const Vector2 force) { mExternalForce += force; };
 };
 

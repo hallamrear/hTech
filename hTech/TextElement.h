@@ -8,7 +8,6 @@ class TextElement : public Entity
 {
 private:
 	SDL_Texture*	mTextTexture;
-	Transform		mTransform;
 	bool			mIsDirty;
 	bool			mIsShowing;
 	std::string		mData;
@@ -22,7 +21,6 @@ private:
 
 public:
 	TextElement(
-		Transform transform,
 		std::string string = "", 
 		float size = 14.0f, 
 		Colour colour = Colour());
@@ -35,7 +33,7 @@ public:
 	void		SetColour(Colour colour);
 	void		SetString(std::string str);
 	void		SetString(const char* str);
-	void		SetPosition(Vector2f worldPosition);
-	Vector2f	GetTextureSize();
+	void		SetPosition(Vector2 worldPosition);
+	Vector2	GetTextureSize();
 };
 

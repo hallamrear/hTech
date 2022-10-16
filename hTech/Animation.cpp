@@ -11,7 +11,7 @@ AnimationController::AnimationController(std::string sheetPath, unsigned int ani
 	mDuration = duration;
 	mTotalFrames = frameCountPerAnimation;
 	mTimeBetweenFrames = mDuration / (float)(mTotalFrames);
-	FrameSize = Vector2f(mAnimationSheet->Width / (float)mTotalFrames, mAnimationSheet->Height / (float)animationCount);
+	FrameSize = Vector2(mAnimationSheet->Width / (float)mTotalFrames, mAnimationSheet->Height / (float)animationCount);
 	mHasFinished = false;
 }
 
@@ -72,7 +72,7 @@ void AnimationController::Render(SDL_Renderer& renderer, Transform transform)
 {
 	if (mAnimationSheet)
 	{
-		Vector2f srcPos = Vector2f((FrameSize.X * mCurrentFrame) + (FrameSize.X / 2.0f), (FrameSize.Y * mCurrentAnimation) + FrameSize.Y / 2.0f);
+		Vector2 srcPos = Vector2((FrameSize.X * mCurrentFrame) + (FrameSize.X / 2.0f), (FrameSize.Y * mCurrentAnimation) + FrameSize.Y / 2.0f);
 		mAnimationSheet->Render(*Game::Renderer, transform.Position, transform.Rotation, srcPos, FrameSize);
 	}
 }
@@ -81,7 +81,7 @@ void AnimationController::Render(SDL_Renderer& renderer, Transform transform, bo
 {
 	if (mAnimationSheet)
 	{
-		Vector2f srcPos = Vector2f((FrameSize.X * mCurrentFrame) + (FrameSize.X / 2.0f), (FrameSize.Y * mCurrentAnimation) + FrameSize.Y / 2.0f);
+		Vector2 srcPos = Vector2((FrameSize.X * mCurrentFrame) + (FrameSize.X / 2.0f), (FrameSize.Y * mCurrentAnimation) + FrameSize.Y / 2.0f);
 		mAnimationSheet->Render(*Game::Renderer, transform.Position, transform.Rotation, srcPos, FrameSize, flipped);
 	}
 }

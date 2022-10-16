@@ -1,34 +1,34 @@
 #pragma once
 #include <math.h>
 
-class Vector2f
+class Vector2
 {
 public:
 	float X;
 	float Y;
 
-	Vector2f();
-	Vector2f(float x, float y);
+	Vector2();
+	Vector2(float x, float y);
 	
 	float GetAngleDegrees() const;
 	float GetAngleRadians() const;
 	float GetMagnitude() const;
 	float GetMagnitudeSquared() const;
-	Vector2f GetNormalized() const;
-	Vector2f GetVectorRotatedByAngle(float angleDegrees);
-	float Dot(Vector2f vector) const;
+	Vector2 GetNormalized() const;
+	Vector2 GetVectorRotatedByAngle(float angleDegrees);
+	float Dot(Vector2 vector) const;
 
 	//Operators
-	Vector2f& operator= (const Vector2f& other);
-	Vector2f operator+(const Vector2f& rhs);
-	Vector2f operator-(const Vector2f& rhs);
-	Vector2f operator*(const float& scalar);
-	Vector2f operator/(const float& scalar);
-	Vector2f& operator+=(const Vector2f& rhs);
-	Vector2f& operator-=(const Vector2f& rhs);
-	bool operator!=(const Vector2f& rhs);
-	bool operator==(const Vector2f& rhs);
+	Vector2& operator= (const Vector2& other);
+	Vector2 operator+(const Vector2& rhs);
+	Vector2 operator-(const Vector2& rhs);
+	Vector2 operator*(const float& scalar);
+	Vector2 operator/(const float& scalar);
+	Vector2& operator+=(const Vector2& rhs);
+	Vector2& operator-=(const Vector2& rhs);
+	bool operator!=(const Vector2& rhs);
+	bool operator==(const Vector2& rhs);
 
-	//friend bool operator==(const Vector2f& lhs, const Vector2f& rhs);
-	//friend Vector2f operator-(const Vector2f& lhs, const Vector2f& rhs);
+	//friend bool operator==(const Vector2& lhs, const Vector2& rhs);
+	//friend Vector2 operator-(const Vector2& lhs, const Vector2& rhs);
 };

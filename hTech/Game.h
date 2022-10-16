@@ -13,8 +13,8 @@ class WindowDetails
 {
 public:
 	std::string title = "";
-	Vector2f position = Vector2f();
-	Vector2f dimensions = Vector2f(600.0f, 300.0f);
+	Vector2 position = Vector2();
+	Vector2 dimensions = Vector2(600.0f, 300.0f);
 };
 
 class Game

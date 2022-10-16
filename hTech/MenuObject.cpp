@@ -3,11 +3,11 @@
 #include "BoundingBox.h"
 #include "Texture.h"
 
-MenuObject::MenuObject(std::string texture_path, Transform transform)
-	: Rigidbody(texture_path, transform, PhysicsProperties())
+MenuObject::MenuObject(std::string texture_path)
+	: Rigidbody(texture_path, PhysicsProperties())
 {
 	mIsStatic = true;
-	mCollider = new BoundingBox(mTransform.Position, (float)mTexture->Width, (float)mTexture->Height);
+	mCollider = new BoundingBox(GetTransform().Position, (float)mTexture->Width, (float)mTexture->Height);
 }
 
 MenuObject::~MenuObject()
@@ -28,9 +28,9 @@ void MenuObject::Render()
 		SDL_Rect destRect{};
 		destRect.w = mTexture->Width;
 		destRect.h = mTexture->Height;
-		destRect.x = (int)(mTransform.Position.X - (destRect.w / 2.0f));
-		destRect.y = (int)(mTransform.Position.Y - (destRect.h / 2.0f));
-		SDL_RenderCopyEx(&mRenderer, &mTexture->GetSDLTexture(), NULL, &destRect, mTransform.Rotation, NULL, SDL_FLIP_NONE);
+		destRect.x = (int)(GetTransform().Position.X - (destRect.w / 2.0f));
+		destRect.y = (int)(GetTransform().Position.Y - (destRect.h / 2.0f));
+		SDL_RenderCopyEx(&mRenderer, &mTexture->GetSDLTexture(), NULL, &destRect, GetTransform().Rotation, NULL, SDL_FLIP_NONE);
 
 		if (mCollider)
 			mCollider->Render(mRenderer);

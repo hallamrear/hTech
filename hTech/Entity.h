@@ -5,17 +5,19 @@
 class  Collider;
 class  Texture;
 struct SDL_Renderer;
+class Component;
+class TransformComponent;
 
 class Entity
 {
 private:
 
 protected:
-	bool					mIsWaitingToBeDestroyed;
+	std::vector<Component*> mComponents;
 
+	bool					mIsWaitingToBeDestroyed;
 	SDL_Renderer&			mRenderer;
 	Texture*				mTexture;
-	Transform				mTransform;
 	bool					mIsAlive;
 
 	const SDL_Renderer&		GetRendererReference();
@@ -23,10 +25,10 @@ protected:
 
 public:
 	std::string				Name;
+	bool					IsEnabled;
 
 	Entity(
-		std::string texture_path = "",
-		Transform transform = Transform());
+		std::string texture_path = "");
 
 	virtual					~Entity() = 0;
 
@@ -38,9 +40,76 @@ public:
 	virtual void			Render() = 0;
 
 	bool const				GetIsAlive()		 const { return mIsAlive; }
-	Transform&				GetTransform()			   { return mTransform; }
 	
 	virtual void			SetAlive(const bool state) { mIsAlive = state; }
 	bool					GetIsBeingDestroyed() const;
 	void					Destroy();
+
+
+	template<typename T>
+	T* GetComponent();
+	template<class C>
+	Entity* AddComponent();
+	template<class C>
+	Entity* RemoveComponent();
+
+	Transform& GetTransform();
 };
+
+template<class C>
+inline C* Entity::GetComponent()
+{
+	C* ptr = nullptr;
+
+	for (size_t i = 0; i < mComponents.size(); i++)
+	{
+		ptr = dynamic_cast<C*>(mComponents[i]);
+		if (ptr != nullptr)
+			return ptr;
+	}
+
+	return nullptr;
+}
+
+template<class C>
+inline Entity* Entity::AddComponent()
+{
+	bool toAdd = true;
+	for (size_t i = 0; i < mComponents.size(); i++)
+	{
+		//if we cast component to a type and it exists we cant add another one so we break the loop
+		if (dynamic_cast<C*>(mComponents[i]) != nullptr)
+		{
+			toAdd = false;
+		}
+	}
+
+	if (toAdd == true)
+	{
+		mComponents.push_back(new C());
+	}
+
+	return this;
+}
+
+template<class C>
+inline Entity* Entity::RemoveComponent()
+{
+	int pos = -1;
+
+	for (size_t i = 0; i < mComponents.size(); i++)
+	{
+		if (dynamic_cast<C*>(mComponents[i]) != nullptr)
+		{
+			pos = i;
+			break;
+		}
+	}
+
+	if (pos != -1)
+	{
+		mComponents.erase(mComponents.begin() + pos);
+	}
+
+	return this;
+}

@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Transform.h"
 
-Transform::Transform(Vector2f position, float rotation)
+Transform::Transform(Vector2 position, float rotation)
 {
 	this->Position = position;
 	this->Rotation = rotation;
@@ -14,36 +14,36 @@ Transform::~Transform()
 
 void Transform::Reset()
 {
-	Position = Vector2f(0.0f, 0.0f);
+	Position = Vector2(0.0f, 0.0f);
 	Rotation = 0.0f;
 }
 
-Vector2f Transform::GetUp() const
+Vector2 Transform::GetUp() const
 {
-	return Vector2f(HelperFunctions::RotatePointAroundOriginDegrees(Vector2f(0.0f, 1.0f), 360.0f - Rotation, Vector2f())).GetNormalized();
+	return Vector2(HelperFunctions::RotatePointAroundOriginDegrees(Vector2(0.0f, 1.0f), 360.0f - Rotation, Vector2())).GetNormalized();
 }
 
-Vector2f Transform::GetDown() const
+Vector2 Transform::GetDown() const
 {
-	return Vector2f(HelperFunctions::RotatePointAroundOriginDegrees(Vector2f(0.0f, -1.0f), 360.0f - Rotation, Vector2f()).GetNormalized());
+	return Vector2(HelperFunctions::RotatePointAroundOriginDegrees(Vector2(0.0f, -1.0f), 360.0f - Rotation, Vector2()).GetNormalized());
 }
 
-Vector2f Transform::GetRight() const
+Vector2 Transform::GetRight() const
 {
-	return Vector2f(HelperFunctions::RotatePointAroundOriginDegrees(Vector2f(1.0f, 0.0f), 360.0f - Rotation, Vector2f()).GetNormalized());
+	return Vector2(HelperFunctions::RotatePointAroundOriginDegrees(Vector2(1.0f, 0.0f), 360.0f - Rotation, Vector2()).GetNormalized());
 }
 
-Vector2f Transform::GetLeft() const
+Vector2 Transform::GetLeft() const
 {
-	return Vector2f(HelperFunctions::RotatePointAroundOriginDegrees(Vector2f(-1.0f, 0.0f), 360.0f - Rotation, Vector2f()).GetNormalized());
+	return Vector2(HelperFunctions::RotatePointAroundOriginDegrees(Vector2(-1.0f, 0.0f), 360.0f - Rotation, Vector2()).GetNormalized());
 }
 
-void Transform::AdjustPosition(const Vector2f offset)
+void Transform::Translate(const Vector2 offset)
 {
 	Position += offset;
 }
 
-void Transform::AdjustRotation(const float angle)
+void Transform::Rotate(const float angle)
 {
 	Rotation += angle;
 }

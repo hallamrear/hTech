@@ -11,7 +11,7 @@ class BoundingSphere
 public:
 	float Radius = 0;
 
-	BoundingSphere(Vector2f& position, float radius);
+	BoundingSphere(Vector2& position, float radius);
 	virtual ~BoundingSphere();
 
 	/// <summary>
@@ -30,11 +30,11 @@ public:
 	/// </summary>
 	/// <param name="direction">Direction from the centre of the circle to get the point from.</param>
 	/// <returns>Position on the bounding circle.</returns>
-	virtual Vector2f FindFurthestPoint(Vector2f direction) const override;
+	virtual Vector2 FindFurthestPoint(Vector2 direction) const override;
 
 	/// <summary>
 	/// Returns a series of points representing the outline of the circle.
 	/// </summary>
 	/// <param name="points">Array of points on the circle outline.</param>
-	virtual void GetColliderAsPoints(Vector2f points[]) const override;
+	virtual void GetColliderAsPoints(Vector2 points[]) const override;
 };

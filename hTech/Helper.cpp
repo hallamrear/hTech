@@ -25,7 +25,7 @@ float HelperFunctions::ConvertToDegrees(float radians)
 }
 
 //todo : make reference to store in point rather than returning
-Vector2f HelperFunctions::RotatePointAroundOriginRadians(Vector2f point, float rotation, Vector2f origin)
+Vector2 HelperFunctions::RotatePointAroundOriginRadians(Vector2 point, float rotation, Vector2 origin)
 {
 	float s = sin(rotation);
 	float c = cos(rotation);
@@ -39,18 +39,18 @@ Vector2f HelperFunctions::RotatePointAroundOriginRadians(Vector2f point, float r
 	float ynew = point.X * s + point.Y * c;
 
 	// translate point back:
-	Vector2f value;
+	Vector2 value;
 	value.X = xnew + origin.X;
 	value.Y = ynew + origin.Y;
 	return value;
 }
 
-Vector2f HelperFunctions::RotatePointAroundOriginDegrees(Vector2f point, float rotation, Vector2f origin)
+Vector2 HelperFunctions::RotatePointAroundOriginDegrees(Vector2 point, float rotation, Vector2 origin)
 {
 	return RotatePointAroundOriginRadians(point, HelperFunctions::ConvertToRadians(rotation), origin);
 }
 
-Vector2f HelperFunctions::LerpPoint(Vector2f start, Vector2f end, float time)
+Vector2 HelperFunctions::LerpPoint(Vector2 start, Vector2 end, float time)
 {
 	return (start * (1 - time) + end * time);
 }
@@ -61,7 +61,7 @@ int HelperFunctions::Sign(int val)
 	return ((0) < val) - (val < (0));
 }
 
-float HelperFunctions::Dot(Vector2f a, Vector2f b)
+float HelperFunctions::Dot(Vector2 a, Vector2 b)
 {
 	return (a.X * b.X) + (a.Y * b.Y);
 }

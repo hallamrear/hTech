@@ -21,9 +21,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 int main(int argc, char* argv[])
 {
 	WindowDetails details;
-	details.dimensions = Vector2f(1280.0f, 720.0f);
+	details.dimensions = Vector2(1280.0f, 720.0f);
 	details.title = "hTech";
-	details.position = Vector2f(200.0f, 200.0f);
+	details.position = Vector2(200.0f, 200.0f);
 
 	Game* game = new Game();
 	game->Initialise(argc, argv, details);
@@ -119,7 +119,7 @@ void Game::SetFullscreen(SCREEN_STATE state)
 
 	int w, h;
 	SDL_GetWindowSize(mWindow, &w, &h);
-	Settings::Get()->SetWindowDimensions(Vector2f((float)w, (float)h));
+	Settings::Get()->SetWindowDimensions(Vector2((float)w, (float)h));
 }
 
 /// <summary>
@@ -129,7 +129,7 @@ void Game::SetFullscreen(SCREEN_STATE state)
 void Game::TakeScreenshot(std::string name)
 {
 	int w, h;
-	Vector2f dimensions = Settings::Get()->GetWindowDimensions();
+	Vector2 dimensions = Settings::Get()->GetWindowDimensions();
 	w = (int)dimensions.X;
 	h = (int)dimensions.Y;
 
@@ -286,7 +286,7 @@ bool Game::InitialiseSystems(WindowDetails details)
 
 		int w, h;
 		SDL_GetWindowSize(mWindow, &w, &h);
-		Settings::Get()->SetWindowDimensions(Vector2f((float)w, (float)h));
+		Settings::Get()->SetWindowDimensions(Vector2((float)w, (float)h));
 
 		if (InitialiseGraphics() == false)
 			return false;
@@ -375,7 +375,7 @@ void Game::HandleEvents()
 			{
 				int w, h;
 				SDL_GetWindowSize(mWindow, &w, &h);
-				Settings::Get()->SetWindowDimensions(Vector2f((float)w, (float)h));
+				Settings::Get()->SetWindowDimensions(Vector2((float)w, (float)h));
 			}
 			break;
 

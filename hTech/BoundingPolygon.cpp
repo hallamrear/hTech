@@ -2,11 +2,11 @@
 #include "BoundingPolygon.h"
 #include "Camera.h"
 
-BoundingPolygon::BoundingPolygon(Vector2f& origin, float& rotation, const std::vector<Vector2f> points, const int& pointCount) : Collider(origin), mRotation(rotation)
+BoundingPolygon::BoundingPolygon(Vector2& origin, float& rotation, const std::vector<Vector2> points, const int& pointCount) : Collider(origin), mRotation(rotation)
 {
 	mType = COLLIDER_TYPE::COLLIDER_POLYGON;
 	PointCount = pointCount;
-	mOriginalPoints = std::vector<Vector2f>();
+	mOriginalPoints = std::vector<Vector2>();
 	mOriginalPoints = points;
 
 	for (int i = 0; i < PointCount; i++)
@@ -37,16 +37,16 @@ void BoundingPolygon::Render(SDL_Renderer& renderer)
 			SDL_RenderDrawPoint(&renderer, mTransformedPoints[0].X, mTransformedPoints[0].Y);
 			break;
 		default:
-			Vector2f pOne = mTransformedPoints[0];
-			Vector2f pTwo;
+			Vector2 pOne = mTransformedPoints[0];
+			Vector2 pTwo;
 
 			for (size_t i = 0; i < PointCount; i++)
 			{
 				pOne = mTransformedPoints[i % PointCount];
 				pTwo = mTransformedPoints[(i + 1) % PointCount];
 
-				Vector2f screenSpaceOne = Camera::WorldToScreen(pOne);
-				Vector2f screenSpaceTwo = Camera::WorldToScreen(pTwo);
+				Vector2 screenSpaceOne = Camera::WorldToScreen(pOne);
+				Vector2 screenSpaceTwo = Camera::WorldToScreen(pTwo);
 
 				SDL_SetRenderDrawColor(&renderer, 0, 0, 255, 255);
 				SDL_RenderDrawLine(&renderer, screenSpaceOne.X, screenSpaceOne.Y, screenSpaceTwo.X, screenSpaceTwo.Y);
@@ -56,12 +56,12 @@ void BoundingPolygon::Render(SDL_Renderer& renderer)
 	}
 }
 
-Vector2f BoundingPolygon::FindFurthestPoint(Vector2f direction) const
+Vector2 BoundingPolygon::FindFurthestPoint(Vector2 direction) const
 {
-	return Vector2f();
+	return Vector2();
 }
 
-void BoundingPolygon::GetColliderAsPoints(Vector2f points[]) const
+void BoundingPolygon::GetColliderAsPoints(Vector2 points[]) const
 {
 	for (int i = 0; i < PointCount; i++)
 	{

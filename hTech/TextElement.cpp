@@ -5,15 +5,13 @@
 #include "Texture.h"
 #include "Camera.h"
 
-TextElement::TextElement(Transform transform, std::string string, float size, Colour colour)
-	: Entity("", mTransform)
+TextElement::TextElement(std::string string, float size, Colour colour)	: Entity("")
 {
 	mTextTexture = nullptr;
 	mIsShowing = true;
 	mData = string;
 	mColour = colour;
 	mFontSize = size;
-	mTransform = transform;
 	mTextWidth = NULL;
 	mTextHeight = NULL;
 	mIsDirty = true;
@@ -90,10 +88,10 @@ void TextElement::Render()
 			SDL_Rect destRect{};
 			destRect.w = mTextWidth;
 			destRect.h = mTextHeight;
-			Vector2f position = Camera::WorldToScreen(Vector2f((mTransform.Position.X) - (destRect.w / 2), (mTransform.Position.Y) - (destRect.h / 2)));
+			Vector2 position = Camera::WorldToScreen(Vector2((GetTransform().Position.X) - (destRect.w / 2), (GetTransform().Position.Y) - (destRect.h / 2)));
 			destRect.x = static_cast<int>(position.X);
 			destRect.y = static_cast<int>(position.Y);
-			SDL_RenderCopyEx(Game::Renderer, mTextTexture, NULL, &destRect, mTransform.Rotation, NULL, SDL_FLIP_NONE);
+			SDL_RenderCopyEx(Game::Renderer, mTextTexture, NULL, &destRect, GetTransform().Rotation, NULL, SDL_FLIP_NONE);
 		}
 	}
 }
@@ -119,12 +117,12 @@ void TextElement::SetString(const char* str)
 	SetString(std::string(str));
 }
 
-void TextElement::SetPosition(Vector2f worldPosition)
+void TextElement::SetPosition(Vector2 worldPosition)
 {
-	mTransform.Position = worldPosition;
+	GetTransform().Position = worldPosition;
 }
 
-Vector2f TextElement::GetTextureSize()
+Vector2 TextElement::GetTextureSize()
 {
-	return Vector2f((float)mTextWidth, (float)mTextHeight);
+	return Vector2((float)mTextWidth, (float)mTextHeight);
 }

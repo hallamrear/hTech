@@ -15,7 +15,7 @@ Log::Log()
 
 	for (size_t i = 0; i < (unsigned int)Settings::Get()->GetMaxLogMessages(); i++)
 	{
-		mTextElements.push_back(new TextElement(Transform(), ""));
+		mTextElements.push_back(new TextElement(""));
 		mMessageQueue.emplace_back(LogLevel::LOG_MESSAGE, "");
 	}
 }
@@ -79,7 +79,7 @@ void Log::Render_Impl(SDL_Renderer& renderer)
 	{
 		vertical += 5;
 		vertical += mTextElements[i]->GetTextureSize().Y;
-		Vector2f worldPos = Camera::ScreenToWorld(Vector2f(horizontal, vertical));
+		Vector2 worldPos = Camera::ScreenToWorld(Vector2(horizontal, vertical));
 		mTextElements[i]->SetPosition(worldPos);
 		mTextElements[i]->Render();
 	}

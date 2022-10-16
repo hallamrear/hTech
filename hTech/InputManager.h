@@ -297,8 +297,8 @@ public:
 	void MousePressUpdate(SDL_Keycode key, bool state);
 
 	void MousePositionUpdate(int x, int y);
-	Vector2f GetMouseScreenPosition();
-	Vector2f GetMouseWorldPosition();
+	Vector2 GetMouseScreenPosition();
+	Vector2 GetMouseWorldPosition();
 	void MouseScrollUpdate(IM_SCROLL_DIRECTION direction);
 };
 

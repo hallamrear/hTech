@@ -7,19 +7,18 @@ class BoundingPolygon :
 {
 private:
 	float& mRotation;
-	std::vector<Vector2f> mOriginalPoints;
-	std::vector<Vector2f> mTransformedPoints;
+	std::vector<Vector2> mOriginalPoints;
+	std::vector<Vector2> mTransformedPoints;
 
 public:
 	int PointCount = 0;
 
-	BoundingPolygon(Vector2f& origin, float& rotation, const std::vector<Vector2f> points, const int& pointCount);
+	BoundingPolygon(Vector2& origin, float& rotation, const std::vector<Vector2> points, const int& pointCount);
 
 	virtual void Update(double deltaTime);
 	virtual void Render(SDL_Renderer& renderer);
 
-	virtual Vector2f FindFurthestPoint(Vector2f direction) const;
-	virtual void GetColliderAsPoints(Vector2f points[]) const;
-
+	virtual Vector2 FindFurthestPoint(Vector2 direction) const;
+	virtual void GetColliderAsPoints(Vector2 points[]) const;
 };
 

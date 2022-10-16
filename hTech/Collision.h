@@ -18,7 +18,7 @@ class CollisionManifold
 public:
 	bool HasCollided = false;
 	float Depth = 0.0f;
-	Vector2f Normal;
+	Vector2 Normal;
 
 	Rigidbody* ObjA = nullptr;
 	Rigidbody* ObjB = nullptr;
@@ -40,23 +40,23 @@ enum class COLLIDER_TYPE
 class Collider
 {
 public:
-	Vector2f& mOrigin;
+	Vector2& mOrigin;
 	COLLIDER_TYPE mType;
 	bool IsOverlap;
 
-	Collider(Vector2f& origin) : mOrigin(origin), mType(COLLIDER_TYPE::COLLIDER_UNKNOWN), IsOverlap(false) { }
+	Collider(Vector2& origin) : mOrigin(origin), mType(COLLIDER_TYPE::COLLIDER_UNKNOWN), IsOverlap(false) { }
 
 	virtual void Update(double deltaTime) = 0;
 	virtual void Render(SDL_Renderer& renderer) = 0;
 
-	virtual Vector2f FindFurthestPoint(Vector2f direction) const = 0;
-	virtual void GetColliderAsPoints(Vector2f points[]) const = 0;
+	virtual Vector2 FindFurthestPoint(Vector2 direction) const = 0;
+	virtual void GetColliderAsPoints(Vector2 points[]) const = 0;
 };
  
 class Collision
 {
 private:
-	static Vector2f FindClosestPointOnPolygon(const BoundingSphere& circle, const Collider& polygon, const int polygonVertexCoun);
+	static Vector2 FindClosestPointOnPolygon(const BoundingSphere& circle, const Collider& polygon, const int polygonVertexCoun);
 	static bool CheckCollision_AABBvsAABB(const BoundingBox& one, const BoundingBox& two, CollisionManifold* const manifold);
 	static bool CheckCollision_OBBvsSPHERE(const OrientedBoundingBox& one, const BoundingSphere& two, CollisionManifold* const manifold);
 	static bool CheckCollision_AABBvsSPHERE(const BoundingBox& one, const BoundingSphere& two, CollisionManifold* const manifold);

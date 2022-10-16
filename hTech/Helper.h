@@ -17,11 +17,11 @@ namespace HelperFunctions
 	float ConvertToDegrees(float radians);
 
 	////todo : make reference to store in point rather than returning
-	Vector2f RotatePointAroundOriginRadians(Vector2f point, float rotation, Vector2f origin);
-	Vector2f RotatePointAroundOriginDegrees(Vector2f point, float rotation, Vector2f origin);
-	Vector2f LerpPoint(Vector2f start, Vector2f end, float time);
+	Vector2 RotatePointAroundOriginRadians(Vector2 point, float rotation, Vector2 origin);
+	Vector2 RotatePointAroundOriginDegrees(Vector2 point, float rotation, Vector2 origin);
+	Vector2 LerpPoint(Vector2 start, Vector2 end, float time);
 
 	////Returns -1 if val < 0, 1 if val > 0, 0 if val == 0
 	int Sign(int val);
-	float Dot(Vector2f a, Vector2f b);
+	float Dot(Vector2 a, Vector2 b);
 }

@@ -17,7 +17,7 @@ class AnimationController
 	bool mHasFinished;
 
 public:
-	Vector2f FrameSize;
+	Vector2 FrameSize;
 
 	AnimationController(std::string sheetPath, unsigned int numberOfAnimations, unsigned int frameCount, float duration, bool looping);
 	~AnimationController();

@@ -5,8 +5,8 @@
 #include "Texture.h"
 #include "Game.h"
 
-Rigidbody::Rigidbody(std::string texture_path = "",	Transform transform = Transform(), PhysicsProperties properties = PhysicsProperties())
-	: Entity(texture_path, transform)
+Rigidbody::Rigidbody(std::string texture_path = "", PhysicsProperties properties = PhysicsProperties())
+	: Entity(texture_path)
 {
 	Physics::RegisterRigidbody(this);
 
@@ -18,15 +18,15 @@ Rigidbody::Rigidbody(std::string texture_path = "",	Transform transform = Transf
 	mSpeedCap = properties.SpeedCap;
 	mRestitution = properties.Restitution;
 
-	mVelocity = Vector2f();
-	mAcceleration = Vector2f();
-	mNetForce = Vector2f();
-	mExternalForce = Vector2f();
+	mVelocity = Vector2();
+	mAcceleration = Vector2();
+	mNetForce = Vector2();
+	mExternalForce = Vector2();
 
 	CalculateInverseMass();
 }
 
-void Rigidbody::AddForce(Vector2f force)
+void Rigidbody::AddForce(Vector2 force)
 {
 	mExternalForce += force;
 }
@@ -58,12 +58,12 @@ void Rigidbody::PhysicsUpdate(double deltaTime)
 	if (GetDragEnabled())
 	{
 		///Drag
-		Vector2f dragForce;
+		Vector2 dragForce;
 		dragForce.X = -mDragCoefficient * mVelocity.X;
 		dragForce.Y = -mDragCoefficient * mVelocity.Y;
 		mNetForce += dragForce;
 
-		Vector2f frictionForce;
+		Vector2 frictionForce;
 		float mew = 2.5f;
 		if (mVelocity.GetMagnitude() < mew * deltaTime) // Make sure the friction doesn't overextend.
 			frictionForce = ((mVelocity * -1) / (float)deltaTime);
@@ -78,7 +78,9 @@ void Rigidbody::PhysicsUpdate(double deltaTime)
 	///External
 	//No need for gravity
 	if (GetGravityEnabled())
+	{
 		mNetForce += (Settings::Get()->GetGravityDirection() * mMass);
+	}
 
 	mNetForce += mExternalForce;
 
@@ -87,7 +89,7 @@ void Rigidbody::PhysicsUpdate(double deltaTime)
 
 	///Update Position
 	mVelocity += mAcceleration * static_cast<float>(deltaTime);
-	mTransform.Position += mVelocity;
+	GetTransform().Position += mVelocity;
 
 	///Speed Cap
 	//Capping - X
@@ -101,8 +103,8 @@ void Rigidbody::PhysicsUpdate(double deltaTime)
 	else if (mVelocity.Y < -mSpeedCap)
 		mVelocity.Y = -mSpeedCap;
 
-	mNetForce = Vector2f();
-	mExternalForce = Vector2f();
+	mNetForce = Vector2();
+	mExternalForce = Vector2();
 }
 
 void Rigidbody::Update(double deltaTime)
@@ -119,7 +121,7 @@ void Rigidbody::Render()
 	{
 		if (mTexture)
 		{
-			mTexture->Render(*Game::Renderer, mTransform.Position, mTransform.Rotation);
+			mTexture->Render(*Game::Renderer, GetTransform().Position, GetTransform().Rotation);
 		}
 
 		if (mCollider)

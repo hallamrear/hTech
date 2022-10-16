@@ -13,9 +13,9 @@ private:
 	int		 mMaxLogMessages;
 	bool	 mDrawColliders;
 	bool	 mDrawLog;
-	Vector2f mWindowCentre;
-	Vector2f mWindowDimensions;
-	Vector2f mGravityDirection;
+	Vector2 mWindowCentre;
+	Vector2 mWindowDimensions;
+	Vector2 mGravityDirection;
 
 public:
 	static Settings* Get();
@@ -24,11 +24,11 @@ public:
 	void SetDrawLog(bool state);
 	bool GetDrawColliders() const;
 	void SetDrawColliders(bool state);
-	Vector2f GetWindowCentre() const;
-	Vector2f GetWindowDimensions() const;
-	Vector2f GetGravityDirection() const;
-	void SetGravityDirection(Vector2f direction);
-	void SetWindowDimensions(Vector2f dimensions);
+	Vector2 GetWindowCentre() const;
+	Vector2 GetWindowDimensions() const;
+	Vector2 GetGravityDirection() const;
+	void SetGravityDirection(Vector2 direction);
+	void SetWindowDimensions(Vector2 dimensions);
 	void SetMaxLogMessages(int count);
 	int GetMaxLogMessages() const;
 };
