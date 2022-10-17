@@ -2,36 +2,22 @@
 #include "World.h"
 #include "Entity.h"
 #include "PhysicsWorld.h"
-#include "Rigidbody.h"
 #include "InputManager.h"
 #include "TextElement.h"
 #include "Camera.h"
+#include "Component_Rigidbody.h"
+#include "Component_Sprite.h"
 
 World* World::mInstance = nullptr;
 
-///
-/// TODO: When reimplementing, make sure to search for every instance of this because some functions calls are commented out
-/// 
-
-//Entity& World::CreateEntity_Impl()
-//{
-//    //IMPLEMENT
-//}
-//
-//void World::DestroyEntity_Impl(Entity* entity)
-//{
-//    //IMPLEMENT
-//}
-
-Rigidbody& World::CreateRigidbody_Impl()
+Entity* World::CreateEntity_Impl()
 {
-    //IMPLEMENT
-    Rigidbody* rb = new Rigidbody("Assets/cat.png", PhysicsProperties());
-    mEntityList.push_back(rb);
-    return *rb;
+    Entity* entity = new Entity();
+    mEntityList.push_back(entity);
+    return entity;
 }
 
-void World::DestroyRigidbody_Impl(Rigidbody* entity)
+void World::DestroyEntity_Impl(Entity* entity)
 {
     if (entity == nullptr)
         return;
@@ -42,7 +28,6 @@ void World::DestroyRigidbody_Impl(Rigidbody* entity)
     {
         Entity* entity = *itr._Ptr;
         entity->Destroy();
-        entity = nullptr;
     }
 }
 
@@ -61,6 +46,9 @@ void World::ClearupEntities()
             {
                 if (i->GetIsBeingDestroyed() == true)
                 {
+                    Entity* e = *it._Ptr;
+                    delete e;
+                    e = nullptr;
                     it = mEntityList.erase(it);
                 }
                 else
@@ -74,6 +62,11 @@ void World::ClearupEntities()
 
 void World::Update_Impl(double deltaTime)
 {
+    if (mEntityList.size() > 0)
+    {
+        mEntityList[mEntityList.size() - 1]->GetTransform().Position = InputManager::Get()->GetMouseWorldPosition();
+    }
+
     for (size_t i = 0; i < mEntityList.size(); i++)
     {
         if (mEntityList[i] != nullptr)
@@ -117,25 +110,40 @@ void World::Render_Impl(SDL_Renderer& renderer)
 World::World()
 {
     mSceneGraphText = new TextElement("UNSET TEXT STRING");
-    InputManager::Bind(IM_KEY_CODE::IM_KEY_1, IM_KEY_STATE::IM_KEY_PRESSED, [this]() { CreateRigidbody_Impl(); });
-    InputManager::Bind(IM_KEY_CODE::IM_KEY_2, IM_KEY_STATE::IM_KEY_PRESSED, [this]() { if(mEntityList.size() != 0) DestroyRigidbody_Impl((Rigidbody*)mEntityList.back()); });
+
+    Settings::Get()->SetDrawColliders(true);
+
+    InputManager::Bind(
+        IM_KEY_CODE::IM_KEY_1,
+        IM_KEY_STATE::IM_KEY_PRESSED,
+        [this]() 
+        { 
+            Entity* entity = CreateEntity_Impl();
+            entity->AddComponent<SpriteComponent>();
+            entity->GetComponent<SpriteComponent>()->LoadTexture("Assets/cat.png");
+        });
+
+    InputManager::Bind(IM_KEY_CODE::IM_KEY_2, IM_KEY_STATE::IM_KEY_PRESSED, [this]() { Vector2 position = InputManager::Get()->GetMouseWorldPosition(); Entity* entity = CreateEntity_Impl(); entity->GetTransform().Position = position; entity->AddComponent<RigidbodyComponent>()->GetComponent<RigidbodyComponent>()->SetCollider(COLLIDER_TYPE::COLLIDER_AABB); entity->GetComponent<RigidbodyComponent>()->SetGravityEnabled(false); });
+    InputManager::Bind(IM_KEY_CODE::IM_KEY_3, IM_KEY_STATE::IM_KEY_PRESSED, [this]() { Vector2 position = InputManager::Get()->GetMouseWorldPosition(); Entity* entity = CreateEntity_Impl(); entity->GetTransform().Position = position; entity->AddComponent<RigidbodyComponent>()->GetComponent<RigidbodyComponent>()->SetCollider(COLLIDER_TYPE::COLLIDER_OBB); entity->GetComponent<RigidbodyComponent>()->SetGravityEnabled(false); });
+    InputManager::Bind(IM_KEY_CODE::IM_KEY_4, IM_KEY_STATE::IM_KEY_PRESSED, [this]() { Vector2 position = InputManager::Get()->GetMouseWorldPosition(); Entity* entity = CreateEntity_Impl(); entity->GetTransform().Position = position; entity->AddComponent<RigidbodyComponent>()->GetComponent<RigidbodyComponent>()->SetCollider(COLLIDER_TYPE::COLLIDER_SPHERE); entity->GetComponent<RigidbodyComponent>()->SetGravityEnabled(false); });
+
+    InputManager::Bind(
+        IM_KEY_CODE::IM_KEY_0,
+        IM_KEY_STATE::IM_KEY_PRESSED,
+        [this]()
+        { 
+            if (mEntityList.size() != 0)
+            {
+                DestroyEntity_Impl(mEntityList.back());
+            }
+        });
 }
 
 World::~World()
 {
     for (size_t i = 0; i < mEntityList.size(); i++)
     {
-        Rigidbody* rb = dynamic_cast<Rigidbody*>(mEntityList[i]);
-
-        if (rb != nullptr)
-        {
-            Physics::DeregisterRigidbody(rb);
-            DestroyRigidbody_Impl(rb);
-        }
-        else
-        {
-            //DestroyEntity_Impl(mEntityList[i]);
-        }
+        DestroyEntity_Impl(mEntityList[i]);
     }
 
     mEntityList.clear();
@@ -149,24 +157,14 @@ World* World::Get()
     return mInstance;
 }
 
-//Entity& World::CreateEntity()
-//{
-//    return Get()->CreateEntity_Impl();
-//}
-
-//void World::DestroyEntity(Entity& entity)
-//{
-//    Get()->DestroyEntity_Impl(&entity);
-//}
-
-Rigidbody& World::CreateRigidbody()
+Entity* World::CreateEntity()
 {
-    return Get()->CreateRigidbody_Impl();
+    return Get()->CreateEntity_Impl();
 }
 
-void World::DestroyRigidbody(Rigidbody& entity)
+void World::DestroyEntity(Entity* entity)
 {
-    Get()->DestroyRigidbody_Impl(&entity);
+    Get()->DestroyEntity_Impl(entity);
 }
 
 void World::Update(double deltaTime)

@@ -9,8 +9,8 @@ protected:
 	Transform mTransform;
 
 public:
-	TransformComponent();
-	TransformComponent(Transform transform);
+	TransformComponent(Entity& entity);
+	TransformComponent(Transform transform, Entity& entity);
 	~TransformComponent();
 
 	Transform& GetTransform();

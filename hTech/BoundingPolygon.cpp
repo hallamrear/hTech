@@ -1,8 +1,9 @@
 #include "pch.h"
 #include "BoundingPolygon.h"
+#include "Transform.h"
 #include "Camera.h"
 
-BoundingPolygon::BoundingPolygon(Vector2& origin, float& rotation, const std::vector<Vector2> points, const int& pointCount) : Collider(origin), mRotation(rotation)
+BoundingPolygon::BoundingPolygon(Transform& origin, float& rotation, const std::vector<Vector2> points, const int& pointCount) : Collider(origin), mRotation(rotation)
 {
 	mType = COLLIDER_TYPE::COLLIDER_POLYGON;
 	PointCount = pointCount;
@@ -11,7 +12,7 @@ BoundingPolygon::BoundingPolygon(Vector2& origin, float& rotation, const std::ve
 
 	for (int i = 0; i < PointCount; i++)
 	{
-		mTransformedPoints.push_back(mOrigin + mOriginalPoints[i]);
+		mTransformedPoints.push_back(mTransform.Position + mOriginalPoints[i]);
 	}
 }
 
@@ -19,7 +20,7 @@ void BoundingPolygon::Update(double deltaTime)
 {
 	for (int i = 0; i < PointCount; i++)
 	{
-		mTransformedPoints[i] = HelperFunctions::RotatePointAroundOriginDegrees(mOrigin + mOriginalPoints[i], mRotation, mOrigin);
+		mTransformedPoints[i] = HelperFunctions::RotatePointAroundOriginDegrees(mTransform.Position + mOriginalPoints[i], mRotation, mTransform.Position);
 	}
 }
 

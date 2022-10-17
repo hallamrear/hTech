@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "PhysicsWorld.h"
-#include "Rigidbody.h"
+#include "Component_Rigidbody.h"
 
 Physics* Physics::mInstance = nullptr;
 
@@ -30,7 +30,7 @@ void Physics::FixedUpdate()
 
 			CollisionManifold manifold;
 
-			if (mRigidbodies[i]->GetCollider() && mRigidbodies[j]->GetCollider() && mRigidbodies[i]->GetIsAlive() && mRigidbodies[j]->GetIsAlive())
+			if (mRigidbodies[i]->HasCollider() && mRigidbodies[j]->HasCollider() && mRigidbodies[i]->GetIsEnabled() && mRigidbodies[j]->GetIsEnabled())
 			{
 				if (Collision::CheckCollision(*mRigidbodies[i]->GetCollider(), *mRigidbodies[j]->GetCollider(), &manifold))
 				{
@@ -71,7 +71,7 @@ void Physics::FixedUpdate()
 	//Physics update
 	for (auto& itr : mRigidbodies)
 	{
-		if (itr->GetIsBeingDestroyed() == false)
+		if (itr->GetIsEnabled() == true)
 		{
 			itr->PhysicsUpdate(mFixedTimestep);
 		}
@@ -88,22 +88,22 @@ void Physics::Update(double deltaTime)
 	Get()->Update_Impl(deltaTime);
 }
 
-void Physics::RegisterRigidbody(Rigidbody* rb)
+void Physics::RegisterRigidbody(RigidbodyComponent* rb)
 {
 	Get()->RegisterRigidbody_Impl(rb);
 }
 
-void Physics::RegisterRigidbody_Impl(Rigidbody* rb)
+void Physics::RegisterRigidbody_Impl(RigidbodyComponent* rb)
 {
 	mRigidbodies.push_back(rb);
 }
 
-void Physics::DeregisterRigidbody(Rigidbody* rb)
+void Physics::DeregisterRigidbody(RigidbodyComponent* rb)
 {
 	Get()->DeregisterRigidbody_Impl(rb);
 }
 
-void Physics::DeregisterRigidbody_Impl(Rigidbody* rb)
+void Physics::DeregisterRigidbody_Impl(RigidbodyComponent* rb)
 {
 	if (mRigidbodies.size() > 0)
 	{

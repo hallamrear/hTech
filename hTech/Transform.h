@@ -12,6 +12,7 @@ public:
 
 	Transform(Vector2 position = Vector2(), float rotation = 0.0f);
 	~Transform();
+
 	void Reset();
 	Vector2 GetUp() const;
 	Vector2 GetDown() const;

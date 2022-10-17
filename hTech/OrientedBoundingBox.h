@@ -7,11 +7,10 @@ protected:
 	void CalculateRotations();
 
 public:
-	float& Rotation;
 	Vector2 TopRight;
 	Vector2 BottomLeft;
 
-	OrientedBoundingBox(Vector2& position, float& rotation, float size_x, float size_y);
+	OrientedBoundingBox(Transform& transform, float size_x, float size_y);
 	~OrientedBoundingBox();
 
 	virtual void Update(double deltaTime);

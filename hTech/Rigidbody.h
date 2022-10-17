@@ -2,11 +2,17 @@
 #include "Entity.h"
 #include "PhysicsProperties.h"
 
+/*
+
 class CollisionManifold;
 
 class Rigidbody : public Entity
 {
 private:
+	Rigidbody(
+		std::string texture_path,
+		PhysicsProperties properties);
+
 
 protected:
 	bool					mGravityEnabled;
@@ -29,10 +35,6 @@ protected:
 	void					AddForce(float X = 0.0f, float Y = 0.0f);
 
 public:
-	Rigidbody(
-		std::string texture_path, 
-		PhysicsProperties properties);
-
 					~Rigidbody();
 
 	//Do not call this outside of physics world.
@@ -69,3 +71,4 @@ public:
 	virtual void	AddExternalForce(const Vector2 force) { mExternalForce += force; };
 };
 
+*/

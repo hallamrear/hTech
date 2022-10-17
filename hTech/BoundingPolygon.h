@@ -13,7 +13,7 @@ private:
 public:
 	int PointCount = 0;
 
-	BoundingPolygon(Vector2& origin, float& rotation, const std::vector<Vector2> points, const int& pointCount);
+	BoundingPolygon(Transform& transform, float& rotation, const std::vector<Vector2> points, const int& pointCount);
 
 	virtual void Update(double deltaTime);
 	virtual void Render(SDL_Renderer& renderer);

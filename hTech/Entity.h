@@ -16,32 +16,28 @@ protected:
 	std::vector<Component*> mComponents;
 
 	bool					mIsWaitingToBeDestroyed;
-	SDL_Renderer&			mRenderer;
-	Texture*				mTexture;
 	bool					mIsAlive;
-
-	const SDL_Renderer&		GetRendererReference();
 	void					ClampRotation();
 
 public:
 	std::string				Name;
 	bool					IsEnabled;
 
-	Entity(
-		std::string texture_path = "");
+	Entity();
 
-	virtual					~Entity() = 0;
+	virtual					~Entity();
 
+	//todo : move to sprite component;
 	//Sets mTexture to the texture at texture_path. Sets the width and height to the parameters.
-	void					AssignTexture(const std::string& texture_path);
-	const Texture&			GetTexture() const;
+	//void					AssignTexture(const std::string& texture_path);
+	//const Texture&		GetTexture() const;
 
-	virtual void			Update(double deltaTime) = 0;
-	virtual void			Render() = 0;
+	virtual void			Update(double deltaTime);
+	virtual void			Render();
 
 	bool const				GetIsAlive()		 const { return mIsAlive; }
-	
 	virtual void			SetAlive(const bool state) { mIsAlive = state; }
+
 	bool					GetIsBeingDestroyed() const;
 	void					Destroy();
 
@@ -86,7 +82,7 @@ inline Entity* Entity::AddComponent()
 
 	if (toAdd == true)
 	{
-		mComponents.push_back(new C());
+		mComponents.push_back(new C(*this));
 	}
 
 	return this;

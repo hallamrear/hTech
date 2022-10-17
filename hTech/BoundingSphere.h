@@ -11,7 +11,7 @@ class BoundingSphere
 public:
 	float Radius = 0;
 
-	BoundingSphere(Vector2& position, float radius);
+	BoundingSphere(Transform& transform, float radius);
 	virtual ~BoundingSphere();
 
 	/// <summary>

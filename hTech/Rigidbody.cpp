@@ -5,6 +5,8 @@
 #include "Texture.h"
 #include "Game.h"
 
+/*
+
 Rigidbody::Rigidbody(std::string texture_path = "", PhysicsProperties properties = PhysicsProperties())
 	: Entity(texture_path)
 {
@@ -140,3 +142,5 @@ void Rigidbody::OnOverlap(const CollisionManifold& manifold, Rigidbody& other)
 {
 
 }
+
+*/

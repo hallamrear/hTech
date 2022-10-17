@@ -5,8 +5,7 @@
 #include "TextureCache.h"
 #include "Component_Transform.h"
 
-Entity::Entity(std::string texture_path)
-	: mRenderer(*Game::Renderer)
+Entity::Entity()
 {
 	IsEnabled = true;
 	mComponents = std::vector<Component*>();
@@ -14,27 +13,45 @@ Entity::Entity(std::string texture_path)
 	mIsWaitingToBeDestroyed = false;
 	Name = "unnamed";
 	mIsAlive = true;
-
-	if (texture_path != "")
-		AssignTexture(texture_path);
-	else
-		mTexture = nullptr;
 }
 
 Entity::~Entity()
 {
-	//IMPLEMENT
-	mTexture = nullptr;
+	for (size_t i = 0; i < mComponents.size(); i++)
+	{
+		delete mComponents[i];
+		mComponents[i] = nullptr;
+	}
+
+	mComponents.clear();
 }
 
-void Entity::AssignTexture(const std::string& texture_path)
+//void Entity::AssignTexture(const std::string& texture_path)
+//{
+//	mTexture = TextureCache::GetTexture(texture_path);
+//}
+//
+//const Texture& Entity::GetTexture() const
+//{
+//	return *mTexture;
+//}
+
+void Entity::Update(double deltaTime)
 {
-	mTexture = TextureCache::GetTexture(texture_path);
+	for (int i = 0; i < mComponents.size(); i++)
+	{
+		mComponents[i]->Update(deltaTime);
+	}
 }
 
-const Texture& Entity::GetTexture() const
+void Entity::Render()
 {
-	return *mTexture;
+	SDL_Renderer& renderer = *Game::Renderer;
+
+	for (int i = 0; i < mComponents.size(); i++)
+	{
+		mComponents[i]->Render(renderer);
+	}
 }
 
 bool Entity::GetIsBeingDestroyed() const
@@ -50,11 +67,6 @@ void Entity::Destroy()
 Transform& Entity::GetTransform()
 {
 	return GetComponent<TransformComponent>()->GetTransform();
-}
-
-const SDL_Renderer& Entity::GetRendererReference()
-{
-	return mRenderer;
 }
 
 void Entity::ClampRotation()

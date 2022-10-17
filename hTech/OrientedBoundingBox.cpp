@@ -1,9 +1,10 @@
 #include "pch.h"
 #include "OrientedBoundingBox.h"
 #include "Camera.h"
+#include "Transform.h"
 
-OrientedBoundingBox::OrientedBoundingBox(Vector2& position, float& rotation, float size_x, float size_y)
-	: BoundingBox(position, size_x, size_y), Rotation(rotation)
+OrientedBoundingBox::OrientedBoundingBox(Transform& transform, float size_x, float size_y)
+	: BoundingBox(transform, size_x, size_y)
 {
 	mType = COLLIDER_TYPE::COLLIDER_OBB;
 	CalculateRotations();
@@ -11,18 +12,18 @@ OrientedBoundingBox::OrientedBoundingBox(Vector2& position, float& rotation, flo
 
 OrientedBoundingBox::~OrientedBoundingBox()
 {
-	Rotation = 0.0f;
+
 }
 
 void OrientedBoundingBox::CalculateRotations()
 {
-	if (Rotation != 0.0f && Rotation != 360.0f)
+	if (mTransform.Rotation != 0.0f || mTransform.Rotation != 360.0f)
 	{
-		float rotation = 360.0f - Rotation;
-			 TopLeft = HelperFunctions::RotatePointAroundOriginDegrees(Vector2(mOrigin.X - (Size.X / 2), mOrigin.Y + (Size.Y / 2)), rotation, mOrigin);
-		  BottomLeft = HelperFunctions::RotatePointAroundOriginDegrees(Vector2(mOrigin.X - (Size.X / 2), mOrigin.Y - (Size.Y / 2)), rotation, mOrigin);
-			TopRight = HelperFunctions::RotatePointAroundOriginDegrees(Vector2(mOrigin.X + (Size.X / 2), mOrigin.Y + (Size.Y / 2)), rotation, mOrigin);
-		 BottomRight = HelperFunctions::RotatePointAroundOriginDegrees(Vector2(mOrigin.X + (Size.X / 2), mOrigin.Y - (Size.Y / 2)), rotation, mOrigin);
+		float rotation = 360.0f - mTransform.Rotation;
+			 TopLeft = HelperFunctions::RotatePointAroundOriginDegrees(Vector2(mTransform.Position.X - (Size.X / 2), mTransform.Position.Y + (Size.Y / 2)), rotation, mTransform.Position);
+		  BottomLeft = HelperFunctions::RotatePointAroundOriginDegrees(Vector2(mTransform.Position.X - (Size.X / 2), mTransform.Position.Y - (Size.Y / 2)), rotation, mTransform.Position);
+			TopRight = HelperFunctions::RotatePointAroundOriginDegrees(Vector2(mTransform.Position.X + (Size.X / 2), mTransform.Position.Y + (Size.Y / 2)), rotation, mTransform.Position);
+		 BottomRight = HelperFunctions::RotatePointAroundOriginDegrees(Vector2(mTransform.Position.X + (Size.X / 2), mTransform.Position.Y - (Size.Y / 2)), rotation, mTransform.Position);
 	}
 }
 

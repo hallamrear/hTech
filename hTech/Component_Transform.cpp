@@ -1,13 +1,14 @@
 #include "pch.h"
+#include "Entity.h"
 #include "Component_Transform.h"
 
-TransformComponent::TransformComponent() : Component("Transform Component")
+TransformComponent::TransformComponent(Entity& entity) : Component("Transform Component", entity)
 {
 	mTransform.Position = Vector2();
 	mTransform.Rotation = 0.0f;
 }
 
-TransformComponent::TransformComponent(Transform transform) : Component("Transform Component")
+TransformComponent::TransformComponent(Transform transform, Entity& entity) : Component("Transform Component", entity)
 {
 	mTransform = transform;
 }

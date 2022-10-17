@@ -4,13 +4,13 @@
 #define FIXED_TIME_STEP (1.0 / 60.0)
 #define IMPULSE_ITERATION_COUNT 1
 
-class Rigidbody;
+class RigidbodyComponent;
 
 class Physics
 {
 	static Physics* mInstance;
 	double mFixedTimestep;
-	std::vector<Rigidbody*> mRigidbodies;
+	std::vector<RigidbodyComponent*> mRigidbodies;
 	std::vector<CollisionManifold> mManifolds;
 
 	Physics(double fixedTimeStep);
@@ -18,8 +18,8 @@ class Physics
 	
 	void FixedUpdate();
 	void Update_Impl(double deltaTime);
-	void RegisterRigidbody_Impl(Rigidbody* rb);
-	void DeregisterRigidbody_Impl(Rigidbody* rb);
+	void RegisterRigidbody_Impl(RigidbodyComponent* rb);
+	void DeregisterRigidbody_Impl(RigidbodyComponent* rb);
 
 protected:
 	static Physics* Get();
@@ -27,7 +27,7 @@ protected:
 public:
 	
 	static void Update(double deltaTime);
-	static void RegisterRigidbody(Rigidbody* rb);
-	static void DeregisterRigidbody(Rigidbody* rb);
+	static void RegisterRigidbody(RigidbodyComponent* rb);
+	static void DeregisterRigidbody(RigidbodyComponent* rb);
 };
 

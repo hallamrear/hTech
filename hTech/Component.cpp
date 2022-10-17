@@ -21,3 +21,18 @@ std::string Component::GetComponentName() const
 {
 	return mComponentName;
 }
+
+Entity& Component::GetEntity() const
+{
+	return Parent;
+}
+
+void Component::Update(float DeltaTime)
+{
+
+}
+
+void Component::Render(SDL_Renderer& renderer)
+{
+
+}

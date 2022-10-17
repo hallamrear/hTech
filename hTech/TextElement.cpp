@@ -5,7 +5,7 @@
 #include "Texture.h"
 #include "Camera.h"
 
-TextElement::TextElement(std::string string, float size, Colour colour)	: Entity("")
+TextElement::TextElement(std::string string, float size, Colour colour)	: Entity()
 {
 	mTextTexture = nullptr;
 	mIsShowing = true;

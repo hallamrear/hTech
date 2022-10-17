@@ -7,7 +7,7 @@
 
 class BoundingSphere;
 class BoundingBox;
-class Rigidbody;
+class RigidbodyComponent;
 class OrientedBoundingBox;
 class BoundingPolygon;
 struct SDL_Renderer;
@@ -20,8 +20,8 @@ public:
 	float Depth = 0.0f;
 	Vector2 Normal;
 
-	Rigidbody* ObjA = nullptr;
-	Rigidbody* ObjB = nullptr;
+	RigidbodyComponent* ObjA = nullptr;
+	RigidbodyComponent* ObjB = nullptr;
 };
 
 enum class COLLIDER_TYPE
@@ -30,21 +30,23 @@ enum class COLLIDER_TYPE
 	COLLIDER_AABB = 0,
 	COLLIDER_SPHERE,
 	COLLIDER_OBB,
-
 	COLLIDER_POLYGON
 };
 
 //OBB - Red outline
 //AABB - Green outline
 //BS - Blue outline
+
+class Transform;
+
 class Collider
 {
 public:
-	Vector2& mOrigin;
+	Transform& mTransform;
 	COLLIDER_TYPE mType;
 	bool IsOverlap;
 
-	Collider(Vector2& origin) : mOrigin(origin), mType(COLLIDER_TYPE::COLLIDER_UNKNOWN), IsOverlap(false) { }
+	Collider(Transform& transform);
 
 	virtual void Update(double deltaTime) = 0;
 	virtual void Render(SDL_Renderer& renderer) = 0;
@@ -73,5 +75,5 @@ private:
 
 public:
 	static bool CheckCollision(const Collider& one, const Collider& two, CollisionManifold* manifold);
-	static void ResolveCollision(Rigidbody& one, Rigidbody& two, CollisionManifold* const manifold);
+	static void ResolveCollision(RigidbodyComponent& one, RigidbodyComponent& two, CollisionManifold* const manifold);
 };

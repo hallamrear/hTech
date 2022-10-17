@@ -1,17 +1,18 @@
 #include "pch.h"
 #include "BoundingBox.h"
+#include "Transform.h"
 #include "Camera.h"
 
-BoundingBox::BoundingBox(Vector2& position, float size_x, float size_y)
-	: Collider(position)
+BoundingBox::BoundingBox(Transform& transform, float size_x, float size_y)
+	: Collider(transform)
 {
 	mType = COLLIDER_TYPE::COLLIDER_AABB;
 
 	Size.X = size_x;
 	Size.Y = size_y;
 
-	TopLeft = Vector2(mOrigin.X - (Size.X / 2.0f), mOrigin.Y + (Size.Y / 2.0f));
-	BottomRight = Vector2(mOrigin.X + (Size.X / 2.0f), mOrigin.Y - (Size.Y / 2.0f));
+	TopLeft = Vector2(mTransform.Position.X - (Size.X / 2.0f), mTransform.Position.Y + (Size.Y / 2.0f));
+	BottomRight = Vector2(mTransform.Position.X + (Size.X / 2.0f), mTransform.Position.Y - (Size.Y / 2.0f));
 };
 
 BoundingBox::~BoundingBox()
@@ -21,8 +22,8 @@ BoundingBox::~BoundingBox()
 
 void BoundingBox::Update(double deltaTime)
 {
-	TopLeft = Vector2(mOrigin.X - (Size.X / 2), mOrigin.Y + (Size.Y / 2));
-	BottomRight = Vector2(mOrigin.X + (Size.X / 2), mOrigin.Y - (Size.Y / 2));
+	TopLeft = Vector2(mTransform.Position.X - (Size.X / 2), mTransform.Position.Y + (Size.Y / 2));
+	BottomRight = Vector2(mTransform.Position.X + (Size.X / 2), mTransform.Position.Y - (Size.Y / 2));
 }
 
 void BoundingBox::Render(SDL_Renderer& renderer)
@@ -31,7 +32,7 @@ void BoundingBox::Render(SDL_Renderer& renderer)
 	if (b)
 	{
 		SDL_Rect r{};
-		Vector2 position = Camera::WorldToScreen(Vector2(mOrigin.X - (Size.X / 2), mOrigin.Y + (Size.Y / 2)));
+		Vector2 position = Camera::WorldToScreen(Vector2(mTransform.Position.X - (Size.X / 2), mTransform.Position.Y + (Size.Y / 2)));
 		r.x = (int)position.X;
 		r.y = (int)position.Y;
 		r.w = (int)(Size.X);
