@@ -37,13 +37,13 @@ void AnimationController::SetAnimation(unsigned int animation)
 	mCurrentAnimation = animation;
 }
 
-void AnimationController::Update(double deltaTime)
+void AnimationController::Update(double DeltaTime)
 {
 	if (mAnimationSheet)
 	{
 		if (mHasFinished == false)
 		{
-			mTimeElapsed += deltaTime;
+			mTimeElapsed += DeltaTime;
 
 			if (mTimeElapsed > mDuration)
 			{

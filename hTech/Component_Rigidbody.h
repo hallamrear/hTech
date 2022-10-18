@@ -36,7 +36,7 @@ public:
     ~RigidbodyComponent();
 
 	//Do not call this outside of physics world.
-	virtual void	PhysicsUpdate(double deltaTime);
+	virtual void	PhysicsUpdate(double DeltaTime);
 
 	void DestroyCollider();
 
@@ -66,5 +66,3 @@ public:
 	void			Update(float DeltaTime);
 	void			Render(SDL_Renderer& renderer);
 };
-
-//todo : add to collider component.

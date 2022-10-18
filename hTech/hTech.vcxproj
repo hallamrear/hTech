@@ -231,6 +231,7 @@ xcopy /Y /E /H /C /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
     <ClInclude Include="Collision.h" />
     <ClInclude Include="Colour.h" />
     <ClInclude Include="Component.h" />
+    <ClInclude Include="Component_Animation.h" />
     <ClInclude Include="Component_Rigidbody.h" />
     <ClInclude Include="Component_Sprite.h" />
     <ClInclude Include="Component_Transform.h" />
@@ -265,6 +266,7 @@ xcopy /Y /E /H /C /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
     <ClCompile Include="Collision.cpp" />
     <ClCompile Include="Colour.cpp" />
     <ClCompile Include="Component.cpp" />
+    <ClCompile Include="Component_Animation.cpp" />
     <ClCompile Include="Component_Rigidbody.cpp" />
     <ClCompile Include="Component_Sprite.cpp" />
     <ClCompile Include="Component_Transform.cpp" />

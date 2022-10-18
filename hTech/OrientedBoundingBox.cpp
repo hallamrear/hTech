@@ -20,10 +20,10 @@ void OrientedBoundingBox::CalculateRotations()
 	if (mTransform.Rotation != 0.0f || mTransform.Rotation != 360.0f)
 	{
 		float rotation = 360.0f - mTransform.Rotation;
-			 TopLeft = HelperFunctions::RotatePointAroundOriginDegrees(Vector2(mTransform.Position.X - (Size.X / 2), mTransform.Position.Y + (Size.Y / 2)), rotation, mTransform.Position);
-		  BottomLeft = HelperFunctions::RotatePointAroundOriginDegrees(Vector2(mTransform.Position.X - (Size.X / 2), mTransform.Position.Y - (Size.Y / 2)), rotation, mTransform.Position);
-			TopRight = HelperFunctions::RotatePointAroundOriginDegrees(Vector2(mTransform.Position.X + (Size.X / 2), mTransform.Position.Y + (Size.Y / 2)), rotation, mTransform.Position);
-		 BottomRight = HelperFunctions::RotatePointAroundOriginDegrees(Vector2(mTransform.Position.X + (Size.X / 2), mTransform.Position.Y - (Size.Y / 2)), rotation, mTransform.Position);
+			 TopLeft = MathsHelp::RotatePointAroundOriginDegrees(Vector2(mTransform.Position.X - (Size.X / 2), mTransform.Position.Y + (Size.Y / 2)), rotation, mTransform.Position);
+		  BottomLeft = MathsHelp::RotatePointAroundOriginDegrees(Vector2(mTransform.Position.X - (Size.X / 2), mTransform.Position.Y - (Size.Y / 2)), rotation, mTransform.Position);
+			TopRight = MathsHelp::RotatePointAroundOriginDegrees(Vector2(mTransform.Position.X + (Size.X / 2), mTransform.Position.Y + (Size.Y / 2)), rotation, mTransform.Position);
+		 BottomRight = MathsHelp::RotatePointAroundOriginDegrees(Vector2(mTransform.Position.X + (Size.X / 2), mTransform.Position.Y - (Size.Y / 2)), rotation, mTransform.Position);
 	}
 }
 

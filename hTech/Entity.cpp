@@ -26,21 +26,14 @@ Entity::~Entity()
 	mComponents.clear();
 }
 
-//void Entity::AssignTexture(const std::string& texture_path)
-//{
-//	mTexture = TextureCache::GetTexture(texture_path);
-//}
-//
-//const Texture& Entity::GetTexture() const
-//{
-//	return *mTexture;
-//}
-
-void Entity::Update(double deltaTime)
+void Entity::Update(double DeltaTime)
 {
 	for (int i = 0; i < mComponents.size(); i++)
 	{
-		mComponents[i]->Update(deltaTime);
+		if (mComponents[i]->GetIsEnabled() == true)
+		{
+			mComponents[i]->Update(DeltaTime);
+		}
 	}
 }
 
@@ -50,7 +43,10 @@ void Entity::Render()
 
 	for (int i = 0; i < mComponents.size(); i++)
 	{
-		mComponents[i]->Render(renderer);
+		if (mComponents[i]->GetIsEnabled() == true)
+		{
+			mComponents[i]->Render(renderer);
+		}
 	}
 }
 

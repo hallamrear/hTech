@@ -48,7 +48,7 @@ public:
 
 	Collider(Transform& transform);
 
-	virtual void Update(double deltaTime) = 0;
+	virtual void Update(double DeltaTime) = 0;
 	virtual void Render(SDL_Renderer& renderer) = 0;
 
 	virtual Vector2 FindFurthestPoint(Vector2 direction) const = 0;

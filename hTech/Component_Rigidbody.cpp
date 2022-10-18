@@ -45,8 +45,8 @@ RigidbodyComponent::~RigidbodyComponent()
 /// <summary>
 /// Do not call this function. It will mess up the physics timestep calculations.
 /// </summary>
-/// <param name="deltaTime"></param>
-void RigidbodyComponent::PhysicsUpdate(double deltaTime)
+/// <param name="DeltaTime"></param>
+void RigidbodyComponent::PhysicsUpdate(double DeltaTime)
 {
 	if (mIsStatic)
 		return;
@@ -61,8 +61,8 @@ void RigidbodyComponent::PhysicsUpdate(double deltaTime)
 
 		Vector2 frictionForce;
 		float mew = 2.5f;
-		if (mVelocity.GetMagnitude() < mew * deltaTime) // Make sure the friction doesn't overextend.
-			frictionForce = ((mVelocity * -1) / (float)deltaTime);
+		if (mVelocity.GetMagnitude() < mew * DeltaTime) // Make sure the friction doesn't overextend.
+			frictionForce = ((mVelocity * -1) / (float)DeltaTime);
 		else
 			frictionForce = (mVelocity.GetNormalized() * -1) * mew; // getNormalized() returns the unit vector.
 
@@ -84,7 +84,7 @@ void RigidbodyComponent::PhysicsUpdate(double deltaTime)
 	mAcceleration = mNetForce / mMass;
 
 	///Update Position
-	mVelocity += mAcceleration * static_cast<float>(deltaTime);
+	mVelocity += mAcceleration * static_cast<float>(DeltaTime);
 	Parent.GetTransform().Position += mVelocity;
 
 	///Speed Cap

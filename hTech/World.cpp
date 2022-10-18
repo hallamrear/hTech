@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include "Component_Rigidbody.h"
 #include "Component_Sprite.h"
+#include "Component_Animation.h"
 
 World* World::mInstance = nullptr;
 
@@ -119,13 +120,22 @@ World::World()
         [this]() 
         { 
             Entity* entity = CreateEntity_Impl();
-            entity->AddComponent<SpriteComponent>();
-            entity->GetComponent<SpriteComponent>()->LoadTexture("Assets/cat.png");
+            entity->AddComponent<AnimationComponent>();
+
+            AnimationComponent* anim = entity->GetComponent<AnimationComponent>();
+            anim->LoadAnimationSheet("Assets/test_animation.png");
+            anim->IsLooping = true;
+            anim->SetDuration(1.0f);
+            anim->SetAnimationFrameCount(10);
+            anim->SetAnimationCount(1);
         });
 
     InputManager::Bind(IM_KEY_CODE::IM_KEY_2, IM_KEY_STATE::IM_KEY_PRESSED, [this]() { Vector2 position = InputManager::Get()->GetMouseWorldPosition(); Entity* entity = CreateEntity_Impl(); entity->GetTransform().Position = position; entity->AddComponent<RigidbodyComponent>()->GetComponent<RigidbodyComponent>()->SetCollider(COLLIDER_TYPE::COLLIDER_AABB); entity->GetComponent<RigidbodyComponent>()->SetGravityEnabled(false); });
     InputManager::Bind(IM_KEY_CODE::IM_KEY_3, IM_KEY_STATE::IM_KEY_PRESSED, [this]() { Vector2 position = InputManager::Get()->GetMouseWorldPosition(); Entity* entity = CreateEntity_Impl(); entity->GetTransform().Position = position; entity->AddComponent<RigidbodyComponent>()->GetComponent<RigidbodyComponent>()->SetCollider(COLLIDER_TYPE::COLLIDER_OBB); entity->GetComponent<RigidbodyComponent>()->SetGravityEnabled(false); });
     InputManager::Bind(IM_KEY_CODE::IM_KEY_4, IM_KEY_STATE::IM_KEY_PRESSED, [this]() { Vector2 position = InputManager::Get()->GetMouseWorldPosition(); Entity* entity = CreateEntity_Impl(); entity->GetTransform().Position = position; entity->AddComponent<RigidbodyComponent>()->GetComponent<RigidbodyComponent>()->SetCollider(COLLIDER_TYPE::COLLIDER_SPHERE); entity->GetComponent<RigidbodyComponent>()->SetGravityEnabled(false); });
+
+    InputManager::Bind(IM_MOUSE_CODE::IM_MOUSE_SCROLL_UP,   IM_KEY_STATE::IM_KEY_PRESSED, [this]() { if (mEntityList.back()->GetComponent<RigidbodyComponent>()->GetCollider()->mType == COLLIDER_TYPE::COLLIDER_OBB) mEntityList.back()->GetTransform().Rotation++; });
+    InputManager::Bind(IM_MOUSE_CODE::IM_MOUSE_SCROLL_DOWN, IM_KEY_STATE::IM_KEY_PRESSED, [this]() { if (mEntityList.back()->GetComponent<RigidbodyComponent>()->GetCollider()->mType == COLLIDER_TYPE::COLLIDER_OBB) mEntityList.back()->GetTransform().Rotation--; });
 
     InputManager::Bind(
         IM_KEY_CODE::IM_KEY_0,

@@ -16,7 +16,7 @@ Vector2::Vector2(float x, float y)
 //0deg == Vector(1.0, 0.0)
 float Vector2::GetAngleDegrees() const
 {
-	return HelperFunctions::ConvertToDegrees(GetAngleRadians());
+	return MathsHelp::ConvertToDegrees(GetAngleRadians());
 }
 
 //0r == Vector(1.0, 0.0)
@@ -44,7 +44,7 @@ Vector2 Vector2::GetNormalized() const
 
 Vector2 Vector2::GetVectorRotatedByAngle(float angleDegrees)
 {
-	float theta = HelperFunctions::ConvertToRadians(angleDegrees);
+	float theta = MathsHelp::ConvertToRadians(angleDegrees);
 	float cs = cos(theta);
 	float sn = sin(theta);
 
@@ -117,6 +117,42 @@ bool Vector2::operator==(const Vector2& rhs)
 	else
 		return false;
 }
+void Vector2::RotatePointAroundOriginRadians(float rotationRad, Vector2 origin)
+{
+	float s = sin(rotationRad);
+	float c = cos(rotationRad);
+
+	// translate point back to origin:
+	X -= origin.X;
+	Y -= origin.Y;
+
+	// rotate point
+	float xnew = X * c - Y * s;
+	float ynew = X * s + Y * c;
+
+	// translate point back:
+	X = xnew + origin.X;
+	Y = ynew + origin.Y;
+}
+void Vector2::RotatePointAroundOriginDegrees(float rotationDeg, Vector2 origin)
+{
+	float rotationRad = MathsHelp::ConvertToRadians(rotationDeg);
+	float s = sin(rotationRad);
+	float c = cos(rotationRad);
+
+	// translate point back to origin:
+	X -= origin.X;
+	Y -= origin.Y;
+
+	// rotate point
+	float xnew = X * c - Y * s;
+	float ynew = X * s + Y * c;
+
+	// translate point back:
+	X = xnew + origin.X;
+	Y = ynew + origin.Y;
+}
+
 //
 //bool operator==(const Vector2& lhs, const Vector2& rhs)
 //{

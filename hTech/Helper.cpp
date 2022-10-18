@@ -4,7 +4,7 @@
 //Works equally each direction from 0
 //e.g. GetRandomIntExcludingCentre(256, 128)
 //		can return between -256 -> -128 & 128 -> 256
-int HelperFunctions::GetRandomIntExcludingCentre(int upperBound, int lowerBound)
+int MathsHelp::GetRandomIntExcludingCentre(int upperBound, int lowerBound)
 {
 	int value = rand() % upperBound;
 
@@ -14,18 +14,17 @@ int HelperFunctions::GetRandomIntExcludingCentre(int upperBound, int lowerBound)
 	return value;
 }
 
-float HelperFunctions::ConvertToRadians(float degrees)
+float MathsHelp::ConvertToRadians(float degrees)
 {
 	return degrees * (float)(M_PI / 180.0);
 }
 
-float HelperFunctions::ConvertToDegrees(float radians)
+float MathsHelp::ConvertToDegrees(float radians)
 {
 	return radians * (float)(180.0 / M_PI);
 }
 
-//todo : make reference to store in point rather than returning
-Vector2 HelperFunctions::RotatePointAroundOriginRadians(Vector2 point, float rotation, Vector2 origin)
+Vector2 MathsHelp::RotatePointAroundOriginRadians(Vector2 point, float rotation, Vector2 origin)
 {
 	float s = sin(rotation);
 	float c = cos(rotation);
@@ -45,23 +44,23 @@ Vector2 HelperFunctions::RotatePointAroundOriginRadians(Vector2 point, float rot
 	return value;
 }
 
-Vector2 HelperFunctions::RotatePointAroundOriginDegrees(Vector2 point, float rotation, Vector2 origin)
+Vector2 MathsHelp::RotatePointAroundOriginDegrees(Vector2 point, float rotation, Vector2 origin)
 {
-	return RotatePointAroundOriginRadians(point, HelperFunctions::ConvertToRadians(rotation), origin);
+	return RotatePointAroundOriginRadians(point, MathsHelp::ConvertToRadians(rotation), origin);
 }
 
-Vector2 HelperFunctions::LerpPoint(Vector2 start, Vector2 end, float time)
+Vector2 MathsHelp::LerpPoint(Vector2 start, Vector2 end, float time)
 {
 	return (start * (1 - time) + end * time);
 }
 
 //Returns -1 if val < 0, 1 if val > 0, 0 if val == 0
-int HelperFunctions::Sign(int val)
+int MathsHelp::Sign(int val)
 {
 	return ((0) < val) - (val < (0));
 }
 
-float HelperFunctions::Dot(Vector2 a, Vector2 b)
+float MathsHelp::Dot(Vector2 a, Vector2 b)
 {
 	return (a.X * b.X) + (a.Y * b.Y);
 }

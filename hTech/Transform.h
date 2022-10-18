@@ -4,9 +4,6 @@
 class Transform
 {
 public:
-	//Todo : add scaling;
-	//float Scale;
-
 	Vector2 Position;
 	float Rotation;
 

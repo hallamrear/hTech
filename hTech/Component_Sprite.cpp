@@ -45,11 +45,8 @@ void SpriteComponent::Update(float DeltaTime)
 
 void SpriteComponent::Render(SDL_Renderer& renderer)
 {
-	if (mIsEnabled)
+	if (mTexture)
 	{
-		if (mTexture)
-		{
-			mTexture->Render(renderer, Parent.GetTransform().Position, Parent.GetTransform().Rotation, mIsFlipped);
-		}
+		mTexture->Render(renderer, Parent.GetTransform().Position, Parent.GetTransform().Rotation, mIsFlipped);
 	}
 }

@@ -97,7 +97,6 @@ bool Collision::CheckCollision_OBBvsSPHERE(const OrientedBoundingBox& one, const
 	//return dist <= two.Radius * two.Radius;
 }
 
-//todo : make SAT
 bool Collision::CheckCollision_AABBvsSPHERE(const BoundingBox& one, const BoundingSphere& two, CollisionManifold* const manifold)
 {
 	//todo : this can be improved by using obb -> aabb and running it here rather than vice versa
@@ -617,7 +616,7 @@ void Collision::ResolveCollision(RigidbodyComponent& one, RigidbodyComponent& tw
 	Vector2 relativeNormal = manifold->Normal.GetNormalized();
 
 	//objects are moving apart
-	if (HelperFunctions::Dot(relativeVelocity, relativeNormal) > 0.0f)
+	if (MathsHelp::Dot(relativeVelocity, relativeNormal) > 0.0f)
 		return;
 
 	//Equations are based on

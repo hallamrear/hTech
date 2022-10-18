@@ -29,8 +29,6 @@ void StateDirector::SetupState(GameStateIdentifier identifier, GameState* state)
 [[deprecated("Use World instead")]]
 void StateDirector::SetupState_Impl(GameStateIdentifier identifier, GameState* state)
 {
-	//Todo : error check for uniques
-	//todo : check if identifier exists and if so, throw;
 	mDirectorStates.emplace(identifier, state);
 }
 

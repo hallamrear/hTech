@@ -7,7 +7,7 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-namespace HelperFunctions
+namespace MathsHelp
 {
 	////Works equally each direction from 0
 	////e.g. GetRandomIntExcludingCentre(256, 128)
@@ -19,6 +19,7 @@ namespace HelperFunctions
 	////todo : make reference to store in point rather than returning
 	Vector2 RotatePointAroundOriginRadians(Vector2 point, float rotation, Vector2 origin);
 	Vector2 RotatePointAroundOriginDegrees(Vector2 point, float rotation, Vector2 origin);
+
 	Vector2 LerpPoint(Vector2 start, Vector2 end, float time);
 
 	////Returns -1 if val < 0, 1 if val > 0, 0 if val == 0

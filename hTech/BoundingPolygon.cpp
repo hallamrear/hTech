@@ -16,11 +16,11 @@ BoundingPolygon::BoundingPolygon(Transform& origin, float& rotation, const std::
 	}
 }
 
-void BoundingPolygon::Update(double deltaTime)
+void BoundingPolygon::Update(double DeltaTime)
 {
 	for (int i = 0; i < PointCount; i++)
 	{
-		mTransformedPoints[i] = HelperFunctions::RotatePointAroundOriginDegrees(mTransform.Position + mOriginalPoints[i], mRotation, mTransform.Position);
+		mTransformedPoints[i] = MathsHelp::RotatePointAroundOriginDegrees(mTransform.Position + mOriginalPoints[i], mRotation, mTransform.Position);
 	}
 }
 

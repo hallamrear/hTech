@@ -292,20 +292,6 @@ bool Game::InitialiseSystems(WindowDetails details)
 			return false;
 
 		SDL_SetRenderDrawBlendMode(Game::Renderer, SDL_BLENDMODE_BLEND);
-
-		//TODO : Uncomment if returning to SDL_image
-		//Initialise image loader.
-		//int flags = 0;
-		//flags |= IMG_INIT_PNG;
-		//flags |= IMG_INIT_JPG;
-		//flags |= IMG_INIT_TIF;
-		//flags |= IMG_INIT_WEBP;
-		//
-		//if (IMG_Init(flags) == 0)
-		//{
-		//	mIsInitialised = false;
-		//	return false;
-		//}
 			
 		return true;
 	}

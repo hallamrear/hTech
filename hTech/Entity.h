@@ -27,12 +27,7 @@ public:
 
 	virtual					~Entity();
 
-	//todo : move to sprite component;
-	//Sets mTexture to the texture at texture_path. Sets the width and height to the parameters.
-	//void					AssignTexture(const std::string& texture_path);
-	//const Texture&		GetTexture() const;
-
-	virtual void			Update(double deltaTime);
+	virtual void			Update(double DeltaTime);
 	virtual void			Render();
 
 	bool const				GetIsAlive()		 const { return mIsAlive; }
