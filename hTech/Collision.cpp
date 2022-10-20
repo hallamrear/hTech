@@ -51,50 +51,6 @@ bool Collision::CheckCollision_AABBvsAABB(const BoundingBox& one, const Bounding
 bool Collision::CheckCollision_OBBvsSPHERE(const OrientedBoundingBox& one, const BoundingSphere& two, CollisionManifold* const manifold)
 {
 	return SeperatingAxisTheory_PolygonCircle(4, one, two, manifold);
-
-	//todo : make sure this shit aint broke
-	//Vector2 corners[4];
-	//one.GetBoxAsPoints(corners);
-	////transform sphere center into obb spaceand perform aabb test
-	//Vector2 sphereCentreAABBSpace = two.mTransform - one.mTransform;
-	//corners[0] -= one.mTransform;
-	//corners[1] -= one.mTransform;
-	//corners[2] -= one.mTransform;
-	//corners[3] -= one.mTransform;
-	////Rotate all around 0,0 by -one.mRotaiton;
-	//sphereCentreAABBSpace = RotatePointAroundOriginDegrees(sphereCentreAABBSpace, 360.0f - one.Rotation, Vector2());
-	//corners[0] = RotatePointAroundOriginDegrees(corners[0], 360.0f - one.Rotation, Vector2());
-	//corners[1] = RotatePointAroundOriginDegrees(corners[1], 360.0f - one.Rotation, Vector2());
-	//corners[2] = RotatePointAroundOriginDegrees(corners[2], 360.0f - one.Rotation, Vector2());
-	//corners[3] = RotatePointAroundOriginDegrees(corners[3], 360.0f - one.Rotation, Vector2());
-	//float dist = 0, minimum = INFINITY, maximum = -INFINITY;
-	//Vector2 extentsMin, extentsMax;
-	//for (int i = 0; i < 3; i++)
-	//{
-	//	if (corners[i].X < extentsMin.X)
-	//		extentsMin.X = corners[i].X;
-	//	if (corners[i].Y < extentsMin.Y)
-	//		extentsMin.Y = corners[i].Y;
-	//	if (corners[i].X > extentsMax.X)
-	//		extentsMax.X = corners[i].X;
-	//	if (corners[i].Y > extentsMax.Y)
-	//		extentsMax.Y = corners[i].Y;
-	//}
-	////we square it to avoid using square roots for
-	////each calculation and can use double radius at the end
-	////MIN---------.
-	////-			  -
-	////-		      -
-	////.----------MAX
-	//if (sphereCentreAABBSpace.X < extentsMin.X)
-	//	dist += pow(extentsMin.X - sphereCentreAABBSpace.X, 2.0f);
-	//else if (sphereCentreAABBSpace.X > extentsMax.X)
-	//	dist += pow(sphereCentreAABBSpace.X - extentsMax.X, 2.0f);
-	//if (sphereCentreAABBSpace.Y < extentsMin.Y)
-	//	dist += pow(extentsMin.Y - sphereCentreAABBSpace.Y, 2.0f);
-	//else if (sphereCentreAABBSpace.Y > extentsMax.Y)
-	//	dist += pow(sphereCentreAABBSpace.Y - extentsMax.Y, 2.0f);
-	//return dist <= two.Radius * two.Radius;
 }
 
 bool Collision::CheckCollision_AABBvsSPHERE(const BoundingBox& one, const BoundingSphere& two, CollisionManifold* const manifold)

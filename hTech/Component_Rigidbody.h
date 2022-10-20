@@ -54,6 +54,7 @@ public:
 	Collider* const GetCollider();
 
 	//Setters
+	virtual void	SetIsStatic(const bool state) { mIsStatic = state; }
 	virtual void	SetGravityEnabled(const bool state) { mGravityEnabled = state; }
 	virtual void	SetDragEnabled(const bool state) { mDragEnabled = state; }
 	//Adjusters
