@@ -3,7 +3,7 @@
 
 class BoundingBox;
 class MenuObject;
-class TextElement;
+class Text;
 
 enum class LogLevel
 {
@@ -15,7 +15,7 @@ enum class LogLevel
 class Log
 {
 private:
-	std::vector<TextElement*> mTextElements;
+	std::vector<Text*> mTextElements;
 	static Log* mInstance;
 
 	Log();
@@ -25,13 +25,13 @@ private:
 	std::deque<std::pair<LogLevel, std::string>> mMessageQueue;
 	void LogMessage_Impl(LogLevel indicator, std::string str);
 	void Render_Impl(SDL_Renderer& renderer);
-	void Update_Impl(double DeltaTime);
+	void Update_Impl(float DeltaTime);
 
 public:
 	static void LogMessage(LogLevel indicator, std::string str);
 	static void LogMessage(LogLevel indicator, const char* str);
 
 	static void Render(SDL_Renderer& renderer);
-	static void Update(double DeltaTime);
+	static void Update(float DeltaTime);
 };
 

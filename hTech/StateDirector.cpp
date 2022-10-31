@@ -5,7 +5,6 @@
 
 #include "StateDirector.h"
 
-//todo : put singleton back
 //StateDirector* StateDirector::mInstance = nullptr;
 
 [[deprecated("Use World instead")]]
@@ -43,7 +42,6 @@ void StateDirector::SetState_Impl(const GameStateIdentifier state)
 	if (itr == mDirectorStates.end())
 	{
 		mCurrentState = nullptr;
-		//todo : fix
 		//assert(itr != mDirectorStates.end());
 		return;
 	}
@@ -61,7 +59,6 @@ void StateDirector::SetState(const GameStateIdentifier state)
 [[deprecated("Use World instead")]]
 StateDirector* StateDirector::Get()
 {
-	//todo : put singleton back
 	//if (!mInstance)
 	//	mInstance = new StateDirector();
 
@@ -82,7 +79,7 @@ const GameState* StateDirector::GetState()
 }
 
 [[deprecated("Use World instead")]]
-void StateDirector::Update(double DeltaTime)
+void StateDirector::Update(float DeltaTime)
 {
 	Get()->Update_Impl(DeltaTime);
 }
@@ -94,7 +91,7 @@ void StateDirector::Render(SDL_Renderer& renderer)
 }
 
 [[deprecated("Use World instead")]]
-void StateDirector::Update_Impl(double DeltaTime)
+void StateDirector::Update_Impl(float DeltaTime)
 {
 	if(mCurrentState)
 		mCurrentState->Update(DeltaTime);

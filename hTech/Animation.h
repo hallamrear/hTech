@@ -25,7 +25,7 @@ public:
 	bool HasFinished();
 	void Start();
 	void SetAnimation(unsigned int animation);
-	void Update(double DeltaTime);
+	void Update(float DeltaTime);
 	void Render(SDL_Renderer& renderer, Transform transform);
 	void Render(SDL_Renderer& renderer, Transform transform, bool flipped);
 };

@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "TextElement.h"
+#include "Text.h"
 #include "Camera.h"
 #include "Log.h"
 #include "Colour.h"
@@ -10,12 +10,12 @@ Log* Log::mInstance = nullptr;
 Log::Log()
 {
 	mMessages = std::vector<std::pair<LogLevel, std::string>>();
-	mTextElements = std::vector<TextElement*>();
+	mTextElements = std::vector<Text*>();
 	mMessageQueue = std::deque<std::pair<LogLevel, std::string>>();
 
 	for (size_t i = 0; i < (unsigned int)Settings::Get()->GetMaxLogMessages(); i++)
 	{
-		mTextElements.push_back(new TextElement(""));
+		mTextElements.push_back(new Text(Vector2(), ""));
 		mMessageQueue.emplace_back(LogLevel::LOG_MESSAGE, "");
 	}
 }
@@ -73,19 +73,18 @@ void Log::Render_Impl(SDL_Renderer& renderer)
 	SDL_SetRenderDrawColor(&renderer, 255, 255, 0, 128);
 	SDL_RenderDrawRect(&renderer, &rect);
 
-	float horizontal = 50.0f + ((Settings::Get()->GetWindowDimensions().X) / 12.0f);
+	float horizontal = ((Settings::Get()->GetWindowDimensions().X) / 20.0f);
 	float vertical = 55;
 	for (int i = Settings::Get()->GetMaxLogMessages() - 1; i >= 0; i--)
 	{
 		vertical += 5;
 		vertical += mTextElements[i]->GetTextureSize().Y;
-		Vector2 worldPos = Camera::ScreenToWorld(Vector2(horizontal, vertical));
-		mTextElements[i]->SetPosition(worldPos);
-		mTextElements[i]->Render();
+		mTextElements[i]->SetPosition(Vector2(horizontal, vertical));
+		mTextElements[i]->Render(renderer);
 	}
 }
 
-void Log::Update_Impl(double DeltaTime)
+void Log::Update_Impl(float DeltaTime)
 {
 	//todo : reorder how it updates the list
 
@@ -126,7 +125,7 @@ void Log::Render(SDL_Renderer& renderer)
 	Get()->Render_Impl(renderer);
 }
 
-void Log::Update(double DeltaTime)
+void Log::Update(float DeltaTime)
 {
 	Get()->Update_Impl(DeltaTime);
 }

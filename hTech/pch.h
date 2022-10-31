@@ -31,5 +31,6 @@
 #include "Settings.h"
 
 static float TEST_ZOOM = 1.0f;
+static unsigned short UI_TILE_SIZE = 16;
 
 #endif

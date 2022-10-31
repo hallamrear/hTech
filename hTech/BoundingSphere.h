@@ -17,7 +17,7 @@ public:
 	/// <summary>
 	/// </summary>
 	/// <param name="DeltaTime">Time between the last frame and this frame.</param>
-	virtual void Update(double DeltaTime);
+	virtual void Update(float DeltaTime);
 
 	/// <summary>
 	/// Renders the circle using SDL_RenderDrawPoint and an SDL_Renderer.

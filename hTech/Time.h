@@ -7,9 +7,9 @@ class Time
 private:
 	//todo : put singleton back
 	//static Time* mInstance;
-	double& mDeltaTime;
+	float& mDeltaTime;
 
-	inline Time(double& dt) 
+	inline Time(float& dt)
 		: mDeltaTime(dt)
 	{
 
@@ -21,7 +21,7 @@ private:
 	}
 
 public:
-	static Time* Get(double& dt)
+	static Time* Get(float& dt)
 	{
 		//todo : put singleton back
 		//if (!mInstance)
@@ -41,9 +41,9 @@ public:
 		//}
 	}
 
-	static const double DeltaTime()
+	static float& DeltaTime()
 	{
-		double d;
+		float d;
 		return Get(d)->mDeltaTime;
 	}
 };

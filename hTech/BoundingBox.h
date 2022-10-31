@@ -15,7 +15,7 @@ public:
 
 	BoundingBox(Transform& transform, float size_x, float size_y);
 	virtual ~BoundingBox();
-	virtual void Update(double DeltaTime);
+	virtual void Update(float DeltaTime);
 	virtual void Render(SDL_Renderer& renderer);
 	virtual void GetColliderAsPoints(Vector2 points[]) const;
 

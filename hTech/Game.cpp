@@ -6,10 +6,8 @@
 #include "Settings.h"
 #include "Time.h"
 #include "PhysicsWorld.h"
-#include <thread>
 #include <iostream>
-#include <iomanip>
-#include <ctime>
+#include "UI.h"
 
 SDL_Renderer* Game::Renderer = nullptr;
 
@@ -59,7 +57,7 @@ void Game::Start()
 		const int frameDelay = 1000 / FPS;
 		Uint32 currentTime = 0, deltaTime = 0, oldTime = 0;
 		Uint32 frameTime = 0;
-		double DeltaTime = 0.0;
+		float DeltaTime = 0.0;
 		Time::Get(DeltaTime);
 
 		while(GetIsRunning())
@@ -71,7 +69,7 @@ void Game::Start()
 				currentTime = SDL_GetTicks();
 				deltaTime = currentTime - oldTime;
 
-				DeltaTime = (double)deltaTime / 1000.0;
+				DeltaTime = deltaTime / 1000.0f;
 
 				if (deltaTime != 0)
 				{
@@ -115,7 +113,6 @@ void Game::SetFullscreen(SCREEN_STATE state)
 		SDL_SetWindowFullscreen(mWindow, 0);
 		break;
 	}
-
 
 	int w, h;
 	SDL_GetWindowSize(mWindow, &w, &h);
@@ -208,6 +205,8 @@ bool Game::InitialiseGraphics()
 	if (!mWindow || mWindow == nullptr)
 		return false;
 
+	SDL_SetHint(SDL_HINT_RENDER_BATCHING, "1");
+
 	if (Game::Renderer)
 		SDL_DestroyRenderer(Game::Renderer);
 
@@ -230,39 +229,9 @@ bool Game::InitialiseApplicationControls()
 	InputManager::Bind(IM_KEY_CODE::IM_KEY_F1, IM_KEY_STATE::IM_KEY_PRESSED,
 		[this]
 		{
-			SetFullscreen(SCREEN_STATE::WINDOW_WINDOWED);
-		});
-
-	InputManager::Bind(IM_KEY_CODE::IM_KEY_F2, IM_KEY_STATE::IM_KEY_PRESSED,
-		[this]
-		{
-			SetFullscreen(SCREEN_STATE::WINDOW_BORDERLESS_FULLSCREEN);
-		});
-
-	InputManager::Bind(IM_KEY_CODE::IM_KEY_F3, IM_KEY_STATE::IM_KEY_PRESSED,
-		[this]
-		{
-			SetFullscreen(SCREEN_STATE::WINDOW_FULLSCREEN);
-		}); 
-	
-	InputManager::Bind(IM_KEY_CODE::IM_KEY_F4, IM_KEY_STATE::IM_KEY_PRESSED,
-		[]
-		{
-			Settings::Get()->SetDrawColliders(!Settings::Get()->GetDrawColliders());
-		});
-
-	InputManager::Bind(IM_KEY_CODE::IM_KEY_F5, IM_KEY_STATE::IM_KEY_PRESSED,
-		[]
-		{
-			Settings::Get()->SetDrawLog(!Settings::Get()->GetDrawLog());
-		});
-
-	InputManager::Bind(IM_KEY_CODE::IM_KEY_F12, IM_KEY_STATE::IM_KEY_PRESSED,
-		[this]
-		{
 			TakeScreenshot("");
 		});
-	
+
 	return true;
 }
 
@@ -270,19 +239,19 @@ bool Game::InitialiseSystems(WindowDetails details)
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
 	{
-		Log::LogMessage(LogLevel::LOG_MESSAGE, "Subsystem created.");
+		if (TTF_Init() < 0)
+		{
+			Log::LogMessage(LogLevel::LOG_ERROR, "Error initializing SDL_ttf");
+			Log::LogMessage(LogLevel::LOG_ERROR, TTF_GetError());
+		}
 
+		Log::LogMessage(LogLevel::LOG_MESSAGE, "Subsystem created.");
 
 		if (InitialiseWindow(details.title.c_str(), (int)details.position.X, (int)details.position.Y, (int)details.dimensions.X, (int)details.dimensions.Y, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE, false) == false)
 			return false;
 
 		Settings::Get()->SetWindowDimensions(details.dimensions);
 
-		if (TTF_Init() < 0)
-		{
-			Log::LogMessage(LogLevel::LOG_ERROR, "Error initializing SDL_ttf");
-			Log::LogMessage(LogLevel::LOG_ERROR, TTF_GetError());
-		}
 
 		int w, h;
 		SDL_GetWindowSize(mWindow, &w, &h);
@@ -304,9 +273,6 @@ void Game::Shutdown()
 	SDL_DestroyRenderer(Game::Renderer);
 	SDL_DestroyWindow(mWindow);
 	SDL_Quit();
-
-	//TODO : Uncomment if returning to SDL_image
-	//IMG_Quit();
 
 	mIsInitialised = false;
 }
@@ -340,9 +306,14 @@ void Game::HandleEvents()
 		case SDL_MOUSEBUTTONUP:
 
 			if (event.type == SDL_MOUSEBUTTONDOWN)
+			{
 				InputManager::Get()->MousePressUpdate(event.button.button, true);
+				UI::OnMouseClick();
+			}
 			else if (event.type == SDL_MOUSEBUTTONUP)
+			{
 				InputManager::Get()->MousePressUpdate(event.button.button, false);
+			}
 				break;
 
 		case SDL_MOUSEMOTION:
@@ -357,7 +328,7 @@ void Game::HandleEvents()
 			break;
 
 		case SDL_WINDOWEVENT:
-			if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
+			if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED || event.window.event == SDL_WINDOWEVENT_RESIZED)
 			{
 				int w, h;
 				SDL_GetWindowSize(mWindow, &w, &h);
@@ -382,11 +353,12 @@ void Game::HandleEvents()
 	}
 }
 
-void Game::Update(double DeltaTime)
+void Game::Update(float DeltaTime)
 {
 	InputManager::Update();
 	Physics::Update(DeltaTime);
 	World::Update(DeltaTime);
+	UI::Update(DeltaTime);
 
 	if(Settings::Get()->GetDrawLog())
 		Log::Update(DeltaTime);
@@ -394,10 +366,11 @@ void Game::Update(double DeltaTime)
 
 void Game::Render()
 {
-	SDL_SetRenderDrawColor(Game::Renderer, 0, 0, 0, 255);
-	SDL_RenderClear(Game::Renderer);
+	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
+	SDL_RenderClear(Renderer);
 
-	World::Render(*Game::Renderer);
+	World::Render(*Renderer);
+	UI::Render(*Renderer);
 
 	if (Settings::Get()->GetDrawLog())
 		Log::Render(*Game::Renderer);

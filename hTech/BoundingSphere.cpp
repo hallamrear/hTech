@@ -16,7 +16,7 @@ BoundingSphere::~BoundingSphere()
 	
 }
 
-void BoundingSphere::Update(double DeltaTime)
+void BoundingSphere::Update(float DeltaTime)
 {
 	
 }
