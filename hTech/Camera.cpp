@@ -1,12 +1,14 @@
 #include "pch.h"
 #include "Camera.h"
-
+#include "UI.h"
 
 //Camera* Camera::mInstance = nullptr;
 
 Camera::Camera()
 {
 	mPosition = Vector2();
+	//UI::CreateVariableTracker<float>(PanelRect(40, 2, 5, 1), mPosition.X, "Camera X: ");
+	//UI::CreateVariableTracker<float>(PanelRect(40, 4, 5, 1), mPosition.Y, "Camera Y: ");
 }
 
 Camera::~Camera()

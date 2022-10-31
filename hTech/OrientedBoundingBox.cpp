@@ -27,7 +27,7 @@ void OrientedBoundingBox::CalculateRotations()
 	}
 }
 
-void OrientedBoundingBox::Update(double deltaTime)
+void OrientedBoundingBox::Update(float DeltaTime)
 {
 	CalculateRotations();
 }

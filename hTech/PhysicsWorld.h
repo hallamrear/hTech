@@ -17,7 +17,7 @@ class Physics
 	~Physics();
 	
 	void FixedUpdate();
-	void Update_Impl(double deltaTime);
+	void Update_Impl(float DeltaTime);
 	void RegisterRigidbody_Impl(RigidbodyComponent* rb);
 	void DeregisterRigidbody_Impl(RigidbodyComponent* rb);
 
@@ -26,7 +26,7 @@ protected:
 
 public:
 	
-	static void Update(double deltaTime);
+	static void Update(float DeltaTime);
 	static void RegisterRigidbody(RigidbodyComponent* rb);
 	static void DeregisterRigidbody(RigidbodyComponent* rb);
 };

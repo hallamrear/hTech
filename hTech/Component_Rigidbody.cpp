@@ -46,7 +46,7 @@ RigidbodyComponent::~RigidbodyComponent()
 /// Do not call this function. It will mess up the physics timestep calculations.
 /// </summary>
 /// <param name="DeltaTime"></param>
-void RigidbodyComponent::PhysicsUpdate(double DeltaTime)
+void RigidbodyComponent::PhysicsUpdate(float DeltaTime)
 {
 	if (mIsStatic)
 		return;
@@ -62,7 +62,7 @@ void RigidbodyComponent::PhysicsUpdate(double DeltaTime)
 		Vector2 frictionForce;
 		float mew = 2.5f;
 		if (mVelocity.GetMagnitude() < mew * DeltaTime) // Make sure the friction doesn't overextend.
-			frictionForce = ((mVelocity * -1) / (float)DeltaTime);
+			frictionForce = ((mVelocity * -1) / DeltaTime);
 		else
 			frictionForce = (mVelocity.GetNormalized() * -1) * mew; // getNormalized() returns the unit vector.
 

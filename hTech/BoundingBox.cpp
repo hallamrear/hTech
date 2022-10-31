@@ -20,7 +20,7 @@ BoundingBox::~BoundingBox()
 	
 };
 
-void BoundingBox::Update(double DeltaTime)
+void BoundingBox::Update(float DeltaTime)
 {
 	TopLeft = Vector2(mTransform.Position.X - (Size.X / 2), mTransform.Position.Y + (Size.Y / 2));
 	BottomRight = Vector2(mTransform.Position.X + (Size.X / 2), mTransform.Position.Y - (Size.Y / 2));

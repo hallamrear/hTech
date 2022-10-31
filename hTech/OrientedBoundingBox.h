@@ -13,7 +13,7 @@ public:
 	OrientedBoundingBox(Transform& transform, float size_x, float size_y);
 	~OrientedBoundingBox();
 
-	virtual void Update(double deltaTime);
+	virtual void Update(float DeltaTime);
 	virtual void Render(SDL_Renderer& renderer);
 
 	//Fills array with points of the box.

@@ -33,7 +33,7 @@ private:
 	bool		InitialiseSystems(WindowDetails details);
 
 	void		HandleEvents();
-	void		Update(double DeltaTime);
+	void		Update(float DeltaTime);
 	void		Render();
 	void		Shutdown();
 

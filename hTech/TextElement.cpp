@@ -1,4 +1,7 @@
+#pragma region deprecated
 #include "pch.h"
+
+/*
 #include "TextElement.h"
 #include "Log.h"
 #include "Game.h"
@@ -31,15 +34,7 @@ void TextElement::CreateTexture()
 {
 	if (mData != "")
 	{
-		//This should not be getting recreated each frame
-		TTF_Font* font;
-		font = TTF_OpenFont("Assets/arial.ttf", (int)mFontSize);
-		if (!font)
-		{
-			Log::LogMessage(LogLevel::LOG_ERROR, "FAILED TO LOAD FONT");
-			Log::LogMessage(LogLevel::LOG_ERROR, TTF_GetError());
-		}
-
+		
 		SDL_Renderer& renderer = const_cast<SDL_Renderer&>(*Game::Renderer);
 		SDL_Surface* textSurface = nullptr;
 		//// Set color to black
@@ -65,7 +60,7 @@ void TextElement::CreateTexture()
 	}
 }
 
-void TextElement::Update(double deltaTime)
+void TextElement::Update(float DeltaTime)
 {
 	if(mIsDirty)
 	{
@@ -85,6 +80,8 @@ void TextElement::Render()
 	{
 		if(mTextTexture)
 		{
+			SDL_SetRenderDrawColor(Game::Renderer, mColour.R, mColour.G, mColour.B, mColour.A);
+
 			SDL_Rect destRect{};
 			destRect.w = mTextWidth;
 			destRect.h = mTextHeight;
@@ -110,6 +107,7 @@ void TextElement::SetString(std::string str)
 void TextElement::SetColour(Colour colour)
 {
 	mColour = colour;
+	mIsDirty = true;
 }
 
 void TextElement::SetString(const char* str)
@@ -126,3 +124,7 @@ Vector2 TextElement::GetTextureSize()
 {
 	return Vector2((float)mTextWidth, (float)mTextHeight);
 }
+
+*/
+
+#pragma endregion

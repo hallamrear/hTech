@@ -42,7 +42,7 @@ private:
 	[[deprecated("Use World instead")]]
 	static StateDirector*	Get();								    
 	[[deprecated("Use World instead")]]
-	void					Update_Impl(double DeltaTime);								    
+	void					Update_Impl(float DeltaTime);								    
 	[[deprecated("Use World instead")]]
 	void					Render_Impl(SDL_Renderer& renderer);
 
@@ -54,7 +54,7 @@ public:
 	[[deprecated("Use World instead")]]
 	static const GameState*	GetState();
 	[[deprecated("Use World instead")]]
-	static void				Update(double DeltaTime);
+	static void				Update(float DeltaTime);
 	[[deprecated("Use World instead")]]
 	static void				Render(SDL_Renderer& renderer);
 };

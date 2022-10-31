@@ -16,7 +16,7 @@ BoundingPolygon::BoundingPolygon(Transform& origin, float& rotation, const std::
 	}
 }
 
-void BoundingPolygon::Update(double DeltaTime)
+void BoundingPolygon::Update(float DeltaTime)
 {
 	for (int i = 0; i < PointCount; i++)
 	{

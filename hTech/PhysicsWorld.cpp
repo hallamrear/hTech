@@ -78,14 +78,14 @@ void Physics::FixedUpdate()
 	}
 }
 
-void Physics::Update_Impl(double deltaTime)
+void Physics::Update_Impl(float DeltaTime)
 {
 	FixedUpdate();
 }
 
-void Physics::Update(double deltaTime)
+void Physics::Update(float DeltaTime)
 {
-	Get()->Update_Impl(deltaTime);
+	Get()->Update_Impl(DeltaTime);
 }
 
 void Physics::RegisterRigidbody(RigidbodyComponent* rb)

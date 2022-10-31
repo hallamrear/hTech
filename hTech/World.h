@@ -2,12 +2,11 @@
 
 struct SDL_Renderer;
 class Entity;
-class TextElement;
+class Text;
 
 class World
 {
 private:
-	TextElement*			mSceneGraphText;
 	static World*			mInstance;
 	std::vector<Entity*>	mEntityList;
 
@@ -15,7 +14,7 @@ private:
 	void					DestroyEntity_Impl(Entity* entity);
 	void					ClearupEntities();
 
-	void					Update_Impl(double);
+	void					Update_Impl(float DeltaTime);
 	void					Render_Impl(SDL_Renderer&);
 
 protected:
@@ -27,7 +26,7 @@ public:
 	static Entity*			CreateEntity();
 	static void				DestroyEntity(Entity* entity);
 
-	static void				Update(double);
+	static void				Update(float DeltaTime);
 	static void				Render(SDL_Renderer&);
 };
 

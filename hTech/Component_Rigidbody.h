@@ -36,7 +36,7 @@ public:
     ~RigidbodyComponent();
 
 	//Do not call this outside of physics world.
-	virtual void	PhysicsUpdate(double DeltaTime);
+	virtual void	PhysicsUpdate(float DeltaTime);
 
 	void DestroyCollider();
 

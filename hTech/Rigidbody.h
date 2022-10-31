@@ -38,13 +38,13 @@ public:
 					~Rigidbody();
 
 	//Do not call this outside of physics world.
-	virtual void	 PhysicsUpdate(double deltaTime);
+	virtual void	 PhysicsUpdate(float DeltaTime);
 
 	/// <summary>
 	/// Overrideable
 	/// </summary>
-	/// <param name="deltaTime"></param>
-	virtual void	 Update(double deltaTime);
+	/// <param name="DeltaTime"></param>
+	virtual void	 Update(float DeltaTime);
 
 	/// <summary>
 	/// Overrideable

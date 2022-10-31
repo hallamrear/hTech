@@ -37,7 +37,7 @@ void AnimationController::SetAnimation(unsigned int animation)
 	mCurrentAnimation = animation;
 }
 
-void AnimationController::Update(double DeltaTime)
+void AnimationController::Update(float DeltaTime)
 {
 	if (mAnimationSheet)
 	{

@@ -82,7 +82,7 @@ const GameState* StateDirector::GetState()
 }
 
 [[deprecated("Use World instead")]]
-void StateDirector::Update(double DeltaTime)
+void StateDirector::Update(float DeltaTime)
 {
 	Get()->Update_Impl(DeltaTime);
 }
@@ -94,7 +94,7 @@ void StateDirector::Render(SDL_Renderer& renderer)
 }
 
 [[deprecated("Use World instead")]]
-void StateDirector::Update_Impl(double DeltaTime)
+void StateDirector::Update_Impl(float DeltaTime)
 {
 	if(mCurrentState)
 		mCurrentState->Update(DeltaTime);

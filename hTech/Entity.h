@@ -27,7 +27,7 @@ public:
 
 	virtual					~Entity();
 
-	virtual void			Update(double DeltaTime);
+	virtual void			Update(float DeltaTime);
 	virtual void			Render();
 
 	bool const				GetIsAlive()		 const { return mIsAlive; }
