@@ -51,30 +51,3 @@ void UI_Element::OnClick()
 {
 
 }
-
-ExampleUIPanel::ExampleUIPanel(PanelRect rect, std::string string) : UI_Element(rect)
-{
-	float size = UI_TILE_SIZE;
-	Vector2 screenPos;
-	mText = new Text(screenPos, string, Colour(0, 0, 0, 255));
-	screenPos.X = mPanel.X * UI_TILE_SIZE + (mText->GetTextureSize().X / 2);
-	screenPos.Y = mPanel.Y * UI_TILE_SIZE - (mText->GetTextureSize().Y / 2);
-	mText->SetPosition(screenPos);
-}
-
-ExampleUIPanel::~ExampleUIPanel()
-{
-	delete mText;
-	mText = nullptr;
-}
-
-void ExampleUIPanel::Update(float DeltaTime)
-{
-	mText->Update(DeltaTime);
-}
-
-void ExampleUIPanel::Render(SDL_Renderer& renderer)
-{
-	DrawPanel(renderer, mPanel.BackgroundColour);
-	mText->Render(renderer);
-}

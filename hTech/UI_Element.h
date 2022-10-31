@@ -21,13 +21,3 @@ public:
 	virtual void Render(SDL_Renderer& renderer);
 	virtual void OnClick();
 };
-
-class ExampleUIPanel : public UI_Element
-{
-public:
-	ExampleUIPanel(PanelRect rect, std::string string);
-	~ExampleUIPanel();
-
-	virtual void Update(float DeltaTime);
-	virtual void Render(SDL_Renderer& renderer);
-};

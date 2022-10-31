@@ -10,7 +10,7 @@ BoundingPolygon::BoundingPolygon(Transform& origin, float& rotation, const std::
 	mOriginalPoints = std::vector<Vector2>();
 	mOriginalPoints = points;
 
-	for (int i = 0; i < PointCount; i++)
+	for (size_t i = 0; i < PointCount; i++)
 	{
 		mTransformedPoints.push_back(mTransform.Position + mOriginalPoints[i]);
 	}
@@ -18,7 +18,7 @@ BoundingPolygon::BoundingPolygon(Transform& origin, float& rotation, const std::
 
 void BoundingPolygon::Update(float DeltaTime)
 {
-	for (int i = 0; i < PointCount; i++)
+	for (size_t i = 0; i < PointCount; i++)
 	{
 		mTransformedPoints[i] = MathsHelp::RotatePointAroundOriginDegrees(mTransform.Position + mOriginalPoints[i], mRotation, mTransform.Position);
 	}
@@ -35,7 +35,7 @@ void BoundingPolygon::Render(SDL_Renderer& renderer)
 		case 0:
 			break;
 		case 1:
-			SDL_RenderDrawPoint(&renderer, mTransformedPoints[0].X, mTransformedPoints[0].Y);
+			SDL_RenderDrawPoint(&renderer, (int)mTransformedPoints[0].X, (int)mTransformedPoints[0].Y);
 			break;
 		default:
 			Vector2 pOne = mTransformedPoints[0];
@@ -50,7 +50,7 @@ void BoundingPolygon::Render(SDL_Renderer& renderer)
 				Vector2 screenSpaceTwo = Camera::WorldToScreen(pTwo);
 
 				SDL_SetRenderDrawColor(&renderer, 0, 0, 255, 255);
-				SDL_RenderDrawLine(&renderer, screenSpaceOne.X, screenSpaceOne.Y, screenSpaceTwo.X, screenSpaceTwo.Y);
+				SDL_RenderDrawLine(&renderer, (int)screenSpaceOne.X, (int)screenSpaceOne.Y, (int)screenSpaceTwo.X, (int)screenSpaceTwo.Y);
 			}
 			break;
 		}
@@ -64,7 +64,7 @@ Vector2 BoundingPolygon::FindFurthestPoint(Vector2 direction) const
 
 void BoundingPolygon::GetColliderAsPoints(Vector2 points[]) const
 {
-	for (int i = 0; i < PointCount; i++)
+	for (size_t i = 0; i < PointCount; i++)
 	{
 		points[i] = mTransformedPoints[i];
 	}

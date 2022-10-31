@@ -11,7 +11,7 @@ private:
 	std::vector<Vector2> mTransformedPoints;
 
 public:
-	int PointCount = 0;
+	size_t PointCount = 0;
 
 	BoundingPolygon(Transform& transform, float& rotation, const std::vector<Vector2> points, const int& pointCount);
 

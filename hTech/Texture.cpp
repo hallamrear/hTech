@@ -11,7 +11,7 @@ Texture::Texture(std::string texture_path)
 {
 	Width = NULL;
 	Height = NULL;
-	mName == "";
+	mName = "";
 	Create(texture_path);
 }
 
@@ -53,14 +53,14 @@ void Texture::Render(SDL_Renderer& renderer, Vector2 position, float rotation, V
 	Vector2 renderPosition = Camera::WorldToScreen(position);
 
 	SDL_Rect destRect{};
-	destRect.w = sourceDimensions.X;
-	destRect.h = sourceDimensions.Y;
+	destRect.w = (int)sourceDimensions.X;
+	destRect.h = (int)sourceDimensions.Y;
 	destRect.x = (int)(renderPosition.X) - (destRect.w / 2);
 	destRect.y = (int)(renderPosition.Y) - (destRect.h / 2);
 
 	SDL_Rect srcRect{};
-	srcRect.w = sourceDimensions.X;
-	srcRect.h = sourceDimensions.Y;
+	srcRect.w = (int)sourceDimensions.X;
+	srcRect.h = (int)sourceDimensions.Y;
 	srcRect.x = (int)(sourcePosition.X) - (srcRect.w / 2);
 	srcRect.y = (int)(sourcePosition.Y) - (srcRect.h / 2);
 
@@ -89,14 +89,14 @@ void Texture::Render(SDL_Renderer& renderer, Vector2 position, float rotation, V
 	const Vector2 renderPosition = Camera::WorldToScreen(position);
 
 	SDL_Rect destRect{};
-	destRect.w = sourceDimensions.X;
-	destRect.h = sourceDimensions.Y;
-	destRect.x = (int)(renderPosition.X) - (destRect.w / 2.0f);
+	destRect.w = (int)sourceDimensions.X;
+	destRect.h = (int)sourceDimensions.Y;
+	destRect.x = (int)(renderPosition.X) - (destRect.w / 2);
 	destRect.y = (int)(renderPosition.Y) - (destRect.h / 2);
 	
 	SDL_Rect srcRect{};
-	srcRect.w = sourceDimensions.X;
-	srcRect.h = sourceDimensions.Y;
+	srcRect.w = (int)sourceDimensions.X;
+	srcRect.h = (int)sourceDimensions.Y;
 	srcRect.x = (int)(sourcePosition.X) - (srcRect.w / 2);
 	srcRect.y = (int)(sourcePosition.Y) - (srcRect.h / 2);
 

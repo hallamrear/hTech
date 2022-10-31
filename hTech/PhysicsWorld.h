@@ -1,7 +1,7 @@
 #pragma once
 #include "Collision.h"
 
-#define FIXED_TIME_STEP (1.0 / 60.0)
+#define FIXED_TIME_STEP (1.0f / 60.0f)
 #define IMPULSE_ITERATION_COUNT 1
 
 class RigidbodyComponent;
@@ -9,11 +9,11 @@ class RigidbodyComponent;
 class Physics
 {
 	static Physics* mInstance;
-	double mFixedTimestep;
+	float mFixedTimestep;
 	std::vector<RigidbodyComponent*> mRigidbodies;
 	std::vector<CollisionManifold> mManifolds;
 
-	Physics(double fixedTimeStep);
+	Physics(float fixedTimeStep);
 	~Physics();
 	
 	void FixedUpdate();

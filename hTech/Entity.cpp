@@ -4,8 +4,7 @@
 #include "Texture.h"
 #include "TextureCache.h"
 #include "Component_Transform.h"
-
-#include "Camera.h"
+#include "Camera.h" //Included for WorldToScreen when rendering an entity with no components.
 
 Entity::Entity()
 {
@@ -54,7 +53,7 @@ void Entity::Render()
 	if (mComponents.size() <= 1)
 	{
 		Vector2 pos = Camera::WorldToScreen(GetTransform().Position);
-		SDL_Rect rect{ pos.X, pos.Y, 4, 4 };
+		SDL_Rect rect{ (int)pos.X, (int)pos.Y, 4, 4 };
 		SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
 		SDL_RenderDrawRect(&renderer, &rect);
 	}

@@ -6,11 +6,7 @@
 #include "Settings.h"
 #include "Time.h"
 #include "PhysicsWorld.h"
-#include "Camera.h"
-#include <thread>
 #include <iostream>
-#include <iomanip>
-#include <ctime>
 #include "UI.h"
 
 SDL_Renderer* Game::Renderer = nullptr;
@@ -117,7 +113,6 @@ void Game::SetFullscreen(SCREEN_STATE state)
 		SDL_SetWindowFullscreen(mWindow, 0);
 		break;
 	}
-
 
 	int w, h;
 	SDL_GetWindowSize(mWindow, &w, &h);
@@ -234,53 +229,9 @@ bool Game::InitialiseApplicationControls()
 	InputManager::Bind(IM_KEY_CODE::IM_KEY_F1, IM_KEY_STATE::IM_KEY_PRESSED,
 		[this]
 		{
-			Settings::Get()->SetDrawColliders(!Settings::Get()->GetDrawColliders());
-		});
-
-	InputManager::Bind(IM_KEY_CODE::IM_KEY_F2, IM_KEY_STATE::IM_KEY_PRESSED,
-		[this]
-		{
-			Settings::Get()->SetDrawLog(!Settings::Get()->GetDrawLog());
-		});
-
-	InputManager::Bind(IM_KEY_CODE::IM_KEY_F4, IM_KEY_STATE::IM_KEY_PRESSED,
-		[this]
-		{
 			TakeScreenshot("");
 		});
 
-	InputManager::Bind(IM_KEY_CODE::IM_KEY_UP_ARROW, IM_KEY_STATE::IM_KEY_HELD,
-		[this]
-		{
-			Vector2 pos = Camera::GetCameraPosition();
-			pos.Y += 2.5f;
-			Camera::SetCameraPosition(pos);
-		});
-
-	InputManager::Bind(IM_KEY_CODE::IM_KEY_DOWN_ARROW, IM_KEY_STATE::IM_KEY_HELD,
-		[this]
-		{
-			Vector2 pos = Camera::GetCameraPosition();
-			pos.Y -= 2.5f;
-			Camera::SetCameraPosition(pos);
-		}); 
-	
-		InputManager::Bind(IM_KEY_CODE::IM_KEY_LEFT_ARROW, IM_KEY_STATE::IM_KEY_HELD,
-		[this]
-		{
-				Vector2 pos = Camera::GetCameraPosition();
-				pos.X -= 2.5f;
-				Camera::SetCameraPosition(pos);
-		});
-
-		InputManager::Bind(IM_KEY_CODE::IM_KEY_RIGHT_ARROW, IM_KEY_STATE::IM_KEY_HELD,
-		[this]
-		{
-				Vector2 pos = Camera::GetCameraPosition();
-				pos.X += 2.5f;
-				Camera::SetCameraPosition(pos);
-		});
-	
 	return true;
 }
 
@@ -322,9 +273,6 @@ void Game::Shutdown()
 	SDL_DestroyRenderer(Game::Renderer);
 	SDL_DestroyWindow(mWindow);
 	SDL_Quit();
-
-	//TODO : Uncomment if returning to SDL_image
-	//IMG_Quit();
 
 	mIsInitialised = false;
 }
@@ -410,7 +358,6 @@ void Game::Update(float DeltaTime)
 	InputManager::Update();
 	Physics::Update(DeltaTime);
 	World::Update(DeltaTime);
-
 	UI::Update(DeltaTime);
 
 	if(Settings::Get()->GetDrawLog())

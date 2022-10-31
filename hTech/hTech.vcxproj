@@ -72,14 +72,14 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <ExternalIncludePath>$(ExternalIncludePath);$(ProjectDir)SDL\include;$(ProjectDir)STB\include</ExternalIncludePath>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)SDL\include;$(ProjectDir)STB\include</IncludePath>
+    <ExternalIncludePath>$(ExternalIncludePath);$(ProjectDir)STB\include;$(ProjectDir)SDL\include</ExternalIncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <ReferencePath>$(ProjectDir)SDL\lib\$(PlatformTarget);$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <ExternalIncludePath>$(ExternalIncludePath);$(ProjectDir)SDL\include;$(ProjectDir)STB\include</ExternalIncludePath>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)SDL\include;$(ProjectDir)STB\include</IncludePath>
+    <ExternalIncludePath>$(ExternalIncludePath);$(ProjectDir)STB\include;$(ProjectDir)SDL\include</ExternalIncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
     <ReferencePath>$(ProjectDir)SDL\lib\$(PlatformTarget);$(ReferencePath)</ReferencePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -285,6 +285,7 @@ xcopy /Y /E /H /C /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
     <ClInclude Include="UI_Element.h" />
     <ClInclude Include="UI_Button.h" />
     <ClInclude Include="Text.h" />
+    <ClInclude Include="UI_TextPanel.h" />
     <ClInclude Include="UI_VariableTracker.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
@@ -345,6 +346,7 @@ xcopy /Y /E /H /C /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
     <ClCompile Include="UI_Element.cpp" />
     <ClCompile Include="UI_Button.cpp" />
     <ClCompile Include="Text.cpp" />
+    <ClCompile Include="UI_TextPanel.cpp" />
     <ClCompile Include="UI_VariableTracker.cpp" />
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="Vector3.cpp" />

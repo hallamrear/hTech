@@ -1,15 +1,9 @@
 #include "pch.h"
 #include "UI.h"
-#include "Camera.h"
-#include "Transform.h"
 #include "UI_Button.h"
 #include "InputManager.h"
-#include "Time.h"
 #include "UI_VariableTracker.h"
-
-#include "Entity.h"
-#include "World.h"
-#include "Component_Animation.h"
+#include "UI_TextPanel.h"
 
 UI* UI::mInstance = nullptr;
 
@@ -27,20 +21,6 @@ UI::UI() : mWindowDimensions(Settings::Get()->GetWindowDimensions())
 			mUIMap[i][j] = nullptr;
 		}
 	}
-
-	auto func = [this]()
-	{
-		Entity* entity = World::CreateEntity()->AddComponent<AnimationComponent>();
-		AnimationComponent* anim = entity->GetComponent<AnimationComponent>();
-		anim->LoadAnimationSheet("Assets/test_animation.png");
-		anim->IsLooping = true;
-		anim->SetDuration(0.25f);
-		anim->SetAnimationFrameCount(10);
-		anim->SetAnimationCount(1);
-	};
-
-	CreateButton_Impl(PanelRect(64, 20, 3, 1, Colour(255, 0, 64, 255), Colour(200, 200, 80, 255)), "Create Entity", func);
-	CreateVariableTracker_Impl<float>(PanelRect(2, 13, 8, 1, Colour(255, 0, 0, 255)), Time::DeltaTime(), "DT: ");
 }
 
 UI::~UI()
@@ -141,7 +121,7 @@ void UI::Render_Impl(SDL_Renderer& renderer)
 
 void UI::CreateExamplePanel_Impl(PanelRect panel, std::string string)
 {
-	AddUIElementToScreenMap(new ExampleUIPanel(panel, string), panel);
+	AddUIElementToScreenMap(new UI_TextPanel(panel, string), panel);
 }
 
 bool UI::OnMouseClick_Impl()

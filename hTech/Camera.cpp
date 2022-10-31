@@ -1,14 +1,45 @@
 #include "pch.h"
 #include "Camera.h"
 #include "UI.h"
+#include "InputManager.h"
 
 //Camera* Camera::mInstance = nullptr;
 
 Camera::Camera()
 {
 	mPosition = Vector2();
-	//UI::CreateVariableTracker<float>(PanelRect(40, 2, 5, 1), mPosition.X, "Camera X: ");
-	//UI::CreateVariableTracker<float>(PanelRect(40, 4, 5, 1), mPosition.Y, "Camera Y: ");
+
+	InputManager::Bind(IM_KEY_CODE::IM_KEY_UP_ARROW, IM_KEY_STATE::IM_KEY_HELD,
+		[this]
+		{
+			Vector2 pos = Camera::GetCameraPosition();
+			pos.Y += 2.5f;
+			Camera::SetCameraPosition(pos);
+		});
+
+	InputManager::Bind(IM_KEY_CODE::IM_KEY_DOWN_ARROW, IM_KEY_STATE::IM_KEY_HELD,
+		[this]
+		{
+			Vector2 pos = Camera::GetCameraPosition();
+			pos.Y -= 2.5f;
+			Camera::SetCameraPosition(pos);
+		});
+
+	InputManager::Bind(IM_KEY_CODE::IM_KEY_LEFT_ARROW, IM_KEY_STATE::IM_KEY_HELD,
+		[this]
+		{
+			Vector2 pos = Camera::GetCameraPosition();
+			pos.X -= 2.5f;
+			Camera::SetCameraPosition(pos);
+		});
+
+	InputManager::Bind(IM_KEY_CODE::IM_KEY_RIGHT_ARROW, IM_KEY_STATE::IM_KEY_HELD,
+		[this]
+		{
+			Vector2 pos = Camera::GetCameraPosition();
+			pos.X += 2.5f;
+			Camera::SetCameraPosition(pos);
+		});
 }
 
 Camera::~Camera()

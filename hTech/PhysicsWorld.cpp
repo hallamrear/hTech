@@ -4,7 +4,7 @@
 
 Physics* Physics::mInstance = nullptr;
 
-Physics::Physics(double fixedTimeStep)
+Physics::Physics(float fixedTimeStep)
 {
 	mFixedTimestep = fixedTimeStep;
 }
@@ -56,7 +56,7 @@ void Physics::FixedUpdate()
 	size_t manifoldCount = mManifolds.size();
 	CollisionManifold* currentManifold = nullptr;
 
-	for (int i = 0; i < manifoldCount; i++)
+	for (size_t i = 0; i < manifoldCount; i++)
 	{
 		currentManifold = &mManifolds[i];
 

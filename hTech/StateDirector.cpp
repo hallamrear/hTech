@@ -5,7 +5,6 @@
 
 #include "StateDirector.h"
 
-//todo : put singleton back
 //StateDirector* StateDirector::mInstance = nullptr;
 
 [[deprecated("Use World instead")]]
@@ -43,7 +42,6 @@ void StateDirector::SetState_Impl(const GameStateIdentifier state)
 	if (itr == mDirectorStates.end())
 	{
 		mCurrentState = nullptr;
-		//todo : fix
 		//assert(itr != mDirectorStates.end());
 		return;
 	}
@@ -61,7 +59,6 @@ void StateDirector::SetState(const GameStateIdentifier state)
 [[deprecated("Use World instead")]]
 StateDirector* StateDirector::Get()
 {
-	//todo : put singleton back
 	//if (!mInstance)
 	//	mInstance = new StateDirector();
 

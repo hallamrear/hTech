@@ -4,7 +4,7 @@
 
 class Camera;
 class Transform;
-struct PanelRect;
+class PanelRect;
 
 class UI
 {
