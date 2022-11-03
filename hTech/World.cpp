@@ -8,6 +8,7 @@
 #include "Component_Rigidbody.h"
 #include "Component_Sprite.h"
 #include "Component_Animation.h"
+#include "Component_ParticleGen.h"
 
 World* World::mInstance = nullptr;
 
@@ -97,6 +98,15 @@ World::World()
             Entity* entity = CreateEntity_Impl();
             entity->GetTransform().Position = InputManager::Get()->GetMouseWorldPosition();
         });
+
+    Entity* entity = nullptr;
+    entity = CreateEntity_Impl()->AddComponent<ParticleSystemComponent>();
+    ParticleSystemComponent* component = entity->GetComponent<ParticleSystemComponent>();
+    ParticleGenDetails details;
+    details.colour = Colour(255, 0, 255, 255);
+    details.duration = 5.0F;
+    component->SetDetails(details);
+    component->Play();
 }
 
 World::~World()
