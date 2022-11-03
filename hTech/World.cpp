@@ -107,7 +107,9 @@ World::World()
     ParticleSystemComponent* component = entity->GetComponent<ParticleSystemComponent>();
     ParticleGenDetails details;
     details.colour = Colour(rand() % 255, rand() % 255, rand() % 255, 255);
-    details.duration = 1.85f;
+    details.width = 8;
+    details.height = 3;
+    details.duration = 0.9f;
     component->SetDetails(details);
     component->Play();
 

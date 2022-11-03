@@ -33,6 +33,7 @@ void BoundingBox::Render(SDL_Renderer& renderer)
 	{
 		SDL_Rect r{};
 		Vector2 position = Camera::WorldToScreen(Vector2(mTransform.Position.X - (Size.X / 2), mTransform.Position.Y + (Size.Y / 2)));
+		position = Camera::WorldToScreen(mTransform.Position);
 		r.x = (int)position.X;
 		r.y = (int)position.Y;
 		r.w = (int)(Size.X);

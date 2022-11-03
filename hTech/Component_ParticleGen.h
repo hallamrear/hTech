@@ -9,7 +9,7 @@ class Colour;
 
 struct ParticleGenDetails
 {
-    unsigned int duration = 0.0f;
+    float duration = 0.0f;
     unsigned int weight = 1;
     Colour colour = Colour(255, 255, 255, 255);
     bool looping = true;
