@@ -112,6 +112,14 @@ void RigidbodyComponent::DestroyCollider()
 	}
 }
 
+void RigidbodyComponent::Reset()
+{
+	mVelocity = Vector2(0.0f, 0.0f);
+	mAcceleration = Vector2(0.0f, 0.0f);
+	mNetForce = Vector2(0.0f, 0.0f);
+	mExternalForce = Vector2(0.0f, 0.0f);
+}
+
 void RigidbodyComponent::SetCollider(COLLIDER_TYPE type)
 {
 	if (mCollider != nullptr)
@@ -126,7 +134,7 @@ void RigidbodyComponent::SetCollider(COLLIDER_TYPE type)
 	{
 	default:
 	case COLLIDER_TYPE::COLLIDER_UNKNOWN:
-		--mCollider = nullptr;
+		mCollider = nullptr;
 		break;
 	case COLLIDER_TYPE::COLLIDER_AABB:
 		mCollider = new BoundingBox(Parent.GetTransform(), 64, 64);

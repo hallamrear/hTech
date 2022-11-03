@@ -10,6 +10,9 @@
 #include "Component_Animation.h"
 #include "Component_ParticleGen.h"
 
+#include "UI.h"
+#include "Time.h"
+
 World* World::mInstance = nullptr;
 
 Entity* World::CreateEntity_Impl()
@@ -103,10 +106,12 @@ World::World()
     entity = CreateEntity_Impl()->AddComponent<ParticleSystemComponent>();
     ParticleSystemComponent* component = entity->GetComponent<ParticleSystemComponent>();
     ParticleGenDetails details;
-    details.colour = Colour(255, 0, 255, 255);
-    details.duration = 5.0F;
+    details.colour = Colour(rand() % 255, rand() % 255, rand() % 255, 255);
+    details.duration = 1.85f;
     component->SetDetails(details);
     component->Play();
+
+    UI::CreateVariableTracker(PanelRect(0, 0, 8, 1), Time::DeltaTime(), "DT : ");
 }
 
 World::~World()

@@ -3,7 +3,7 @@
 #include "Colour.h"
 #include "Particle.h"
 
-#define PARTICLE_COUNT 2
+#define PARTICLE_COUNT 50
 
 class Colour;
 
@@ -27,7 +27,7 @@ class ParticleSystemComponent :
     public Component
 {
 private:
-    Particle mParticles[500];
+    Particle* mParticles[PARTICLE_COUNT];
     std::vector<Particle*> mLivingParticles;
     std::vector<Particle*> mDeadParticles;
 

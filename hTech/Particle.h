@@ -2,15 +2,17 @@
 #include "Entity.h"
 
 struct ParticleGenDetails;
+class ParticleSystemComponent;
 
 class Particle :
     public Entity
 {
 private:
     float mLifespan;
+    ParticleSystemComponent& mEmitter;
 
 public:
-    Particle();
+    Particle(ParticleSystemComponent& emitter);
     ~Particle();
 
     void Reset();

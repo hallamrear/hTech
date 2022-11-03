@@ -6,11 +6,20 @@ ParticleSystemComponent::ParticleSystemComponent(Entity& entity, ParticleGenDeta
 {
 	mParticleSystemDetails = details;
 	mIsRunning = details.playOnStart;
+
+	for (size_t i = 0; i < PARTICLE_COUNT; i++)
+	{
+		mParticles[i] = new Particle(*this);
+	}
 }
 
 ParticleSystemComponent::~ParticleSystemComponent()
 {
-
+	for (size_t i = 0; i < PARTICLE_COUNT; i++)
+	{
+		delete mParticles[i];
+		mParticles[i] = nullptr;
+	}
 }
 
 void ParticleSystemComponent::SetDetails(ParticleGenDetails details)
@@ -30,9 +39,16 @@ void ParticleSystemComponent::Update(float deltaTime)
 	{
 		for (size_t i = 0; i < PARTICLE_COUNT; i++)
 		{
-			if (mParticles[i].GetIsAlive())
+			if (mParticles[i]->GetIsAlive())
 			{
-				mParticles->Update(deltaTime, mParticleSystemDetails);
+				mParticles[i]->Update(deltaTime, mParticleSystemDetails);
+			}
+			else
+			{
+				if (mParticleSystemDetails.looping == true)
+				{
+					mParticles[i]->Reset();
+				}
 			}
 		}
 	}
@@ -44,9 +60,9 @@ void ParticleSystemComponent::Render(SDL_Renderer& renderer)
 	{
 		for (size_t i = 0; i < PARTICLE_COUNT; i++)
 		{
-			if (mParticles[i].GetIsAlive())
-			{
-				mParticles->Render(renderer, mParticleSystemDetails);
+			if (mParticles[i]->GetIsAlive())
+			{				 
+				mParticles[i]->Render(renderer, mParticleSystemDetails);
 			}
 		}
 	}
@@ -57,7 +73,7 @@ void ParticleSystemComponent::Play()
 	mIsRunning = true;
 	for (size_t i = 0; i < PARTICLE_COUNT; i++)
 	{
-		mParticles->Reset();
+		mParticles[i]->Reset();
 	}
 }
 

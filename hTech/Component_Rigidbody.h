@@ -39,6 +39,7 @@ public:
 	virtual void	PhysicsUpdate(float DeltaTime);
 
 	void DestroyCollider();
+	void Reset();
 
 	Vector2 const	GetVelocity()		const { return mVelocity; }
 	Vector2 const	GetAcceleration()	const { return mAcceleration; }
