@@ -3,6 +3,7 @@
 
 struct ParticleGenDetails;
 class ParticleSystemComponent;
+class BoundingBox;
 
 class Particle :
     public Entity
@@ -10,6 +11,7 @@ class Particle :
 private:
     float mLifespan;
     ParticleSystemComponent& mEmitter;
+    BoundingBox* mCollider;
 
 public:
     Particle(ParticleSystemComponent& emitter);

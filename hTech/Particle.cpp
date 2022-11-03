@@ -3,7 +3,7 @@
 #include "Camera.h"
 #include "Component_ParticleGen.h"
 #include "Component_Rigidbody.h"
-#include "Collision.h"
+#include "BoundingBox.h"
 
 Particle::Particle(ParticleSystemComponent& emitter) : mEmitter(emitter)
 {
@@ -12,6 +12,7 @@ Particle::Particle(ParticleSystemComponent& emitter) : mEmitter(emitter)
 	RigidbodyComponent* component = GetComponent<RigidbodyComponent>();
 	component->SetCollider(COLLIDER_TYPE::COLLIDER_AABB);
 	component->GetCollider()->IsOverlap = true;
+	mCollider = (BoundingBox*)GetComponent<RigidbodyComponent>()->GetCollider();
 }
 
 Particle::~Particle()
@@ -28,7 +29,7 @@ void Particle::Reset()
 
 	Vector2 dir;
 	dir.X = rand() % 16 - 8;
-	dir.Y = rand() % 16 - 8;
+	dir.Y = rand() % 25 - 8;
 	GetComponent<RigidbodyComponent>()->AddVelocity(dir);
 }
 
@@ -36,14 +37,16 @@ void Particle::Render(SDL_Renderer& renderer, const ParticleGenDetails& details)
 {
 	if (mIsAlive)
 	{
-		GetComponent<RigidbodyComponent>()->GetCollider()->Render(renderer);
-
 		Vector2 screenPos = Camera::WorldToScreen(GetTransform().Position);
 		SDL_Rect rect{ (int)screenPos.X, (int)screenPos.Y, details.width, details.height };
 		SDL_SetRenderDrawColor(&renderer, details.colour.R, details.colour.G, details.colour.B, details.colour.A);
-		SDL_SetRenderDrawColor(&renderer, rand() % 255, rand() % 255, rand() % 255, details.colour.A);
-		
 		SDL_RenderDrawRect(&renderer, &rect);
+
+		if (mCollider != nullptr)
+		{
+			mCollider->Size = Vector2(details.width, details.height);
+			mCollider->Render(renderer);
+		}
 	}
 }
 
@@ -51,6 +54,11 @@ void Particle::Update(float deltaTime, const ParticleGenDetails& details)
 {
 	if (mIsAlive)
 	{
+		if (mCollider != nullptr)
+		{
+			mCollider->Update(deltaTime);
+		}
+
 		mLifespan += deltaTime;
 
 		if (mLifespan > details.duration)
