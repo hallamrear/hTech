@@ -3,7 +3,7 @@
 #include "Colour.h"
 #include "Text.h"
 
-UI_Button::UI_Button(PanelRect rect, std::string text, std::function<void()> func) : UI_Element(rect)
+UI_Button::UI_Button(UI_Panel rect, std::string text, std::function<void()> func) : UI_Element(rect)
 {
 	mWasPressedLastFrame = false;
 	mIsPressed = false;
@@ -11,6 +11,7 @@ UI_Button::UI_Button(PanelRect rect, std::string text, std::function<void()> fun
 
 	Vector2 screenPos;
 	mText = new Text(screenPos, text, rect.TextColour);
+	mText->SetWrapWidthInPixels(mPanel.W * UI_TILE_SIZE);
 	screenPos.X = mPanel.X * UI_TILE_SIZE + (mText->GetTextureSize().X / 2);
 	screenPos.Y = mPanel.Y * UI_TILE_SIZE - (mText->GetTextureSize().Y / 2);
 	mText->SetPosition(screenPos);

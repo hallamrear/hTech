@@ -4,7 +4,7 @@
 #include "Text.h"
 #include "Camera.h"
 
-UI_Element::UI_Element(PanelRect rect)
+UI_Element::UI_Element(UI_Panel rect)
 {
 	mPanel = rect;
 	mText = nullptr;

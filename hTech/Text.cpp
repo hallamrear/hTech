@@ -15,9 +15,7 @@ bool Text::CreateTTFFontAsset(const int& fontSize, const std::string& fontLocati
 
 	mFont = TTF_OpenFont(fontLocation.c_str(), (int)fontSize);
 	if (!mFont)
-	{
-		
-		
+	{		
 		std::string str = TTF_GetError();
 		Log::LogMessage(LogLevel::LOG_ERROR, "FAILED TO LOAD FONT");
 		Log::LogMessage(LogLevel::LOG_ERROR, TTF_GetError());
@@ -57,7 +55,7 @@ void Text::CreateTextTexture()
 		SDL_Surface* textSurface = nullptr;
 		SDL_Color color = { mColour.R, mColour.G, mColour.B, mColour.A };
 
-		textSurface = TTF_RenderText_Solid(mFont, mData.c_str(), color);
+		textSurface = TTF_RenderUTF8_Blended_Wrapped(mFont, mData.c_str(), color, mWrapWidth);
 
 		if (!textSurface)
 		{
@@ -125,6 +123,11 @@ void Text::Render(SDL_Renderer& renderer)
 		destRect.h = mTextHeight;
 		SDL_RenderCopy(&renderer, mTextTexture, NULL, &destRect);
 	}
+}
+
+void Text::SetWrapWidthInPixels(int width)
+{
+	mWrapWidth = width;
 }
 
 void Text::SetPosition(const Vector2& screenSpacePosition)
