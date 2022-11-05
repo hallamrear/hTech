@@ -21,6 +21,8 @@ UI::UI() : mWindowDimensions(Settings::Get()->GetWindowDimensions())
 			mUIMap[i][j] = nullptr;
 		}
 	}
+
+	mFocusedObject = nullptr;
 }
 
 UI::~UI()
@@ -132,7 +134,14 @@ bool UI::OnMouseClick_Impl()
 
 	if (mUIMap[clickPosX][clickPosY] != nullptr)
 	{
-		mUIMap[clickPosX][clickPosY]->OnClick();
+		if (mFocusedObject != nullptr)
+		{
+			mFocusedObject->SetInFocus(false);
+		}
+
+		mFocusedObject = mUIMap[clickPosX][clickPosY];
+		mFocusedObject->SetInFocus(true);
+		mFocusedObject->OnClick();
 		return true;
 	}
 

@@ -13,8 +13,8 @@ private:
 	unsigned int mUIGridColumnCount;
 	unsigned int mUIGridRowCount;
 	std::vector<UI_Element*> mUIElements;
-
 	UI_Element*** mUIMap;
+	UI_Element* mFocusedObject;
 
 	static UI* mInstance;
 	const Vector2& mWindowDimensions;

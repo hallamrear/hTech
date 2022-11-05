@@ -10,6 +10,7 @@ class UI_Element
 protected:
 	PanelRect mPanel;
 	Text* mText;
+	bool mInFocus;
 
 	UI_Element(PanelRect rect);
 	virtual ~UI_Element() = 0;
@@ -20,4 +21,7 @@ public:
 	virtual void Update(float DeltaTime);
 	virtual void Render(SDL_Renderer& renderer);
 	virtual void OnClick();
+
+	bool GetInFocus() const;
+	void SetInFocus(bool state);
 };

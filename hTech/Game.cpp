@@ -232,6 +232,9 @@ bool Game::InitialiseApplicationControls()
 			TakeScreenshot("");
 		});
 
+	UI::CreateExamplePanel(PanelRect(3, 3, 3, 3, Colour(25, 12, 255, 255), Colour(0, 255, 0, 255)), "Example 1");
+	UI::CreateExamplePanel(PanelRect(7, 7, 3, 3, Colour(25, 12, 255, 255), Colour(0, 255, 0, 255)), "Example 2");
+
 	return true;
 }
 
