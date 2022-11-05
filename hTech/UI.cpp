@@ -57,9 +57,11 @@ bool UI::OnMouseClick()
 	return Get()->OnMouseClick_Impl();
 }
 
-void UI::CreateButton_Impl(UI_Panel panel, std::string text, std::function<void()> function)
+UI_Button* UI::CreateButton_Impl(UI_Panel panel, std::string text, std::function<void()> function)
 {
-	AddUIElementToScreenMap(new UI_Button(panel, text, function), panel);
+	UI_Button* button = new UI_Button(panel, text, function);
+	AddUIElementToScreenMap(button, panel);
+	return button;
 }
 
 void UI::AddUIElementToScreenMap(UI_Element* element, UI_Panel panel)
@@ -78,14 +80,14 @@ void UI::AddUIElementToScreenMap(UI_Element* element, UI_Panel panel)
 	}
 }
 
-void UI::CreateButton(UI_Panel panel, std::string text, std::function<void()> function)
+UI_Button* UI::CreateButton(UI_Panel panel, std::string text, std::function<void()> function)
 {
-	Get()->CreateButton_Impl(panel, text, function);
+	return Get()->CreateButton_Impl(panel, text, function);
 }
 
-void UI::CreateExamplePanel(UI_Panel panel, std::string string)
+UI_TextPanel* UI::CreateTextPanel(UI_Panel panel, std::string string)
 {
-	Get()->CreateExamplePanel_Impl(panel, string);
+	return Get()->CreateTextPanel_Impl(panel, string);
 }
 
 void UI::Update_Impl(float DeltaTime)
@@ -121,9 +123,11 @@ void UI::Render_Impl(SDL_Renderer& renderer)
 	}
 }
 
-void UI::CreateExamplePanel_Impl(UI_Panel panel, std::string string)
+UI_TextPanel* UI::CreateTextPanel_Impl(UI_Panel panel, std::string string)
 {
-	AddUIElementToScreenMap(new UI_TextPanel(panel, string), panel);
+	UI_TextPanel* text = new UI_TextPanel(panel, string);
+	AddUIElementToScreenMap(text, panel);
+	return text;
 }
 
 bool UI::OnMouseClick_Impl()
