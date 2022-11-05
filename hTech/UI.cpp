@@ -21,6 +21,8 @@ UI::UI() : mWindowDimensions(Settings::Get()->GetWindowDimensions())
 			mUIMap[i][j] = nullptr;
 		}
 	}
+
+	mFocusedObject = nullptr;
 }
 
 UI::~UI()
@@ -55,12 +57,12 @@ bool UI::OnMouseClick()
 	return Get()->OnMouseClick_Impl();
 }
 
-void UI::CreateButton_Impl(PanelRect panel, std::string text, std::function<void()> function)
+void UI::CreateButton_Impl(UI_Panel panel, std::string text, std::function<void()> function)
 {
 	AddUIElementToScreenMap(new UI_Button(panel, text, function), panel);
 }
 
-void UI::AddUIElementToScreenMap(UI_Element* element, PanelRect panel)
+void UI::AddUIElementToScreenMap(UI_Element* element, UI_Panel panel)
 {
 	if (element != nullptr)
 	{
@@ -76,12 +78,12 @@ void UI::AddUIElementToScreenMap(UI_Element* element, PanelRect panel)
 	}
 }
 
-void UI::CreateButton(PanelRect panel, std::string text, std::function<void()> function)
+void UI::CreateButton(UI_Panel panel, std::string text, std::function<void()> function)
 {
 	Get()->CreateButton_Impl(panel, text, function);
 }
 
-void UI::CreateExamplePanel(PanelRect panel, std::string string)
+void UI::CreateExamplePanel(UI_Panel panel, std::string string)
 {
 	Get()->CreateExamplePanel_Impl(panel, string);
 }
@@ -119,7 +121,7 @@ void UI::Render_Impl(SDL_Renderer& renderer)
 	}
 }
 
-void UI::CreateExamplePanel_Impl(PanelRect panel, std::string string)
+void UI::CreateExamplePanel_Impl(UI_Panel panel, std::string string)
 {
 	AddUIElementToScreenMap(new UI_TextPanel(panel, string), panel);
 }
@@ -132,7 +134,14 @@ bool UI::OnMouseClick_Impl()
 
 	if (mUIMap[clickPosX][clickPosY] != nullptr)
 	{
-		mUIMap[clickPosX][clickPosY]->OnClick();
+		if (mFocusedObject != nullptr)
+		{
+			mFocusedObject->SetInFocus(false);
+		}
+
+		mFocusedObject = mUIMap[clickPosX][clickPosY];
+		mFocusedObject->SetInFocus(true);
+		mFocusedObject->OnClick();
 		return true;
 	}
 

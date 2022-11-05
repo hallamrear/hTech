@@ -1,7 +1,7 @@
 #pragma once
 #include "Colour.h"
 
-class PanelRect
+class UI_Panel
 {
 public:
 	unsigned short X = 0;
@@ -11,6 +11,6 @@ public:
 	Colour BackgroundColour = Colour(255, 255, 255, 255);
 	Colour TextColour = Colour(0, 0, 0, 255);
 
-	PanelRect();
-	PanelRect(unsigned short posX, unsigned short posY, unsigned short width, unsigned short height, Colour textColour = Colour(0, 0, 0, 255), Colour bgColour = Colour(255, 255, 255, 255));
+	UI_Panel();
+	UI_Panel(unsigned short posX, unsigned short posY, unsigned short width, unsigned short height, Colour textColour = Colour(0, 0, 0, 255), Colour bgColour = Colour(255, 255, 255, 255));
 };

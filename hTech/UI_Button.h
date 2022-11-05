@@ -10,7 +10,7 @@ private:
 	std::function<void()> mFunction;
 
 public:
-	UI_Button(PanelRect rect, std::string text, std::function<void()> func);
+	UI_Button(UI_Panel rect, std::string text, std::function<void()> func);
 	~UI_Button();
 
 	void Update(float DeltaTime);

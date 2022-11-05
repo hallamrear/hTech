@@ -4,10 +4,11 @@
 #include "Text.h"
 #include "Camera.h"
 
-UI_Element::UI_Element(PanelRect rect)
+UI_Element::UI_Element(UI_Panel rect)
 {
 	mPanel = rect;
 	mText = nullptr;
+	mInFocus = false;
 }
 
 UI_Element::~UI_Element()
@@ -35,6 +36,11 @@ void UI_Element::DrawPanel(SDL_Renderer& renderer, Colour color, bool drawFilled
 		SDL_RenderDrawRect(&renderer, &panel);
 	}
 
+	if (mInFocus)
+	{
+		SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
+		SDL_RenderDrawRect(&renderer, &panel);
+	}
 }
 
 void UI_Element::Update(float DeltaTime)
@@ -50,4 +56,14 @@ void UI_Element::Render(SDL_Renderer& renderer)
 void UI_Element::OnClick()
 {
 
+}
+
+void UI_Element::SetInFocus(bool state)
+{
+	mInFocus = state;
+}
+
+bool UI_Element::GetInFocus() const
+{
+	return mInFocus;
 }

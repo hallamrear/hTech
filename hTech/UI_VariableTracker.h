@@ -11,7 +11,7 @@ private:
     std::string mAdditionalText;
 
 public:
-    UI_VariableTracker(PanelRect rect, const R& reference, std::string additionalText);
+    UI_VariableTracker(UI_Panel rect, const R& reference, std::string additionalText);
     ~UI_VariableTracker();
 
     void Update(float DeltaTime);
@@ -19,12 +19,13 @@ public:
 };
 
 template<class R>
-inline UI_VariableTracker<R>::UI_VariableTracker(PanelRect rect, const R& variable, std::string additionalText)
+inline UI_VariableTracker<R>::UI_VariableTracker(UI_Panel rect, const R& variable, std::string additionalText)
 	: UI_Element(rect), mReference(variable)
 {
 	mAdditionalText = additionalText;
 	Vector2 screenPos;
 	mText = new Text(screenPos, "", rect.TextColour);
+	mText->SetWrapWidthInPixels(mPanel.W * UI_TILE_SIZE);
 	screenPos.X = mPanel.X * UI_TILE_SIZE + (mText->GetTextureSize().X / 2);
 	screenPos.Y = mPanel.Y * UI_TILE_SIZE - (mText->GetTextureSize().Y / 2);
 	mText->SetPosition(screenPos);

@@ -132,7 +132,7 @@
     <ClInclude Include="UI_VariableTracker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="UI_PanelRect.h">
+    <ClInclude Include="UI_Panel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="UI_TextPanel.h">
@@ -251,7 +251,7 @@
     <ClCompile Include="UI_VariableTracker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UI_PanelRect.cpp">
+    <ClCompile Include="UI_Panel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UI_TextPanel.cpp">
