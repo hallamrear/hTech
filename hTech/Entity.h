@@ -13,6 +13,7 @@ class Entity
 private:
 
 protected:
+	std::string				mName;
 	std::vector<Component*> mComponents;
 
 	bool					mIsWaitingToBeDestroyed;
@@ -20,11 +21,10 @@ protected:
 	void					ClampRotation();
 
 public:
-	std::string				Name;
+	const std::string&      GetName();
 	bool					IsEnabled;
 
-	Entity();
-
+							Entity(std::string name);
 	virtual					~Entity();
 
 	virtual void			Update(float DeltaTime);

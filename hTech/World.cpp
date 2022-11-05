@@ -5,15 +5,12 @@
 #include "InputManager.h"
 #include "Text.h"
 #include "Camera.h"
-#include "Component_Rigidbody.h"
-#include "Component_Sprite.h"
-#include "Component_Animation.h"
 
 World* World::mInstance = nullptr;
 
-Entity* World::CreateEntity_Impl()
+Entity* World::CreateEntity_Impl(std::string name)
 {
-    Entity* entity = new Entity();
+    Entity* entity = new Entity(name);
     mEntityList.push_back(entity);
     return entity;
 }
@@ -85,6 +82,22 @@ void World::Render_Impl(SDL_Renderer& renderer)
     }
 }
 
+Entity* World::GetEntityByName_Impl(std::string name)
+{
+    Entity* entity = nullptr;
+
+    for (size_t i = 0; i < mEntityList.size(); i++)
+    {
+        if (mEntityList[i]->GetName() == name)
+        {
+            entity = mEntityList[i];
+            break;
+        }
+    }
+
+    return entity;
+}
+
 World::World()
 {
     Settings::Get()->SetDrawColliders(true);
@@ -117,7 +130,7 @@ World* World::Get()
     return mInstance;
 }
 
-Entity* World::CreateEntity()
+Entity* World::CreateEntity(std::string name)
 {
     return Get()->CreateEntity_Impl();
 }
@@ -125,6 +138,11 @@ Entity* World::CreateEntity()
 void World::DestroyEntity(Entity* entity)
 {
     Get()->DestroyEntity_Impl(entity);
+}
+
+Entity* World::GetEntityByName(std::string name)
+{
+    return Get()->GetEntityByName_Impl(name);
 }
 
 void World::Update(float DeltaTime)

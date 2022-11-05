@@ -6,13 +6,13 @@
 #include "Component_Transform.h"
 #include "Camera.h" //Included for WorldToScreen when rendering an entity with no components.
 
-Entity::Entity()
+Entity::Entity(std::string name)
 {
 	IsEnabled = true;
 	mComponents = std::vector<Component*>();
 	AddComponent<TransformComponent>();
 	mIsWaitingToBeDestroyed = false;
-	Name = "unnamed";
+	mName = name;
 	mIsAlive = true;
 }
 
@@ -77,4 +77,9 @@ Transform& Entity::GetTransform()
 void Entity::ClampRotation()
 {
 	GetTransform().Rotation = fmod(GetTransform().Rotation, 360.0f);
+}
+
+const std::string& Entity::GetName()
+{
+	return mName;
 }
