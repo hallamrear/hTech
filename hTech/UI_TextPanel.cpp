@@ -6,7 +6,7 @@ UI_TextPanel::UI_TextPanel(UI_Panel rect, std::string string) : UI_Element(rect)
 {
 	float size = UI_TILE_SIZE;
 	Vector2 screenPos;
-	mText = new Text(screenPos, string, Colour(0, 0, 0, 255));
+	mText = new Text(screenPos, string, mPanel.TextColour);
 	mText->SetWrapWidthInPixels(mPanel.W * UI_TILE_SIZE);
 	screenPos.X = mPanel.X * UI_TILE_SIZE + (mText->GetTextureSize().X / 2);
 	screenPos.Y = mPanel.Y * UI_TILE_SIZE - (mText->GetTextureSize().Y / 2);
