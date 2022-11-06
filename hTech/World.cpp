@@ -132,7 +132,7 @@ World* World::Get()
 
 Entity* World::CreateEntity(std::string name)
 {
-    return Get()->CreateEntity_Impl();
+    return Get()->CreateEntity_Impl(name);
 }
 
 void World::DestroyEntity(Entity* entity)
