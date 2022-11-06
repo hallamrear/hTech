@@ -3,8 +3,8 @@
 #include <unordered_map>
 #include <vector>
 
+class Rectangle;
 class Entity;
-class Rectangle_;
 class Text;
 
 namespace std {
@@ -56,7 +56,7 @@ public:
 	~SpatialHash();
 
 	void Clear();
-	void Retrieve(Rectangle_ rect);
+	void Retrieve(class Rectangle rect);
 	void Insert(Entity* entity);
 	void Remove(Entity* entity);
 

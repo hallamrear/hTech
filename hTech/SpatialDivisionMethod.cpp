@@ -1,11 +1,11 @@
 #include "pch.h"
 #include "SpatialDivisionMethod.h"
-#include "Rectangle.h"
 #include "World.h"
 #include "Camera.h"
 #include "Log.h"
 #include "Entity.h"
 #include "Text.h"
+#include "Rectangle.h"
 
 Vector2 SpatialHash::GetIDFromEntity(Entity* entity)
 {
@@ -46,7 +46,7 @@ void SpatialHash::Clear()
 	}
 }
 
-void SpatialHash::Retrieve(Rectangle_ rect)
+void SpatialHash::Retrieve(class Rectangle rect)
 {
 
 }

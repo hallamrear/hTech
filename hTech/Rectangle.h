@@ -1,6 +1,6 @@
 #pragma once
 
-class Rectangle_
+struct Rectangle
 {
 public:
 	int X = 0;
