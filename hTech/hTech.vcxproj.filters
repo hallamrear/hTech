@@ -138,6 +138,12 @@
     <ClInclude Include="UI_TextPanel.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SpatialDivisionMethod.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rectangle.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -255,6 +261,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="UI_TextPanel.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Rectangle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SpatialDivisionMethod.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -110,13 +110,11 @@ float Vector2::Dot(Vector2 vector) const
 	return ((this->X * vector.X) + (this->Y * vector.Y));
 }
 
-bool Vector2::operator==(const Vector2& rhs)
+bool Vector2::operator==(const Vector2& rhs) const
 {
-	if ((this->X == rhs.X) && (this->Y == rhs.Y))
-		return true;
-	else
-		return false;
+	return ((this->X == rhs.X) && (this->Y == rhs.Y));
 }
+
 void Vector2::RotatePointAroundOriginRadians(float rotationRad, Vector2 origin)
 {
 	float s = sin(rotationRad);

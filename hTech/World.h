@@ -1,4 +1,9 @@
 #pragma once
+#include "SpatialDivisionMethod.h"
+
+#define WORLD_TILE_SIZE 256
+#define WORLD_TILE_COUNT_X 8
+#define WORLD_TILE_COUNT_Y 5
 
 struct SDL_Renderer;
 class Entity;
@@ -7,10 +12,9 @@ class Text;
 class World
 {
 private:
-	std::vector<SDL_Point> mWorldDebugGridLayoutPoints;
-
 	static World*			mInstance;
 	std::vector<Entity*>	mEntityList;
+	SpatialHash*			mWorldHashMap;
 
 	Entity*					CreateEntity_Impl(std::string name = "unnamed");
 	void					DestroyEntity_Impl(Entity* entity);

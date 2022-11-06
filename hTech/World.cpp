@@ -6,16 +6,18 @@
 #include "Text.h"
 #include "Camera.h"
 
-#define WORLD_TILE_SIZE 256
-#define WORLD_TILE_COUNT_X 8
-#define WORLD_TILE_COUNT_Y 6
-
 World* World::mInstance = nullptr;
 
 Entity* World::CreateEntity_Impl(std::string name)
 {
     Entity* entity = new Entity(name);
     mEntityList.push_back(entity);
+    
+    if (mWorldHashMap)
+    {
+        mWorldHashMap->Insert(entity);
+    }
+
     return entity;
 }
 
@@ -64,6 +66,8 @@ void World::ClearupEntities()
 
 void World::Update_Impl(float DeltaTime)
 {
+    mWorldHashMap->Update(DeltaTime);
+
     for (size_t i = 0; i < mEntityList.size(); i++)
     {
         if (mEntityList[i] != nullptr)
@@ -77,14 +81,7 @@ void World::Update_Impl(float DeltaTime)
 
 void World::Render_Impl(SDL_Renderer& renderer)
 {
-    SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
-    for (auto& itr : mWorldDebugGridLayoutPoints)
-    {
-        Vector2 v = Camera::WorldToScreen(Vector2(itr.x, itr.y));
-        SDL_Rect rect{ v.X, v.Y, WORLD_TILE_SIZE, WORLD_TILE_SIZE };
-        SDL_RenderDrawRect(&renderer, &rect);
-    }
-    //SDL_RenderDrawPoints(&renderer, mWorldDebugGridLayoutPoints.data(), mWorldDebugGridLayoutPoints.size());
+    mWorldHashMap->Render(renderer);
 
     for (size_t i = 0; i < mEntityList.size(); i++)
     {
@@ -113,17 +110,15 @@ Entity* World::GetEntityByName_Impl(std::string name)
 
 World::World()
 {
+    int sizeX = WORLD_TILE_COUNT_X;
+    int sizeY = WORLD_TILE_COUNT_Y;
+    sizeX -= (sizeX % 2);
+    sizeY -= (sizeY% 2);
+
     int halfSizeX = WORLD_TILE_COUNT_X / 2;
     int halfSizeY = WORLD_TILE_COUNT_Y / 2;
 
-    for (int i = -halfSizeX; i < halfSizeX; i++)
-    {
-        for (int j = -halfSizeY; j < halfSizeY; j++)
-        {
-            mWorldDebugGridLayoutPoints.push_back(SDL_Point{ i * WORLD_TILE_SIZE, j * WORLD_TILE_SIZE });
-        }
-    }
-
+    mWorldHashMap = new SpatialHash(sizeX, sizeY);
 
     InputManager::Bind(
         IM_KEY_CODE::IM_KEY_1,
@@ -137,6 +132,12 @@ World::World()
 
 World::~World()
 {
+    if (mWorldHashMap)
+    {
+        delete mWorldHashMap;
+        mWorldHashMap = nullptr;
+    }
+
     for (size_t i = 0; i < mEntityList.size(); i++)
     {
         DestroyEntity_Impl(mEntityList[i]);

@@ -27,7 +27,7 @@ public:
 	Vector2& operator+=(const Vector2& rhs);
 	Vector2& operator-=(const Vector2& rhs);
 	bool operator!=(const Vector2& rhs);
-	bool operator==(const Vector2& rhs);
+	bool operator==(const Vector2& rhs) const;
 
 	void RotatePointAroundOriginRadians(float rotationRad, Vector2 origin);
 	void RotatePointAroundOriginDegrees(float rotationDeg, Vector2 origin);

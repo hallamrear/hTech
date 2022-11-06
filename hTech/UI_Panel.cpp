@@ -5,7 +5,7 @@ UI_Panel::UI_Panel()
 {
 }
 
-UI_Panel::UI_Panel(unsigned short posX, unsigned short posY, unsigned short width, unsigned short height, Colour textColour, Colour bgColour)
+UI_Panel::UI_Panel(int posX, int posY, int width, int height, Colour textColour, Colour bgColour)
 {
 	this->X = posX;
 	this->Y = posY;

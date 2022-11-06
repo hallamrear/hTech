@@ -1,16 +1,17 @@
 #pragma once
+#include "Rectangle.h"
 #include "Colour.h"
 
-class UI_Panel
+class UI_Panel : public Rectangle_
 {
 public:
-	unsigned short X = 0;
-	unsigned short Y = 0;
-	unsigned short W = 1;
-	unsigned short H = 1;
+	int X = 0;
+	int Y = 0;
+	int W = 1;
+	int H = 1;
 	Colour BackgroundColour = Colour(255, 255, 255, 255);
 	Colour TextColour = Colour(0, 0, 0, 255);
 
 	UI_Panel();
-	UI_Panel(unsigned short posX, unsigned short posY, unsigned short width, unsigned short height, Colour textColour = Colour(0, 0, 0, 255), Colour bgColour = Colour(255, 255, 255, 255));
+	UI_Panel(int posX, int posY, int width, int height, Colour textColour = Colour(0, 0, 0, 255), Colour bgColour = Colour(255, 255, 255, 255));
 };
