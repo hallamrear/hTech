@@ -5,7 +5,7 @@ class Text
 {
 private:
 	static TTF_Font* mFont;
-	static bool CreateTTFFontAsset(const int& fontSize = 16.0f, const std::string& fontLocation = "Assets/arial.ttf");
+	static bool CreateTTFFontAsset(const int& fontSize = 14.0f, const std::string& fontLocation = "Assets/arial.ttf");
 	static bool DestroyTTFFontAsset();
 
 	int mWrapWidth = 0;

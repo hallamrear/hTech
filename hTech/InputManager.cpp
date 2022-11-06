@@ -9,8 +9,8 @@
 InputManager::InputManager()
 {
 	mIsMouseDown = false;
-	mMousePositionX = -1;
-	mMousePositionY = -1;
+	mMousePositionScreenSpace = Vector2();
+	mMousePositionWorldSpace = Vector2();
 }
 
 InputManager::~InputManager()
@@ -290,18 +290,19 @@ InputManager* InputManager::Get()
 
 void InputManager::MousePositionUpdate(int x, int y)
 {
-	mMousePositionX = x;
-	mMousePositionY = y;
+	mMousePositionScreenSpace.X = (float)x;
+	mMousePositionScreenSpace.Y = (float)y;
 }
 
-Vector2 InputManager::GetMouseScreenPosition()
+const Vector2& InputManager::GetMouseScreenPosition()
 {
-	return Vector2((float)mMousePositionX, (float)mMousePositionY);
+	return mMousePositionScreenSpace;
 }
 
-Vector2 InputManager::GetMouseWorldPosition()
+const Vector2& InputManager::GetMouseWorldPosition()
 {
-	return Camera::ScreenToWorld(GetMouseScreenPosition());
+	mMousePositionWorldSpace = Camera::ScreenToWorld(mMousePositionScreenSpace);
+	return mMousePositionWorldSpace;
 }
 
 void InputManager::MouseScrollUpdate(IM_SCROLL_DIRECTION direction)
