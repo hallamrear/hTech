@@ -43,6 +43,11 @@ void UI_Element::DrawPanel(SDL_Renderer& renderer, Colour color, bool drawFilled
 	}
 }
 
+UI_Panel& UI_Element::GetPanel()
+{
+	return mPanel;
+}
+
 void UI_Element::Update(float DeltaTime)
 {
 
