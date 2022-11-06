@@ -8,6 +8,7 @@
 #include "PhysicsWorld.h"
 #include <iostream>
 #include "UI.h"
+#include "Editor.h"
 
 SDL_Renderer* Game::Renderer = nullptr;
 
@@ -157,6 +158,7 @@ void Game::TakeScreenshot(std::string name)
 void Game::Initialise(int argc, char* argv[], WindowDetails details)
 {
 	mIsInitialised = (InitialiseSystems(details) && InitialiseApplicationControls());
+
 	if(mIsInitialised == false)
 	{
 		Shutdown();
@@ -362,6 +364,8 @@ void Game::Update(float DeltaTime)
 
 	if(Settings::Get()->GetDrawLog())
 		Log::Update(DeltaTime);
+
+	Editor::Update(DeltaTime);
 }
 
 void Game::Render()
@@ -373,7 +377,10 @@ void Game::Render()
 	UI::Render(*Renderer);
 
 	if (Settings::Get()->GetDrawLog())
-		Log::Render(*Game::Renderer);
+		Log::Render(*Renderer);
+
+
+	Editor::Render(*Renderer);
 
 	SDL_RenderPresent(Game::Renderer);
 }
