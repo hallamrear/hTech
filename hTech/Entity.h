@@ -21,7 +21,7 @@ protected:
 	void					ClampRotation();
 
 public:
-	const std::string&      GetName();
+	const std::string&      GetName() const;
 	bool					IsEnabled;
 
 							Entity(std::string name);

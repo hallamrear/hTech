@@ -79,7 +79,7 @@ void Entity::ClampRotation()
 	GetTransform().Rotation = fmod(GetTransform().Rotation, 360.0f);
 }
 
-const std::string& Entity::GetName()
+const std::string& Entity::GetName() const
 {
 	return mName;
 }
