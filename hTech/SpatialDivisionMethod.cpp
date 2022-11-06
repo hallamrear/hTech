@@ -10,8 +10,8 @@
 Vector2 SpatialHash::GetIDFromEntity(Entity* entity)
 {
 	Vector2 index = entity->GetTransform().Position;
-	index.X = (int)index.X / WORLD_TILE_SIZE;
-	index.Y = (int)index.Y / WORLD_TILE_SIZE;
+	index.X = floorf(index.X / (float)WORLD_TILE_SIZE);
+	index.Y = floorf(index.Y / (float)WORLD_TILE_SIZE);	
 	return index;
 }
 
@@ -22,13 +22,15 @@ SpatialHash::SpatialHash(int sizeX, int sizeY)
 
 	mMap = std::unordered_map<Vector2, HashBucket>();
 
-	for (int i = 0; i < mSizeX; i++)
-	{
-		for (int j = 0; j < mSizeY; j++)
-		{
-			mMap.insert(std::make_pair<Vector2, HashBucket>(Vector2(i - (mSizeX / 2), j - (mSizeY / 2)), HashBucket()));
-		}
-	}
+	//for (int i = 0; i < mSizeX; i++)
+	//{
+	//	for (int j = 0; j < mSizeY; j++)
+	//	{
+	//		mMap.insert(std::make_pair<Vector2, HashBucket>(Vector2(i - (mSizeX / 2), j - (mSizeY / 2)), HashBucket()));
+	//	}
+	//}
+
+	mText = new Text();
 }
 
 SpatialHash::~SpatialHash()
@@ -36,8 +38,17 @@ SpatialHash::~SpatialHash()
 	mMap.clear();
 }
 
+void SpatialHash::Clear()
+{
+	for (auto& itr : mMap)
+	{
+		itr.second.Clear();
+	}
+}
+
 void SpatialHash::Retrieve(Rectangle_ rect)
 {
+
 }
 
 void SpatialHash::Insert(Entity* entity)
@@ -51,14 +62,28 @@ void SpatialHash::Insert(Entity* entity)
 	}
 	else
 	{
-		Log::LogMessage(LogLevel::LOG_ERROR, "Error adding an entity to the hash map.");
-		throw;
+		//mMap.insert(std::make_pair<Vector2, HashBucket>(Vector2(i - (mSizeX / 2), j - (mSizeY / 2)), HashBucket()));
+		mMap.insert(std::pair<Vector2, HashBucket>(index, HashBucket()));
+		mMap.find(index)->second.Insert(entity);
+		//Log::LogMessage(LogLevel::LOG_ERROR, "Error adding an entity to the hash map.");
+		//throw;
 	}
 }
 
 void SpatialHash::Remove(Entity* entity)
 {
+	Vector2 index = GetIDFromEntity(entity);
 
+	std::unordered_map<Vector2, HashBucket>::iterator foundItem = mMap.find(index);
+	if (foundItem != mMap.end())
+	{
+		foundItem->second.Remove(entity);
+	}
+	else
+	{
+		Log::LogMessage(LogLevel::LOG_ERROR, "Error removing an entity to the hash map.");
+		throw;
+	}
 }
 
 void SpatialHash::Update(float deltaTime)
@@ -71,11 +96,30 @@ void SpatialHash::Render(SDL_Renderer& renderer)
 	SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
 	for (const auto& itr : mMap)
 	{
+		Vector2 wPosition = Vector2(itr.first.X * (float)WORLD_TILE_SIZE, (itr.first.Y + 1) * (float)WORLD_TILE_SIZE);
+		Vector2 sPosition = Camera::WorldToScreen(wPosition);
+		SDL_Rect rect;
+		rect.x = sPosition.X;
+		rect.y = sPosition.Y;
+		rect.w = WORLD_TILE_SIZE;
+		rect.h = WORLD_TILE_SIZE;
+		SDL_RenderDrawRect(&renderer, &rect);
+
 		if (itr.second.Count() != 0)
 		{
-			Vector2 position = Camera::WorldToScreen(Vector2(itr.first.X * (float)WORLD_TILE_SIZE, itr.first.Y * (float)WORLD_TILE_SIZE));
-			SDL_Rect rect{ position.X, position.Y , WORLD_TILE_SIZE, WORLD_TILE_SIZE };
-			SDL_RenderDrawRect(&renderer, &rect);
+			Vector2 offset = wPosition + Vector2(WORLD_TILE_SIZE / 2, -WORLD_TILE_SIZE / 2 + (WORLD_TILE_SIZE / 4));
+			mText->SetPosition(Camera::WorldToScreen(offset));
+			mText->SetString(std::to_string(itr.second.Count()));
+			mText->Update(0.0f);
+			mText->Render(renderer);
+
+			std::string str = "";
+			offset = wPosition + Vector2(WORLD_TILE_SIZE / 2, -WORLD_TILE_SIZE / 2 - (WORLD_TILE_SIZE / 4));
+			mText->SetPosition(Camera::WorldToScreen(offset));
+			str = std::to_string((int)itr.first.X) + ", " + std::to_string((int)itr.first.Y);
+			mText->SetString(str);
+			mText->Update(0.0f);
+			mText->Render(renderer);
 		}
 	}
 }
@@ -93,6 +137,11 @@ HashBucket::~HashBucket()
 size_t HashBucket::Count() const
 {
 	return mBucket.size();
+}
+
+void HashBucket::Clear()
+{
+	mBucket.clear();
 }
 
 void HashBucket::Insert(Entity* entity)

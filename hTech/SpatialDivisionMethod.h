@@ -5,6 +5,7 @@
 
 class Entity;
 class Rectangle_;
+class Text;
 
 namespace std {
 	template <>
@@ -35,6 +36,7 @@ public:
 	~HashBucket();
 
 	size_t Count() const;
+	void Clear();
 	void Insert(Entity* entity);
 	void Remove(Entity* entity);
 };
@@ -42,6 +44,8 @@ public:
 class SpatialHash
 {
 private:
+	Text* mText;
+
 	int mSizeX;
 	int mSizeY;
 	std::unordered_map<Vector2, HashBucket> mMap;
@@ -51,6 +55,7 @@ public:
 	SpatialHash(int sizeX, int sizeY);
 	~SpatialHash();
 
+	void Clear();
 	void Retrieve(Rectangle_ rect);
 	void Insert(Entity* entity);
 	void Remove(Entity* entity);

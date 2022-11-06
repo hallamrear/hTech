@@ -5,12 +5,13 @@
 #include "InputManager.h"
 #include "Text.h"
 #include "Camera.h"
+#include "Transform.h"
 
 World* World::mInstance = nullptr;
 
-Entity* World::CreateEntity_Impl(std::string name)
+Entity* World::CreateEntity_Impl(std::string Name, Transform SpawnTransform, Entity* Parent)
 {
-    Entity* entity = new Entity(name);
+    Entity* entity = new Entity(SpawnTransform, Name, Parent);
     mEntityList.push_back(entity);
     
     if (mWorldHashMap)
@@ -66,6 +67,7 @@ void World::ClearupEntities()
 
 void World::Update_Impl(float DeltaTime)
 {
+    mWorldHashMap->Clear();
     mWorldHashMap->Update(DeltaTime);
 
     for (size_t i = 0; i < mEntityList.size(); i++)
@@ -73,6 +75,7 @@ void World::Update_Impl(float DeltaTime)
         if (mEntityList[i] != nullptr)
         {
             mEntityList[i]->Update(DeltaTime);
+            mWorldHashMap->Insert(mEntityList[i]);
         }
     }
 
@@ -125,8 +128,7 @@ World::World()
         IM_KEY_STATE::IM_KEY_PRESSED,
         [this]()
         {
-            Entity* entity = CreateEntity_Impl();
-            entity->GetTransform().Position = InputManager::Get()->GetMouseWorldPosition();
+            Entity* entity = CreateEntity_Impl("Test", Transform(InputManager::Get()->GetMouseWorldPosition()));
         });
 }
 
@@ -154,9 +156,9 @@ World* World::Get()
     return mInstance;
 }
 
-Entity* World::CreateEntity(std::string name)
+Entity* World::CreateEntity(std::string Name, Transform SpawnTransform, Entity* Parent)
 {
-    return Get()->CreateEntity_Impl();
+    return Get()->CreateEntity_Impl(Name, SpawnTransform, Parent);
 }
 
 void World::DestroyEntity(Entity* entity)

@@ -1,9 +1,10 @@
 #pragma once
 #include "SpatialDivisionMethod.h"
+#include "Transform.h"
 
 #define WORLD_TILE_SIZE 256
-#define WORLD_TILE_COUNT_X 8
-#define WORLD_TILE_COUNT_Y 5
+#define WORLD_TILE_COUNT_X 16
+#define WORLD_TILE_COUNT_Y 16
 
 struct SDL_Renderer;
 class Entity;
@@ -16,7 +17,7 @@ private:
 	std::vector<Entity*>	mEntityList;
 	SpatialHash*			mWorldHashMap;
 
-	Entity*					CreateEntity_Impl(std::string name = "unnamed");
+	Entity*					CreateEntity_Impl(std::string Name = "unnamed", Transform SpawnTransform = Transform(), Entity* Parent = nullptr);
 	void					DestroyEntity_Impl(Entity* entity);
 	void					ClearupEntities();
 
@@ -30,7 +31,7 @@ protected:
 	static World*			Get();
 
 public:
-	static Entity*			CreateEntity(std::string name = "unnamed");
+	static Entity*			CreateEntity(std::string Name = "unnamed", Transform SpawnTransform = Transform(), Entity* Parent = nullptr);
 	static void				DestroyEntity(Entity* entity);
 
 	static Entity*			GetEntityByName(std::string name);
