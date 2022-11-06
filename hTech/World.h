@@ -7,6 +7,8 @@ class Text;
 class World
 {
 private:
+	std::vector<SDL_Point> mWorldDebugGridLayoutPoints;
+
 	static World*			mInstance;
 	std::vector<Entity*>	mEntityList;
 
