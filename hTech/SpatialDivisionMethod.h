@@ -3,6 +3,8 @@
 #include <vector>
 #include "Vector2.h"
 
+#define HASH_CLEANUP_COOLDOWN 5.0f
+
 namespace std {
 	template <>
 	struct hash<Vector2>
@@ -30,8 +32,8 @@ class HashBucket;
 class SpatialHash
 {
 private:
+	float mCleanupTimeElapsed = 0.0f;
 	Text* mText;
-
 	int mSizeX;
 	int mSizeY;
 	std::unordered_map<Vector2, HashBucket> mMap;

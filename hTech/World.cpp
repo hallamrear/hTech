@@ -90,53 +90,12 @@ void World::Render_Impl(SDL_Renderer& renderer)
 {
     mWorldHashMap->Render(renderer);
 
-
     for (size_t i = 0; i < mEntityList.size(); i++)
     {
         if (mEntityList[i] != nullptr)
         {
             mEntityList[i]->Render();
         }
-    }
-
-
-    for (size_t i = 0; i < mSelectedEntities.size(); i++)
-    {
-        Vector2 rectTR = Camera::WorldToScreen(mSelectedEntities[i]->GetTransform().Position + Vector2(-32, 32));
-        SDL_Rect rect{};
-        rect.x = rectTR.X;
-        rect.y = rectTR.Y;
-        rect.w = 64;
-        rect.h = 64;
-
-        SDL_RenderDrawRect(&renderer, &rect);
-    }
-
-    Vector2 points[4] =
-    {
-        {(float)selectionRect.X,				   (float)selectionRect.Y},
-        {(float)selectionRect.X + selectionRect.W, (float)selectionRect.Y},
-        {(float)selectionRect.X,				   (float)selectionRect.Y - selectionRect.H},
-        {(float)selectionRect.X + selectionRect.W, (float)selectionRect.Y - selectionRect.H}
-    };
-
-    SDL_SetRenderDrawColor(&renderer, 255, 255, 255, 255);
-    Vector2 r;
-    SDL_Rect c{};
-    for (size_t i = 0; i < 4; i++)
-    {
-        r = Camera::WorldToScreen(points[i]);
-        c.w = 4;
-        c.h = 4;
-        c.x = r.X - (c.w / 2);
-        c.y = r.Y - (c.h / 2);
-        SDL_RenderFillRect(&renderer, &c);
-    }
-
-    if (mIsDraggingRect)
-    {
-        SDL_SetRenderDrawColor(&renderer, 255, 255, 255, 255);
-        selectionRect.Render(renderer);
     }
 }
 
@@ -171,43 +130,17 @@ World::World()
     int halfSizeX = WORLD_TILE_COUNT_X / 2;
     int halfSizeY = WORLD_TILE_COUNT_Y / 2;
 
-    UI::CreateVariableTracker(UI_Panel(1, 2, 6, 1), selectionRect.X, "1 X: ");
-    UI::CreateVariableTracker(UI_Panel(1, 3, 6, 1), selectionRect.Y, "1 Y: ");
-    UI::CreateVariableTracker(UI_Panel(1, 4, 6, 1), selectionRect.W, "1 W: ");
-    UI::CreateVariableTracker(UI_Panel(1, 5, 6, 1), selectionRect.H, "1 H: ");
-
     mWorldHashMap = new SpatialHash(sizeX, sizeY);
-    mSelectedEntities = std::vector<Entity*>();
 
     InputManager::Bind(
-        IM_KEY_CODE::IM_KEY_1,
+        IM_KEY_CODE::IM_KEY_A,
         IM_KEY_STATE::IM_KEY_PRESSED,
         [this]()
         {
             Entity* entity = CreateEntity_Impl("Test", Transform(InputManager::Get()->GetMouseWorldPosition()));
             entity->AddComponent<SpriteComponent>();
             entity->GetComponent<SpriteComponent>()->LoadTexture("Assets/test.png");
-        });
-
-
-    InputManager::Bind(IM_MOUSE_CODE::IM_MOUSE_LEFT_CLICK, IM_KEY_STATE::IM_KEY_PRESSED, [this]()
-        {
-            rectStart = InputManager::Get()->GetMouseWorldPosition();
-            mIsDraggingRect = true;
-        });
-
-    InputManager::Bind(IM_MOUSE_CODE::IM_MOUSE_LEFT_CLICK, IM_KEY_STATE::IM_KEY_HELD, [this]()
-        {
-            Vector2 mousePos = InputManager::Get()->GetMouseWorldPosition();
-            selectionRect = WorldRectangle(rectStart, mousePos);
-        });
-
-    InputManager::Bind(IM_MOUSE_CODE::IM_MOUSE_LEFT_CLICK, IM_KEY_STATE::IM_KEY_RELEASED, [this]()
-        {
-            rectEnd = InputManager::Get()->GetMouseWorldPosition();
-            selectionRect = WorldRectangle(rectStart, rectEnd);       
-            mWorldHashMap->Retrieve(selectionRect, mSelectedEntities);
-        });
+        });   
 }
 
 World::~World()
@@ -262,4 +195,39 @@ void World::Update(float DeltaTime)
 void World::Render(SDL_Renderer& renderer)
 {
     Get()->Render_Impl(renderer);
+}
+
+Entity* World::FindNearestEntityToPosition_Impl(Vector2 WorldPosition)
+{
+    Entity* closestEntity = nullptr;
+    std::vector<Entity*> entities = std::vector<Entity*>();
+    int size = 64.0f;
+    WorldRectangle rect = WorldRectangle(WorldPosition.X - (size / 2), WorldPosition.Y + (size / 2), size, size);
+    float minDistance = FLT_MAX;
+    rect = WorldRectangle(WorldPosition.X - (size / 2), WorldPosition.Y + (size / 2), size, size);
+    mWorldHashMap->Retrieve(rect, entities);
+    
+    for (std::vector<Entity*>::iterator itr = entities.begin(); itr != entities.end(); itr++)
+    {
+        Entity* ent = *itr;
+        Vector2 position = ent->GetTransform().Position;
+
+        Vector2 diff = Vector2(WorldPosition.X - position.X, WorldPosition.Y - position.Y);
+        float mag = diff.GetMagnitude();
+        if (mag < minDistance)
+        {
+            minDistance = mag;
+            closestEntity = *itr;
+        }
+    }
+
+    if (closestEntity)
+        return closestEntity;
+    else
+        return nullptr;
+}
+
+Entity* World::FindNearestEntityToPosition(Vector2 WorldPosition)
+{
+    return Get()->FindNearestEntityToPosition_Impl(WorldPosition);
 }
