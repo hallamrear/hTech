@@ -102,18 +102,33 @@ void World::Render_Impl(SDL_Renderer& renderer)
 Entity* World::GetEntityByName_Impl(std::string name)
 {
     Entity* entity = nullptr;
+    auto result = std::find_if(mEntityList.begin(), mEntityList.end(), [name](Entity* entity) { return entity->GetName() == name; });
 
-    for (size_t i = 0; i < mEntityList.size(); i++)
+    if (result != mEntityList.end())
     {
-        if (mEntityList[i]->GetName() == name)
-        {
-            entity = mEntityList[i];
-            break;
-        }
+        return *result;
     }
 
     return entity;
 }
+
+//[[deprecated("Rewritten")]]
+//Entity* World::GetEntityByName_Impl(std::string name)
+//{
+//    Entity* entity = nullptr;
+//
+//    for (size_t i = 0; i < mEntityList.size(); i++)
+//    {
+//        if (mEntityList[i]->GetName() == name)
+//        {
+//            entity = mEntityList[i];
+//            break;
+//        }
+//    }
+//
+//    return entity;
+//}
+
 
 void World::QuerySpaceForEntities_Impl(WorldRectangle rect, std::vector<Entity*>& entities)
 {
