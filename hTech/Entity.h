@@ -24,7 +24,7 @@ public:
 	const std::string&      GetName() const;
 	bool					IsEnabled;
 
-							Entity(std::string name);
+							Entity(Transform SpawnTransform = Transform(), std::string Name = "unnamed", Entity* Parent = nullptr);
 	virtual					~Entity();
 
 	virtual void			Update(float DeltaTime);
@@ -32,6 +32,9 @@ public:
 
 	bool const				GetIsAlive()		 const { return mIsAlive; }
 	virtual void			SetAlive(const bool state) { mIsAlive = state; }
+
+	Entity*					GetParent();
+	void					SetParent(Entity* entity);
 
 	bool					GetIsBeingDestroyed() const;
 	void					Destroy();

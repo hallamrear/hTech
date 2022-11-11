@@ -254,6 +254,8 @@ xcopy /Y /E /H /C /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
     <ClInclude Include="Helper.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Log.h" />
+    <ClInclude Include="Rectangle.h" />
+    <ClInclude Include="SpatialDivisionMethod.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="OrientedBoundingBox.h" />
     <ClInclude Include="pch.h" />
@@ -312,6 +314,8 @@ xcopy /Y /E /H /C /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
     <ClCompile Include="Helper.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Log.cpp" />
+    <ClCompile Include="Rectangle.cpp" />
+    <ClCompile Include="SpatialDivisionMethod.cpp" />
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="OrientedBoundingBox.cpp" />
     <ClCompile Include="pch.cpp">

@@ -64,6 +64,24 @@ UI_Button* UI::CreateButton_Impl(UI_Panel panel, std::string text, std::function
 	return button;
 }
 
+void UI::RebuildUIGrid()
+{
+	mUIGridLayoutPoints.clear();
+	Vector2 dim = Settings::Get()->GetWindowDimensions();
+	Vector2 pos;
+	int count = 0;
+
+	for (int i = 0; i < dim.X; i += UI_TILE_SIZE)
+	{
+		for (int j = 0; j < dim.Y; j += UI_TILE_SIZE)
+		{
+			mUIGridLayoutPoints.push_back(SDL_Point{ i, j });
+		}
+	}
+
+	mStoredWindowDimensions = dim;
+}
+
 void UI::AddUIElementToScreenMap(UI_Element* element, UI_Panel panel)
 {
 	if (element != nullptr)
@@ -92,6 +110,11 @@ UI_TextPanel* UI::CreateTextPanel(UI_Panel panel, std::string string)
 
 void UI::Update_Impl(float DeltaTime)
 {
+	if (Settings::Get()->GetWindowDimensions() != mStoredWindowDimensions)
+	{
+		RebuildUIGrid();
+	}
+
 	for(const auto& itr : mUIElements)
 	{
 		itr->Update(DeltaTime);
@@ -100,21 +123,7 @@ void UI::Update_Impl(float DeltaTime)
 
 void UI::Render_Impl(SDL_Renderer& renderer)
 {
-	mUIGridLayoutPoints.clear();
-	Vector2 dim = Settings::Get()->GetWindowDimensions();
-	Vector2 pos;
-	int count = 0;
-
-	for (int i = 0; i < dim.X; i += UI_TILE_SIZE)
-	{
-		for (int j = 0; j < dim.Y; j += UI_TILE_SIZE)
-		{
-			SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
-			SDL_RenderDrawPoint(&renderer, i, j);
-			mUIGridLayoutPoints.push_back(SDL_Point{ i, j });
-		}
-	}
-
+	SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
 	SDL_RenderDrawPoints(&renderer, mUIGridLayoutPoints.data(), mUIGridLayoutPoints.size());
 
 	for (const auto& itr : mUIElements)

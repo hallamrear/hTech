@@ -12,6 +12,9 @@ class UI
 {
 private:	
 	std::vector<SDL_Point> mUIGridLayoutPoints;
+	Vector2 mStoredWindowDimensions;
+	void RebuildUIGrid();
+
 	unsigned int mUIGridColumnCount;
 	unsigned int mUIGridRowCount;
 	std::vector<UI_Element*> mUIElements;

@@ -70,13 +70,24 @@ void Texture::Render(SDL_Renderer& renderer, Vector2 position, float rotation, V
 
 void Texture::Render(SDL_Renderer& renderer, Vector2 position, float rotation, bool flipped)
 {
-	Vector2 renderPosition = Camera::WorldToScreen(position);
+	////ORIGINAL
+	//Vector2 renderPosition = Camera::WorldToScreen(position);
+	//SDL_Rect destRect{};
+	//destRect.w = Width;
+	//destRect.h = Height;
+	//destRect.x = (int)(renderPosition.X) - (destRect.w / 2);
+	//destRect.y = (int)(renderPosition.Y) - (destRect.h / 2);
 
+	//ALTERED
+	Vector2 renderPosition = position;
+	renderPosition.X -= (Width / 2);
+	renderPosition.Y += (Height / 2);
+	renderPosition = Camera::WorldToScreen(renderPosition);
 	SDL_Rect destRect{};
 	destRect.w = Width;
 	destRect.h = Height;
-	destRect.x = (int)(renderPosition.X) - (destRect.w / 2);
-	destRect.y = (int)(renderPosition.Y) - (destRect.h / 2);
+	destRect.x = (int)(renderPosition.X);
+	destRect.y = (int)(renderPosition.Y);
 
 	if (flipped)
 		SDL_RenderCopyEx(&renderer, &GetSDLTexture(), NULL, &destRect, rotation, NULL, SDL_FLIP_NONE);

@@ -6,14 +6,20 @@
 #include "Component_Transform.h"
 #include "Camera.h" //Included for WorldToScreen when rendering an entity with no components.
 
-Entity::Entity(std::string name)
+Entity::Entity(Transform SpawnTransform, std::string Name, Entity* Parent)
 {
 	IsEnabled = true;
 	mComponents = std::vector<Component*>();
 	AddComponent<TransformComponent>();
+	GetTransform() = SpawnTransform;
 	mIsWaitingToBeDestroyed = false;
-	mName = name;
+	mName = Name;
 	mIsAlive = true;
+
+	if (Parent != nullptr)
+	{
+		SetParent(Parent);
+	}
 }
 
 Entity::~Entity()
@@ -57,6 +63,17 @@ void Entity::Render()
 		SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
 		SDL_RenderDrawRect(&renderer, &rect);
 	}
+}
+
+Entity* Entity::GetParent()
+{
+	//TODO : Implement
+	return nullptr;
+}
+
+void Entity::SetParent(Entity* entity)
+{
+	//TODO : Implement
 }
 
 bool Entity::GetIsBeingDestroyed() const
