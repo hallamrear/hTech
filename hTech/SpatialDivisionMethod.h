@@ -1,11 +1,7 @@
 #pragma once
-#include "Vector2.h"
 #include <unordered_map>
 #include <vector>
-
-class Rectangle;
-class Entity;
-class Text;
+#include "Vector2.h"
 
 namespace std {
 	template <>
@@ -22,24 +18,14 @@ namespace std {
 			// and bit shifting:
 
 			return ((hash<float>()(k.X) ^ (hash<float>()(k.Y) << 1)) >> 1);
-		}
+		};
 	};
 }
 
-class HashBucket
-{
-private:
-	std::vector<Entity*> mBucket;
-
-public:
-	HashBucket();
-	~HashBucket();
-
-	size_t Count() const;
-	void Clear();
-	void Insert(Entity* entity);
-	void Remove(Entity* entity);
-};
+class WorldRectangle;
+class Entity;
+class Text;
+class HashBucket;
 
 class SpatialHash
 {
@@ -56,7 +42,7 @@ public:
 	~SpatialHash();
 
 	void Clear();
-	void Retrieve(class Rectangle rect);
+	void Retrieve(class WorldRectangle rect, std::vector<Entity*>& foundEntities);
 	void Insert(Entity* entity);
 	void Remove(Entity* entity);
 

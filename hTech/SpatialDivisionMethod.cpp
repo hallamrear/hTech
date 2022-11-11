@@ -7,6 +7,22 @@
 #include "Text.h"
 #include "Rectangle.h"
 
+class HashBucket
+{
+private:
+	std::vector<Entity*> Data;
+
+public:
+	HashBucket();
+	~HashBucket();
+
+	std::vector<Entity*>& GetData();
+	size_t Count() const;
+	void Clear();
+	void Insert(Entity* entity);
+	void Remove(Entity* entity);
+};
+
 Vector2 SpatialHash::GetIDFromEntity(Entity* entity)
 {
 	Vector2 index = entity->GetTransform().Position;
@@ -21,14 +37,6 @@ SpatialHash::SpatialHash(int sizeX, int sizeY)
 	mSizeY = sizeY;
 
 	mMap = std::unordered_map<Vector2, HashBucket>();
-
-	//for (int i = 0; i < mSizeX; i++)
-	//{
-	//	for (int j = 0; j < mSizeY; j++)
-	//	{
-	//		mMap.insert(std::make_pair<Vector2, HashBucket>(Vector2(i - (mSizeX / 2), j - (mSizeY / 2)), HashBucket()));
-	//	}
-	//}
 
 	mText = new Text();
 }
@@ -46,9 +54,86 @@ void SpatialHash::Clear()
 	}
 }
 
-void SpatialHash::Retrieve(class Rectangle rect)
+void SpatialHash::Retrieve(class WorldRectangle rect, std::vector<Entity*>& foundEntities)
 {
+	WorldRectangle reorientedRect = rect;
 
+	if (rect.W < 0)
+	{
+		reorientedRect.X = rect.X + rect.W;
+	}
+
+	reorientedRect.W = abs(rect.W);
+
+	if (rect.H < 0)
+	{
+		reorientedRect.Y = rect.Y - rect.H;
+	}
+
+	reorientedRect.H = abs(rect.H);
+
+	Vector2 points[4]
+	{
+		{(float)reorientedRect.X,					 (float)reorientedRect.Y},
+		{(float)reorientedRect.X + reorientedRect.W, (float)reorientedRect.Y},
+		{(float)reorientedRect.X,					 (float)reorientedRect.Y - reorientedRect.H},
+		{(float)reorientedRect.X + reorientedRect.W, (float)reorientedRect.Y - reorientedRect.H},
+	};
+
+	std::vector<Vector2> IDs = std::vector<Vector2>();
+
+	int step = WORLD_TILE_SIZE / 4;
+	for (int x = floorf(points[0].X); x <= points[3].X; x += step)
+	{
+		for (int y = points[3].Y; y <= points[0].Y; y += step)
+		{
+			IDs.push_back(
+				Vector2(
+					floorf(x / (float)WORLD_TILE_SIZE),
+					floorf(y / (float)WORLD_TILE_SIZE)
+				));
+		}
+	}
+
+	std::unique(IDs.begin(), IDs.end());
+
+	foundEntities.clear();
+
+	if (IDs.size() > 0)
+	{
+		for (auto& ID : IDs)
+		{
+			std::unordered_map<Vector2, HashBucket>::iterator itr = mMap.find(ID);
+			if (itr != mMap.end())
+			{
+				if (itr->second.Count() > 0)
+				{
+					foundEntities.reserve(foundEntities.size() + itr->second.Count());
+					foundEntities.insert(foundEntities.end(), itr->second.GetData().begin(), itr->second.GetData().end());
+				}
+			}
+		}
+	}
+
+	size_t count = foundEntities.size();
+	for (size_t i = 0; i < count; i++)
+	{
+		Vector2 position = foundEntities[i]->GetTransform().Position;
+
+		if ((position.X > points[0].X && position.X < points[3].X && position.Y > points[3].Y && position.Y < points[0].Y) == false)
+		{
+			foundEntities[i] = nullptr;
+		}
+	}
+
+	foundEntities.erase(
+		std::remove_if(
+			foundEntities.begin(),
+			foundEntities.end(),
+			[](Entity const* ptr) { return ptr == nullptr; }
+		),
+		foundEntities.end()
+	);
 }
 
 void SpatialHash::Insert(Entity* entity)
@@ -93,9 +178,10 @@ void SpatialHash::Update(float deltaTime)
 
 void SpatialHash::Render(SDL_Renderer& renderer)
 {
-	SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
 	for (const auto& itr : mMap)
 	{
+		SDL_SetRenderDrawColor(&renderer, 0, 0, 255, 255);
+
 		Vector2 wPosition = Vector2(itr.first.X * (float)WORLD_TILE_SIZE, (itr.first.Y + 1) * (float)WORLD_TILE_SIZE);
 		Vector2 sPosition = Camera::WorldToScreen(wPosition);
 		SDL_Rect rect;
@@ -126,35 +212,40 @@ void SpatialHash::Render(SDL_Renderer& renderer)
 
 HashBucket::HashBucket()
 {
-	mBucket = std::vector<Entity*>();
+	Data = std::vector<Entity*>();
 }
 
 HashBucket::~HashBucket()
 {
-	mBucket.clear();
+	Data.clear();
+}
+
+std::vector<Entity*>& HashBucket::GetData()
+{
+	return Data;
 }
 
 size_t HashBucket::Count() const
 {
-	return mBucket.size();
+	return Data.size();
 }
 
 void HashBucket::Clear()
 {
-	mBucket.clear();
+	Data.clear();
 }
 
 void HashBucket::Insert(Entity* entity)
 {
-	mBucket.push_back(entity);
+	Data.push_back(entity);
 }
 
 void HashBucket::Remove(Entity* entity)
 {
-	std::vector<Entity*>::iterator found = std::find(mBucket.begin(), mBucket.end(), entity);
-	if (found != mBucket.end())
+	std::vector<Entity*>::iterator found = std::find(Data.begin(), Data.end(), entity);
+	if (found != Data.end())
 	{
-		mBucket.erase(found);
+		Data.erase(found);
 	}
 
 	//if it equals .end then it does not exist in this bucket.

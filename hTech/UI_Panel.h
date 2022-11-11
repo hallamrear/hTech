@@ -2,7 +2,7 @@
 #include "Rectangle.h"
 #include "Colour.h"
 
-class UI_Panel : public Rectangle
+class UI_Panel
 {
 public:
 	int X = 0;
