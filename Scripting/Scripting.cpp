@@ -30,6 +30,26 @@ bool CheckLua(lua_State* L, int r)
     return true;
 }
 
+//creating a fucntion callable by lua it needs a specific definition
+//using lua_ as a prefix to show its callable from there.
+//takes a single state argument
+//returns teh number of arguements passed back to lua.
+//e.g. 1, C
+int lua_HostFunction(lua_State* L)
+{
+    //not indexing -1, -2 
+    //as if its a fresh stack that already has the values pushed onto it.
+    float a = (float)lua_tonumber(L, 1);
+    float b = (float)lua_tonumber(L, 2);
+
+    std::cout << "C++ function has been called" << std::endl;
+    float result = a + b;
+    //push back onto the stack.
+    lua_pushnumber(L, result);
+    return 1;
+}
+
+
 int main()
 {
     struct player
@@ -57,6 +77,13 @@ int main()
     //adds std libraries to machine state (so we can use math.sin for example)
     luaL_openlibs(state);
 
+    /// <summary>
+    /// string name that lua uses to call the function
+    /// function ptr to the function
+    /// </summary>
+    /// <returns></returns>
+    lua_register(state, "HostFunction", lua_HostFunction);
+
     //tell lua to execute command.
     //do file to open a file.
     if (CheckLua(state, luaL_dofile(state, "example.lua")))
@@ -66,15 +93,14 @@ int main()
         lua_getglobal(state, "player");
 
         //getting a function from the file.
-        lua_getglobal(state, "AddStuff");
+        lua_getglobal(state, "DoCPPFunction");
         //checking its real
         if (lua_isfunction(state, -1))
         {
             //pushing 2 numbers to the stack to use in the function call.
-            lua_pushnumber(state, 3.5f);
-            lua_pushnumber(state, 7.1f);
+            lua_pushnumber(state, 4);
+            lua_pushnumber(state, 5);
 
-                                
             /// <summary>
             /// 2 == how many arguments expected
             /// 1 == how many arguments returned
@@ -85,9 +111,8 @@ int main()
             {
                 //we told it to expect 2 so it would have popped them.
                 //it will have pushed the 1 result to the top of the stack.
-
                 result = (float)lua_tonumber(state, -1);
-                std::cout << result << std::endl;
+                std::cout << "function calls result = " << result << std::endl;
             }
         }
 

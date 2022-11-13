@@ -30,3 +30,10 @@ end
 function getplayer(n)
 	return players[n];
 end
+
+
+function DoCPPFunction(a, b)
+	print("[LUA] DoCPPFunction("..a..", "..b..") called \n")
+	c = HostFunction(a + 1, b)
+	return c
+end
