@@ -32,7 +32,14 @@ bool CheckLua(lua_State* L, int r)
 
 int main()
 {
-    std::string command = "a = 7 + 11 + math.sin(23.7)";
+    struct player
+    {
+        std::string title;
+        std::string name;
+        std::string family;
+        int level;
+    } mPlayer;
+
 
     //To do anything in lua, you need a lua state.
     //Lua uses a captial L to repressent a state.
@@ -42,42 +49,52 @@ int main()
     luaL_openlibs(state);
 
     //tell lua to execute command.
-    if (CheckLua(state, luaL_dostring(state, command.c_str())))
+    //do file to open a file.
+    if (CheckLua(state, luaL_dofile(state, "example.lua")))
     {
         //a exists in the lua global machine
-        lua_getglobal(state, "a");
+        //we are now looking for a global object called player
+        lua_getglobal(state, "player");
 
-        //lua is reasonably typeless and so we need to validate A's type.
-        //expected to be a number
+        //lua is reasonably typeless and so we need to validate playername's type.
+        //player is no longer a simple type and so we need to define it as a table of variables.
 
-        if (lua_isnumber(state, -1))
+        //-1 indicates its at the top of the stack.
+        if (lua_istable(state, -1))
         {
-            //convert whatever a is to a number
-            float a_cpp = (float)lua_tonumber(state, -1);
-            std::cout << a_cpp << std::endl;
+            {
+            //this pushes the string to the top of the stack
+            lua_pushstring(state, "name");
+            //making the index for the table -2 as it is no longer at the top.
+            lua_gettable(state, -2);
+
+            //looks at top parameter, finds key value, pops name off stack and replaces with value we're looking for.
+            //top of stack now contains the name we are searching for.
+            mPlayer.name = lua_tostring(state, -1);
+            //fixes stack arrangement
+            lua_pop(state, 1);
+            }
+
+            //this is just multiple version of what is happening above
+            lua_pushstring(state, "title");
+            lua_gettable(state, -2);
+            mPlayer.title = lua_tostring(state, -1);
+            lua_pop(state, 1);
+            lua_pushstring(state, "family");
+            lua_gettable(state, -2);
+            mPlayer.family = lua_tostring(state, -1);
+            lua_pop(state, 1);
+            lua_pushstring(state, "level");
+            lua_gettable(state, -2);
+            mPlayer.level = lua_tonumber(state, -1);
+            lua_pop(state, 1);
+
+            std::cout << "family: " << mPlayer.family << std::endl;
+            std::cout << "name: " << mPlayer.name << std::endl;
+            std::cout << "title: " << mPlayer.title << std::endl;
+            std::cout << "level: " << mPlayer.level << std::endl;
         }
     }
-
-    //using the same command means we cna sequence commands. 
-    command = "a = a + 100";
-
-    //tell lua to execute command.
-    if (CheckLua(state, luaL_dostring(state, command.c_str())))
-    {
-        //a exists in the lua global machine
-        lua_getglobal(state, "a");
-
-        //lua is reasonably typeless and so we need to validate A's type.
-        //expected to be a number
-
-        if (lua_isnumber(state, -1))
-        {
-            //convert whatever a is to a number
-            float a_cpp = (float)lua_tonumber(state, -1);
-            std::cout << a_cpp << std::endl;
-        }
-    }
-
 
     //cleanup lua vm
     system("pause");
