@@ -38,12 +38,21 @@ int main()
         std::string name;
         std::string family;
         int level;
+
+        void print()
+        {
+            std::cout << "family: " << family << std::endl;
+            std::cout << "name: " << name << std::endl;
+            std::cout << "title: " << title << std::endl;
+            std::cout << "level: " << level << std::endl;
+        }
     } mPlayer;
 
 
     //To do anything in lua, you need a lua state.
     //Lua uses a captial L to repressent a state.
     lua_State* state = luaL_newstate();
+    float result = 0.0f;
 
     //adds std libraries to machine state (so we can use math.sin for example)
     luaL_openlibs(state);
@@ -56,44 +65,79 @@ int main()
         //we are now looking for a global object called player
         lua_getglobal(state, "player");
 
-        //lua is reasonably typeless and so we need to validate playername's type.
-        //player is no longer a simple type and so we need to define it as a table of variables.
-
-        //-1 indicates its at the top of the stack.
-        if (lua_istable(state, -1))
+        //getting a function from the file.
+        lua_getglobal(state, "AddStuff");
+        //checking its real
+        if (lua_isfunction(state, -1))
         {
+            //pushing 2 numbers to the stack to use in the function call.
+            lua_pushnumber(state, 3.5f);
+            lua_pushnumber(state, 7.1f);
+
+                                
+            /// <summary>
+            /// 2 == how many arguments expected
+            /// 1 == how many arguments returned
+            /// 0 == defines how error is handled in lua script.
+            /// </summary>
+            /// <returns></returns>
+            if (CheckLua(state, lua_pcall(state, 2, 1, 0)))
             {
-            //this pushes the string to the top of the stack
-            lua_pushstring(state, "name");
-            //making the index for the table -2 as it is no longer at the top.
-            lua_gettable(state, -2);
+                //we told it to expect 2 so it would have popped them.
+                //it will have pushed the 1 result to the top of the stack.
 
-            //looks at top parameter, finds key value, pops name off stack and replaces with value we're looking for.
-            //top of stack now contains the name we are searching for.
-            mPlayer.name = lua_tostring(state, -1);
-            //fixes stack arrangement
-            lua_pop(state, 1);
+                result = (float)lua_tonumber(state, -1);
+                std::cout << result << std::endl;
             }
-
-            //this is just multiple version of what is happening above
-            lua_pushstring(state, "title");
-            lua_gettable(state, -2);
-            mPlayer.title = lua_tostring(state, -1);
-            lua_pop(state, 1);
-            lua_pushstring(state, "family");
-            lua_gettable(state, -2);
-            mPlayer.family = lua_tostring(state, -1);
-            lua_pop(state, 1);
-            lua_pushstring(state, "level");
-            lua_gettable(state, -2);
-            mPlayer.level = lua_tonumber(state, -1);
-            lua_pop(state, 1);
-
-            std::cout << "family: " << mPlayer.family << std::endl;
-            std::cout << "name: " << mPlayer.name << std::endl;
-            std::cout << "title: " << mPlayer.title << std::endl;
-            std::cout << "level: " << mPlayer.level << std::endl;
         }
+
+        //Getting a player from the file.
+        lua_getglobal(state, "getplayer");
+        if (lua_isfunction(state, -1))
+        {
+            lua_pushnumber(state, 0);
+
+            if (CheckLua(state, lua_pcall(state, 1, 1, 0)))
+            {
+                //lua is reasonably typeless and so we need to validate playername's type.
+                //player is no longer a simple type and so we need to define it as a table of variables.
+
+                //-1 indicates its at the top of the stack.
+                if (lua_istable(state, -1))
+                {
+                    {
+                        //this pushes the string to the top of the stack
+                        lua_pushstring(state, "name");
+                        //making the index for the table -2 as it is no longer at the top.
+                        lua_gettable(state, -2);
+
+                        //looks at top parameter, finds key value, pops name off stack and replaces with value we're looking for.
+                        //top of stack now contains the name we are searching for.
+                        mPlayer.name = lua_tostring(state, -1);
+                        //fixes stack arrangement
+                        lua_pop(state, 1);
+                    }
+
+                    //this is just multiple version of what is happening above
+                    lua_pushstring(state, "title");
+                    lua_gettable(state, -2);
+                    mPlayer.title = lua_tostring(state, -1);
+                    lua_pop(state, 1);
+                    lua_pushstring(state, "family");
+                    lua_gettable(state, -2);
+                    mPlayer.family = lua_tostring(state, -1);
+                    lua_pop(state, 1);
+                    lua_pushstring(state, "level");
+                    lua_gettable(state, -2);
+                    mPlayer.level = lua_tonumber(state, -1);
+                    lua_pop(state, 1);
+
+                    mPlayer.print();
+                }
+            }
+        }
+
+       
     }
 
     //cleanup lua vm

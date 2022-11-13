@@ -15,4 +15,18 @@ playername = "test player name";
 
 --OR class initialising
 
-player = { title = "alt", name = "marv", family = "look", level = 12}
+players = {}
+players[0] = { title = "alt", name = "marv", family = "look", level = 12}
+players[1] = { title = "1", name = "1", family = "1", level = 1}
+
+function AddStuff( a, b )
+	--just a visual thing that is not necessary,
+	--..a.. concatenates a to the string.
+	--print runs to the win32 console for the program.
+	print("[LUA] AddStuff("..a..", "..b..") called \n");
+	return a+b;
+end
+
+function getplayer(n)
+	return players[n];
+end
