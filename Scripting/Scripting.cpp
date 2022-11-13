@@ -17,19 +17,32 @@ extern "C"
 #endif
 }
 
+//Checking VM state
+bool CheckLua(lua_State* L, int r)
+{
+    if (r != LUA_OK)
+    {
+        std::string err = lua_tostring(L, -1);
+        std::cout << err << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
 int main()
 {
-    std::string command = "a = 7 + 11";
+    std::string command = "a = 7 + 11 + math.sin(23.7)";
 
     //To do anything in lua, you need a lua state.
     //Lua uses a captial L to repressent a state.
     lua_State* state = luaL_newstate();
 
-    //tell lua to execute command.
-    int result = luaL_dostring(state, command.c_str());
+    //adds std libraries to machine state (so we can use math.sin for example)
+    luaL_openlibs(state);
 
-    //always need to validate results
-    if (result == LUA_OK)
+    //tell lua to execute command.
+    if (CheckLua(state, luaL_dostring(state, command.c_str())))
     {
         //a exists in the lua global machine
         lua_getglobal(state, "a");
@@ -44,12 +57,27 @@ int main()
             std::cout << a_cpp << std::endl;
         }
     }
-    else
+
+    //using the same command means we cna sequence commands. 
+    command = "a = a + 100";
+
+    //tell lua to execute command.
+    if (CheckLua(state, luaL_dostring(state, command.c_str())))
     {
-        //if not ok, ask the lua stack.
-        std::string error = lua_tostring(state, -1);
-        std::cout << error << std::endl;
+        //a exists in the lua global machine
+        lua_getglobal(state, "a");
+
+        //lua is reasonably typeless and so we need to validate A's type.
+        //expected to be a number
+
+        if (lua_isnumber(state, -1))
+        {
+            //convert whatever a is to a number
+            float a_cpp = (float)lua_tonumber(state, -1);
+            std::cout << a_cpp << std::endl;
+        }
     }
+
 
     //cleanup lua vm
     system("pause");
