@@ -49,6 +49,61 @@ int lua_HostFunction(lua_State* L)
     return 1;
 }
 
+struct CallableStruct
+{
+    //the wrapper function lua will be able to see.
+    //we need to register this function with lua however.
+    static int wrap_ToBeCalledFromLUA(lua_State* L)
+    {
+        //checking we have been passed the correct number of arguments
+        if (lua_gettop(L) != 2) return -1;
+
+        //the first object on the stack is now the 'host' argument i.e a pointer to one of these objects
+        //therefore
+        CallableStruct* object = static_cast<CallableStruct*>(lua_touserdata(L, 1));
+        int exampleIndex = lua_tointeger(L, 2);
+        object->ToBeCalledFromLUA();
+
+        //we are not returning anything to lua.
+        return 0;
+    }
+
+    void ToBeCalledFromLUA()
+    {
+        printf("CPP - void ToBeCalledFromLUA()");
+    }
+
+    void RunLua(lua_State* L)
+    {
+        //call to register the functions.
+        if (CheckLua(L, luaL_dofile(L, "Example2.lua")))
+        {
+            //getting funciton and putting at top of stack.
+            lua_getglobal(L , "CallCPPFunctionInLuaFunction");
+
+            //validating
+            if (lua_isfunction(L, -1))
+            {
+                //this is effectively pushing a pointer for this object.
+                lua_pushlightuserdata(L, this);
+                //push second parameter for function
+                lua_pushnumber(L, 123);
+
+                /// <summary>
+                /// 2 arguments,
+                /// 1 return,
+                /// 0 is for error flags
+                /// </summary>
+                /// <param name="L"></param>
+                /// CALLS THE FUNCTION
+                if (CheckLua(L, lua_pcall(L, 2, 1, 0)))
+                {
+                    std::cout << "[CPP] has called the member function of CallableStruct" << std::endl;
+                }
+            }
+        }
+    }
+};
 
 int main()
 {
@@ -57,7 +112,7 @@ int main()
         std::string title;
         std::string name;
         std::string family;
-        int level;
+        int level = 0;
 
         void print()
         {
@@ -161,6 +216,31 @@ int main()
                 }
             }
         }
+
+
+
+        //registering the function to be called from lua later.
+        lua_register(state, "_CPPFunction", CallableStruct::wrap_ToBeCalledFromLUA);
+
+        //calling a cpp member function from lua.
+        CallableStruct object;
+        object.RunLua(state);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
        
     }

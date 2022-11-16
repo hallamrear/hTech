@@ -31,5 +31,8 @@
     <None Include="Example.lua">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="Example2.lua">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
