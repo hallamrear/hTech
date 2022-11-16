@@ -233,11 +233,28 @@ int main()
 
 
 
+        //getting a function from the file.
+        lua_getglobal(state, "CreateCoroutine");
+        //checking its real
+        if (lua_isfunction(state, -1))
+        {
+            lua_pcall(state, 0, 0, 0);
+        }
+        while (true)
+        {
+            //getting a function from the file.
+            lua_getglobal(state, "CallCoroutine");
+            //checking its real
+            if (lua_isfunction(state, -1))
+            {
 
+                //call coroutine function.
+                if (CheckLua(state, lua_pcall(state, 0, 0, 0)))
+                {
 
-
-
-
+                }
+            }
+        }
 
 
 

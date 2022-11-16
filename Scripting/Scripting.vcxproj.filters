@@ -15,10 +15,13 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Scripting.cpp">
+    <ClCompile Include="LUAScripting.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="CPPScripting.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
