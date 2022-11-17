@@ -161,8 +161,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Script.h" />
+    <ClInclude Include="TestCPPScript.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="buildCustomScripts.bat" />
     <None Include="Example.lua" />
     <None Include="Example2.lua" />
   </ItemGroup>
