@@ -9,7 +9,7 @@ StartScript(ExampleScript)
 public:
 	inline void Update(float deltaTime) override
 	{
-		std::cout << "CUSTOM SCRIPT BAYBEE" << std::endl;
+		std::cout << "test" << std::endl;
 	}
 }
 EndScript(ExampleScript)
