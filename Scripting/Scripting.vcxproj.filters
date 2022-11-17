@@ -43,7 +43,7 @@
     <None Include="Example2.lua">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="buildCustomScripts.bat">
+    <None Include="buildScripts.bat">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

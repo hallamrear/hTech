@@ -95,6 +95,9 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PreBuildEvent>
+      <Command>start buildScripts.bat</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -113,6 +116,9 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
+    <PreBuildEvent>
+      <Command>start buildScripts.bat</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -165,7 +171,7 @@
     <ClInclude Include="TestCPPScript.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="buildCustomScripts.bat" />
+    <None Include="buildScripts.bat" />
     <None Include="Example.lua" />
     <None Include="Example2.lua" />
   </ItemGroup>
