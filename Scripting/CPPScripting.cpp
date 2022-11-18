@@ -50,7 +50,7 @@ struct ScriptManager
 int main()
 {
 	Script* ptr;
-	ptr = ScriptManager::LoadDLL("scripts/customscripts.dll");
+	ptr = ScriptManager::LoadDLL("../Debug/ScriptSolutionTemplate.dll");
 
 	if (ptr != nullptr)
 	{
@@ -58,5 +58,9 @@ int main()
 		{
 			ptr->Update(0.016f);
 		}
+	}
+	else
+	{
+		system("pause");
 	}
 }
