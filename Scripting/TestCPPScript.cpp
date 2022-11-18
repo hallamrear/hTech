@@ -1,6 +1,7 @@
 #pragma once
+#include "pch.h"
 #include <iostream>
-#include <Scripting/Script.h>
+#include "Script.h"
 
 //custom defines in script.h just to make it look more like an actual custom script
 //and to hide the extern tbh
