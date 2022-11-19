@@ -208,6 +208,28 @@ World::World()
             selectionRect = WorldRectangle(rectStart, rectEnd);       
             mWorldHashMap->Retrieve(selectionRect, mSelectedEntities);
         });
+
+
+    UI::CreateButton(UI_Panel(32, 32, 2, 2), "open", 
+        [this]() 
+        {
+            OPENFILENAME file = { sizeof(OPENFILENAME) };
+            char szFile[_MAX_PATH] = "name";
+            const char szExt[] = "ext\0"; // extra '\0' for lpstrFilter
+
+            file.hwndOwner = GetConsoleWindow();
+            file.lpstrFile = szFile; // <--------------------- initial file name
+            file.nMaxFile = sizeof(szFile) / sizeof(szFile[0]);
+            file.lpstrFilter = file.lpstrDefExt = szExt;
+            file.Flags = OFN_SHOWHELP | OFN_OVERWRITEPROMPT;
+
+            if (GetOpenFileName(&file))
+            {
+                std::string filestr = file.lpstrFile;
+                return;
+                //ScriptManager::ReloadFile()
+            }
+        });
 }
 
 World::~World()
