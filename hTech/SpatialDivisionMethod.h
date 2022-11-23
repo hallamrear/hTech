@@ -1,4 +1,8 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
+
+
 #include <unordered_map>
 #include <vector>
 #include "Vector2.h"
@@ -25,9 +29,24 @@ namespace std {
 class WorldRectangle;
 class Entity;
 class Text;
-class HashBucket;
 
-class SpatialHash
+class HTECH_FUNCTION_EXPORT HashBucket
+{
+private:
+	std::vector<Entity*> Data;
+
+public:
+	HashBucket();
+	~HashBucket();
+
+	std::vector<Entity*>& GetData();
+	size_t Count() const;
+	void Clear();
+	void Insert(Entity* entity);
+	void Remove(Entity* entity);
+};
+
+class HTECH_FUNCTION_EXPORT SpatialHash
 {
 private:
 	Text* mText;

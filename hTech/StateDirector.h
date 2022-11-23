@@ -1,8 +1,12 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
+
+
 #include <map>
 #include "GameStates.h"
 
-enum class [[deprecated("Use World instead")]] GameStateIdentifier
+enum class HTECH_FUNCTION_EXPORT [[deprecated("Use World instead")]] GameStateIdentifier
 {	
 	GAME_STATE_UNKNOWN = -1,
 	GAME_STATE_PAUSED = 0,
@@ -19,7 +23,7 @@ enum class [[deprecated("Use World instead")]] GameStateIdentifier
 	GAME_STATE_9
 };
 
-class StateDirector
+class HTECH_FUNCTION_EXPORT StateDirector
 {
 private:
 	//todo : put singleton back

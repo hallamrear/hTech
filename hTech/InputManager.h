@@ -1,25 +1,28 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
+
+
 #include <functional>
 #include "Vector2.h"
 
 typedef int32_t SDL_Keycode;
 
-enum class IM_KEY_STATE : int
+enum class HTECH_FUNCTION_EXPORT IM_KEY_STATE : int
 {
 	IM_KEY_PRESSED,
 	IM_KEY_HELD,
 	IM_KEY_RELEASED
 };
 
-
-enum class IM_SCROLL_DIRECTION : int
+enum class HTECH_FUNCTION_EXPORT IM_SCROLL_DIRECTION : int
 {
 	IM_SCROLL_UP = 1,
 	IM_SCROLL_NONE = 0,
 	IM_SCROLL_DOWN = -1
 };
 
-enum class IM_KEY_CODE : int
+enum class HTECH_FUNCTION_EXPORT IM_KEY_CODE : int
 {
 	/*00*/ IM_KEY_1 = 0,
 	/*01*/ IM_KEY_2,
@@ -59,7 +62,7 @@ enum class IM_KEY_CODE : int
 	/*35*/ IM_KEY_F12
 };
 
-enum class IM_MOUSE_CODE : int
+enum class HTECH_FUNCTION_EXPORT IM_MOUSE_CODE : int
 {
 	/*00*/ IM_MOUSE_SCROLL_UP = 0,
 	/*00*/ IM_MOUSE_SCROLL_DOWN,
@@ -68,7 +71,7 @@ enum class IM_MOUSE_CODE : int
 	/*03*/ IM_MOUSE_MIDDLE_CLICK
 };
 
-class Key
+class HTECH_FUNCTION_EXPORT Key
 {
 	std::function<void()> mPressFunction;
 	std::function<void()> mHeldFunction;
@@ -143,7 +146,7 @@ public:
 	}
 };
 
-class Mouse
+class HTECH_FUNCTION_EXPORT Mouse
 {
 	std::function<void()> mPressFunction;
 	std::function<void()> mHeldFunction;
@@ -218,7 +221,7 @@ public:
 	}
 };
 
-class InputManager
+class HTECH_FUNCTION_EXPORT InputManager
 {
 private:
 	//todo : put singleton back

@@ -1,9 +1,12 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
+
 #include "Text.h"
 #include "UI_Element.h"
 
 template<class R>
-class UI_VariableTracker :
+class HTECH_FUNCTION_EXPORT UI_VariableTracker :
     public UI_Element
 {
 private:

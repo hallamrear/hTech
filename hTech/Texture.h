@@ -1,10 +1,12 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
 #include <string>
 
-class Vector2;
+class HTECH_FUNCTION_EXPORT Vector2;
 struct SDL_Texture;
 
-class Texture
+class HTECH_FUNCTION_EXPORT Texture
 {
 protected:
 	std::string mName;

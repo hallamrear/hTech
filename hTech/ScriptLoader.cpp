@@ -22,6 +22,32 @@ void ScriptLoader::UnloadLibrary()
 	}
 }
 
+std::string aaaaaaaaaaaaaaaa()
+{
+	//Get the error message ID, if any.
+	DWORD errorMessageID = ::GetLastError();
+	if (errorMessageID == 0) {
+		return std::string(); //No error message has been recorded
+	}
+
+	LPSTR messageBuffer = nullptr;
+
+	//Ask Win32 to give us the string version of that message ID.
+	//The parameters we pass in, tell Win32 to create the buffer that holds the message for us (because we don't yet know how long the message string will be).
+	size_t size = FormatMessageA(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
+		NULL, errorMessageID, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPSTR)&messageBuffer, 0, NULL);
+
+	//Copy the error message into a std::string.
+	std::string message(messageBuffer, size);
+
+	//Free the Win32's string's buffer.
+	LocalFree(messageBuffer);
+
+	std::cout << message << std::endl;
+
+	return message;
+};
+
 void ScriptLoader::LoadCustomScriptDLL(std::string libraryLocation)
 {
 	UnloadLibrary();
@@ -39,6 +65,7 @@ void ScriptLoader::LoadCustomScriptDLL(std::string libraryLocation)
 	if (!mLoadedLibrary)
 	{
 		std::cout << "Could not load library" << std::endl;
+		aaaaaaaaaaaaaaaa();
 	}
 	else
 	{
@@ -56,6 +83,7 @@ ScriptObject* ScriptLoader::GetFunctionPtrFromLibrary(std::string externalClassN
 
 		if (!DLLFunction)
 		{
+			aaaaaaaaaaaaaaaa();
 			std::cout << "Error getting function from DLL." << std::endl;
 			return nullptr;
 		}
@@ -69,7 +97,7 @@ ScriptObject* ScriptLoader::GetFunctionPtrFromLibrary(std::string externalClassN
 bool ScriptLoader::LoadScriptObjectToMap(std::string externalClassName)
 {
     //HARDCODED : DLL Location from built project
-    std::string dllLocation = "..//Scripting//Project//test//Debug//test.dll";
+    std::string dllLocation = "C://Users//ryem_//source//repos//hTech//Scripting//Project//test//Debug//test.dll";
 	LoadCustomScriptDLL(dllLocation);
 
 	if (mLoadedLibrary)
@@ -87,6 +115,24 @@ bool ScriptLoader::LoadScriptObjectToMap(std::string externalClassName)
 
 ScriptObject* ScriptLoader::GetScriptObject(std::string externalClassName)
 {
+	FILE* fpstdin = stdin, * fpstdout = stdout, * fpstderr = stderr;
+	AllocConsole();
+	AttachConsole(GetCurrentProcessId());
+	freopen_s(&fpstdin, "CONIN$", "r", stdin);
+	freopen_s(&fpstdout, "CONOUT$", "w", stdout);
+	freopen_s(&fpstderr, "CONOUT$", "w", stderr);
+
+	CONSOLE_FONT_INFOEX cfi;
+	cfi.cbSize = sizeof(cfi);
+	cfi.nFont = 0;
+	cfi.dwFontSize.X = 0;                   // Width of each character in the font
+	cfi.dwFontSize.Y = 4;                  // Height
+	cfi.FontFamily = FF_DONTCARE;
+	cfi.FontWeight = FW_NORMAL;
+	wcscpy_s(cfi.FaceName, L"Consolas");
+	SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi);
+
+
     if (mLoadedScriptMap.find(externalClassName) == mLoadedScriptMap.end())
     {
         if (LoadScriptObjectToMap(externalClassName) == false)

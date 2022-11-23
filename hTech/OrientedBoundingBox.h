@@ -1,7 +1,11 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
+
+
 #include "BoundingBox.h"
 
-class OrientedBoundingBox : public BoundingBox
+class HTECH_FUNCTION_EXPORT OrientedBoundingBox : public BoundingBox
 {
 protected:
 	void CalculateRotations();

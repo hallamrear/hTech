@@ -1,8 +1,14 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
-class ScriptObject;
+#ifndef _WINDEF_
+class HINSTANCE__; // Forward or never
+typedef HINSTANCE__* HINSTANCE;
+#endif
 
-class ScriptLoader
+class HTECH_FUNCTION_EXPORT ScriptObject;
+
+class HTECH_FUNCTION_EXPORT ScriptLoader
 {
 private:
 	ScriptLoader();

@@ -7,22 +7,6 @@
 #include "Text.h"
 #include "Rectangle.h"
 
-class HashBucket
-{
-private:
-	std::vector<Entity*> Data;
-
-public:
-	HashBucket();
-	~HashBucket();
-
-	std::vector<Entity*>& GetData();
-	size_t Count() const;
-	void Clear();
-	void Insert(Entity* entity);
-	void Remove(Entity* entity);
-};
-
 Vector2 SpatialHash::GetIDFromEntity(Entity* entity)
 {
 	Vector2 index = entity->GetTransform().Position;
@@ -54,7 +38,7 @@ void SpatialHash::Clear()
 	}
 }
 
-void SpatialHash::Retrieve(class WorldRectangle rect, std::vector<Entity*>& foundEntities)
+void SpatialHash::Retrieve(class HTECH_FUNCTION_EXPORT WorldRectangle rect, std::vector<Entity*>& foundEntities)
 {
 	WorldRectangle reorientedRect = rect;
 

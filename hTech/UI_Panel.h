@@ -1,8 +1,11 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
+
 #include "Rectangle.h"
 #include "Colour.h"
 
-class UI_Panel
+class HTECH_FUNCTION_EXPORT UI_Panel
 {
 public:
 	int X = 0;

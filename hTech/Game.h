@@ -1,15 +1,19 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
+
+
 #include <string>
 #include "Vector2.h"
 
-enum class SCREEN_STATE
+enum class HTECH_FUNCTION_EXPORT SCREEN_STATE
 {
 	WINDOW_FULLSCREEN = 0,
 	WINDOW_BORDERLESS_FULLSCREEN,
 	WINDOW_WINDOWED
 };
 
-class WindowDetails
+class HTECH_FUNCTION_EXPORT WindowDetails
 {
 public:
 	std::string title = "";
@@ -17,7 +21,7 @@ public:
 	Vector2 dimensions = Vector2(600.0f, 300.0f);
 };
 
-class Game
+class HTECH_FUNCTION_EXPORT Game
 {
 private:
 	bool						mIsInitialised;

@@ -1,8 +1,12 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
+
+
 #include "UI_Element.h"
 #include <functional>
 
-class UI_Button : public UI_Element
+class HTECH_FUNCTION_EXPORT UI_Button : public UI_Element
 {
 private:
 	bool mWasPressedLastFrame;

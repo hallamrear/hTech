@@ -1,9 +1,13 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
+
+
 #include "Component.h"
 
-class Texture;
+class HTECH_FUNCTION_EXPORT Texture;
 
-class SpriteComponent :
+class HTECH_FUNCTION_EXPORT SpriteComponent :
     public Component
 {
 private:

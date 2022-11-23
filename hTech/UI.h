@@ -1,4 +1,8 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
+
+
 #include "UI_Element.h"
 #include "UI_VariableTracker.h"
 
@@ -6,7 +10,7 @@ class Camera;
 class Transform;
 class UI_Panel;
 
-class UI
+class HTECH_FUNCTION_EXPORT UI
 {
 private:	
 	std::vector<SDL_Point> mUIGridLayoutPoints;
