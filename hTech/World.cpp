@@ -10,6 +10,7 @@
 #include "UI.h"
 
 #include "Component_Sprite.h"
+#include "Component_Script.h"
 
 World* World::mInstance = nullptr;
 
@@ -188,6 +189,13 @@ World::World()
             entity->AddComponent<SpriteComponent>();
             entity->GetComponent<SpriteComponent>()->LoadTexture("Assets/test.png");
         });
+
+    Entity* testOne = CreateEntity_Impl("TestClassOne", Transform(Vector2(-100.0f, 0.0)));
+    testOne->AddComponent<ScriptComponent>()->AddComponent<SpriteComponent>();
+    testOne->GetComponent<SpriteComponent>()->LoadTexture("Assets/1.png");
+    Entity* testTwo = CreateEntity_Impl("TestClassTwo", Transform(Vector2(100.0f, 0.0)));
+    testTwo->AddComponent<ScriptComponent>()->AddComponent<SpriteComponent>();
+    testTwo->GetComponent<SpriteComponent>()->LoadTexture("Assets/2.png");
 
 
     InputManager::Bind(IM_MOUSE_CODE::IM_MOUSE_LEFT_CLICK, IM_KEY_STATE::IM_KEY_PRESSED, [this]()

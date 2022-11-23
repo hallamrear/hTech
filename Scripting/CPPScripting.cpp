@@ -15,13 +15,6 @@
 
 #include <windows.h>
 
-typedef void(*Test)();
-
-namespace DLLFunctions
-{
-	Test mTest;
-}
-
 // Create a string with last error message
 std::string GetLastErrorStdStr()
 {
@@ -240,7 +233,6 @@ struct ScriptManager
 
 		//resolve function address
 		Script* function = DLLFunction();
-		FreeLibrary(hGetProcIDDLL);
 		return function;
 	};
 };
@@ -251,8 +243,7 @@ int main()
 	//CreateProjectFolder(projectName);
 
 	std::string location = "Project//test//Debug//test.dll";	
-	std::string fn = "?Create@TestClassOne@@SAPAVScript@@XZ";
-	fn = "Create_TestClassOne";
+	 std::string fn = "Create_TestClassOne";
 	auto ptrOne = ScriptManager::LoadDLL(location, fn);
 	fn = "Create_TestClassTwo";
 	auto ptrTwo = ScriptManager::LoadDLL(location, fn);
@@ -261,8 +252,8 @@ int main()
 	{
 		while (true)
 		{
-			try { ptrOne->Update(0.016f); } catch (std::exception e) { std::cout << e.what() << std::endl; };
-			try { ptrTwo->Update(0.016f); } catch (std::exception e) { std::cout << e.what() << std::endl; };
+			ptrOne->Update(0.016f);
+			ptrTwo->Update(0.016f);
 		}
 	}
 	else

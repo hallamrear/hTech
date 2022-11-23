@@ -150,6 +150,9 @@
     <ClInclude Include="ScriptLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ScriptObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -279,6 +282,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ScriptLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

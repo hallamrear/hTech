@@ -6,10 +6,16 @@ class ScriptComponent :
     public Component
 {
 private:
-    static ScriptObject* mScriptObject;
+    ScriptObject* mScriptObject; 
+    
+protected:
+    virtual void Destroy()
+    {
+
+    }
 
 public:
-    ScriptComponent(std::string externalClassName);
+    ScriptComponent(Entity& entity);
     ~ScriptComponent();
 
     void Update(float deltaTime);
