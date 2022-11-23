@@ -6,8 +6,6 @@
 //and to hide the extern tbh
 StartScript(TestClassTwo)
 {
-	CreateScript(TestClassTwo);
-
 	publicFunction Update(float deltaTime)
 	{
 		std::cout << "testClass 2222222222222!" << std::endl;

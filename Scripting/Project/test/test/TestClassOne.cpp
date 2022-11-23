@@ -6,7 +6,7 @@
 //and to hide the extern tbh
 StartScript(TestClassOne)
 {
-	CreateScript(TestClassOne);
+	//CreateScript(TestClassOne);
 
 	publicFunction Update(float deltaTime)
 	{

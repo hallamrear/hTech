@@ -209,7 +209,7 @@ struct ScriptManager
 {
 	static Script* LoadDLL(std::string location, std::string fn)
 	{
-		typedef Script* (__cdecl* scriptPtr)();
+		typedef Script* (__stdcall* scriptPtr)();
 
 		//get raw script location
 		std::string tempPath = "add any additional directories here." + location;
@@ -240,6 +240,7 @@ struct ScriptManager
 
 		//resolve function address
 		Script* function = DLLFunction();
+		FreeLibrary(hGetProcIDDLL);
 		return function;
 	};
 };
@@ -251,16 +252,17 @@ int main()
 
 	std::string location = "Project//test//Debug//test.dll";	
 	std::string fn = "?Create@TestClassOne@@SAPAVScript@@XZ";
+	fn = "Create_TestClassOne";
 	auto ptrOne = ScriptManager::LoadDLL(location, fn);
-	fn = "?Create@TestClassTwo@@SAPAVScript@@XZ";
+	fn = "Create_TestClassTwo";
 	auto ptrTwo = ScriptManager::LoadDLL(location, fn);
 
 	if (ptrOne != nullptr && ptrTwo != nullptr)
 	{
 		while (true)
 		{
-			ptrOne->Update(0.016f);
-			ptrTwo->Update(0.016f);
+			try { ptrOne->Update(0.016f); } catch (std::exception e) { std::cout << e.what() << std::endl; };
+			try { ptrTwo->Update(0.016f); } catch (std::exception e) { std::cout << e.what() << std::endl; };
 		}
 	}
 	else

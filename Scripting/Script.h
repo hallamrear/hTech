@@ -6,15 +6,20 @@
 #define HTECH_FUNCTION_EXPORT __declspec(dllimport)
 #endif
 
-#define EndScript(C) ;
-#define CreateScript(C) public:	inline static __declspec(dllexport) Script* __cdecl Create(void) { return new C(); } 
-
-#define StartScript(C) class C : public Script
+#define EndScript(C) _EndScript(C)
+#define StartScript(C) _StartScript(C)
+#define _EndScript(C) ; extern "C" {  inline HTECH_FUNCTION_EXPORT Script* CREATE_FUNCTION(C) { return new C(); } }
+#define _StartScript(C) class C : public Script
 
 #define publicFunction _publicFunction
 #define _publicFunction public: inline void
 #define privateFunction _privateFunction
 #define _privateFunction private: inline void
+
+#define Create_
+#define MAKE_FN_NAME(x) Create_##x(void)
+#define CREATE_FUNCTION(signal) MAKE_FN_NAME(signal)
+
 
 class Script
 {
