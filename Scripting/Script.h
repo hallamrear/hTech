@@ -17,9 +17,8 @@
 #define _privateFunction private: inline void
 
 #define Create_
-#define MAKE_FN_NAME(x) Create_##x(void)
-#define CREATE_FUNCTION(signal) MAKE_FN_NAME(signal)
-
+#define MAKE_FN_NAME(CLASS) Create_##CLASS(void)
+#define CREATE_FUNCTION(CLASS) MAKE_FN_NAME(CLASS)
 
 class Script
 {
