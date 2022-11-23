@@ -13,41 +13,43 @@
 #endif
 #include "Script.h"
 
-struct ScriptManager
+#include <windows.h>
+
+typedef void(*Test)();
+
+namespace DLLFunctions
 {
-	static Script* LoadDLL(std::string location)
+	Test mTest;
+}
+
+// Create a string with last error message
+std::string GetLastErrorStdStr()
+{
+	DWORD error = GetLastError();
+	if (error)
 	{
-		typedef Script* (__stdcall *scriptPtr)();
-		 
-		//get raw script location
-		std::string tempPath = "add any additional directories here." + location;
-		tempPath = location;
-
-		//Load libary into handle instance
-		//loadA loads out DLL into memory for the progra,
-		HINSTANCE hGetProcIDDLL = LoadLibraryA((tempPath.c_str()));
-
-		//validate
-		if (!hGetProcIDDLL)
+		LPVOID lpMsgBuf;
+		DWORD bufLen = FormatMessage(
+			FORMAT_MESSAGE_ALLOCATE_BUFFER |
+			FORMAT_MESSAGE_FROM_SYSTEM |
+			FORMAT_MESSAGE_IGNORE_INSERTS,
+			NULL,
+			error,
+			MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+			(LPTSTR)&lpMsgBuf,
+			0, NULL);
+		if (bufLen)
 		{
-			std::cout << "Couldnot load library" << std::endl;
-			return nullptr;
+			LPCSTR lpMsgStr = (LPCSTR)lpMsgBuf;
+			std::string result(lpMsgStr, lpMsgStr + (bufLen * 3));
+
+			LocalFree(lpMsgBuf);
+
+			return result;
 		}
-
-		//GetPRocAddress returns the ptr to the function we are trying to find within the DLL instance.
-		scriptPtr CreateScript = (scriptPtr)GetProcAddress(hGetProcIDDLL, "CreateScript");
-
-		if (!CreateScript)
-		{
-			std::cout << "Could not find function name" << std::endl;
-			return nullptr;
-		}
-
-		//resolve function address
-		Script* function = CreateScript();
-		return function;
-	};
-};
+	}
+	return std::string();
+}
 
 void ReplaceExampleReferencesInFile(std::filesystem::path filePath, std::string projectName)
 {
@@ -203,19 +205,62 @@ void CreateProjectFolder(std::string projectName)
 	}
 }
 
+struct ScriptManager
+{
+	static Script* LoadDLL(std::string location, std::string fn)
+	{
+		typedef Script* (__cdecl* scriptPtr)();
+
+		//get raw script location
+		std::string tempPath = "add any additional directories here." + location;
+		tempPath = location;
+
+		//Load libary into handle instance
+		//loadA loads out DLL into memory for the program
+		HINSTANCE hGetProcIDDLL = LoadLibraryEx(tempPath.c_str(), NULL, 0);
+
+		//validate
+		if (!hGetProcIDDLL)
+		{
+			std::cout << "Could not load library" << std::endl;
+			std::cout << GetLastErrorStdStr() << std::endl;
+			return nullptr;
+		}
+
+		//GetPRocAddress returns the ptr to the function we are trying to find within the DLL instance.
+		std::string functionName = fn;
+		scriptPtr DLLFunction = (scriptPtr)GetProcAddress(hGetProcIDDLL, functionName.c_str());
+
+ 		if (!DLLFunction)
+		{
+			std::cout << "Could not find function name" << std::endl;
+			std::cout << GetLastErrorStdStr() << std::endl;
+			return nullptr;
+		}
+
+		//resolve function address
+		Script* function = DLLFunction();
+		return function;
+	};
+};
+
 int main()
 {
-	std::string projectName = "test";
-	CreateProjectFolder(projectName);
+	std::string projectName = "bUILD";
+	//CreateProjectFolder(projectName);
 
-	Script* ptr;
-	ptr = ScriptManager::LoadDLL("Project/test/Debug/test.dll");
+	std::string location = "Project//test//Debug//test.dll";	
+	std::string fn = "?Create@TestClassOne@@SAPAVScript@@XZ";
+	auto ptrOne = ScriptManager::LoadDLL(location, fn);
+	fn = "?Create@TestClassTwo@@SAPAVScript@@XZ";
+	auto ptrTwo = ScriptManager::LoadDLL(location, fn);
 
-	if (ptr != nullptr)
+	if (ptrOne != nullptr && ptrTwo != nullptr)
 	{
 		while (true)
 		{
-			ptr->Update(0.016f);
+			ptrOne->Update(0.016f);
+			ptrTwo->Update(0.016f);
 		}
 	}
 	else
