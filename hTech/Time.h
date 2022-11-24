@@ -1,8 +1,6 @@
 #pragma once
  #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
-
-
 //todo : release functions for all the singletons
 
 class HTECH_FUNCTION_EXPORT Time
@@ -50,4 +48,3 @@ public:
 		return Get(d)->mDeltaTime;
 	}
 };
-

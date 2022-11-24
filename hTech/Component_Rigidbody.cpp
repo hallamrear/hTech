@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "Component_Rigidbody.h"
+#include "Component_Script.h"
 #include "Entity.h"
 #include "PhysicsWorld.h"
 #include "BoundingBox.h"
@@ -176,12 +177,20 @@ void RigidbodyComponent::CalculateInverseMass()
 
 void RigidbodyComponent::OnCollision(const CollisionManifold& manifold, RigidbodyComponent& other)
 {
-
+	ScriptComponent* script = Parent.GetComponent<ScriptComponent>();
+	if (script != nullptr)
+	{
+		script->OnCollision(manifold, other);
+	}
 }
 
 void RigidbodyComponent::OnOverlap(const CollisionManifold& manifold, RigidbodyComponent& other)
 {
-
+	ScriptComponent* script = Parent.GetComponent<ScriptComponent>();
+	if (script != nullptr)
+	{
+		script->OnOverlap(manifold, other);
+	}
 }
 
 void RigidbodyComponent::Update(float DeltaTime)
