@@ -9,7 +9,11 @@
 #include "Camera.h"
 #include <functional>
 
+#include "World.h"
+#include "UI_Button.h"
+
 Editor* Editor::mInstance = nullptr;
+UI_Button* button = nullptr;
 
 Editor::Editor() : mMouseScreenPosition(InputManager::Get()->GetMouseScreenPosition()), mMouseWorldPosition(InputManager::Get()->GetMouseWorldPosition())
 {
@@ -20,21 +24,16 @@ Editor::Editor() : mMouseScreenPosition(InputManager::Get()->GetMouseScreenPosit
     mSelectedEntities = std::vector<Entity*>();
 
     //Setting up editor controls!
-    UI::CreateButton(UI_Panel(1, 1, 1, 1), "#", std::bind(&Editor::SetCursorStateToNoMode, this));
-    UI::CreateButton(UI_Panel(2, 1, 2, 2), "S", std::bind(&Editor::SetCursorStateToSelectMode, this));
-    UI::CreateButton(UI_Panel(5, 1, 2, 2), "M", std::bind(&Editor::SetCursorStateToMoveMode, this));
-    UI::CreateButton(UI_Panel(8, 1, 2, 2), "R", std::bind(&Editor::SetCursorStateToRotateMode, this));
-    UI::CreateButton(UI_Panel(12, 1, 5, 4), "I", std::bind(&Editor::SetCursorStateToInspectMode, this));
+    button = UI::CreateButton(UI_Panel(1, 1, 1, 1), "#", std::bind(&Editor::SetCursorStateToNoMode, this));
+    UI::CreateButton(UI_Panel(2, 1, 1, 1), "M", std::bind(&Editor::SetCursorStateToMoveMode, this));
+    UI::CreateButton(UI_Panel(3, 1, 1, 1), "R", std::bind(&Editor::SetCursorStateToRotateMode, this));
+    UI::CreateButton(UI_Panel(4, 1, 1, 1), "I", std::bind(&Editor::SetCursorStateToInspectMode, this));
 
     InputManager::Get()->Bind(IM_KEY_CODE::IM_KEY_0, IM_KEY_STATE::IM_KEY_PRESSED, std::bind(&Editor::SetCursorStateToNoMode, this));
     InputManager::Get()->Bind(IM_KEY_CODE::IM_KEY_1, IM_KEY_STATE::IM_KEY_PRESSED, std::bind(&Editor::SetCursorStateToSelectMode, this));
     InputManager::Get()->Bind(IM_KEY_CODE::IM_KEY_2, IM_KEY_STATE::IM_KEY_PRESSED, std::bind(&Editor::SetCursorStateToMoveMode, this));
     InputManager::Get()->Bind(IM_KEY_CODE::IM_KEY_3, IM_KEY_STATE::IM_KEY_PRESSED, std::bind(&Editor::SetCursorStateToRotateMode, this));
     InputManager::Get()->Bind(IM_KEY_CODE::IM_KEY_4, IM_KEY_STATE::IM_KEY_PRESSED, std::bind(&Editor::SetCursorStateToInspectMode, this));
-
-    Entity* entity = World::CreateEntity("Test");
-    UI::CreateVariableTracker(UI_Panel(20, 20, 10, 1), mDragDifferenceThisFrame.X, "deltaX: ");
-    UI::CreateVariableTracker(UI_Panel(20, 21, 10, 1), mDragDifferenceThisFrame.Y, "deltaY: ");
 
     mCurrentCursorState = EDITOR_STATE::NONE;
 
@@ -187,6 +186,9 @@ void Editor::Update(float deltaTime)
 
 void Editor::Update_Impl(float deltaTime)
 {
+    button->GetPanel().BackgroundColour.R++;
+    button->GetPanel().BackgroundColour.R = button->GetPanel().BackgroundColour.R % 255;
+
     switch (mCurrentCursorState)
     {
     case EDITOR_STATE::MOVE:
