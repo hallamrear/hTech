@@ -1,7 +1,9 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
 
-class PhysicsProperties
+
+class HTECH_FUNCTION_EXPORT PhysicsProperties
 {
 public:
 	//IsStatic Overrides gravity enabled

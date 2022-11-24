@@ -1,11 +1,15 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
+
+
 #include <string>
 #include "UI_Panel.h"
 
 struct SDL_Renderer;
-class Text;
+class HTECH_FUNCTION_EXPORT Text;
 
-class UI_Element
+class HTECH_FUNCTION_EXPORT UI_Element
 {
 protected:
 	UI_Panel mPanel;

@@ -10,6 +10,7 @@
 #include "UI.h"
 
 #include "Component_Sprite.h"
+#include "Component_Script.h"
 
 World* World::mInstance = nullptr;
 
@@ -189,6 +190,13 @@ World::World()
             entity->GetComponent<SpriteComponent>()->LoadTexture("Assets/test.png");
         });
 
+    Entity* testOne = CreateEntity_Impl("TestClassOne", Transform(Vector2(-100.0f, 0.0)));
+    testOne->AddComponent<ScriptComponent>()->AddComponent<SpriteComponent>();
+    testOne->GetComponent<SpriteComponent>()->LoadTexture("Assets/1.png");
+    Entity* testTwo = CreateEntity_Impl("TestClassTwo", Transform(Vector2(100.0f, 0.0)));
+    testTwo->AddComponent<ScriptComponent>()->AddComponent<SpriteComponent>();
+    testTwo->GetComponent<SpriteComponent>()->LoadTexture("Assets/2.png");
+
 
     InputManager::Bind(IM_MOUSE_CODE::IM_MOUSE_LEFT_CLICK, IM_KEY_STATE::IM_KEY_PRESSED, [this]()
         {
@@ -207,6 +215,28 @@ World::World()
             rectEnd = InputManager::Get()->GetMouseWorldPosition();
             selectionRect = WorldRectangle(rectStart, rectEnd);       
             mWorldHashMap->Retrieve(selectionRect, mSelectedEntities);
+        });
+
+
+    UI::CreateButton(UI_Panel(32, 32, 2, 2), "open", 
+        [this]() 
+        {
+            OPENFILENAME file = { sizeof(OPENFILENAME) };
+            char szFile[_MAX_PATH] = "name";
+            const char szExt[] = "ext\0"; // extra '\0' for lpstrFilter
+
+            file.hwndOwner = GetConsoleWindow();
+            file.lpstrFile = szFile; // <--------------------- initial file name
+            file.nMaxFile = sizeof(szFile) / sizeof(szFile[0]);
+            file.lpstrFilter = file.lpstrDefExt = szExt;
+            file.Flags = OFN_SHOWHELP | OFN_OVERWRITEPROMPT;
+
+            if (GetOpenFileName(&file))
+            {
+                std::string filestr = file.lpstrFile;
+                return;
+                //ScriptManager::ReloadFile()
+            }
         });
 }
 

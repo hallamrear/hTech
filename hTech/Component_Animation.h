@@ -1,10 +1,14 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
+
+
 #include "Component.h"
 
 struct SDL_Renderer;
-class Texture;
+class HTECH_FUNCTION_EXPORT Texture;
 
-class AnimationComponent
+class HTECH_FUNCTION_EXPORT AnimationComponent
 	: public Component
 {
 private:

@@ -1,7 +1,9 @@
 #pragma once
+#define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
 #include <math.h>
 
-class Vector2
+class HTECH_FUNCTION_EXPORT Vector2
 {
 public:
 	float X;

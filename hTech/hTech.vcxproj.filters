@@ -144,6 +144,15 @@
     <ClInclude Include="Rectangle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Component_Script.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -267,6 +276,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SpatialDivisionMethod.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Component_Script.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

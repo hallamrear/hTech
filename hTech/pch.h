@@ -1,6 +1,12 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
 #ifndef PCH_H
 #define PCH_H
+
+#ifndef HTECH_FUNCTION_EXPORT
+#define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+#endif
 
 #define _USE_MATH_DEFINES
 #define NOMINMAX

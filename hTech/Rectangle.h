@@ -1,4 +1,7 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
+
 
 struct WorldRectangle
 {

@@ -1,6 +1,9 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
-class Vector3
+
+
+class HTECH_FUNCTION_EXPORT Vector3
 {
 public:
 	float X = 0.0f;

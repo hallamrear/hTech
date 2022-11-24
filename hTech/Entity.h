@@ -1,14 +1,18 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
+
+
 #include <string>
 #include "Transform.h"
 
-class  Collider;
-class  Texture;
+class HTECH_FUNCTION_EXPORT  Collider;
+class HTECH_FUNCTION_EXPORT  Texture;
 struct SDL_Renderer;
-class Component;
-class TransformComponent;
+class HTECH_FUNCTION_EXPORT Component;
+class HTECH_FUNCTION_EXPORT TransformComponent;
 
-class Entity
+class HTECH_FUNCTION_EXPORT Entity
 {
 private:
 

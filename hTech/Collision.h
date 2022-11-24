@@ -1,19 +1,23 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
+
+
 #include "Vector2.h"
 #include "Helper.h"
 #include <list>
 #include <array>
 #include <vector>
 
-class BoundingSphere;
-class BoundingBox;
-class RigidbodyComponent;
-class OrientedBoundingBox;
-class BoundingPolygon;
+class HTECH_FUNCTION_EXPORT BoundingSphere;
+class HTECH_FUNCTION_EXPORT BoundingBox;
+class HTECH_FUNCTION_EXPORT RigidbodyComponent;
+class HTECH_FUNCTION_EXPORT OrientedBoundingBox;
+class HTECH_FUNCTION_EXPORT BoundingPolygon;
 struct SDL_Renderer;
-class Entity;
+class HTECH_FUNCTION_EXPORT Entity;
 
-class CollisionManifold
+class HTECH_FUNCTION_EXPORT CollisionManifold
 {
 public:
 	bool HasCollided = false;
@@ -24,7 +28,7 @@ public:
 	RigidbodyComponent* ObjB = nullptr;
 };
 
-enum class COLLIDER_TYPE
+enum class HTECH_FUNCTION_EXPORT COLLIDER_TYPE
 {
 	COLLIDER_UNKNOWN = -1,
 	COLLIDER_AABB = 0,
@@ -37,9 +41,9 @@ enum class COLLIDER_TYPE
 //AABB - Green outline
 //BS - Blue outline
 
-class Transform;
+class HTECH_FUNCTION_EXPORT Transform;
 
-class Collider
+class HTECH_FUNCTION_EXPORT Collider
 {
 public:
 	Transform& mTransform;
@@ -55,7 +59,7 @@ public:
 	virtual void GetColliderAsPoints(Vector2 points[]) const = 0;
 };
  
-class Collision
+class HTECH_FUNCTION_EXPORT Collision
 {
 private:
 	static Vector2 FindClosestPointOnPolygon(const BoundingSphere& circle, const Collider& polygon, const int polygonVertexCoun);

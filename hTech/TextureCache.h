@@ -1,11 +1,13 @@
 #pragma once
+#define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
 #include <unordered_map>
 
 struct SDL_Texture;
 
-class Texture;
+class HTECH_FUNCTION_EXPORT Texture;
 
-class TextureCache
+class HTECH_FUNCTION_EXPORT TextureCache
 {
 private:
 	TextureCache();

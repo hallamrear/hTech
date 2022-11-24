@@ -1,4 +1,6 @@
 #pragma once
+#define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
 #include <random>
 #include "Vector2.h"
 #include "Vector3.h"

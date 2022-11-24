@@ -1,7 +1,11 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
+
+
 #include "Colour.h"
 
-class Text
+class HTECH_FUNCTION_EXPORT Text
 {
 private:
 	static TTF_Font* mFont;

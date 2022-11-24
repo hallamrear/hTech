@@ -1,4 +1,8 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
+
+
 #include "SpatialDivisionMethod.h"
 #include "Transform.h"
 
@@ -7,12 +11,12 @@
 #define WORLD_TILE_COUNT_Y 16
 
 struct SDL_Renderer;
-class Entity;
-class Text;
+class HTECH_FUNCTION_EXPORT Entity;
+class HTECH_FUNCTION_EXPORT Text;
 
 #include "Rectangle.h"
 
-class World
+class HTECH_FUNCTION_EXPORT World
 {
 private:
 	std::vector<Entity*> mSelectedEntities;

@@ -1,8 +1,12 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
+
+
 #include "Texture.h"
 #include "Transform.h"
 
-class AnimationController
+class HTECH_FUNCTION_EXPORT AnimationController
 {
 	float mTimeBetweenFrames;
 	float mTimeElapsed;

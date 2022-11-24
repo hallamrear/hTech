@@ -1,9 +1,14 @@
 #pragma once
+#include <string>
+
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
 #include <queue>
 
 class BoundingBox;
 class MenuObject;
 class Text;
+struct SDL_Renderer;
 
 enum class LogLevel
 {
@@ -12,7 +17,7 @@ enum class LogLevel
 	LOG_MESSAGE,
 };
 
-class Log
+class HTECH_FUNCTION_EXPORT Log
 {
 private:
 	std::vector<Text*> mTextElements;

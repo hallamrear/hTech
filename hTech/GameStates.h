@@ -1,8 +1,11 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
+
 
 struct SDL_Renderer;
 
-class [[deprecated("Use World instead")]] GameState
+class HTECH_FUNCTION_EXPORT [[deprecated("Use World instead")]] GameState
 {
 public:
 	[[deprecated("Use World instead")]]

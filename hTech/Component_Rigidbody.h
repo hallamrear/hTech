@@ -1,12 +1,16 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
+
+
 #include "Component.h"
 
 
-enum class COLLIDER_TYPE;
-class CollisionManifold;
-class Collider;
+enum class HTECH_FUNCTION_EXPORT COLLIDER_TYPE;
+class HTECH_FUNCTION_EXPORT CollisionManifold;
+class HTECH_FUNCTION_EXPORT Collider;
 
-class RigidbodyComponent :
+class HTECH_FUNCTION_EXPORT RigidbodyComponent :
     public Component
 {
 private:

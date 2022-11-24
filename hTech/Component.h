@@ -1,9 +1,12 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
-class Entity;
+
+
+class HTECH_FUNCTION_EXPORT Entity;
 struct SDL_Renderer;
 
-class Component
+class HTECH_FUNCTION_EXPORT Component
 {
 protected:
 	bool mIsEnabled = true;

@@ -1,8 +1,12 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
+
+
 #include "Collision.h"
 #include <vector>
 
-class BoundingPolygon :
+class HTECH_FUNCTION_EXPORT BoundingPolygon :
     public Collider
 {
 private:

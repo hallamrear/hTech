@@ -1,7 +1,11 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
+
+
 #include "Vector2.h"
 
-class Camera
+class HTECH_FUNCTION_EXPORT Camera
 {
 private:
 	Vector2 mPosition;

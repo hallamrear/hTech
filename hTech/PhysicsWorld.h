@@ -1,12 +1,16 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
+
+
 #include "Collision.h"
 
 #define FIXED_TIME_STEP (1.0f / 60.0f)
 #define IMPULSE_ITERATION_COUNT 1
 
-class RigidbodyComponent;
+class HTECH_FUNCTION_EXPORT RigidbodyComponent;
 
-class Physics
+class HTECH_FUNCTION_EXPORT Physics
 {
 	static Physics* mInstance;
 	float mFixedTimestep;

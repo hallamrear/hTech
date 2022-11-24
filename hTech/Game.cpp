@@ -55,10 +55,10 @@ void Game::Start()
 
 		const int FPS = 60;
 		const int frameDelay = 1000 / FPS;
-		Uint32 currentTime = 0, deltaTime = 0, oldTime = 0;
+		Uint32 currentTime = 0, deltaTimeMilliseconds = 0, oldTime = 0;
 		Uint32 frameTime = 0;
-		float DeltaTime = 0.0;
-		Time::Get(DeltaTime);
+		float DeltaTimeInSeconds = 0.0;
+		Time::Get(DeltaTimeInSeconds);
 
 		while(GetIsRunning())
 		{
@@ -67,14 +67,16 @@ void Game::Start()
 			while (GetIsRunning())
 			{
 				currentTime = SDL_GetTicks();
-				deltaTime = currentTime - oldTime;
 
-				DeltaTime = deltaTime / 1000.0f;
+				//frame delta in miliseconds
+				deltaTimeMilliseconds = currentTime - oldTime;
 
-				if (deltaTime != 0)
+				DeltaTimeInSeconds = deltaTimeMilliseconds / 1000.0f;
+
+				if (deltaTimeMilliseconds != 0)
 				{
 					HandleEvents();
-					Update(DeltaTime);
+					Update(DeltaTimeInSeconds);
 					Render();
 				}
 
@@ -230,7 +232,13 @@ bool Game::InitialiseApplicationControls()
 		[this]
 		{
 			TakeScreenshot("");
-		});
+		}); 
+	
+	InputManager::Bind(IM_KEY_CODE::IM_KEY_F2, IM_KEY_STATE::IM_KEY_PRESSED,
+	[this]
+	{
+			Settings::Get()->SetDrawLog(!Settings::Get()->GetDrawLog());
+	});
 
 	return true;
 }

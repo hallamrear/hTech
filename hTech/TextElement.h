@@ -1,12 +1,14 @@
 #pragma region deprecated
 
 //#pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
 //#include "Entity.h"
 //#include "Colour.h"
 //
 //struct SDL_Texture;
 //
-//class TextElement : public Entity
+//class HTECH_FUNCTION_EXPORT TextElement : public Entity
 //{
 //private:
 //	SDL_Texture*	mTextTexture;

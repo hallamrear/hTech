@@ -1,7 +1,11 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
+
+
 #include "Vector2.h"
 
-class Settings
+class HTECH_FUNCTION_EXPORT Settings
 {
 private:
 	//todo : put singleton back

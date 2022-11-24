@@ -1,0 +1,82 @@
+#include "pch.h"
+#include "Component_Script.h"
+#include "Collision.h"
+#include "Entity.h"
+#include "ScriptLoader.h"
+#include "ScriptObject.h"
+
+void ScriptComponent::Destroy()
+{
+	if (mScriptObject)
+	{
+		mScriptObject->Destroy();
+		mScriptObject = nullptr;
+	}
+}
+
+void ScriptComponent::Update(float deltaTime)
+{
+	if (mScriptObject)
+	{
+		mScriptObject->Update(deltaTime);
+	}
+}
+
+ScriptComponent::ScriptComponent(Entity& entity) : Component("Script Component", entity)
+{
+	std::string expectedName = entity.GetName();
+	mScriptObject = ScriptLoader::GetScriptObject(expectedName);
+}
+
+ScriptComponent::~ScriptComponent()
+{
+	Destroy();
+}
+
+void ScriptComponent::Start()
+{
+	if (mScriptObject)
+	{
+		mScriptObject->Start();
+	}
+}
+
+void ScriptComponent::OnEnable()
+{
+	if (mScriptObject)
+	{
+		mScriptObject->OnEnable();
+	}
+}
+
+void ScriptComponent::OnDisable()
+{
+	if (mScriptObject)
+	{
+		mScriptObject->OnDisable();
+	}
+}
+
+void ScriptComponent::OnCollision(const CollisionManifold& manifold, RigidbodyComponent& other)
+{
+	if (mScriptObject)
+	{
+		mScriptObject->OnCollision(manifold, other);
+	}
+}
+
+void ScriptComponent::OnOverlap(const CollisionManifold& manifold, RigidbodyComponent& other)
+{
+	if (mScriptObject)
+	{
+		mScriptObject->OnOverlap(manifold, other);
+	}
+}
+
+ScriptObject const * ScriptComponent::GetScriptObject()
+{
+	if (mScriptObject)
+		return mScriptObject;
+	else
+		return nullptr;
+}

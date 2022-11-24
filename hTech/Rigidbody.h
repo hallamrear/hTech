@@ -1,12 +1,16 @@
 #pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
+
+
 #include "Entity.h"
 #include "PhysicsProperties.h"
 
 /*
 
-class CollisionManifold;
+class HTECH_FUNCTION_EXPORT CollisionManifold;
 
-class Rigidbody : public Entity
+class HTECH_FUNCTION_EXPORT Rigidbody : public Entity
 {
 private:
 	Rigidbody(
