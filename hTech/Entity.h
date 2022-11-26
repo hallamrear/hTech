@@ -25,7 +25,7 @@ protected:
 	void					ClampRotation();
 
 public:
-	const std::string&      GetName();
+	const std::string&      GetName() const;
 	bool					IsEnabled;
 
 							Entity(Transform SpawnTransform = Transform(), std::string Name = "unnamed", Entity* Parent = nullptr);

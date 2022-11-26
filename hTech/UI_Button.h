@@ -12,6 +12,7 @@ private:
 	bool mWasPressedLastFrame;
 	bool mIsPressed;
 	std::function<void()> mFunction;
+	Colour mPressedColour;
 
 public:
 	UI_Button(UI_Panel rect, std::string text, std::function<void()> func);
@@ -21,5 +22,6 @@ public:
 	void Render(SDL_Renderer& renderer);
 
 	void OnClick();
+	void SetPressedColour(Colour colour);
 };
 

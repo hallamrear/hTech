@@ -9,6 +9,11 @@ UI_Button::UI_Button(UI_Panel rect, std::string text, std::function<void()> func
 	mIsPressed = false;
 	mFunction = func;
 
+	mPressedColour.R = mPanel.BackgroundColour.R - (mPanel.BackgroundColour.R / 8);
+	mPressedColour.G = mPanel.BackgroundColour.G - (mPanel.BackgroundColour.G / 8);
+	mPressedColour.B = mPanel.BackgroundColour.B - (mPanel.BackgroundColour.B / 8);
+	mPressedColour.A = mPanel.BackgroundColour.A - (mPanel.BackgroundColour.A / 8);
+
 	Vector2 screenPos;
 	mText = new Text(screenPos, text, rect.TextColour);
 	mText->SetWrapWidthInPixels(mPanel.W * UI_TILE_SIZE);
@@ -44,11 +49,12 @@ void UI_Button::Render(SDL_Renderer& renderer)
 {
 	if (mIsPressed)
 	{
-		DrawPanel(renderer, Colour(64, 64, 64, 255), true);
+		DrawPanel(renderer, Colour(mPressedColour.R, mPressedColour.G, mPressedColour.B, mPressedColour.A), true);
+		DrawPanel(renderer, Colour(mPanel.BackgroundColour.R, mPanel.BackgroundColour.G, mPanel.BackgroundColour.B, mPanel.BackgroundColour.A), false);
 	}
 	else
 	{
-		DrawPanel(renderer, Colour(200, 200, 200, 255), true);
+		DrawPanel(renderer, Colour(mPanel.BackgroundColour.R, mPanel.BackgroundColour.G, mPanel.BackgroundColour.B, mPanel.BackgroundColour.A), true);
 	}
 
 	mText->Render(renderer);
@@ -61,4 +67,9 @@ void UI_Button::OnClick()
 		mFunction();
 		mIsPressed = true;
 	}
+}
+
+void UI_Button::SetPressedColour(Colour colour)
+{
+	mPressedColour = colour;
 }

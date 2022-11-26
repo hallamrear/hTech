@@ -4,6 +4,7 @@
 
 #include "Text.h"
 #include "UI_Element.h"
+#include "Entity.h"
 
 template<class R>
 class HTECH_FUNCTION_EXPORT UI_VariableTracker :
@@ -15,6 +16,7 @@ private:
 
 public:
     UI_VariableTracker(UI_Panel rect, const R& reference, std::string additionalText);
+
     ~UI_VariableTracker();
 
     void Update(float DeltaTime);
@@ -49,6 +51,44 @@ inline void UI_VariableTracker<R>::Update(float DeltaTime)
 
 template<class R>
 inline void UI_VariableTracker<R>::Render(SDL_Renderer& renderer)
+{
+	DrawPanel(renderer, mPanel.BackgroundColour, true);
+	mText->Render(renderer);
+}
+
+
+
+
+
+
+
+
+
+template<>
+inline UI_VariableTracker<Entity>::UI_VariableTracker(UI_Panel rect, const Entity& variable, std::string additionalText) : UI_Element(rect), mReference(variable)
+{
+	mAdditionalText = additionalText;
+	Vector2 screenPos;
+	mText = new Text(screenPos, "", rect.TextColour);
+	mText->SetWrapWidthInPixels(mPanel.W * UI_TILE_SIZE);
+	screenPos.X = mPanel.X * UI_TILE_SIZE + (mText->GetTextureSize().X / 2);
+	screenPos.Y = mPanel.Y * UI_TILE_SIZE - (mText->GetTextureSize().Y / 2);
+	mText->SetPosition(screenPos);
+}
+
+template<>
+inline void UI_VariableTracker<Entity>::Update(float DeltaTime)
+{
+	std::string str = mReference.GetName() + "\n";
+	str += "Is Alive? : " + std::to_string(mReference.GetIsAlive()) + "\n";
+	str += "Is Enabled? :" + std::to_string(mReference.IsEnabled) + "\n";
+	str += "Notes: " + mAdditionalText + "\n";
+	mText->SetString(str);
+	mText->Update(DeltaTime);
+}
+
+template<>
+inline void UI_VariableTracker<Entity>::Render(SDL_Renderer& renderer)
 {
 	DrawPanel(renderer, mPanel.BackgroundColour, true);
 	mText->Render(renderer);

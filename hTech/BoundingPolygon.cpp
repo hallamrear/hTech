@@ -2,6 +2,7 @@
 #include "BoundingPolygon.h"
 #include "Transform.h"
 #include "Camera.h"
+#include "Console.h"
 
 BoundingPolygon::BoundingPolygon(Transform& origin, float& rotation, const std::vector<Vector2> points, const int& pointCount) : Collider(origin), mRotation(rotation)
 {
@@ -26,7 +27,7 @@ void BoundingPolygon::Update(float DeltaTime)
 
 void BoundingPolygon::Render(SDL_Renderer& renderer)
 {
-	if (Settings::Get()->GetDrawColliders())
+	if (Console::Query("DrawColliders") != 0)
 	{
 		PointCount = mOriginalPoints.size();
 

@@ -19,11 +19,6 @@ class HTECH_FUNCTION_EXPORT Text;
 class HTECH_FUNCTION_EXPORT World
 {
 private:
-	std::vector<Entity*> mSelectedEntities;
-	Vector2 rectStart, rectEnd;
-	bool mIsDraggingRect = false;
-	WorldRectangle selectionRect = WorldRectangle(0,0,0,0);
-
 	static World*			mInstance;
 	std::vector<Entity*>	mEntityList;
 	SpatialHash*			mWorldHashMap;
@@ -36,6 +31,7 @@ private:
 	void					Render_Impl(SDL_Renderer&);
 	Entity*					GetEntityByName_Impl(std::string name);
 	void					QuerySpaceForEntities_Impl(WorldRectangle rect, std::vector<Entity*>& entities);
+	Entity*					FindNearestEntityToPosition_Impl(Vector2 WorldPosition);
 
 protected:
 							World();
@@ -43,6 +39,7 @@ protected:
 	static World*			Get();
 
 public:
+	static Entity*			FindNearestEntityToPosition(Vector2 WorldPosition);
 	static void				QuerySpaceForEntities(WorldRectangle rect, std::vector<Entity*>& entities);
 	static Entity*			CreateEntity(std::string Name = "unnamed", Transform SpawnTransform = Transform(), Entity* Parent = nullptr);
 	static void				DestroyEntity(Entity* entity);

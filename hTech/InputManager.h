@@ -230,8 +230,8 @@ private:
 	const int mKeyCount = 36;
 	const int mMouseCount = 5;
 	bool mIsMouseDown;
-	int mMousePositionX;
-	int mMousePositionY;
+	Vector2 mMousePositionScreenSpace;
+	Vector2 mMousePositionWorldSpace;
 
 	Key mKeyStates[36] =
 	{
@@ -300,8 +300,8 @@ public:
 	void MousePressUpdate(SDL_Keycode key, bool state);
 
 	void MousePositionUpdate(int x, int y);
-	Vector2 GetMouseScreenPosition();
-	Vector2 GetMouseWorldPosition();
+	const Vector2& GetMouseScreenPosition();
+	const Vector2& GetMouseWorldPosition();
 	void MouseScrollUpdate(IM_SCROLL_DIRECTION direction);
 };
 

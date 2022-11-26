@@ -248,6 +248,8 @@ xcopy /Y /E /H /C /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
     <ClInclude Include="Component_Script.h" />
     <ClInclude Include="Component_Sprite.h" />
     <ClInclude Include="Component_Transform.h" />
+    <ClInclude Include="Console.h" />
+    <ClInclude Include="Editor.h" />
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameStates.h" />
@@ -269,7 +271,6 @@ xcopy /Y /E /H /C /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="Settings.h" />
     <ClInclude Include="StateDirector.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
@@ -310,6 +311,8 @@ xcopy /Y /E /H /C /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
     <ClCompile Include="Component_Script.cpp" />
     <ClCompile Include="Component_Sprite.cpp" />
     <ClCompile Include="Component_Transform.cpp" />
+    <ClCompile Include="Console.cpp" />
+    <ClCompile Include="Editor.cpp" />
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GameStates.cpp" />
@@ -335,7 +338,6 @@ xcopy /Y /E /H /C /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="Settings.cpp" />
     <ClCompile Include="StateDirector.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>

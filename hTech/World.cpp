@@ -91,7 +91,6 @@ void World::Render_Impl(SDL_Renderer& renderer)
 {
     mWorldHashMap->Render(renderer);
 
-
     for (size_t i = 0; i < mEntityList.size(); i++)
     {
         if (mEntityList[i] != nullptr)
@@ -99,63 +98,38 @@ void World::Render_Impl(SDL_Renderer& renderer)
             mEntityList[i]->Render();
         }
     }
-
-
-    for (size_t i = 0; i < mSelectedEntities.size(); i++)
-    {
-        Vector2 rectTR = Camera::WorldToScreen(mSelectedEntities[i]->GetTransform().Position + Vector2(-32, 32));
-        SDL_Rect rect{};
-        rect.x = rectTR.X;
-        rect.y = rectTR.Y;
-        rect.w = 64;
-        rect.h = 64;
-
-        SDL_RenderDrawRect(&renderer, &rect);
-    }
-
-    Vector2 points[4] =
-    {
-        {(float)selectionRect.X,				   (float)selectionRect.Y},
-        {(float)selectionRect.X + selectionRect.W, (float)selectionRect.Y},
-        {(float)selectionRect.X,				   (float)selectionRect.Y - selectionRect.H},
-        {(float)selectionRect.X + selectionRect.W, (float)selectionRect.Y - selectionRect.H}
-    };
-
-    SDL_SetRenderDrawColor(&renderer, 255, 255, 255, 255);
-    Vector2 r;
-    SDL_Rect c{};
-    for (size_t i = 0; i < 4; i++)
-    {
-        r = Camera::WorldToScreen(points[i]);
-        c.w = 4;
-        c.h = 4;
-        c.x = r.X - (c.w / 2);
-        c.y = r.Y - (c.h / 2);
-        SDL_RenderFillRect(&renderer, &c);
-    }
-
-    if (mIsDraggingRect)
-    {
-        SDL_SetRenderDrawColor(&renderer, 255, 255, 255, 255);
-        selectionRect.Render(renderer);
-    }
 }
 
 Entity* World::GetEntityByName_Impl(std::string name)
 {
     Entity* entity = nullptr;
+    auto result = std::find_if(mEntityList.begin(), mEntityList.end(), [name](Entity* entity) { return entity->GetName() == name; });
 
-    for (size_t i = 0; i < mEntityList.size(); i++)
+    if (result != mEntityList.end())
     {
-        if (mEntityList[i]->GetName() == name)
-        {
-            entity = mEntityList[i];
-            break;
-        }
+        return *result;
     }
 
     return entity;
 }
+
+//[[deprecated("Rewritten")]]
+//Entity* World::GetEntityByName_Impl(std::string name)
+//{
+//    Entity* entity = nullptr;
+//
+//    for (size_t i = 0; i < mEntityList.size(); i++)
+//    {
+//        if (mEntityList[i]->GetName() == name)
+//        {
+//            entity = mEntityList[i];
+//            break;
+//        }
+//    }
+//
+//    return entity;
+//}
+
 
 void World::QuerySpaceForEntities_Impl(WorldRectangle rect, std::vector<Entity*>& entities)
 {
@@ -172,72 +146,17 @@ World::World()
     int halfSizeX = WORLD_TILE_COUNT_X / 2;
     int halfSizeY = WORLD_TILE_COUNT_Y / 2;
 
-    UI::CreateVariableTracker(UI_Panel(1, 2, 6, 1), selectionRect.X, "1 X: ");
-    UI::CreateVariableTracker(UI_Panel(1, 3, 6, 1), selectionRect.Y, "1 Y: ");
-    UI::CreateVariableTracker(UI_Panel(1, 4, 6, 1), selectionRect.W, "1 W: ");
-    UI::CreateVariableTracker(UI_Panel(1, 5, 6, 1), selectionRect.H, "1 H: ");
-
     mWorldHashMap = new SpatialHash(sizeX, sizeY);
-    mSelectedEntities = std::vector<Entity*>();
 
     InputManager::Bind(
-        IM_KEY_CODE::IM_KEY_1,
+        IM_KEY_CODE::IM_KEY_A,
         IM_KEY_STATE::IM_KEY_PRESSED,
         [this]()
         {
             Entity* entity = CreateEntity_Impl("Test", Transform(InputManager::Get()->GetMouseWorldPosition()));
             entity->AddComponent<SpriteComponent>();
             entity->GetComponent<SpriteComponent>()->LoadTexture("Assets/test.png");
-        });
-
-    Entity* testOne = CreateEntity_Impl("TestClassOne", Transform(Vector2(-100.0f, 0.0)));
-    testOne->AddComponent<ScriptComponent>()->AddComponent<SpriteComponent>();
-    testOne->GetComponent<SpriteComponent>()->LoadTexture("Assets/1.png");
-    Entity* testTwo = CreateEntity_Impl("TestClassTwo", Transform(Vector2(100.0f, 0.0)));
-    testTwo->AddComponent<ScriptComponent>()->AddComponent<SpriteComponent>();
-    testTwo->GetComponent<SpriteComponent>()->LoadTexture("Assets/2.png");
-
-
-    InputManager::Bind(IM_MOUSE_CODE::IM_MOUSE_LEFT_CLICK, IM_KEY_STATE::IM_KEY_PRESSED, [this]()
-        {
-            rectStart = InputManager::Get()->GetMouseWorldPosition();
-            mIsDraggingRect = true;
-        });
-
-    InputManager::Bind(IM_MOUSE_CODE::IM_MOUSE_LEFT_CLICK, IM_KEY_STATE::IM_KEY_HELD, [this]()
-        {
-            Vector2 mousePos = InputManager::Get()->GetMouseWorldPosition();
-            selectionRect = WorldRectangle(rectStart, mousePos);
-        });
-
-    InputManager::Bind(IM_MOUSE_CODE::IM_MOUSE_LEFT_CLICK, IM_KEY_STATE::IM_KEY_RELEASED, [this]()
-        {
-            rectEnd = InputManager::Get()->GetMouseWorldPosition();
-            selectionRect = WorldRectangle(rectStart, rectEnd);       
-            mWorldHashMap->Retrieve(selectionRect, mSelectedEntities);
-        });
-
-
-    UI::CreateButton(UI_Panel(32, 32, 2, 2), "open", 
-        [this]() 
-        {
-            OPENFILENAME file = { sizeof(OPENFILENAME) };
-            char szFile[_MAX_PATH] = "name";
-            const char szExt[] = "ext\0"; // extra '\0' for lpstrFilter
-
-            file.hwndOwner = GetConsoleWindow();
-            file.lpstrFile = szFile; // <--------------------- initial file name
-            file.nMaxFile = sizeof(szFile) / sizeof(szFile[0]);
-            file.lpstrFilter = file.lpstrDefExt = szExt;
-            file.Flags = OFN_SHOWHELP | OFN_OVERWRITEPROMPT;
-
-            if (GetOpenFileName(&file))
-            {
-                std::string filestr = file.lpstrFile;
-                return;
-                //ScriptManager::ReloadFile()
-            }
-        });
+        });   
 }
 
 World::~World()
@@ -292,4 +211,39 @@ void World::Update(float DeltaTime)
 void World::Render(SDL_Renderer& renderer)
 {
     Get()->Render_Impl(renderer);
+}
+
+Entity* World::FindNearestEntityToPosition_Impl(Vector2 WorldPosition)
+{
+    Entity* closestEntity = nullptr;
+    std::vector<Entity*> entities = std::vector<Entity*>();
+    int size = 64;
+    WorldRectangle rect = WorldRectangle((int)WorldPosition.X - (size / 2), (int)WorldPosition.Y + (size / 2), size, size);
+    float minDistance = FLT_MAX;
+    rect = WorldRectangle((int)WorldPosition.X - (size / 2), (int)WorldPosition.Y + (size / 2), size, size);
+    mWorldHashMap->Retrieve(rect, entities);
+    
+    for (std::vector<Entity*>::iterator itr = entities.begin(); itr != entities.end(); itr++)
+    {
+        Entity* ent = *itr;
+        Vector2 position = ent->GetTransform().Position;
+
+        Vector2 diff = Vector2(WorldPosition.X - position.X, WorldPosition.Y - position.Y);
+        float mag = diff.GetMagnitude();
+        if (mag < minDistance)
+        {
+            minDistance = mag;
+            closestEntity = *itr;
+        }
+    }
+
+    if (closestEntity)
+        return closestEntity;
+    else
+        return nullptr;
+}
+
+Entity* World::FindNearestEntityToPosition(Vector2 WorldPosition)
+{
+    return Get()->FindNearestEntityToPosition_Impl(WorldPosition);
 }

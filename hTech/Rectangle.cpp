@@ -4,10 +4,10 @@
 
 WorldRectangle::WorldRectangle(Vector2 TL, Vector2 BR)
 {
-	X = TL.X;
-	Y = TL.Y;
-	W = BR.X - TL.X;
-	H = TL.Y - BR.Y;
+	X = (int) TL.X;
+	Y = (int) TL.Y;
+	W = (int)(BR.X - TL.X);
+	H = (int)(TL.Y - BR.Y);
 }
 
 WorldRectangle::WorldRectangle(int x, int y, int w, int h)
@@ -20,16 +20,16 @@ WorldRectangle::WorldRectangle(int x, int y, int w, int h)
 
 void WorldRectangle::Render(SDL_Renderer& renderer, bool drawFromCenter)
 {
-	SDL_Rect rect;
+	SDL_Rect rect{};
 	Vector2 position = Vector2();
 	if (drawFromCenter)
 	{
-		position = Vector2(X - (W / 2), Y + (H / 2));
+		position = Vector2((float)(X - (W / 2)), (float)(Y + (H / 2)));
 	}
 	else
 	{
-		position.X = X;
-		position.Y = Y;
+		position.X = (float)X;
+		position.Y = (float)Y;
 	}
 
 	position = Camera::WorldToScreen(position);

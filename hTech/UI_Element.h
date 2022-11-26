@@ -22,6 +22,8 @@ protected:
 	void DrawPanel(SDL_Renderer& renderer, Colour color, bool drawFilled = true);
 
 public:
+	UI_Panel& GetPanel();
+
 	virtual void Update(float DeltaTime);
 	virtual void Render(SDL_Renderer& renderer);
 	virtual void OnClick();

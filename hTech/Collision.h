@@ -5,6 +5,7 @@
 
 #include "Vector2.h"
 #include "Helper.h"
+#include "Console.h"
 #include <list>
 #include <array>
 #include <vector>
