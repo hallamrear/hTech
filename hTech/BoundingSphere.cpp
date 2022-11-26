@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "BoundingSphere.h"
-#include "Settings.h"
+#include "Console.h"
 #include "Camera.h"
 #include "Transform.h"
 
@@ -23,7 +23,7 @@ void BoundingSphere::Update(float DeltaTime)
 
 void BoundingSphere::Render(SDL_Renderer& renderer)
 {
-	if(Settings::Get()->GetDrawColliders())
+	if(Console::Query("DrawColliders") != 0)
 	{
 		SDL_SetRenderDrawColor(&renderer, 0, 255, 255, 255);
 		Vector2 centre = Camera::WorldToScreen(mTransform.Position);

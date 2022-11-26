@@ -75,7 +75,8 @@ void RigidbodyComponent::PhysicsUpdate(float DeltaTime)
 	//No need for gravity
 	if (GetGravityEnabled())
 	{
-		mNetForce += (Settings::Get()->GetGravityDirection() * mMass);
+		//HARDCODED Gravity value
+		mNetForce += (Vector2(0.0f, -9.81f) * mMass);
 	}
 
 	mNetForce += mExternalForce;
