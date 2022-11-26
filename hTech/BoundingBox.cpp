@@ -28,8 +28,7 @@ void BoundingBox::Update(float DeltaTime)
 
 void BoundingBox::Render(SDL_Renderer& renderer)
 {
-	bool b = Settings::Get()->GetDrawColliders();
-	if (b)
+	if (Console::Query("DrawColliders") != 0)
 	{
 		SDL_Rect r{};
 		Vector2 position = Camera::WorldToScreen(Vector2(mTransform.Position.X - (Size.X / 2), mTransform.Position.Y + (Size.Y / 2)));

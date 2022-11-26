@@ -4,13 +4,14 @@
 #include "InputManager.h"
 #include "UI_VariableTracker.h"
 #include "UI_TextPanel.h"
+#include "Console.h"
 
 UI* UI::mInstance = nullptr;
 
-UI::UI() : mWindowDimensions(Settings::Get()->GetWindowDimensions())
+UI::UI()
 {
-	mUIGridColumnCount = (int)mWindowDimensions.X / UI_TILE_SIZE;
-	mUIGridRowCount = (int)mWindowDimensions.Y / UI_TILE_SIZE;
+	mUIGridColumnCount = Console::Query("WindowDimensionsW") / UI_TILE_SIZE;
+	mUIGridRowCount    = Console::Query("WindowDimensionsH") / UI_TILE_SIZE;
 
 	mUIMap = new UI_Element * *[mUIGridColumnCount];
 	for (size_t i = 0; i < mUIGridColumnCount; i++)
@@ -67,7 +68,9 @@ UI_Button* UI::CreateButton_Impl(UI_Panel panel, std::string text, std::function
 void UI::RebuildUIGrid()
 {
 	mUIGridLayoutPoints.clear();
-	Vector2 dim = Settings::Get()->GetWindowDimensions();
+	Vector2 dim;
+	dim.X = Console::Query("WindowDimensionsW");
+	dim.Y = Console::Query("WindowDimensionsH");
 	Vector2 pos;
 	int count = 0;
 
@@ -110,7 +113,11 @@ UI_TextPanel* UI::CreateTextPanel(UI_Panel panel, std::string string)
 
 void UI::Update_Impl(float DeltaTime)
 {
-	if (Settings::Get()->GetWindowDimensions() != mStoredWindowDimensions)
+	Vector2 dimensions;
+	dimensions.X = Console::Query("WindowDimensionsW");
+	dimensions.Y = Console::Query("WindowDimensionsH");
+
+	if (dimensions != mStoredWindowDimensions)
 	{
 		RebuildUIGrid();
 	}

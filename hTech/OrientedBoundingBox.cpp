@@ -34,7 +34,7 @@ void OrientedBoundingBox::Update(float DeltaTime)
 
 void OrientedBoundingBox::Render(SDL_Renderer& renderer)
 {
-	if (Settings::Get()->GetDrawColliders())
+	if (Console::Query("DrawColliders") != 0)
 	{
 		SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
 
