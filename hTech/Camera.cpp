@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include "UI.h"
 #include "InputManager.h"
+#include "Console.h"
 
 //Camera* Camera::mInstance = nullptr;
 
@@ -90,7 +91,12 @@ Vector2 Camera::WorldToScreen_Impl(Vector2 worldPosition)
 	camPosition.Y *= -1;
 	Vector2 wp = worldPosition;
 	wp.Y *= -1;
-	return Vector2((wp - camPosition) + Settings::Get()->GetWindowCentre());
+
+	Vector2 WindowCentre;
+	WindowCentre.X = Console::Query("WindowCentreX");
+	WindowCentre.Y = Console::Query("WindowCentreY");
+
+	return Vector2((wp - camPosition) + WindowCentre);
 }
 
 Vector2 Camera::ScreenToWorld(Vector2 screenPosition)
@@ -100,9 +106,13 @@ Vector2 Camera::ScreenToWorld(Vector2 screenPosition)
 
 Vector2 Camera::ScreenToWorld_Impl(Vector2 screenPosition)
 {
+	Vector2 WindowCentre;
+	WindowCentre.X = Console::Query("WindowCentreX");
+	WindowCentre.Y = Console::Query("WindowCentreY");
+
 	Vector2 camPosition = mPosition;
 	camPosition.Y *= -1;
-	Vector2 out = Vector2((screenPosition + camPosition) - Settings::Get()->GetWindowCentre());
+	Vector2 out = Vector2((screenPosition + camPosition) - WindowCentre);
 	out.Y *= -1;
 	return out;
 }

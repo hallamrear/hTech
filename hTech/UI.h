@@ -22,7 +22,6 @@ private:
 	UI_Element* mFocusedObject;
 
 	static UI* mInstance;
-	const Vector2& mWindowDimensions;
 
 	void AddUIElementToScreenMap(UI_Element* element, UI_Panel panel);
 

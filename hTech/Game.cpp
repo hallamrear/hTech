@@ -3,12 +3,12 @@
 #include "InputManager.h"
 #include "World.h"
 #include "Log.h"
-#include "Settings.h"
 #include "Time.h"
 #include "PhysicsWorld.h"
 #include <iostream>
 #include "UI.h"
 #include "Editor.h"
+#include "Console.h"
 
 SDL_Renderer* Game::Renderer = nullptr;
 
@@ -117,7 +117,11 @@ void Game::SetFullscreen(SCREEN_STATE state)
 
 	int w, h;
 	SDL_GetWindowSize(mWindow, &w, &h);
-	Settings::Get()->SetWindowDimensions(Vector2((float)w, (float)h));
+	Console::Run("WindowDimensionsW " + std::to_string(w));
+	Console::Run("WindowDimensionsH " + std::to_string(h));
+
+	Console::Run("WindowCentreX " + std::to_string(w / 2));
+	Console::Run("WindowCentreY " + std::to_string(h / 2));
 }
 
 /// <summary>
@@ -127,9 +131,8 @@ void Game::SetFullscreen(SCREEN_STATE state)
 void Game::TakeScreenshot(std::string name)
 {
 	int w, h;
-	Vector2 dimensions = Settings::Get()->GetWindowDimensions();
-	w = (int)dimensions.X;
-	h = (int)dimensions.Y;
+	w = Console::Query("WindowDimensionsW");
+	h = Console::Query("WindowDimensionsH");
 
 	SDL_Surface* sshot = SDL_CreateRGBSurface(0, w, h, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
 	SDL_RenderReadPixels(Game::Renderer, NULL, SDL_PIXELFORMAT_ARGB8888, sshot->pixels, sshot->pitch);
@@ -252,18 +255,20 @@ bool Game::InitialiseSystems(WindowDetails details)
 		if (InitialiseWindow(details.title.c_str(), (int)details.position.X, (int)details.position.Y, (int)details.dimensions.X, (int)details.dimensions.Y, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED, false) == false)
 			return false;
 
-		Settings::Get()->SetWindowDimensions(details.dimensions);
-
-
 		int w, h;
 		SDL_GetWindowSize(mWindow, &w, &h);
-		Settings::Get()->SetWindowDimensions(Vector2((float)w, (float)h));
+		Console::Run("WindowDimensionsW " + std::to_string(w));
+		Console::Run("WindowDimensionsH " + std::to_string(h));
+		Console::Run("WindowCentreX " + std::to_string(w / 2));
+		Console::Run("WindowCentreY " + std::to_string(h / 2));
 
 		if (InitialiseGraphics() == false)
 			return false;
 
 		SDL_SetRenderDrawBlendMode(Game::Renderer, SDL_BLENDMODE_BLEND);
 			
+		Console::Show();
+
 		return true;
 	}
 	else
@@ -334,7 +339,10 @@ void Game::HandleEvents()
 			{
 				int w, h;
 				SDL_GetWindowSize(mWindow, &w, &h);
-				Settings::Get()->SetWindowDimensions(Vector2((float)w, (float)h));
+				Console::Run("WindowDimensionsW " + std::to_string(w));
+				Console::Run("WindowDimensionsH " + std::to_string(h));
+				Console::Run("WindowCentreX " + std::to_string(w / 2));
+				Console::Run("WindowCentreY " + std::to_string(h / 2));
 			}
 			break;
 
@@ -362,7 +370,7 @@ void Game::Update(float DeltaTime)
 	World::Update(DeltaTime);
 	UI::Update(DeltaTime);
 
-	if(Settings::Get()->GetDrawLog())
+	if(Console::Query("DrawLog") != 0)
 		Log::Update(DeltaTime);
 
 	Editor::Update(DeltaTime);
@@ -376,7 +384,7 @@ void Game::Render()
 	World::Render(*Renderer);
 	UI::Render(*Renderer);
 
-	if (Settings::Get()->GetDrawLog())
+	if (Console::Query("DrawLog") != 0)
 		Log::Render(*Renderer);
 
 

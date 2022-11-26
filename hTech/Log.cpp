@@ -4,6 +4,7 @@
 #include "Log.h"
 #include "Colour.h"
 #include "Transform.h"
+#include "Console.h"
 
 Log* Log::mInstance = nullptr;
 
@@ -13,7 +14,7 @@ Log::Log()
 	mTextElements = std::vector<Text*>();
 	mMessageQueue = std::deque<std::pair<LogLevel, std::string>>();
 
-	for (size_t i = 0; i < (unsigned int)Settings::Get()->GetMaxLogMessages(); i++)
+	for (size_t i = 0; i < Console::Query("MaxLogMessages"); i++)
 	{
 		mTextElements.push_back(new Text(Vector2(), ""));
 		mMessageQueue.emplace_back(LogLevel::LOG_MESSAGE, "");
@@ -43,7 +44,7 @@ void Log::LogMessage_Impl(LogLevel indicator, std::string str)
 	mMessages.emplace_back(indicator, str);
 	mMessageQueue.push_back(std::make_pair(indicator, str));
 
-	if (mMessageQueue.size() > (unsigned int)Settings::Get()->GetMaxLogMessages())
+	if (mMessageQueue.size() > Console::Query("MaxLogMessages"))
 		mMessageQueue.pop_front();
 
 	printf("");
@@ -63,8 +64,8 @@ void Log::Render_Impl(SDL_Renderer& renderer)
 	{
 		50,
 		50,
-		(int)(Settings::Get()->GetWindowDimensions().X) / 6,
-		(int)(Settings::Get()->GetWindowDimensions().Y) - 100,
+		(int)(Console::Query("WindowDimensionsW")) / 6,
+		(int)(Console::Query("WindowDimensionsH")) - 100,
 	};
 
 	SDL_Color colour {64, 64, 64, (256 / 4) * 3};
@@ -73,9 +74,10 @@ void Log::Render_Impl(SDL_Renderer& renderer)
 	SDL_SetRenderDrawColor(&renderer, 255, 255, 0, 128);
 	SDL_RenderDrawRect(&renderer, &rect);
 
-	float horizontal = ((Settings::Get()->GetWindowDimensions().X) / 20.0f);
+	float horizontal = (Console::Query("WindowDimensionsW") / 20.0f);
 	float vertical = 55;
-	for (int i = Settings::Get()->GetMaxLogMessages() - 1; i >= 0; i--)
+	int count = Console::Query("MaxLogMessages") - 1;
+	for (int i = count; i >= 0; i--)
 	{
 		vertical += 5;
 		vertical += mTextElements[i]->GetTextureSize().Y;
@@ -91,7 +93,7 @@ void Log::Update_Impl(float DeltaTime)
 	for (auto& itr : mTextElements)
 		itr->SetString("");
 
-	int loopCount = Settings::Get()->GetMaxLogMessages() - 1;
+	int loopCount = Console::Query("MaxLogMessages") -1;
 
 	for (int i = loopCount; i >= 0; i--)
 	{
