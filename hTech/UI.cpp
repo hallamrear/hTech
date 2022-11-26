@@ -1,5 +1,7 @@
 #include "pch.h"
 #include "UI.h"
+
+#ifdef DEFINE_OLD_UI
 #include "UI_Button.h"
 #include "InputManager.h"
 #include "UI_VariableTracker.h"
@@ -176,4 +178,47 @@ void UI::Update(float DeltaTime)
 void UI::Render(SDL_Renderer& renderer)
 {
 	Get()->Render_Impl(renderer);
+}
+#endif
+
+UI* UI::mInstance = nullptr;
+
+UI::UI()
+{
+
+}
+
+UI::~UI()
+{
+
+}
+
+UI* UI::Get()
+{
+	if (mInstance == nullptr)
+	{
+		mInstance = new UI();
+	}
+
+	return mInstance;
+}
+
+void UI::Update(float DeltaTime)
+{
+	Get()->Update_Impl(DeltaTime);
+}
+
+void UI::Render(SDL_Renderer& renderer)
+{
+	Get()->Render_Impl(renderer);
+}
+
+void UI::Update_Impl(float DeltaTime)
+{
+
+}
+
+void UI::Render_Impl(SDL_Renderer& renderer)
+{
+
 }

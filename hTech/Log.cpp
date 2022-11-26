@@ -5,6 +5,7 @@
 #include "Colour.h"
 #include "Transform.h"
 #include "Console.h"
+#include "UI.h"
 
 Log* Log::mInstance = nullptr;
 
@@ -46,8 +47,6 @@ void Log::LogMessage_Impl(LogLevel indicator, std::string str)
 
 	if (mMessageQueue.size() > Console::Query("MaxLogMessages"))
 		mMessageQueue.pop_front();
-
-	printf("");
 }
 
 Log* Log::Get()
@@ -60,7 +59,7 @@ Log* Log::Get()
 
 void Log::Render_Impl(SDL_Renderer& renderer)
 {
-	SDL_Rect rect
+	/*SDL_Rect rect
 	{
 		50,
 		50,
@@ -83,7 +82,42 @@ void Log::Render_Impl(SDL_Renderer& renderer)
 		vertical += mTextElements[i]->GetTextureSize().Y;
 		mTextElements[i]->SetPosition(Vector2(horizontal, vertical));
 		mTextElements[i]->Render(renderer);
+	}*/
+
+	ImGui::Begin("Log");
+
+	ImVec4 colour = ImVec4(0, 0, 0, 0);
+
+	int count = Console::Query("MaxLogMessages") - 1;
+	for (int i = count; i >= 0; i--)
+	{
+		switch (mMessageQueue[i].first)
+		{
+			case LogLevel::LOG_ERROR:
+			{
+				colour = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
+			} 
+			break;
+
+			case LogLevel::LOG_WARNING: 
+			{
+				colour = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
+			} 
+			break;
+
+			case LogLevel::LOG_MESSAGE: 
+			{
+				colour = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+			} 
+			break;		
+		default:
+			colour = ImVec4(0.0f, 0.0f, 1.0f, 1.0f);
+			break;
+		}
+		ImGui::TextColored(ImVec4(255, 0, 0, 255), mMessageQueue[i].second.c_str());
 	}
+
+	ImGui::End();
 }
 
 void Log::Update_Impl(float DeltaTime)

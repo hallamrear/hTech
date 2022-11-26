@@ -1,5 +1,6 @@
 #pragma once
- #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+#ifdef DEFINE_OLD_UI
+#define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
 
 
@@ -31,3 +32,4 @@ public:
 	bool GetInFocus() const;
 	void SetInFocus(bool state);
 };
+#endif

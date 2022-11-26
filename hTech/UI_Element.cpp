@@ -1,4 +1,5 @@
 #include "pch.h"
+#ifdef DEFINE_OLD_UI
 #include "UI_Element.h"
 #include "UI.h"
 #include "Text.h"
@@ -72,3 +73,4 @@ bool UI_Element::GetInFocus() const
 {
 	return mInFocus;
 }
+#endif

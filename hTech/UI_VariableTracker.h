@@ -1,5 +1,6 @@
 #pragma once
- #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+#ifdef DEFINE_OLD_UI
+#define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
 
 #include "Text.h"
@@ -56,14 +57,6 @@ inline void UI_VariableTracker<R>::Render(SDL_Renderer& renderer)
 	mText->Render(renderer);
 }
 
-
-
-
-
-
-
-
-
 template<>
 inline UI_VariableTracker<Entity>::UI_VariableTracker(UI_Panel rect, const Entity& variable, std::string additionalText) : UI_Element(rect), mReference(variable)
 {
@@ -93,3 +86,4 @@ inline void UI_VariableTracker<Entity>::Render(SDL_Renderer& renderer)
 	DrawPanel(renderer, mPanel.BackgroundColour, true);
 	mText->Render(renderer);
 }
+#endif

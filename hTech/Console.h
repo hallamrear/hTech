@@ -6,7 +6,6 @@ private:
 	std::unordered_map<std::string, int> mIntMap;
 	std::unordered_map<std::string, std::function<void()>> mNonVariableFunctions;
 
-	HWND mTerminalHandle;
 	static Console* mInstance;
 	static Console* Get();
 

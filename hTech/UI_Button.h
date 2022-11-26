@@ -1,7 +1,6 @@
 #pragma once
- #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
-
-
+#ifdef DEFINE_OLD_UI
+#define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
 #include "UI_Element.h"
 #include <functional>
@@ -25,3 +24,4 @@ public:
 	void SetPressedColour(Colour colour);
 };
 
+#endif

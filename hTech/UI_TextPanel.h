@@ -1,7 +1,7 @@
 #pragma once
+#ifdef DEFINE_OLD_UI
+
  #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
-
-
 
 #include "UI_Element.h"
 
@@ -14,3 +14,5 @@ public:
 	virtual void Update(float DeltaTime);
 	virtual void Render(SDL_Renderer& renderer);
 };
+
+#endif
