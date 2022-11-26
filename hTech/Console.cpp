@@ -25,14 +25,11 @@ Console::Console()
         freopen_s((FILE**)stderr, "CONOUT$", "w", stderr);
     }
 
+    Hide_Impl();
+
     mIntMap = std::unordered_map<std::string, int>();
 
-    ReloadValues_Impl();
-
-    //mStringMap = std::unordered_map<std::string, std::string>();
-    //mVectorTwoMap = std::unordered_map<std::string, Vector2>();
-    //mFloatMap = std::unordered_map<std::string, float>();
-    //mBoolMap = std::unordered_map<std::string, bool >();
+    ReloadValues();
 }
 
 Console::~Console()
@@ -58,11 +55,6 @@ void Console::Show_Impl()
         std::cerr.clear();
         std::cin.clear();
     }
-}
-
-void Console::ReloadValues()
-{
-    Get()->ReloadValues_Impl();
 }
 
 void Console::Run(std::string command)
@@ -107,9 +99,11 @@ int Console::Query_Impl(std::string variable)
     return 0;
 }
 
-
-void Console::ReloadValues_Impl()
+void Console::ReloadValues()
 {
+    mIntMap.clear();
+    mNonVariableFunctions.clear();
+
     mIntMap.insert(std::make_pair("ShowConsole", 0));
     mIntMap.insert(std::make_pair("DrawLog", 0));
     mIntMap.insert(std::make_pair("WindowDimensionsW", 1280));
@@ -118,6 +112,10 @@ void Console::ReloadValues_Impl()
     mIntMap.insert(std::make_pair("MaxLogMessages", 10));
     mIntMap.insert(std::make_pair("WindowCentreX", 0));
     mIntMap.insert(std::make_pair("WindowCentreY", 0));
+
+    mNonVariableFunctions.insert(std::make_pair("reload", std::bind(&Console::ReloadValues, this)));
+    mNonVariableFunctions.insert(std::make_pair("showConsole", std::bind(&Console::Show_Impl, this)));
+    mNonVariableFunctions.insert(std::make_pair("hideConsole", std::bind(&Console::Hide_Impl, this)));
 }
 
 void Console::Run_Impl(std::string command)
@@ -147,9 +145,28 @@ void Console::ParseCommand(std::vector<std::string>& splits)
 
     std::string output = "";
 
-    if (command == "print")
+    if (command == "print" || command == "call")
     {
-        output = "Variable " + splits[0] + " : " + std::to_string(Query_Impl(splits[0]));
+        if (command[0] == 'p')
+        {
+            output = "Variable " + splits[0] + " : " + std::to_string(Query_Impl(splits[0]));
+        }
+        else
+        {
+            std::string funcName = splits[0];
+
+            auto foundFunc = mNonVariableFunctions.find(funcName);
+            if (foundFunc != mNonVariableFunctions.end())
+            {
+                output = command + " to " + funcName + "()";
+                foundFunc->second();
+            }
+            else
+            {
+                output = "Function '" + splits[0] + "' not found.";
+            }
+            splits[0];
+        }
     }
     else 
     {

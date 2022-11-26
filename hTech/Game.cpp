@@ -267,8 +267,6 @@ bool Game::InitialiseSystems(WindowDetails details)
 
 		SDL_SetRenderDrawBlendMode(Game::Renderer, SDL_BLENDMODE_BLEND);
 			
-		Console::Show();
-
 		return true;
 	}
 	else

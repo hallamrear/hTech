@@ -4,6 +4,7 @@ class Console
 {
 private:
 	std::unordered_map<std::string, int> mIntMap;
+	std::unordered_map<std::string, std::function<void()>> mNonVariableFunctions;
 
 	HWND mTerminalHandle;
 	static Console* mInstance;
@@ -12,7 +13,7 @@ private:
 	Console();
 	~Console();
 
-	void ReloadValues_Impl();
+	void ReloadValues();
 	void Run_Impl(std::string command);
 	void ParseCommand(std::vector<std::string>& splits);
 	void Print(std::string line);
@@ -22,7 +23,6 @@ private:
 	int  Query_Impl(std::string variable);
 
 public:
-	static void ReloadValues();
 	static void Run(std::string command);
 	static int  Query(std::string variable);
 	static void Show();
