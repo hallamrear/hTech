@@ -128,8 +128,8 @@ void Editor::MouseHold()
     {
         if (selected)
         {
-            mDragDifferenceThisFrame = (mDragCurrentWS - mMovementMousePosLastFrame);
-            selected->GetTransform().Rotate(mDragDifferenceThisFrame.GetMagnitude() * Time::DeltaTime());
+            Vector2 diff = (mDragStartWS - mDragCurrentWS);
+            selected->GetTransform().Rotate(diff.X * Time::DeltaTime());
         }
     }
         break;
@@ -168,7 +168,6 @@ void Editor::MouseRelease()
     default:
         break;
     }
-
 }
 
 
