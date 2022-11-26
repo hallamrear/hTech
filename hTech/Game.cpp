@@ -238,12 +238,6 @@ bool Game::InitialiseApplicationControls()
 		{
 			TakeScreenshot("");
 		}); 
-	
-	InputManager::Bind(IM_KEY_CODE::IM_KEY_F2, IM_KEY_STATE::IM_KEY_PRESSED,
-	[this]
-	{
-			Settings::Get()->SetDrawLog(!Settings::Get()->GetDrawLog());
-	});
 
 	return true;
 }
