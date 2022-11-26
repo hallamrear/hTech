@@ -216,10 +216,10 @@ Entity* World::FindNearestEntityToPosition_Impl(Vector2 WorldPosition)
 {
     Entity* closestEntity = nullptr;
     std::vector<Entity*> entities = std::vector<Entity*>();
-    int size = 64.0f;
-    WorldRectangle rect = WorldRectangle(WorldPosition.X - (size / 2), WorldPosition.Y + (size / 2), size, size);
+    int size = 64;
+    WorldRectangle rect = WorldRectangle((int)WorldPosition.X - (size / 2), (int)WorldPosition.Y + (size / 2), size, size);
     float minDistance = FLT_MAX;
-    rect = WorldRectangle(WorldPosition.X - (size / 2), WorldPosition.Y + (size / 2), size, size);
+    rect = WorldRectangle((int)WorldPosition.X - (size / 2), (int)WorldPosition.Y + (size / 2), size, size);
     mWorldHashMap->Retrieve(rect, entities);
     
     for (std::vector<Entity*>::iterator itr = entities.begin(); itr != entities.end(); itr++)

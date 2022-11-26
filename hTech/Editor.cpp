@@ -11,6 +11,7 @@
 
 #include "World.h"
 #include "UI_Button.h"
+#include "Time.h"
 
 Editor* Editor::mInstance = nullptr;
 UI_Button* button = nullptr;
@@ -70,7 +71,7 @@ void Editor::MousePress()
         break;
     case EDITOR_STATE::ROTATE:
     {
-
+        selected = World::FindNearestEntityToPosition(InputManager::Get()->GetMouseWorldPosition());
     }
         break;
     case EDITOR_STATE::NONE:
@@ -125,7 +126,11 @@ void Editor::MouseHold()
         break;
     case EDITOR_STATE::ROTATE:
     {
-
+        if (selected)
+        {
+            mDragDifferenceThisFrame = (mDragCurrentWS - mMovementMousePosLastFrame);
+            selected->GetTransform().Rotate(mDragDifferenceThisFrame.GetMagnitude() * Time::DeltaTime());
+        }
     }
         break;
     case EDITOR_STATE::NONE:
@@ -155,6 +160,8 @@ void Editor::MouseRelease()
     case EDITOR_STATE::INSPECT:
         break;
     case EDITOR_STATE::ROTATE:
+        mSelectedEntities.clear();
+        selected = nullptr;
         break;
     case EDITOR_STATE::NONE:
         break;
@@ -222,8 +229,8 @@ void Editor::Render_Impl(SDL_Renderer& renderer)
     {
         Vector2 rectTR = Camera::WorldToScreen(mSelectedEntities[i]->GetTransform().Position + Vector2(-32, 32));
         SDL_Rect rect{};
-        rect.x = rectTR.X;
-        rect.y = rectTR.Y;
+        rect.x = (int)rectTR.X;
+        rect.y = (int)rectTR.Y;
         rect.w = 64;
         rect.h = 64;
         SDL_RenderDrawRect(&renderer, &rect);
@@ -246,8 +253,8 @@ void Editor::Render_Impl(SDL_Renderer& renderer)
             r = Camera::WorldToScreen(points[i]);
             c.w = 4;
             c.h = 4;
-            c.x = r.X - (c.w / 2);
-            c.y = r.Y - (c.h / 2);
+            c.x = (int)r.X - (c.w / 2);
+            c.y = (int)r.Y - (c.h / 2);
             SDL_RenderFillRect(&renderer, &c);
         }
 
@@ -259,8 +266,8 @@ void Editor::Render_Impl(SDL_Renderer& renderer)
     {
         SDL_Rect d{};
         Vector2 position = Camera::WorldToScreen(selected->GetTransform().Position + Vector2(-32.0f, 32.0f));
-        d.x = position.X;
-        d.y = position.Y;
+        d.x = (int)position.X;
+        d.y = (int)position.Y;
         d.w = 64;
         d.h = 64;
         SDL_SetRenderDrawColor(&renderer, 255, 255, 0, 255);

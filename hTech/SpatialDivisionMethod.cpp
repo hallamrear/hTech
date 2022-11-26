@@ -83,9 +83,9 @@ void SpatialHash::Retrieve(class WorldRectangle rect, std::vector<Entity*>& foun
 	std::vector<Vector2> IDs = std::vector<Vector2>();
 
 	int step = WORLD_TILE_SIZE / 4;
-	for (int x = points[0].X; x <= points[3].X; x += step)
+	for (int x = (int)points[0].X; x <= (int)points[3].X; x += step)
 	{
-		for (int y = points[3].Y; y <= points[0].Y; y += step)
+		for (int y = (int)points[3].Y; y <= (int)points[0].Y; y += step)
 		{
 			IDs.push_back(
 				Vector2(
@@ -199,9 +199,9 @@ void SpatialHash::Render(SDL_Renderer& renderer)
 
 		Vector2 wPosition = Vector2(itr.first.X * (float)WORLD_TILE_SIZE, (itr.first.Y + 1) * (float)WORLD_TILE_SIZE);
 		Vector2 sPosition = Camera::WorldToScreen(wPosition);
-		SDL_Rect rect;
-		rect.x = sPosition.X;
-		rect.y = sPosition.Y;
+		SDL_Rect rect{};
+		rect.x = (int)sPosition.X;
+		rect.y = (int)sPosition.Y;
 		rect.w = WORLD_TILE_SIZE;
 		rect.h = WORLD_TILE_SIZE;
 		SDL_RenderDrawRect(&renderer, &rect);

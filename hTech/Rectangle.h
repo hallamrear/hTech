@@ -1,6 +1,6 @@
 #pragma once
 
-struct WorldRectangle
+class WorldRectangle
 {
 public:
 	int X = 0;
