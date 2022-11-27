@@ -168,6 +168,9 @@
     <ClInclude Include="imstb_truetype.h">
       <Filter>DearIMGUI</Filter>
     </ClInclude>
+    <ClInclude Include="imgui_stdlib.h">
+      <Filter>DearIMGUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -312,6 +315,9 @@
       <Filter>DearIMGUI</Filter>
     </ClCompile>
     <ClCompile Include="imgui_widgets.cpp">
+      <Filter>DearIMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_stdlib.cpp">
       <Filter>DearIMGUI</Filter>
     </ClCompile>
   </ItemGroup>

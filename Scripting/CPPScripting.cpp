@@ -239,8 +239,8 @@ struct ScriptManager
 
 int main()
 {
-	std::string projectName = "bUILD";
-	//CreateProjectFolder(projectName);
+	std::string projectName = "test";
+	CreateProjectFolder(projectName);
 
 	std::string location = "Project//test//Debug//test.dll";	
 	 std::string fn = "Create_TestClassOne";

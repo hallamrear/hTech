@@ -14,6 +14,14 @@ void ScriptComponent::Destroy()
 	}
 }
 
+void ScriptComponent::RenderProperties()
+{
+	ImGui::Text("Script Components run out of .h files under the same name as the object, compiled via the engine.");
+	ImGui::Text("There's really not much to write here that isn't adding a code editor and that feels abit much.");
+
+	//IMPLEMENT In-Engine code editor.
+}
+
 void ScriptComponent::Update(float deltaTime)
 {
 	if (mScriptObject)

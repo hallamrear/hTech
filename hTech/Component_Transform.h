@@ -11,6 +11,7 @@ class HTECH_FUNCTION_EXPORT TransformComponent : public Component
 {
 protected:
 	Transform mTransform;
+	void RenderProperties();
 
 public:
 	TransformComponent(Entity& entity);

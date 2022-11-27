@@ -15,6 +15,7 @@ private:
     bool     mIsFlipped;
 
 protected:
+    void RenderProperties();
 
 public:
     SpriteComponent(Entity& entity);

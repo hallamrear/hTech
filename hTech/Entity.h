@@ -1,14 +1,15 @@
 #pragma once
  #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
-
-
 #include <string>
 #include "Transform.h"
+#include "UI.h"
 
+enum class ENUM_COMPONENT_LIST;
+
+struct SDL_Renderer;
 class HTECH_FUNCTION_EXPORT  Collider;
 class HTECH_FUNCTION_EXPORT  Texture;
-struct SDL_Renderer;
 class HTECH_FUNCTION_EXPORT Component;
 class HTECH_FUNCTION_EXPORT TransformComponent;
 
@@ -33,6 +34,8 @@ public:
 
 	virtual void			Update(float DeltaTime);
 	virtual void			Render();
+
+	void					RenderProperties();
 
 	bool const				GetIsAlive()		 const { return mIsAlive; }
 	virtual void			SetAlive(const bool state) { mIsAlive = state; }

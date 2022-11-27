@@ -34,6 +34,7 @@ protected:
 	void					CalculateInverseMass();
 	void					AddForce(Vector2 force);
 	void					AddForce(float X = 0.0f, float Y = 0.0f);
+	void RenderProperties();
 
 public:
     RigidbodyComponent(Entity& entity);

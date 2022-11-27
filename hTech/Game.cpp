@@ -216,12 +216,23 @@ bool Game::InitialiseDearIMGUI()
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	io.ConfigDockingWithShift == true;
+	io.ConfigFlags |= ImGuiDockNodeFlags_PassthruCentralNode;
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
-	//ImGui::StyleColorsLight();
+
+
+	ImGuiViewport* viewport = ImGui::GetMainViewport();
+	ImGui::SetNextWindowPos(viewport->WorkPos);
+	ImGui::SetNextWindowSize(viewport->WorkSize);
+	ImGui::SetNextWindowViewport(viewport->ID);
+
+	
+
 
 	// Setup Platform/Renderer backends
 	return (ImGui_ImplSDL2_InitForSDLRenderer(mWindow, Renderer) && ImGui_ImplSDLRenderer_Init(Renderer));
@@ -428,16 +439,73 @@ void Game::Render()
 	ImGui_ImplSDL2_NewFrame();
 	ImGui::NewFrame();
 
+	///Dockspace Window
+	ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
+	ImGuiWindowFlags host_window_flags = 0;
+	host_window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking;
+	host_window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+	if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
+		host_window_flags |= ImGuiWindowFlags_NoBackground;
+
+	ImGui::Begin("DockSpace Window", nullptr, host_window_flags);
+	ImGuiID dockspace_id = ImGui::GetID("DockSpace");
+	ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags, nullptr);
+	ImGui::End();
+
 	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
 	SDL_RenderClear(Renderer);
 
 	World::Render(*Renderer);
 	UI::Render(*Renderer);
 
+	ImGui::ShowDemoWindow();
+
 	if (Console::Query("DrawLog") != 0)
 		Log::Render(*Renderer);
 
-	ImGui::ShowDemoWindow();
+#ifdef _DEBUG
+
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::MenuItem("New Project"))
+			{
+				//IMPLEMENT New Project
+			}
+			
+			if (ImGui::MenuItem("Open Project"))
+			{
+				//IMPLEMENT Open Project
+			}
+
+			if (ImGui::MenuItem("Save Project"))
+			{
+				//IMPLEMENT Save Project
+			}
+
+			if (ImGui::MenuItem("Exit"))
+			{
+				if (ImGui::BeginPopupModal("Save Project"))
+				{
+					ImGui::Text("Do you wish to save?");
+					if (ImGui::Button("Yes"))
+					{
+						//IMPLEMENT Save Project
+					}
+
+					if (ImGui::Button("No"))
+					{
+						mIsRunning = false;
+					}
+				}
+				ImGui::EndPopup();
+			}
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+#endif
 
 	Editor::Render(*Renderer);
 

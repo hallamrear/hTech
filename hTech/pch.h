@@ -1,5 +1,5 @@
 #pragma once
- #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+#define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
 #ifndef PCH_H
 #define PCH_H

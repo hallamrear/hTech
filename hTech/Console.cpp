@@ -89,6 +89,7 @@ void Console::ReloadValues()
     mIntMap.insert(std::make_pair("WindowDimensionsW", 1280));
     mIntMap.insert(std::make_pair("WindowDimensionsH", 720));
     mIntMap.insert(std::make_pair("DrawColliders", 0));
+    mIntMap.insert(std::make_pair("DrawHashMap", 0));
     mIntMap.insert(std::make_pair("MaxLogMessages", 50));
     mIntMap.insert(std::make_pair("WindowCentreX", 0));
     mIntMap.insert(std::make_pair("WindowCentreY", 0));

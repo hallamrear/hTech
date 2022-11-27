@@ -12,22 +12,23 @@ class HTECH_FUNCTION_EXPORT AnimationComponent
 	: public Component
 {
 private:
+	std::string mUINewAnimationSheetString;
 	float mTimeBetweenFrames;
 	float mTimeElapsed;
 	float mDuration;
-	unsigned int mCurrentFrame;
+	int mCurrentFrame;
 	Texture* mAnimationSheet;
-	unsigned int mCurrentAnimation;
-	unsigned int mTotalFrames;
+	int mCurrentAnimation;
+	int mTotalFrames;
 	Vector2 mFrameSize;
-	unsigned int mAnimationCount;
-	unsigned int mAnimationFrameCount;
+	int mAnimationCount;
 
 	//If the animation does not loop, this will set to true when it has finished playing.
 	bool mHasFinished;
 	void RecalculateFrameAndAnimationData();
 
 protected:
+	void RenderProperties();
 
 public:
 	bool IsLooping;

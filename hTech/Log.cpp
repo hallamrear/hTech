@@ -84,7 +84,7 @@ void Log::Render_Impl(SDL_Renderer& renderer)
 		mTextElements[i]->Render(renderer);
 	}*/
 
-	ImGui::Begin("Log");
+	ImGui::Begin("Log / Console");
 
 	ImVec4 colour = ImVec4(0, 0, 0, 0);
 

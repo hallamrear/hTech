@@ -63,7 +63,12 @@ void Editor::MousePress()
         break;
     case EDITOR_STATE::INSPECT:
     {
-        selected = World::FindNearestEntityToPosition(InputManager::Get()->GetMouseWorldPosition());
+        Entity* found = World::FindNearestEntityToPosition(InputManager::Get()->GetMouseWorldPosition());
+
+        if (found != nullptr)
+        {
+            selected = found;
+        }
     }
         break;
     case EDITOR_STATE::ROTATE:
@@ -151,8 +156,6 @@ void Editor::MouseRelease()
         World::QuerySpaceForEntities(selectionRect, mSelectedEntities);
         break;
     case EDITOR_STATE::MOVE:
-        mSelectedEntities.clear();
-        selected = nullptr;
         break;
     case EDITOR_STATE::INSPECT:
         break;
@@ -210,6 +213,28 @@ void Editor::Render(SDL_Renderer& renderer)
 
 void Editor::Render_Impl(SDL_Renderer& renderer)
 {
+    if (ImGui::Begin("Editor Tools"))
+    {
+        //IMPLEMENT Editor tools window
+    }
+    ImGui::End();
+
+    if (ImGui::Begin("Properties"))
+    {
+        if (selected)
+        {
+            selected->RenderProperties();
+        }
+    }
+    ImGui::End();
+
+    if (ImGui::Begin("Assets"))
+    {
+        //IMPLEMENT Assets Window.
+    }
+    ImGui::End();
+
+
     if (mCurrentCursorState != EDITOR_STATE::NONE)
     {
         if (mCursorTextures[(int)mCurrentCursorState] != nullptr)

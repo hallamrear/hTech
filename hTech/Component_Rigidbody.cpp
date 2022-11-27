@@ -168,6 +168,11 @@ void RigidbodyComponent::AddForce(float X, float Y)
 	mExternalForce.Y += Y;
 }
 
+void RigidbodyComponent::RenderProperties()
+{
+	//IMPLEMENT Component properties panel.
+}
+
 void RigidbodyComponent::CalculateInverseMass()
 {
 	if (GetIsStatic())

@@ -87,10 +87,31 @@ void World::Update_Impl(float DeltaTime)
     ClearupEntities();
 }
 
+
+#ifdef _DEBUG
 void World::Render_Impl(SDL_Renderer& renderer)
 {
-    mWorldHashMap->Render(renderer);
+    ImGui::Begin("Scene Graph");
 
+    if (Console::Query("DrawHashMap") != 0)
+    {
+        mWorldHashMap->Render(renderer);
+    }
+
+    for (size_t i = 0; i < mEntityList.size(); i++)
+    {
+        if (mEntityList[i] != nullptr)
+        {
+            
+            mEntityList[i]->Render();
+        }
+    }
+
+    ImGui::End();
+}
+#else
+void World::Render_Impl(SDL_Renderer& renderer)
+{
     for (size_t i = 0; i < mEntityList.size(); i++)
     {
         if (mEntityList[i] != nullptr)
@@ -99,6 +120,7 @@ void World::Render_Impl(SDL_Renderer& renderer)
         }
     }
 }
+#endif
 
 Entity* World::GetEntityByName_Impl(std::string name)
 {
@@ -138,6 +160,7 @@ World::World()
             Entity* entity = CreateEntity_Impl("Test", Transform(InputManager::Get()->GetMouseWorldPosition()));
             entity->AddComponent<SpriteComponent>();
             entity->GetComponent<SpriteComponent>()->LoadTexture("Assets/test.png");
+            entity->AddComponent<ScriptComponent>();
         });   
 }
 
