@@ -1,5 +1,8 @@
 #include "pch.h"
 #include "Editor.h"
+
+#if _DEBUG
+
 #include "UI.h"
 #include "InputManager.h"
 #include "TextureCache.h"
@@ -8,13 +11,12 @@
 #include "UI_Button.h"
 #include "Camera.h"
 #include <functional>
-
+#include "Entity.h"
 #include "World.h"
 #include "UI_Button.h"
 #include "Time.h"
 
 Editor* Editor::mInstance = nullptr;
-UI_Button* button = nullptr;
 
 Editor::Editor() : mMouseScreenPosition(InputManager::Get()->GetMouseScreenPosition()), mMouseWorldPosition(InputManager::Get()->GetMouseWorldPosition())
 {
@@ -25,11 +27,6 @@ Editor::Editor() : mMouseScreenPosition(InputManager::Get()->GetMouseScreenPosit
     mSelectedEntities = std::vector<Entity*>();
 
     //Setting up editor controls!
-    button = UI::CreateButton(UI_Panel(1, 1, 1, 1), "#", std::bind(&Editor::SetCursorStateToNoMode, this));
-    UI::CreateButton(UI_Panel(2, 1, 1, 1), "M", std::bind(&Editor::SetCursorStateToMoveMode, this));
-    UI::CreateButton(UI_Panel(3, 1, 1, 1), "R", std::bind(&Editor::SetCursorStateToRotateMode, this));
-    UI::CreateButton(UI_Panel(4, 1, 1, 1), "I", std::bind(&Editor::SetCursorStateToInspectMode, this));
-
     InputManager::Get()->Bind(IM_KEY_CODE::IM_KEY_0, IM_KEY_STATE::IM_KEY_PRESSED, std::bind(&Editor::SetCursorStateToNoMode, this));
     InputManager::Get()->Bind(IM_KEY_CODE::IM_KEY_1, IM_KEY_STATE::IM_KEY_PRESSED, std::bind(&Editor::SetCursorStateToSelectMode, this));
     InputManager::Get()->Bind(IM_KEY_CODE::IM_KEY_2, IM_KEY_STATE::IM_KEY_PRESSED, std::bind(&Editor::SetCursorStateToMoveMode, this));
@@ -66,7 +63,12 @@ void Editor::MousePress()
         break;
     case EDITOR_STATE::INSPECT:
     {
-        selected = World::FindNearestEntityToPosition(InputManager::Get()->GetMouseWorldPosition());
+        Entity* found = World::FindNearestEntityToPosition(InputManager::Get()->GetMouseWorldPosition());
+
+        if (found != nullptr)
+        {
+            selected = found;
+        }
     }
         break;
     case EDITOR_STATE::ROTATE:
@@ -154,8 +156,6 @@ void Editor::MouseRelease()
         World::QuerySpaceForEntities(selectionRect, mSelectedEntities);
         break;
     case EDITOR_STATE::MOVE:
-        mSelectedEntities.clear();
-        selected = nullptr;
         break;
     case EDITOR_STATE::INSPECT:
         break;
@@ -192,9 +192,6 @@ void Editor::Update(float deltaTime)
 
 void Editor::Update_Impl(float deltaTime)
 {
-    button->GetPanel().BackgroundColour.R++;
-    button->GetPanel().BackgroundColour.R = button->GetPanel().BackgroundColour.R % 255;
-
     switch (mCurrentCursorState)
     {
     case EDITOR_STATE::MOVE:
@@ -216,6 +213,28 @@ void Editor::Render(SDL_Renderer& renderer)
 
 void Editor::Render_Impl(SDL_Renderer& renderer)
 {
+    if (ImGui::Begin("Editor Tools"))
+    {
+        //IMPLEMENT Editor tools window
+    }
+    ImGui::End();
+
+    if (ImGui::Begin("Properties"))
+    {
+        if (selected)
+        {
+            selected->RenderProperties();
+        }
+    }
+    ImGui::End();
+
+    if (ImGui::Begin("Assets"))
+    {
+        //IMPLEMENT Assets Window.
+    }
+    ImGui::End();
+
+
     if (mCurrentCursorState != EDITOR_STATE::NONE)
     {
         if (mCursorTextures[(int)mCurrentCursorState] != nullptr)
@@ -314,3 +333,5 @@ void Editor::SetCursorStateToSelectMode()
     SDL_ShowCursor(true);
     selected = nullptr;
 }
+
+#endif

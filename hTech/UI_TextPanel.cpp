@@ -1,4 +1,5 @@
 #include "pch.h"
+#ifdef DEFINE_OLD_UI
 #include "UI_TextPanel.h"
 #include "Text.h"
 
@@ -29,3 +30,4 @@ void UI_TextPanel::Render(SDL_Renderer& renderer)
 	DrawPanel(renderer, mPanel.BackgroundColour);
 	mText->Render(renderer);
 }
+#endif

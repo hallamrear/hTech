@@ -10,6 +10,9 @@ enum class EDITOR_STATE
 	NONE
 };
 
+#if _DEBUG
+
+
 class Entity;
 class Texture;
 
@@ -63,3 +66,21 @@ public:
 	static void SetEditorCursorState(EDITOR_STATE state);
 };
 
+#else
+
+class Editor
+{
+private:
+
+protected:
+	Editor() {};
+	static Editor* Get() { return nullptr; };
+
+public:
+	~Editor();
+
+	static inline void Update(float deltaTime) {};
+	static inline void Render(SDL_Renderer&) {};
+	static inline void SetEditorCursorState(EDITOR_STATE state);
+};
+#endif

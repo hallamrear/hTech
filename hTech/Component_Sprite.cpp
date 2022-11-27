@@ -4,6 +4,32 @@
 #include "TextureCache.h"
 #include "Texture.h"
 
+void SpriteComponent::RenderProperties()
+{
+	ImGui::Text("Texture Details:\n");
+	static std::string mUINewSpriteString;
+	ImGui::InputText("Sprite Name:", &mUINewSpriteString);
+	ImGui::SameLine();
+	if (ImGui::ArrowButton("Load Texture", ImGuiDir_::ImGuiDir_Left))
+	{
+		LoadTexture(mUINewSpriteString);
+		mUINewSpriteString = "";
+	}
+	ImGui::Dummy(ImVec2(0.0f, 20.0f));
+	if (mTexture != nullptr)
+	{
+		ImGui::Text("Texture Location: %s", mTexture->GetLocation().c_str());
+		ImGui::Text("Height: %i", mTexture->Height);
+		ImGui::Text("Width: %i", mTexture->Width);
+		ImGui::Checkbox("Flip texture", &mIsFlipped);
+	}
+	else
+	{
+		ImGui::Text("No texture loaded at the moment.");
+		ImGui::Text("Write texture location in this box and click the arrow.");
+	}
+}
+
 SpriteComponent::SpriteComponent(Entity& entity) : Component("Sprite Component", entity)
 {
 	mTexture = nullptr;

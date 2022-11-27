@@ -89,6 +89,29 @@ void AnimationComponent::RecalculateFrameAndAnimationData()
 	mFrameSize = Vector2(mAnimationSheet->Width / (float)mTotalFrames, mAnimationSheet->Height / (float)mAnimationCount);
 }
 
+void AnimationComponent::RenderProperties()
+{
+	ImGui::DragFloat("Animation duration", &mDuration, 0.25f, 1, 60);
+	ImGui::DragInt("Total Frames per Animation", &mTotalFrames, 1.0f, 1, 200);
+	ImGui::DragInt("Total Animations in sheet", &mAnimationCount, 1.0f, 0, 200);
+	ImGui::Text("Current frame: %f", mTimeBetweenFrames);
+	ImGui::Text("Frame time elapsed: %f", mTimeElapsed);
+	ImGui::Text("Current frame: %i", (int)mCurrentFrame);
+	ImGui::Text("Current animation: %i", (int)mCurrentAnimation);
+	ImGui::Text("Frame Size: X = %i, Y = %i", mFrameSize.X, mFrameSize.Y);
+	ImGui::Text("Has Finished: %i", (int)&mHasFinished);
+	ImGui::Checkbox("Loop animation: ", &IsLooping);
+	ImGui::Checkbox("Flip animation: ", &IsFlipped);
+
+	ImGui::InputText("Sprite Name:##Animation", &mUINewAnimationSheetString);
+	ImGui::SameLine();
+	if (ImGui::ArrowButton("Load Texture##Animation", ImGuiDir_::ImGuiDir_Left))
+	{
+		LoadAnimationSheet(mUINewAnimationSheetString);
+		mUINewAnimationSheetString = "";
+	}
+}
+
 void AnimationComponent::SetAnimationCount(unsigned int animationCount)
 {
 	mAnimationCount = animationCount;

@@ -1,5 +1,6 @@
 #pragma once
- #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+#ifdef DEFINE_OLD_UI
+#define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
 
 #include "Rectangle.h"
@@ -18,3 +19,5 @@ public:
 	UI_Panel();
 	UI_Panel(int posX, int posY, int width, int height, Colour textColour = Colour(0, 0, 0, 255), Colour bgColour = Colour(255, 255, 255, 255));
 };
+
+#endif

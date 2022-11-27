@@ -16,6 +16,7 @@ private:
     
 protected:
     virtual void Destroy();
+	void RenderProperties();
 
 public:
     ScriptComponent(Entity& entity);

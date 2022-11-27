@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "Console.h"
 #include <cstdarg>
+#include "Log.h"
 
 Console* Console::mInstance = nullptr;
 
@@ -16,17 +17,6 @@ Console* Console::Get()
 
 Console::Console()
 {
-    if (mTerminalHandle == nullptr)
-    {
-        AllocConsole();
-        mTerminalHandle = GetConsoleWindow();
-        freopen_s((FILE**)stdin, "CONIN", "r", stdin);
-        freopen_s((FILE**)stdout, "CONOUT$", "w", stdout);
-        freopen_s((FILE**)stderr, "CONOUT$", "w", stderr);
-    }
-
-    Hide_Impl();
-
     mIntMap = std::unordered_map<std::string, int>();
 
     ReloadValues();
@@ -39,22 +29,12 @@ Console::~Console()
 
 void Console::Hide_Impl()
 {
-    if (mTerminalHandle)
-    {
-        ShowWindow(mTerminalHandle, SW_HIDE);
-    }
+    Run_Impl("DrawLog 0");
 }
 
 void Console::Show_Impl()
 {
-    if (mTerminalHandle)
-    {
-        ShowWindow(mTerminalHandle, SW_SHOW);
-
-        std::cout.clear();
-        std::cerr.clear();
-        std::cin.clear();
-    }
+    Run_Impl("DrawLog 1");
 }
 
 void Console::Run(std::string command)
@@ -84,7 +64,7 @@ bool Console::IsVisible()
 
 bool Console::IsVisible_Impl()
 {
-    return IsWindowVisible(mTerminalHandle) != false;
+    return Query_Impl("DrawLog") != 0;
 }
 
 int Console::Query_Impl(std::string variable)
@@ -109,7 +89,8 @@ void Console::ReloadValues()
     mIntMap.insert(std::make_pair("WindowDimensionsW", 1280));
     mIntMap.insert(std::make_pair("WindowDimensionsH", 720));
     mIntMap.insert(std::make_pair("DrawColliders", 0));
-    mIntMap.insert(std::make_pair("MaxLogMessages", 10));
+    mIntMap.insert(std::make_pair("DrawHashMap", 0));
+    mIntMap.insert(std::make_pair("MaxLogMessages", 50));
     mIntMap.insert(std::make_pair("WindowCentreX", 0));
     mIntMap.insert(std::make_pair("WindowCentreY", 0));
 
@@ -188,15 +169,12 @@ void Console::ParseCommand(std::vector<std::string>& splits)
 }
 
 void Console::Print(std::string line)
-{
-    if (IsVisible_Impl())
+{        
+    if (line.back() != '\n')
     {
-        //IMPLEMENT Actual console window.
-        std::cout << line;
-
-        if (line.back() != '\n')
-        {
-            std::cout << std::endl;
-        }
+        line += '\n';
     }
+
+    //We pass it a number outside the enum to get the alternative colour in the switch.
+    Log::LogMessage((LogLevel)4, line.c_str());
 }

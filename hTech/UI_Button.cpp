@@ -1,4 +1,5 @@
 #include "pch.h"
+#ifdef DEFINE_OLD_UI
 #include "UI_Button.h"
 #include "Colour.h"
 #include "Text.h"
@@ -73,3 +74,5 @@ void UI_Button::SetPressedColour(Colour colour)
 {
 	mPressedColour = colour;
 }
+
+#endif

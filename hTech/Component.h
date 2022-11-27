@@ -1,13 +1,14 @@
 #pragma once
- #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
-
+#define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
 class HTECH_FUNCTION_EXPORT Entity;
 struct SDL_Renderer;
 
 class HTECH_FUNCTION_EXPORT Component
 {
+private:
+
 protected:
 	bool mIsEnabled = true;
 	std::string mComponentName = "Unnamed Component";
@@ -25,5 +26,6 @@ public:
 
 	virtual void Update(float DeltaTime);
 	virtual void Render(SDL_Renderer& renderer);
+	virtual void RenderProperties() = 0;
 };
 

@@ -1,4 +1,5 @@
 #include "pch.h"
+#ifdef DEFINE_OLD_UI
 #include "UI_Panel.h"
 
 UI_Panel::UI_Panel()
@@ -14,3 +15,5 @@ UI_Panel::UI_Panel(int posX, int posY, int width, int height, Colour textColour,
 	this->BackgroundColour = bgColour;
 	this->TextColour = textColour;
 }
+
+#endif

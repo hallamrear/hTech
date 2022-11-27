@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "ScriptLoader.h"
 #include "ScriptObject.h"
+#include "Log.h"
 #include <unordered_map>
 
 static HINSTANCE mLoadedLibrary;
@@ -38,11 +39,11 @@ void ScriptLoader::LoadCustomScriptDLL(std::string libraryLocation)
 	//validate
 	if (!mLoadedLibrary)
 	{
-		std::cout << "Could not load library" << std::endl;
+		Log::LogMessage(LogLevel::LOG_ERROR, "Could not load library");
 	}
 	else
 	{
-		std::cout << "Loaded custom script DLL successfully." << std::endl;
+		Log::LogMessage(LogLevel::LOG_MESSAGE, "Loaded custom script DLL successfully.");
 	}
 }
 
@@ -56,7 +57,7 @@ ScriptObject* ScriptLoader::GetFunctionPtrFromLibrary(std::string externalClassN
 
 		if (!DLLFunction)
 		{
-			std::cout << "Error getting function from DLL." << std::endl;
+			Log::LogMessage(LogLevel::LOG_ERROR, "Error getting function from DLL.");
 			return nullptr;
 		}
 
@@ -87,24 +88,6 @@ bool ScriptLoader::LoadScriptObjectToMap(std::string externalClassName)
 
 ScriptObject* ScriptLoader::GetScriptObject(std::string externalClassName)
 {
-	FILE* fpstdin = stdin, * fpstdout = stdout, * fpstderr = stderr;
-	AllocConsole();
-	AttachConsole(GetCurrentProcessId());
-	freopen_s(&fpstdin, "CONIN$", "r", stdin);
-	freopen_s(&fpstdout, "CONOUT$", "w", stdout);
-	freopen_s(&fpstderr, "CONOUT$", "w", stderr);
-
-	CONSOLE_FONT_INFOEX cfi;
-	cfi.cbSize = sizeof(cfi);
-	cfi.nFont = 0;
-	cfi.dwFontSize.X = 0;                   // Width of each character in the font
-	cfi.dwFontSize.Y = 4;                  // Height
-	cfi.FontFamily = FF_DONTCARE;
-	cfi.FontWeight = FW_NORMAL;
-	wcscpy_s(cfi.FaceName, L"Consolas");
-	SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi);
-
-
     if (mLoadedScriptMap.find(externalClassName) == mLoadedScriptMap.end())
     {
         if (LoadScriptObjectToMap(externalClassName) == false)

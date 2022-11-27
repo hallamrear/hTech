@@ -24,3 +24,14 @@ Transform& TransformComponent::GetTransform()
 {
 	return mTransform;
 }
+
+void TransformComponent::RenderProperties()
+{
+	float floats[2];
+	floats[0] = mTransform.Position.X;
+	floats[1] = mTransform.Position.Y;
+	ImGui::InputFloat2("Position:", floats);
+	mTransform.Position.X = floats[0];
+	mTransform.Position.Y = floats[1];
+	ImGui::InputFloat("Rotation:", &mTransform.Rotation);
+}

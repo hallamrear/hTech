@@ -193,6 +193,9 @@ bool Game::InitialiseWindow(const char* title, int xpos, int ypos, int width, in
 	if (isFullscreen)
 		flags |= SDL_WINDOW_FULLSCREEN;
 
+	//For IMGUI
+	flags |= SDL_WINDOW_ALLOW_HIGHDPI;
+
 	mWindow = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
 
 	if (mWindow)
@@ -205,6 +208,34 @@ bool Game::InitialiseWindow(const char* title, int xpos, int ypos, int width, in
 		Log::LogMessage(LogLevel::LOG_ERROR, "Window failed to create.");
 		return false;
 	}
+}
+
+bool Game::InitialiseDearIMGUI()
+{
+	// Setup Dear ImGui context
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+	io.ConfigDockingWithShift == true;
+	io.ConfigFlags |= ImGuiDockNodeFlags_PassthruCentralNode;
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+	// Setup Dear ImGui style
+	ImGui::StyleColorsDark();
+
+
+	ImGuiViewport* viewport = ImGui::GetMainViewport();
+	ImGui::SetNextWindowPos(viewport->WorkPos);
+	ImGui::SetNextWindowSize(viewport->WorkSize);
+	ImGui::SetNextWindowViewport(viewport->ID);
+
+	
+
+
+	// Setup Platform/Renderer backends
+	return (ImGui_ImplSDL2_InitForSDLRenderer(mWindow, Renderer) && ImGui_ImplSDLRenderer_Init(Renderer));
 }
 
 bool Game::InitialiseGraphics()
@@ -222,7 +253,14 @@ bool Game::InitialiseGraphics()
 	if (Game::Renderer)
 	{
 		Log::LogMessage(LogLevel::LOG_MESSAGE, "Renderer created.");
-		return true;
+
+		if (InitialiseDearIMGUI())
+		{
+			Log::LogMessage(LogLevel::LOG_MESSAGE, "DearIMGUI initialised.");
+			return true;
+		}
+		
+		return false;
 	}
 	else
 	{
@@ -238,6 +276,19 @@ bool Game::InitialiseApplicationControls()
 		{
 			TakeScreenshot("");
 		}); 
+
+	InputManager::Bind(IM_KEY_CODE::IM_KEY_F2, IM_KEY_STATE::IM_KEY_PRESSED,
+		[this]
+		{
+			if (Console::IsVisible())
+			{
+				Console::Hide();
+			}
+			else
+			{
+				Console::Show();
+			}
+		});
 
 	return true;
 }
@@ -277,6 +328,11 @@ bool Game::InitialiseSystems(WindowDetails details)
 
 void Game::Shutdown()
 {
+	// Cleanup
+	ImGui_ImplSDLRenderer_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
+	ImGui::DestroyContext();
+
 	SDL_DestroyRenderer(Game::Renderer);
 	SDL_DestroyWindow(mWindow);
 	SDL_Quit();
@@ -290,6 +346,8 @@ void Game::HandleEvents()
 	bool hadWheelEvent = false;
 	while (SDL_PollEvent(&event))
 	{
+		ImGui_ImplSDL2_ProcessEvent(&event);
+
 		if(!hadWheelEvent)
 		{
 			if (event.type == SDL_MOUSEWHEEL)
@@ -315,7 +373,6 @@ void Game::HandleEvents()
 			if (event.type == SDL_MOUSEBUTTONDOWN)
 			{
 				InputManager::Get()->MousePressUpdate(event.button.button, true);
-				UI::OnMouseClick();
 			}
 			else if (event.type == SDL_MOUSEBUTTONUP)
 			{
@@ -378,17 +435,81 @@ void Game::Update(float DeltaTime)
 
 void Game::Render()
 {
+	ImGui_ImplSDLRenderer_NewFrame();
+	ImGui_ImplSDL2_NewFrame();
+	ImGui::NewFrame();
+
+	///Dockspace Window
+	ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
+	ImGuiWindowFlags host_window_flags = 0;
+	host_window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking;
+	host_window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+	if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
+		host_window_flags |= ImGuiWindowFlags_NoBackground;
+
+	ImGui::Begin("DockSpace Window", nullptr, host_window_flags);
+	ImGuiID dockspace_id = ImGui::GetID("DockSpace");
+	ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags, nullptr);
+	ImGui::End();
+
 	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
 	SDL_RenderClear(Renderer);
 
 	World::Render(*Renderer);
 	UI::Render(*Renderer);
 
+	ImGui::ShowDemoWindow();
+
 	if (Console::Query("DrawLog") != 0)
 		Log::Render(*Renderer);
 
+#ifdef _DEBUG
+
+	if (ImGui::BeginMainMenuBar())
+	{
+		if (ImGui::BeginMenu("File"))
+		{
+			if (ImGui::MenuItem("New Project"))
+			{
+				//IMPLEMENT New Project
+			}
+			
+			if (ImGui::MenuItem("Open Project"))
+			{
+				//IMPLEMENT Open Project
+			}
+
+			if (ImGui::MenuItem("Save Project"))
+			{
+				//IMPLEMENT Save Project
+			}
+
+			if (ImGui::MenuItem("Exit"))
+			{
+				if (ImGui::BeginPopupModal("Save Project"))
+				{
+					ImGui::Text("Do you wish to save?");
+					if (ImGui::Button("Yes"))
+					{
+						//IMPLEMENT Save Project
+					}
+
+					if (ImGui::Button("No"))
+					{
+						mIsRunning = false;
+					}
+				}
+				ImGui::EndPopup();
+			}
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+#endif
 
 	Editor::Render(*Renderer);
 
+	ImGui::Render();
+	ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
 	SDL_RenderPresent(Game::Renderer);
 }
