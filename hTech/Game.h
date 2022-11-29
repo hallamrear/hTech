@@ -58,5 +58,8 @@ public:
 	const bool  GetIsInitialised() const { return mIsInitialised; };
 
 	void		TakeScreenshot(std::string name);
+	void		CreateProjectFolder(std::string name);
+	void		OpenProject();
+	void		SaveProject();
 };
 

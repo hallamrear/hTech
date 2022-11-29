@@ -84,7 +84,7 @@ void Log::Render_Impl(SDL_Renderer& renderer)
 		mTextElements[i]->Render(renderer);
 	}*/
 
-	ImGui::Begin("Log / Console");
+	ImGui::Begin("Log | Console", 0, ImGuiWindowFlags_::ImGuiWindowFlags_NoResize);
 
 	ImVec4 colour = ImVec4(0, 0, 0, 0);
 
@@ -93,28 +93,36 @@ void Log::Render_Impl(SDL_Renderer& renderer)
 	{
 		switch (mMessageQueue[i].first)
 		{
-			case LogLevel::LOG_ERROR:
-			{
-				colour = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
-			} 
-			break;
+		case LogLevel::LOG_ERROR:
+		{
+			colour = ImVec4(1.0f, 0.0f, 0.0f, 1.0f);
+		}
+		break;
 
-			case LogLevel::LOG_WARNING: 
-			{
-				colour = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
-			} 
-			break;
+		case LogLevel::LOG_WARNING:
+		{
+			colour = ImVec4(1.0f, 1.0f, 0.0f, 1.0f);
+		}
+		break;
 
-			case LogLevel::LOG_MESSAGE: 
-			{
-				colour = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
-			} 
-			break;		
+		case LogLevel::LOG_MESSAGE:
+		{
+			colour = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);
+		}
+		break;
 		default:
 			colour = ImVec4(0.0f, 0.0f, 1.0f, 1.0f);
 			break;
 		}
 		ImGui::TextColored(ImVec4(255, 0, 0, 255), mMessageQueue[i].second.c_str());
+	}
+
+	ImGui::SetNextItemWidth(-FLT_MAX);
+	static std::string textInput;
+	if(ImGui::InputText("##ConsoleInput", &textInput, ImGuiInputTextFlags_EnterReturnsTrue))
+	{
+		Console::Run(textInput);
+		textInput = "";
 	}
 
 	ImGui::End();

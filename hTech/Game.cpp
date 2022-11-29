@@ -9,6 +9,9 @@
 #include "UI.h"
 #include "Editor.h"
 #include "Console.h"
+#include <filesystem>
+#include <ShObjIdl_core.h>
+#include <SDL_syswm.h>
 
 SDL_Renderer* Game::Renderer = nullptr;
 
@@ -464,46 +467,85 @@ void Game::Render()
 		Log::Render(*Renderer);
 
 #ifdef _DEBUG
-
 	if (ImGui::BeginMainMenuBar())
 	{
+		static bool showNewProjectModal = false,
+			showOpenProjectModal = false;
 		if (ImGui::BeginMenu("File"))
 		{
 			if (ImGui::MenuItem("New Project"))
 			{
-				//IMPLEMENT New Project
+				static std::string projectName;
+				showNewProjectModal = true;
+				CreateProjectFolder(projectName);
 			}
 			
 			if (ImGui::MenuItem("Open Project"))
 			{
-				//IMPLEMENT Open Project
+				OpenProject();
 			}
 
 			if (ImGui::MenuItem("Save Project"))
 			{
-				//IMPLEMENT Save Project
+				SaveProject();
 			}
 
-			if (ImGui::MenuItem("Exit"))
+			if (ImGui::BeginMenu("Exit##Menu"))
 			{
-				if (ImGui::BeginPopupModal("Save Project"))
+				if (ImGui::MenuItem("Exit with Saving"))
 				{
-					ImGui::Text("Do you wish to save?");
-					if (ImGui::Button("Yes"))
-					{
-						//IMPLEMENT Save Project
-					}
-
-					if (ImGui::Button("No"))
-					{
-						mIsRunning = false;
-					}
+					SaveProject();
+					mIsRunning = false;
 				}
-				ImGui::EndPopup();
+
+				ImGui::Dummy(Vector2(-FLT_MAX, 100.0f));
+
+				if (ImGui::MenuItem("Exit without Saving"))
+				{
+					mIsRunning = false;
+				}
+				ImGui::EndMenu();
 			}
+			
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
+
+		if (showNewProjectModal)
+		{
+			if(ImGui::IsPopupOpen("New Project") == false)
+				ImGui::OpenPopup("New Project");
+
+			// Always center this window when appearing
+			ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+			ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+			if (ImGui::BeginPopupModal("New Project", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+			{
+				static std::string projectName = "";
+				ImGui::Text("Create a new project?\n"); 
+				ImGui::Text("Project Name: "); ImGui::SameLine(); ImGui::InputText("##ProjectNameInput", &projectName);
+				ImGui::Separator();
+
+				if (ImGui::Button("Create", ImVec2(120, 0)))
+				{ 
+					CreateProjectFolder(projectName);
+					projectName = "";
+					showNewProjectModal = false;
+					ImGui::CloseCurrentPopup();
+				}
+				ImGui::SetItemDefaultFocus();
+				ImGui::SameLine();
+				if (ImGui::Button("Cancel", ImVec2(120, 0)))
+				{
+					showNewProjectModal = false;
+					ImGui::CloseCurrentPopup();
+					projectName = "";
+				}
+
+				ImGui::EndPopup();
+			}
+		}
 	}
 #endif
 
@@ -512,4 +554,21 @@ void Game::Render()
 	ImGui::Render();
 	ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
 	SDL_RenderPresent(Game::Renderer);
+}
+
+//IMPLEMENT New Project
+void Game::CreateProjectFolder(std::string name)
+{
+
+}
+
+//IMPLEMENT Open Project
+void Game::OpenProject()
+{
+	
+}
+
+//IMPLEMENT Save Project
+void Game::SaveProject()
+{
 }
