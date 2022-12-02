@@ -1,22 +1,26 @@
 #pragma once
+#include <filesystem>
 
-#define PROJECT_DIRECTORY_PATH_COUNT 3
+#define PROJECT_DIRECTORY_PATH_COUNT 4
 
 class Project;
 
 class ProjectLoader
 {
-	static Project* mCurrentProject;
+	static Project LoadedProject;
 	
 	inline static std::string ProjectDirectoryLayout[PROJECT_DIRECTORY_PATH_COUNT] =
 	{
 		"\\Assets\\",
 		"\\Scenes\\",
-		"\\Scripts\\"
+		"\\Scripts\\",
+		"\\Logs\\"
 	};
 
-	static void CreateEngineProjectsFolder(std::string path);
-	static void CreateEmptyProjectHierarchy(std::string projectName, std::string folderRoot);
+	static void CreateEmptyProjectFile(const std::string& projectName);
+	static void CreateScriptSolution(const std::filesystem::path& projectFolderRoot, const std::string& projectName);
+	static void CreateEmptyProjectHierarchy(const std::string& projectName, const std::string& folderRoot);
+	static void ReplaceExampleReferencesInFile(const std::filesystem::path& filePath, const std::string& projectName);
 
 public:
 	static void CreateProject(std::string projectName);
@@ -31,8 +35,15 @@ public:
 
 class Project
 {
+private:
 	bool m_IsLoaded;
+	std::filesystem::path m_AssetDirectory;
+	std::filesystem::path m_ScenesDirectory;
+	std::filesystem::path m_ScriptsDirectory;
 
-	
-
+public:
+	bool GetIsLoaded() const;
+	const std::filesystem::path& GetAssetDirectory() const;
+	const std::filesystem::path& GetScenesDirectory() const;
+	const std::filesystem::path& GetScriptsDirectory() const;
 };
