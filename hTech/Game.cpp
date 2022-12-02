@@ -23,6 +23,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
 int main(int argc, char* argv[])
 {
+	ProjectLoader::CreateProject("test");
+
 	WindowDetails details;
 	details.dimensions = Vector2(1280.0f, 720.0f);
 	details.title = "hTech";
@@ -486,20 +488,20 @@ void Game::Render()
 				std::string projectFilePath = "";
 				if (OpenProject(projectFilePath))
 				{
-					ProjectLoader::LoadProject(nullptr, projectFilePath);
+					ProjectLoader::LoadProject(projectFilePath);
 				}
 			}
 
 			if (ImGui::MenuItem("Save Project"))
 			{
-				ProjectLoader::SaveProject(nullptr);
+				ProjectLoader::SaveProject();
 			}
 
 			if (ImGui::BeginMenu("Exit##Menu"))
 			{
 				if (ImGui::MenuItem("Exit with Saving"))
 				{
-					ProjectLoader::SaveProject(nullptr);
+					ProjectLoader::SaveProject();
 					mIsRunning = false;
 				}
 
@@ -534,7 +536,7 @@ void Game::Render()
 
 				if (ImGui::Button("Create", ImVec2(120, 0)))
 				{ 
-					ProjectLoader::CreateProject(nullptr, projectName);
+					ProjectLoader::CreateProject(projectName);
 					projectName = "";
 					showNewProjectModal = false;
 					ImGui::CloseCurrentPopup();
