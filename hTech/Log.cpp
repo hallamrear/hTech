@@ -14,12 +14,6 @@ Log::Log()
 	mMessages = std::vector<std::pair<LogLevel, std::string>>();
 	mTextElements = std::vector<Text*>();
 	mMessageQueue = std::deque<std::pair<LogLevel, std::string>>();
-
-	for (size_t i = 0; i < Console::Query("MaxLogMessages"); i++)
-	{
-		mTextElements.push_back(new Text(Vector2(), ""));
-		mMessageQueue.emplace_back(LogLevel::LOG_MESSAGE, "");
-	}
 }
 
 Log::~Log()
