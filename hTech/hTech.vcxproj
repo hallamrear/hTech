@@ -264,6 +264,7 @@ xcopy /Y /E /H /C /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
     <ClInclude Include="imstb_truetype.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Log.h" />
+    <ClInclude Include="ProjectLoader.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="ScriptLoader.h" />
     <ClInclude Include="ScriptObject.h" />
@@ -316,6 +317,7 @@ xcopy /Y /E /H /C /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
     <ClCompile Include="imgui_widgets.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="Log.cpp" />
+    <ClCompile Include="ProjectLoader.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="ScriptLoader.cpp" />
     <ClCompile Include="ScriptObject.cpp" />

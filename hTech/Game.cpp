@@ -9,8 +9,9 @@
 #include "UI.h"
 #include "Editor.h"
 #include "Console.h"
+#include "ProjectLoader.h"
 #include <filesystem>
-#include <ShObjIdl_core.h>
+#include <ShlObj_core.h>
 #include <SDL_syswm.h>
 
 SDL_Renderer* Game::Renderer = nullptr;
@@ -477,24 +478,28 @@ void Game::Render()
 			{
 				static std::string projectName;
 				showNewProjectModal = true;
-				CreateProjectFolder(projectName);
+				//ProjectLoader::CreateProject(nullptr, projectName);
 			}
 			
 			if (ImGui::MenuItem("Open Project"))
 			{
-				OpenProject();
+				std::string projectFilePath = "";
+				if (OpenProject(projectFilePath))
+				{
+					ProjectLoader::LoadProject(nullptr, projectFilePath);
+				}
 			}
 
 			if (ImGui::MenuItem("Save Project"))
 			{
-				SaveProject();
+				ProjectLoader::SaveProject(nullptr);
 			}
 
 			if (ImGui::BeginMenu("Exit##Menu"))
 			{
 				if (ImGui::MenuItem("Exit with Saving"))
 				{
-					SaveProject();
+					ProjectLoader::SaveProject(nullptr);
 					mIsRunning = false;
 				}
 
@@ -529,7 +534,7 @@ void Game::Render()
 
 				if (ImGui::Button("Create", ImVec2(120, 0)))
 				{ 
-					CreateProjectFolder(projectName);
+					ProjectLoader::CreateProject(nullptr, projectName);
 					projectName = "";
 					showNewProjectModal = false;
 					ImGui::CloseCurrentPopup();
@@ -556,19 +561,41 @@ void Game::Render()
 	SDL_RenderPresent(Game::Renderer);
 }
 
-//IMPLEMENT New Project
-void Game::CreateProjectFolder(std::string name)
+// callback function
+INT CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lp, LPARAM pData)
 {
-
+	if (uMsg == BFFM_INITIALIZED) SendMessage(hwnd, BFFM_SETSELECTION, TRUE, pData);
+	return 0;
 }
 
-//IMPLEMENT Open Project
-void Game::OpenProject()
+bool Game::OpenProject(std::string& path)
 {
-	
-}
+	SDL_SysWMinfo wmInfo;
+	SDL_VERSION(&wmInfo.version);
+	SDL_GetWindowWMInfo(mWindow, &wmInfo);
 
-//IMPLEMENT Save Project
-void Game::SaveProject()
-{
+	// common dialog box structure, setting all fields to 0 is important
+	OPENFILENAME ofn = { 0 };
+	TCHAR szFile[260] = { 0 };
+	// Initialize remaining fields of OPENFILENAME structure
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = wmInfo.info.win.window;
+	ofn.lpstrFile = szFile;
+	ofn.nMaxFile = sizeof(szFile);
+	ofn.lpstrFilter = TEXT("Project Files\0*.hTechProj\0");
+	ofn.nFilterIndex = 1;
+	ofn.lpstrFileTitle = NULL;
+	ofn.nMaxFileTitle = 0;
+	ofn.lpstrInitialDir = NULL;
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+	if (GetOpenFileName(&ofn) == TRUE)
+	{
+		// use ofn.lpstrFile here
+		path = ofn.lpstrFile;		
+		return true;
+	}
+
+	path = "";
+	return false;
 }
