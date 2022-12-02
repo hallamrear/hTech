@@ -8,12 +8,15 @@ class ProjectLoader
 {
 	static Project* mCurrentProject;
 	
-	const std::string ProjectDirectoryLayout[PROJECT_DIRECTORY_PATH_COUNT] =
+	inline static std::string ProjectDirectoryLayout[PROJECT_DIRECTORY_PATH_COUNT] =
 	{
 		"\\Assets\\",
 		"\\Scenes\\",
 		"\\Scripts\\"
 	};
+
+	static void CreateEngineProjectsFolder(std::string path);
+	static void CreateEmptyProjectHierarchy(std::string projectName, std::string folderRoot);
 
 public:
 	static void CreateProject(std::string projectName);
