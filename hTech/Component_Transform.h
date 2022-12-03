@@ -19,5 +19,7 @@ public:
 	~TransformComponent();
 
 	Transform& GetTransform();
+
+	void Serialize(Serializer& writer) const override;
 };
 

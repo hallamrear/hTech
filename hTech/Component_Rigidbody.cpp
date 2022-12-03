@@ -49,6 +49,8 @@ RigidbodyComponent::~RigidbodyComponent()
 /// <param name="DeltaTime"></param>
 void RigidbodyComponent::PhysicsUpdate(float DeltaTime)
 {
+	CalculateInverseMass();
+
 	if (mIsStatic)
 		return;
 
@@ -128,7 +130,7 @@ void RigidbodyComponent::SetCollider(COLLIDER_TYPE type)
 	{
 	default:
 	case COLLIDER_TYPE::COLLIDER_UNKNOWN:
-		--mCollider = nullptr;
+		mCollider = nullptr;
 		break;
 	case COLLIDER_TYPE::COLLIDER_AABB:
 		mCollider = new BoundingBox(Parent.GetTransform(), 64, 64);
@@ -213,4 +215,67 @@ void RigidbodyComponent::Render(SDL_Renderer& renderer)
 	{
 		mCollider->Render(renderer);
 	}
+}
+
+void RigidbodyComponent::Serialize(Serializer& writer) const
+{
+	Component::Serialize(writer);
+
+	writer.String("Physics Properties");
+	writer.StartObject();
+
+	writer.String("Collider Type");
+	if (mCollider != nullptr)
+	{
+		writer.Int((int)mCollider->mType);
+	}
+	else
+	{
+		writer.Null();
+	}
+
+	writer.String("Static");			writer.Bool(mIsStatic);
+	writer.String("Gravity Enabled");    writer.Bool(mGravityEnabled);
+	writer.String("Drag Enabled");       writer.Bool(mDragEnabled);
+	writer.String("Mass");					writer.Double(mMass);
+	writer.String("Inverse Mass");					writer.Double(mInverseMass);
+	writer.String("Drag Coefficient");					writer.Double(mDragCoefficient);
+	writer.String("Speed cap");					writer.Double(mSpeedCap);
+	writer.String("Restitution");					writer.Double(mRestitution);
+
+	writer.String("Velocity"); writer.StartObject();
+	writer.String("X");					writer.Double((double)mVelocity.X);
+	writer.String("Y");					writer.Double((double)mVelocity.Y);
+	writer.EndObject();
+
+	writer.String("Acceleration"); writer.StartObject();
+	writer.String("X");					writer.Double((double)mAcceleration.X);
+	writer.String("Y");					writer.Double((double)mAcceleration.Y);
+	writer.EndObject();
+
+	writer.String("Net Force"); writer.StartObject();
+	writer.String("X");					writer.Double((double)mNetForce.X);
+	writer.String("Y");					writer.Double((double)mNetForce.Y);
+	writer.EndObject();
+
+	writer.String("External Force"); writer.StartObject();
+	writer.String("X");					writer.Double((double)mExternalForce.X);
+	writer.String("Y");					writer.Double((double)mExternalForce.Y);
+	writer.EndObject();
+
+	writer.EndObject();
+
+	Collider* mCollider;
+	bool					mGravityEnabled;
+	bool					mDragEnabled;
+	float					mMass; //Weight of Entity (kg)
+	float					mInverseMass;
+	float					mDragCoefficient;
+	float					mSpeedCap; //Speed cap (u/s)
+	float					mRestitution;
+	Vector2					mVelocity;
+	Vector2					mAcceleration;
+	Vector2					mNetForce;
+	Vector2					mExternalForce;
+	bool					mIsStatic;
 }

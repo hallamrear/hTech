@@ -1,0 +1,84 @@
+{
+    "Entities": [
+        {
+            "Name": "Test",
+            "IsAlive": true,
+            "IsEnabled": true,
+            "Components": [
+                {
+                    "Component Name": "Transform Component",
+                    "IsEnabled": true,
+                    "Position": {
+                        "X": -539.0,
+                        "Y": -539.0
+                    },
+                    "Rotation": {
+                        "degrees": 0.0
+                    }
+                },
+                {
+                    "Component Name": "Sprite Component",
+                    "IsEnabled": true,
+                    "Texture": "Assets/test.png",
+                    "IsFlipped": false
+                },
+                {}
+            ]
+        },
+        {
+            "Name": "Test",
+            "IsAlive": true,
+            "IsEnabled": true,
+            "Components": [
+                {
+                    "Component Name": "Transform Component",
+                    "IsEnabled": true,
+                    "Position": {
+                        "X": -268.0,
+                        "Y": -268.0
+                    },
+                    "Rotation": {
+                        "degrees": 0.0
+                    }
+                },
+                {
+                    "Component Name": "Sprite Component",
+                    "IsEnabled": true,
+                    "Texture": "Assets/test.png",
+                    "IsFlipped": false
+                },
+                {},
+                {
+                    "Component Name": "Rigidbody Component",
+                    "IsEnabled": true,
+                    "Physics Properties": {
+                        "Is Static": false,
+                        "GravityEnabled": true,
+                        "DragEnabled": true,
+                        "": 100.0,
+                        "": 0.009999999776482582,
+                        "": 0.4699999988079071,
+                        "": 1000.0,
+                        "": 0.5,
+                        "Velocity": {
+                            "X": 0.0,
+                            "Y": -31.8804931640625
+                        },
+                        "Acceleration": {
+                            "X": 0.0,
+                            "Y": -8.867539405822754
+                        },
+                        "Net Force": {
+                            "X": 0.0,
+                            "Y": 0.0
+                        },
+                        "External Force": {
+                            "X": 0.0,
+                            "Y": 0.0
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

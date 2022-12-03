@@ -44,6 +44,17 @@ Texture* TextureCache::GetTexture_Internal(const std::string& texture_path)
 	return itr->second;
 }
 
+void TextureCache::UnloadAll_Impl()
+{
+	for (auto itr : mTextures)
+	{
+		delete itr.second;
+		itr.second = nullptr;
+	}
+
+	mTextures.clear();
+}
+
 TextureCache* TextureCache::Get()
 {
 	if (mInstance)
@@ -57,5 +68,10 @@ TextureCache* TextureCache::Get()
 Texture* TextureCache::GetTexture(const std::string& texture_path)
 {
 	return Get()->GetTexture_Internal(texture_path);
+}
+
+void TextureCache::UnloadAll()
+{
+	return Get()->UnloadAll_Impl();
 }
 

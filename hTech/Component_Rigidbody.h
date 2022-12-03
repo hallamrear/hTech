@@ -1,10 +1,7 @@
 #pragma once
  #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
-
-
 #include "Component.h"
-
 
 enum class HTECH_FUNCTION_EXPORT COLLIDER_TYPE;
 class HTECH_FUNCTION_EXPORT CollisionManifold;
@@ -71,4 +68,6 @@ public:
 
 	void			Update(float DeltaTime);
 	void			Render(SDL_Renderer& renderer);
+
+	void Serialize(Serializer& writer) const override;
 };

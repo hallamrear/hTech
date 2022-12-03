@@ -79,14 +79,17 @@ void World::Update_Impl(float DeltaTime)
     {
         if (mEntityList[i] != nullptr)
         {
-            mEntityList[i]->Update(DeltaTime);
+            if (mEntityList[i]->IsEnabled)
+            {
+                mEntityList[i]->Update(DeltaTime);
+            }
+
             mWorldHashMap->Insert(mEntityList[i]);
         }
     }
 
     ClearupEntities();
 }
-
 
 #ifdef _DEBUG
 void World::Render_Impl(SDL_Renderer& renderer)
@@ -102,7 +105,7 @@ void World::Render_Impl(SDL_Renderer& renderer)
     {
         if (mEntityList[i] != nullptr)
         {
-            
+            ImGui::Text(mEntityList[i]->GetName().c_str());
             mEntityList[i]->Render();
         }
     }
@@ -207,7 +210,7 @@ Entity* World::GetEntityByName(std::string name)
 {
     return Get()->GetEntityByName_Impl(name);
 }
-
+  
 void World::Update(float DeltaTime)
 {
     Get()->Update_Impl(DeltaTime);
@@ -248,7 +251,35 @@ Entity* World::FindNearestEntityToPosition_Impl(Vector2 WorldPosition)
         return nullptr;
 }
 
+void World::ClearAllEntities()
+{
+    for (size_t i = 0; i < mEntityList.size(); i++)
+    {
+        delete mEntityList[i];
+        mEntityList[i] = nullptr;
+    }
+
+    mEntityList.clear();
+}
+
 Entity* World::FindNearestEntityToPosition(Vector2 WorldPosition)
 {
     return Get()->FindNearestEntityToPosition_Impl(WorldPosition);
+}
+
+void World::Serialize_Impl(Serializer& writer) const
+{
+    writer.String("Entities");
+    writer.StartArray();
+    for (size_t i = 0; i < mEntityList.size(); i++)
+    {
+        mEntityList[i]->Serialize(writer);
+    }
+
+    writer.EndArray();
+}
+
+void World::Serialize(Serializer& writer)
+{
+    Get()->Serialize_Impl(writer);
 }

@@ -16,10 +16,12 @@ private:
 	std::unordered_map<std::string, Texture*> mTextures;
 
 	Texture* GetTexture_Internal(const std::string& texture_path);
+	void UnloadAll_Impl();
 
 public:
 	static TextureCache* Get();
 	static Texture* GetTexture(const std::string& texture_path);
+	static void UnloadAll();
 
 	~TextureCache();
 };

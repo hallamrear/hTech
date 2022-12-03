@@ -1,18 +1,34 @@
 #include "pch.h"
 #include "ProjectLoader.h"
-#include "nlohmann/json.hpp"
 #include "Log.h"
 #include <ShlObj_core.h>
 #include <fstream>
-
-using json = nlohmann::json;
-
-Project ProjectLoader::LoadedProject = Project();
+#include "World.h"
+#include "TextureCache.h"
+#include <rapidjson.h>
+#include <stringbuffer.h>
+#include <prettywriter.h>
 
 void ProjectLoader::LoadProject(std::string projectName)
 {
 	//IMPLEMENT Load Project
 	UnloadProject();
+	
+	FILE* file = nullptr;
+	fopen_s(&file, "TEST.hScene", "w+");
+
+	if (file != NULL)
+	{
+		//IMPLEMENT Save Project
+		//World::Load(saveFile);
+	}
+	else
+	{
+		//IMPLEMENT FILE ERROR THROW;
+		throw;
+	}
+
+	fclose(file);
 }
 
 void ProjectLoader::UnloadProject(bool save)
@@ -23,15 +39,41 @@ void ProjectLoader::UnloadProject(bool save)
 	}
 
 	//IMPLEMENT Unload Project
-	if (LoadedProject.GetIsLoaded())
-	{
+	TextureCache::UnloadAll();
+	//IMPLEMENT Loading Console variables from project.
 
-	}
+	
 }
 
 void ProjectLoader::SaveProject()
 {
+	rapidjson::StringBuffer sb;
+	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(sb);
+
 	//IMPLEMENT Save Project
+	writer.StartObject();
+	World::Serialize(writer);
+	writer.EndObject();
+
+	FILE* file = nullptr;
+	fopen_s(&file, "TEST.hScene", "w+");
+
+	if (file)
+	{
+		fseek(file, 0, 0);
+		fputs(sb.GetString(), file);
+		fclose(file);
+	}
+
+}
+
+void ProjectLoader::GetEngineProjectsLocation(std::string& path)
+{
+	//Gets the location of the documents folder, and creates the engines folders there.
+	char buffer[512];
+	SHGetFolderPathA(NULL, CSIDL_MYDOCUMENTS, NULL, SHGFP_TYPE_CURRENT, buffer);
+	path = buffer;
+	path += "\\hTech\\Projects\\";
 }
 
 void ProjectLoader::CreateProject(std::string projectName)
@@ -51,7 +93,7 @@ void ProjectLoader::CreateProject(std::string projectName)
 		Log::LogMessage(LogLevel::LOG_MESSAGE, "ProjectLoader -> Created engine project hierarchy root.");
 		CreateEmptyProjectHierarchy(projectName, projectRootLocation);
 
-		std::filesystem::path solutionPath = projectRootLocation + projectName + std::string(projectName + ".sln");
+		std::filesystem::path solutionPath = projectRootLocation + projectName + projectName + std::string(projectName + ".sln");
 		std::string command = "start devenv " + solutionPath.string();
 		system(command.c_str());
 	}
@@ -208,24 +250,4 @@ void ProjectLoader::CreateScriptSolution(const std::filesystem::path& projectFol
 			std::cout << error.code() << "\n" << error.what() << "\n";
 		}
 	}
-}
-
-bool Project::GetIsLoaded() const
-{
-	return m_IsLoaded;
-}
-
-const std::filesystem::path& Project::GetAssetDirectory() const
-{
-	return m_AssetDirectory;
-}
-
-const std::filesystem::path& Project::GetScenesDirectory() const
-{
-	return m_ScenesDirectory;
-}
-
-const std::filesystem::path& Project::GetScriptsDirectory() const
-{
-	return m_ScriptsDirectory;
 }

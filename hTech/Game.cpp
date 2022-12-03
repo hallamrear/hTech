@@ -23,8 +23,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
 int main(int argc, char* argv[])
 {
-	ProjectLoader::CreateProject("test");
-
 	WindowDetails details;
 	details.dimensions = Vector2(1280.0f, 720.0f);
 	details.title = "hTech";
