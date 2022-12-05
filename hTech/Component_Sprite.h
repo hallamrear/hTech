@@ -27,4 +27,5 @@ public:
     void Render(SDL_Renderer& renderer);
 
     void Serialize(Serializer& writer) const override;
+    void Deserialize(SerializedValue& value) override;
 };

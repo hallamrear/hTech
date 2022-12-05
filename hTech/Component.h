@@ -31,4 +31,5 @@ public:
 	virtual void Render(SDL_Renderer& renderer);
 	virtual void RenderProperties() = 0;
 	virtual void Serialize(Serializer& writer) const = 0;
+	virtual void Deserialize(SerializedValue& value) = 0;
 };

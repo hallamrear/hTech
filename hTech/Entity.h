@@ -56,6 +56,7 @@ public:
 	Transform& GetTransform();
 
 	void Serialize(Serializer& writer) const;
+	void Deserialize(SerializedValue& serializedEntity);
 };
 
 template<class C>

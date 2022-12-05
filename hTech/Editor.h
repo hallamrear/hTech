@@ -19,7 +19,6 @@ class Texture;
 class Editor
 {
 private:
-	Texture* mCursorTextures[4];
 	std::vector<Entity*> mSelectedEntities;
 	Vector2 mDragStartWS, mDragCurrentWS, mDragEndWS;
 	Vector2 mDragDifferenceThisFrame, mMovementMousePosLastFrame;

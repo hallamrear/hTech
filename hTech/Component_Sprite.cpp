@@ -92,3 +92,23 @@ void SpriteComponent::Serialize(Serializer& writer) const
 
 	writer.String("IsFlipped"); writer.Bool(mIsFlipped);
 }
+
+void SpriteComponent::Deserialize(SerializedValue& value)
+{
+	Component::Deserialize(value);
+
+	if (value["Texture"].IsString())
+	{
+		std::string texturePath = value["Texture"].GetString();
+		LoadTexture(texturePath);
+	}
+	else
+	{
+		mTexture = nullptr;
+	}
+
+	if (value["IsFlipped"].IsBool())
+	{
+		mIsFlipped = value["IsFlipped"].GetBool();
+	}
+}

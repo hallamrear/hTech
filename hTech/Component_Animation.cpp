@@ -159,3 +159,9 @@ bool AnimationComponent::HasFinished() const
 {
 	return mHasFinished;
 }
+
+void AnimationComponent::Deserialize(SerializedValue& value)
+{
+	Component::Deserialize(value);
+
+}

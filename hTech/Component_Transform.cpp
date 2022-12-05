@@ -41,6 +41,24 @@ void TransformComponent::Serialize(Serializer& writer) const
 	writer.EndObject();
 }
 
+void TransformComponent::Deserialize(SerializedValue& value)
+{
+	Component::Deserialize(value);
+
+	auto positionMember = value.FindMember("Position");
+	if (positionMember->value.IsObject())
+	{
+		mTransform.Position.X = (float)positionMember->value["X"].GetDouble();
+		mTransform.Position.Y = (float)positionMember->value["Y"].GetDouble();		
+	}
+
+	auto rotationMember = value.FindMember("Rotation");
+	if (rotationMember->value.IsObject())
+	{
+		mTransform.Rotation = (float)rotationMember->value["degrees"].GetDouble();
+	}
+}
+
 void TransformComponent::RenderProperties()
 {
 	float floats[2];

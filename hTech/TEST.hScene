@@ -9,8 +9,8 @@
                     "Component Name": "Transform Component",
                     "IsEnabled": true,
                     "Position": {
-                        "X": -539.0,
-                        "Y": -539.0
+                        "X": -399.0,
+                        "Y": -399.0
                     },
                     "Rotation": {
                         "degrees": 0.0
@@ -34,8 +34,8 @@
                     "Component Name": "Transform Component",
                     "IsEnabled": true,
                     "Position": {
-                        "X": -268.0,
-                        "Y": -268.0
+                        "X": -414.0,
+                        "Y": -414.0
                     },
                     "Rotation": {
                         "degrees": 0.0
@@ -47,37 +47,557 @@
                     "Texture": "Assets/test.png",
                     "IsFlipped": false
                 },
-                {},
+                {}
+            ]
+        },
+        {
+            "Name": "Test",
+            "IsAlive": true,
+            "IsEnabled": true,
+            "Components": [
                 {
-                    "Component Name": "Rigidbody Component",
+                    "Component Name": "Transform Component",
                     "IsEnabled": true,
-                    "Physics Properties": {
-                        "Is Static": false,
-                        "GravityEnabled": true,
-                        "DragEnabled": true,
-                        "": 100.0,
-                        "": 0.009999999776482582,
-                        "": 0.4699999988079071,
-                        "": 1000.0,
-                        "": 0.5,
-                        "Velocity": {
-                            "X": 0.0,
-                            "Y": -31.8804931640625
-                        },
-                        "Acceleration": {
-                            "X": 0.0,
-                            "Y": -8.867539405822754
-                        },
-                        "Net Force": {
-                            "X": 0.0,
-                            "Y": 0.0
-                        },
-                        "External Force": {
-                            "X": 0.0,
-                            "Y": 0.0
-                        }
+                    "Position": {
+                        "X": -408.0,
+                        "Y": -408.0
+                    },
+                    "Rotation": {
+                        "degrees": 0.0
                     }
-                }
+                },
+                {
+                    "Component Name": "Sprite Component",
+                    "IsEnabled": true,
+                    "Texture": "Assets/test.png",
+                    "IsFlipped": false
+                },
+                {}
+            ]
+        },
+        {
+            "Name": "Test",
+            "IsAlive": true,
+            "IsEnabled": true,
+            "Components": [
+                {
+                    "Component Name": "Transform Component",
+                    "IsEnabled": true,
+                    "Position": {
+                        "X": -397.0,
+                        "Y": -397.0
+                    },
+                    "Rotation": {
+                        "degrees": 0.0
+                    }
+                },
+                {
+                    "Component Name": "Sprite Component",
+                    "IsEnabled": true,
+                    "Texture": "Assets/test.png",
+                    "IsFlipped": false
+                },
+                {}
+            ]
+        },
+        {
+            "Name": "Test",
+            "IsAlive": true,
+            "IsEnabled": true,
+            "Components": [
+                {
+                    "Component Name": "Transform Component",
+                    "IsEnabled": true,
+                    "Position": {
+                        "X": -378.0,
+                        "Y": -378.0
+                    },
+                    "Rotation": {
+                        "degrees": 0.0
+                    }
+                },
+                {
+                    "Component Name": "Sprite Component",
+                    "IsEnabled": true,
+                    "Texture": "Assets/test.png",
+                    "IsFlipped": false
+                },
+                {}
+            ]
+        },
+        {
+            "Name": "Test",
+            "IsAlive": true,
+            "IsEnabled": true,
+            "Components": [
+                {
+                    "Component Name": "Transform Component",
+                    "IsEnabled": true,
+                    "Position": {
+                        "X": -372.0,
+                        "Y": -372.0
+                    },
+                    "Rotation": {
+                        "degrees": 0.0
+                    }
+                },
+                {
+                    "Component Name": "Sprite Component",
+                    "IsEnabled": true,
+                    "Texture": "Assets/test.png",
+                    "IsFlipped": false
+                },
+                {}
+            ]
+        },
+        {
+            "Name": "Test",
+            "IsAlive": true,
+            "IsEnabled": true,
+            "Components": [
+                {
+                    "Component Name": "Transform Component",
+                    "IsEnabled": true,
+                    "Position": {
+                        "X": -375.0,
+                        "Y": -375.0
+                    },
+                    "Rotation": {
+                        "degrees": 0.0
+                    }
+                },
+                {
+                    "Component Name": "Sprite Component",
+                    "IsEnabled": true,
+                    "Texture": "Assets/test.png",
+                    "IsFlipped": false
+                },
+                {}
+            ]
+        },
+        {
+            "Name": "Test",
+            "IsAlive": true,
+            "IsEnabled": true,
+            "Components": [
+                {
+                    "Component Name": "Transform Component",
+                    "IsEnabled": true,
+                    "Position": {
+                        "X": -387.0,
+                        "Y": -387.0
+                    },
+                    "Rotation": {
+                        "degrees": 0.0
+                    }
+                },
+                {
+                    "Component Name": "Sprite Component",
+                    "IsEnabled": true,
+                    "Texture": "Assets/test.png",
+                    "IsFlipped": false
+                },
+                {}
+            ]
+        },
+        {
+            "Name": "Test",
+            "IsAlive": true,
+            "IsEnabled": true,
+            "Components": [
+                {
+                    "Component Name": "Transform Component",
+                    "IsEnabled": true,
+                    "Position": {
+                        "X": -391.0,
+                        "Y": -391.0
+                    },
+                    "Rotation": {
+                        "degrees": 0.0
+                    }
+                },
+                {
+                    "Component Name": "Sprite Component",
+                    "IsEnabled": true,
+                    "Texture": "Assets/test.png",
+                    "IsFlipped": false
+                },
+                {}
+            ]
+        },
+        {
+            "Name": "Test",
+            "IsAlive": true,
+            "IsEnabled": true,
+            "Components": [
+                {
+                    "Component Name": "Transform Component",
+                    "IsEnabled": true,
+                    "Position": {
+                        "X": -352.0,
+                        "Y": -352.0
+                    },
+                    "Rotation": {
+                        "degrees": 0.0
+                    }
+                },
+                {
+                    "Component Name": "Sprite Component",
+                    "IsEnabled": true,
+                    "Texture": "Assets/test.png",
+                    "IsFlipped": false
+                },
+                {}
+            ]
+        },
+        {
+            "Name": "Test",
+            "IsAlive": true,
+            "IsEnabled": true,
+            "Components": [
+                {
+                    "Component Name": "Transform Component",
+                    "IsEnabled": true,
+                    "Position": {
+                        "X": -248.0,
+                        "Y": -248.0
+                    },
+                    "Rotation": {
+                        "degrees": 0.0
+                    }
+                },
+                {
+                    "Component Name": "Sprite Component",
+                    "IsEnabled": true,
+                    "Texture": "Assets/test.png",
+                    "IsFlipped": false
+                },
+                {}
+            ]
+        },
+        {
+            "Name": "Test",
+            "IsAlive": true,
+            "IsEnabled": true,
+            "Components": [
+                {
+                    "Component Name": "Transform Component",
+                    "IsEnabled": true,
+                    "Position": {
+                        "X": -159.0,
+                        "Y": -159.0
+                    },
+                    "Rotation": {
+                        "degrees": 0.0
+                    }
+                },
+                {
+                    "Component Name": "Sprite Component",
+                    "IsEnabled": true,
+                    "Texture": "Assets/test.png",
+                    "IsFlipped": false
+                },
+                {}
+            ]
+        },
+        {
+            "Name": "Test",
+            "IsAlive": true,
+            "IsEnabled": true,
+            "Components": [
+                {
+                    "Component Name": "Transform Component",
+                    "IsEnabled": true,
+                    "Position": {
+                        "X": -102.0,
+                        "Y": -102.0
+                    },
+                    "Rotation": {
+                        "degrees": 0.0
+                    }
+                },
+                {
+                    "Component Name": "Sprite Component",
+                    "IsEnabled": true,
+                    "Texture": "Assets/test.png",
+                    "IsFlipped": false
+                },
+                {}
+            ]
+        },
+        {
+            "Name": "Test",
+            "IsAlive": true,
+            "IsEnabled": true,
+            "Components": [
+                {
+                    "Component Name": "Transform Component",
+                    "IsEnabled": true,
+                    "Position": {
+                        "X": -37.0,
+                        "Y": -37.0
+                    },
+                    "Rotation": {
+                        "degrees": 0.0
+                    }
+                },
+                {
+                    "Component Name": "Sprite Component",
+                    "IsEnabled": true,
+                    "Texture": "Assets/test.png",
+                    "IsFlipped": false
+                },
+                {}
+            ]
+        },
+        {
+            "Name": "Test",
+            "IsAlive": true,
+            "IsEnabled": true,
+            "Components": [
+                {
+                    "Component Name": "Transform Component",
+                    "IsEnabled": true,
+                    "Position": {
+                        "X": -191.0,
+                        "Y": -191.0
+                    },
+                    "Rotation": {
+                        "degrees": 0.0
+                    }
+                },
+                {
+                    "Component Name": "Sprite Component",
+                    "IsEnabled": true,
+                    "Texture": "Assets/test.png",
+                    "IsFlipped": false
+                },
+                {}
+            ]
+        },
+        {
+            "Name": "Test",
+            "IsAlive": true,
+            "IsEnabled": true,
+            "Components": [
+                {
+                    "Component Name": "Transform Component",
+                    "IsEnabled": true,
+                    "Position": {
+                        "X": -28.0,
+                        "Y": -28.0
+                    },
+                    "Rotation": {
+                        "degrees": 0.0
+                    }
+                },
+                {
+                    "Component Name": "Sprite Component",
+                    "IsEnabled": true,
+                    "Texture": "Assets/test.png",
+                    "IsFlipped": false
+                },
+                {}
+            ]
+        },
+        {
+            "Name": "Test",
+            "IsAlive": true,
+            "IsEnabled": true,
+            "Components": [
+                {
+                    "Component Name": "Transform Component",
+                    "IsEnabled": true,
+                    "Position": {
+                        "X": -37.0,
+                        "Y": -37.0
+                    },
+                    "Rotation": {
+                        "degrees": 0.0
+                    }
+                },
+                {
+                    "Component Name": "Sprite Component",
+                    "IsEnabled": true,
+                    "Texture": "Assets/test.png",
+                    "IsFlipped": false
+                },
+                {}
+            ]
+        },
+        {
+            "Name": "Test",
+            "IsAlive": true,
+            "IsEnabled": true,
+            "Components": [
+                {
+                    "Component Name": "Transform Component",
+                    "IsEnabled": true,
+                    "Position": {
+                        "X": -32.0,
+                        "Y": -32.0
+                    },
+                    "Rotation": {
+                        "degrees": 0.0
+                    }
+                },
+                {
+                    "Component Name": "Sprite Component",
+                    "IsEnabled": true,
+                    "Texture": "Assets/test.png",
+                    "IsFlipped": false
+                },
+                {}
+            ]
+        },
+        {
+            "Name": "Test",
+            "IsAlive": true,
+            "IsEnabled": true,
+            "Components": [
+                {
+                    "Component Name": "Transform Component",
+                    "IsEnabled": true,
+                    "Position": {
+                        "X": -28.0,
+                        "Y": -28.0
+                    },
+                    "Rotation": {
+                        "degrees": 0.0
+                    }
+                },
+                {
+                    "Component Name": "Sprite Component",
+                    "IsEnabled": true,
+                    "Texture": "Assets/test.png",
+                    "IsFlipped": false
+                },
+                {}
+            ]
+        },
+        {
+            "Name": "Test",
+            "IsAlive": true,
+            "IsEnabled": true,
+            "Components": [
+                {
+                    "Component Name": "Transform Component",
+                    "IsEnabled": true,
+                    "Position": {
+                        "X": -2.0,
+                        "Y": -2.0
+                    },
+                    "Rotation": {
+                        "degrees": 0.0
+                    }
+                },
+                {
+                    "Component Name": "Sprite Component",
+                    "IsEnabled": true,
+                    "Texture": "Assets/test.png",
+                    "IsFlipped": false
+                },
+                {}
+            ]
+        },
+        {
+            "Name": "Test",
+            "IsAlive": true,
+            "IsEnabled": true,
+            "Components": [
+                {
+                    "Component Name": "Transform Component",
+                    "IsEnabled": true,
+                    "Position": {
+                        "X": 2.0,
+                        "Y": 2.0
+                    },
+                    "Rotation": {
+                        "degrees": 0.0
+                    }
+                },
+                {
+                    "Component Name": "Sprite Component",
+                    "IsEnabled": true,
+                    "Texture": "Assets/test.png",
+                    "IsFlipped": false
+                },
+                {}
+            ]
+        },
+        {
+            "Name": "Test",
+            "IsAlive": true,
+            "IsEnabled": true,
+            "Components": [
+                {
+                    "Component Name": "Transform Component",
+                    "IsEnabled": true,
+                    "Position": {
+                        "X": 16.0,
+                        "Y": 16.0
+                    },
+                    "Rotation": {
+                        "degrees": 0.0
+                    }
+                },
+                {
+                    "Component Name": "Sprite Component",
+                    "IsEnabled": true,
+                    "Texture": "Assets/test.png",
+                    "IsFlipped": false
+                },
+                {}
+            ]
+        },
+        {
+            "Name": "Test",
+            "IsAlive": true,
+            "IsEnabled": true,
+            "Components": [
+                {
+                    "Component Name": "Transform Component",
+                    "IsEnabled": true,
+                    "Position": {
+                        "X": -27.0,
+                        "Y": -27.0
+                    },
+                    "Rotation": {
+                        "degrees": 0.0
+                    }
+                },
+                {
+                    "Component Name": "Sprite Component",
+                    "IsEnabled": true,
+                    "Texture": "Assets/test.png",
+                    "IsFlipped": false
+                },
+                {}
+            ]
+        },
+        {
+            "Name": "Test",
+            "IsAlive": true,
+            "IsEnabled": true,
+            "Components": [
+                {
+                    "Component Name": "Transform Component",
+                    "IsEnabled": true,
+                    "Position": {
+                        "X": -28.0,
+                        "Y": -28.0
+                    },
+                    "Rotation": {
+                        "degrees": 0.0
+                    }
+                },
+                {
+                    "Component Name": "Sprite Component",
+                    "IsEnabled": true,
+                    "Texture": "Assets/test.png",
+                    "IsFlipped": false
+                },
+                {}
             ]
         }
     ]

@@ -4,6 +4,7 @@
 #include "Log.h"
 #include "Texture.h"
 #include "TextureCache.h"
+#include "ProjectLoader.h"
 
 TextureCache* TextureCache::mInstance = nullptr;
 
@@ -33,10 +34,22 @@ Texture* TextureCache::GetTexture_Internal(const std::string& texture_path)
 
 	auto itr = mTextures.find(texture_path);
 
-	if(itr == mTextures.end())
+	if (itr == mTextures.end())
 	{
-		mTextures.insert(std::make_pair(texture_path, new Texture(texture_path)));
-		itr = mTextures.find(texture_path);
+		std::string fullPath = ""; std::string projectName = ProjectLoader::GetLoadedProjectName();
+		ProjectLoader::GetEngineProjectsLocation(fullPath);
+		fullPath += (projectName + "\\Assets\\" + texture_path);
+
+		if (std::filesystem::exists(fullPath))
+		{
+			mTextures.insert(std::make_pair(texture_path, new Texture(texture_path)));
+			itr = mTextures.find(texture_path);
+		}
+		else
+		{
+			Log::LogMessage(LogLevel::LOG_ERROR, "TextureCache -> Error loading texture file at [" + fullPath + "]");
+			return nullptr;
+		}
 	}
 
 	assert(itr->second != nullptr);

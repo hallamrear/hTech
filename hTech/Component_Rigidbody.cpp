@@ -243,39 +243,118 @@ void RigidbodyComponent::Serialize(Serializer& writer) const
 	writer.String("Speed cap");					writer.Double(mSpeedCap);
 	writer.String("Restitution");					writer.Double(mRestitution);
 
-	writer.String("Velocity"); writer.StartObject();
+	writer.String("Velocity"); 
+	writer.StartObject();
 	writer.String("X");					writer.Double((double)mVelocity.X);
 	writer.String("Y");					writer.Double((double)mVelocity.Y);
 	writer.EndObject();
 
-	writer.String("Acceleration"); writer.StartObject();
+	writer.String("Acceleration"); 
+	writer.StartObject();
 	writer.String("X");					writer.Double((double)mAcceleration.X);
 	writer.String("Y");					writer.Double((double)mAcceleration.Y);
 	writer.EndObject();
 
-	writer.String("Net Force"); writer.StartObject();
+	writer.String("Net Force"); 
+	writer.StartObject();
 	writer.String("X");					writer.Double((double)mNetForce.X);
 	writer.String("Y");					writer.Double((double)mNetForce.Y);
 	writer.EndObject();
 
-	writer.String("External Force"); writer.StartObject();
+	writer.String("External Force"); 
+	writer.StartObject();
 	writer.String("X");					writer.Double((double)mExternalForce.X);
 	writer.String("Y");					writer.Double((double)mExternalForce.Y);
 	writer.EndObject();
 
 	writer.EndObject();
 
-	Collider* mCollider;
-	bool					mGravityEnabled;
-	bool					mDragEnabled;
-	float					mMass; //Weight of Entity (kg)
-	float					mInverseMass;
-	float					mDragCoefficient;
-	float					mSpeedCap; //Speed cap (u/s)
-	float					mRestitution;
-	Vector2					mVelocity;
-	Vector2					mAcceleration;
-	Vector2					mNetForce;
-	Vector2					mExternalForce;
-	bool					mIsStatic;
+}
+
+void RigidbodyComponent::Deserialize(SerializedValue& value)
+{
+	Component::Deserialize(value);
+
+	//TODO FINISH THIS AND ANIMATION AND I THINK ITLL BE NEARLY DONE WITH SOME TESTING;
+
+
+
+
+
+	auto propertiesMember = value.FindMember("Properties");
+
+	if (propertiesMember->value.IsObject())
+	{
+		auto properties = propertiesMember->value.GetObjectA();
+
+		auto colliderMember = properties.FindMember("Collider Type");
+		if (colliderMember->value.IsInt())
+		{
+			SetCollider((COLLIDER_TYPE)value.GetInt());
+		}
+		else
+		{
+			SetCollider(COLLIDER_TYPE::COLLIDER_UNKNOWN);
+		}
+
+		auto staticMember = properties.FindMember("Static");
+		if (staticMember->value.IsBool())
+			mIsStatic = staticMember->value.GetBool();
+
+		auto gravityMember = properties.FindMember("Gravity Enabled");
+		if (gravityMember->value.IsBool())
+			mGravityEnabled = gravityMember->value.GetBool();
+
+		auto dragMember = properties.FindMember("Drag Enabled");       
+		if (dragMember->value.IsBool()) 
+			mDragEnabled = dragMember->value.GetBool();
+
+		auto massMember = properties.FindMember("Mass");
+		if  (massMember->value.IsDouble()) 
+			mMass = massMember->value.GetDouble();
+
+		auto invmassMember = properties.FindMember("Inverse Mass");
+		if (invmassMember->value.IsDouble())
+			mInverseMass = invmassMember->value.GetDouble();
+
+		auto dragcoeffMember = properties.FindMember("Drag Coefficient");
+		if (dragcoeffMember->value.IsDouble())
+			mDragCoefficient = dragcoeffMember->value.GetDouble();
+
+		auto speedCapMember = properties.FindMember("Speed cap");
+		if (speedCapMember->value.IsBool())
+			mSpeedCap = speedCapMember->value.GetDouble();
+
+		auto restMember = properties.FindMember("Restitution");
+		if (restMember->value.IsBool())
+			mRestitution = restMember->value.GetDouble();
+
+		auto externalForceMember = properties.FindMember("External Force");
+		if (externalForceMember->value.IsObject())
+		{
+			mExternalForce.X = (float)externalForceMember->value["X"].GetDouble();
+			mExternalForce.Y = (float)externalForceMember->value["Y"].GetDouble();
+		}
+
+		auto netForceMember = properties.FindMember("Net Force");
+		if (netForceMember->value.IsObject())
+		{
+			mNetForce.X = (float)netForceMember->value["X"].GetDouble();
+			mNetForce.Y = (float)netForceMember->value["Y"].GetDouble();
+		}
+
+		auto accelerationMember = properties.FindMember("Acceleration");
+		if (accelerationMember->value.IsObject())
+		{
+			mAcceleration.X = (float)accelerationMember->value["X"].GetDouble();
+			mAcceleration.Y = (float)accelerationMember->value["Y"].GetDouble();
+		}
+
+		auto velocityMember = properties.FindMember("Velocity");
+		if (velocityMember->value.IsObject())
+		{
+			mVelocity.X = (float)velocityMember->value["X"].GetDouble();
+			mVelocity.Y = (float)velocityMember->value["Y"].GetDouble();
+		}
+	}
 }

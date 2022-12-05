@@ -8,63 +8,116 @@
 #include <rapidjson.h>
 #include <stringbuffer.h>
 #include <prettywriter.h>
+#include <reader.h>
+#include <document.h>
+#include "Console.h"
 
-void ProjectLoader::LoadProject(std::string projectName)
+bool ProjectLoader::m_HasProjectLoaded = false;
+std::string ProjectLoader::m_ProjectName = "No Project Loaded";
+
+void ProjectLoader::LoadProject(std::filesystem::path sceneFilePath)
 {
 	//IMPLEMENT Load Project
-	UnloadProject();
-	
-	FILE* file = nullptr;
-	fopen_s(&file, "TEST.hScene", "w+");
+	if (m_HasProjectLoaded == true)
+	{
+		UnloadProject();
+	}
 
-	if (file != NULL)
+	std::fstream stream;
+	stream.open(sceneFilePath, std::ios::in | std::ios::end | std::ios::binary);
+
+	if (stream.good())
 	{
 		//IMPLEMENT Save Project
-		//World::Load(saveFile);
+
+		stream.seekg(0, std::ios::end); int end = stream.tellg();
+		stream.seekg(0, std::ios::beg); int start = stream.tellg();
+		int size = end - start;
+
+		char* buffer = new char[size + 1];
+		stream.read(buffer, size);
+
+		rapidjson::StringStream stream(buffer);
+
+		Log::LogMessage(LogLevel::LOG_ERROR, buffer);
+
+		//IMPLEMENT Loading Console variables from project.
+		 		
+		if (buffer != "")
+		{
+			rapidjson::Document loadedDoc;
+			loadedDoc.Parse<rapidjson::kParseStopWhenDoneFlag>(buffer);
+			World::Deserialize(loadedDoc);
+		}
+
+		m_HasProjectLoaded = true;
+		m_ProjectName = sceneFilePath.filename().string();
+		//Remove extension.
+		m_ProjectName = m_ProjectName.substr(0, m_ProjectName.size() - sceneFilePath.extension().string().size()).c_str();
 	}
 	else
 	{
 		//IMPLEMENT FILE ERROR THROW;
+		m_HasProjectLoaded = false;
+		m_ProjectName = "No Project Loaded";
 		throw;
 	}
 
-	fclose(file);
+	stream.close();
 }
 
 void ProjectLoader::UnloadProject(bool save)
 {
-	if (save)
+	if (m_HasProjectLoaded)
 	{
-		SaveProject();
+		if (save)
+		{
+			SaveProject();
+		}
+
+		//IMPLEMENT Unload Project
+		TextureCache::UnloadAll();
+		World::UnloadAll();
+
+		m_HasProjectLoaded = false;
+		m_ProjectName = "No Project Loaded";
 	}
-
-	//IMPLEMENT Unload Project
-	TextureCache::UnloadAll();
-	//IMPLEMENT Loading Console variables from project.
-
-	
 }
 
 void ProjectLoader::SaveProject()
 {
-	rapidjson::StringBuffer sb;
-	rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(sb);
-
-	//IMPLEMENT Save Project
-	writer.StartObject();
-	World::Serialize(writer);
-	writer.EndObject();
-
-	FILE* file = nullptr;
-	fopen_s(&file, "TEST.hScene", "w+");
-
-	if (file)
+	if (m_HasProjectLoaded)
 	{
-		fseek(file, 0, 0);
-		fputs(sb.GetString(), file);
-		fclose(file);
-	}
+		rapidjson::StringBuffer sb;
+		rapidjson::PrettyWriter<rapidjson::StringBuffer> writer(sb);
 
+		//IMPLEMENT Saving Console variables from project.
+
+		//IMPLEMENT Save Project
+		writer.StartObject();
+		World::Serialize(writer);
+		writer.EndObject();
+
+		std::string fileName;
+		GetEngineProjectsLocation(fileName);
+		fileName += (m_ProjectName + "\\Scenes\\" + m_ProjectName + ".hScene");
+
+		std::fstream fileStream;
+		fileStream.open(fileName, std::ios::out | std::ios::trunc);
+
+		if (fileStream.good())
+		{
+			fileStream.seekg(0, std::ios::beg);
+			fileStream.write(sb.GetString(), sb.GetSize());
+		}
+		else
+		{
+			//IMPLEMENT file throw error.
+			throw;
+		}
+
+		fileStream.close();
+	}
 }
 
 void ProjectLoader::GetEngineProjectsLocation(std::string& path)
@@ -74,6 +127,16 @@ void ProjectLoader::GetEngineProjectsLocation(std::string& path)
 	SHGetFolderPathA(NULL, CSIDL_MYDOCUMENTS, NULL, SHGFP_TYPE_CURRENT, buffer);
 	path = buffer;
 	path += "\\hTech\\Projects\\";
+}
+
+const std::string ProjectLoader::GetLoadedProjectName()
+{
+	return m_ProjectName;
+}
+
+const bool ProjectLoader::HasProjectLoaded()
+{
+	return m_HasProjectLoaded;
 }
 
 void ProjectLoader::CreateProject(std::string projectName)
@@ -93,9 +156,11 @@ void ProjectLoader::CreateProject(std::string projectName)
 		Log::LogMessage(LogLevel::LOG_MESSAGE, "ProjectLoader -> Created engine project hierarchy root.");
 		CreateEmptyProjectHierarchy(projectName, projectRootLocation);
 
-		std::filesystem::path solutionPath = projectRootLocation + projectName + projectName + std::string(projectName + ".sln");
+		std::filesystem::path solutionPath = projectRootLocation + projectName + '\\' + std::string(projectName + ".sln");
 		std::string command = "start devenv " + solutionPath.string();
 		system(command.c_str());
+		m_HasProjectLoaded = true;
+		m_ProjectName = projectName;
 	}
 }
 

@@ -41,7 +41,7 @@ void World::DestroyEntity_Impl(Entity* entity)
     }
 }
 
-void World::ClearupEntities()
+void World::ClearupDeadEntities()
 {
     if (mEntityList.size() != 0)
     {
@@ -88,7 +88,7 @@ void World::Update_Impl(float DeltaTime)
         }
     }
 
-    ClearupEntities();
+    ClearupDeadEntities();
 }
 
 #ifdef _DEBUG
@@ -221,6 +221,11 @@ void World::Render(SDL_Renderer& renderer)
     Get()->Render_Impl(renderer);
 }
 
+void World::UnloadAll()
+{
+    return Get()->ClearAllEntities();
+}
+
 Entity* World::FindNearestEntityToPosition_Impl(Vector2 WorldPosition)
 {
     Entity* closestEntity = nullptr;
@@ -275,11 +280,33 @@ void World::Serialize_Impl(Serializer& writer) const
     {
         mEntityList[i]->Serialize(writer);
     }
-
     writer.EndArray();
+}
+
+void World::Deserialize_Impl(Deserializer& reader)
+{
+    auto value = reader.IsArray();
+    SerializedValue results = reader["Entities"].GetArray();
+
+    Entity* entity = nullptr;
+    for (rapidjson::SizeType i = 0; i < results.Size(); i++)
+    {
+        if (results[i]["Name"].IsString())
+        {
+            entity = CreateEntity_Impl(results[i]["Name"].GetString());
+            entity->Deserialize(results[i]);
+        }
+    }
+
+    entity = nullptr;
 }
 
 void World::Serialize(Serializer& writer)
 {
     Get()->Serialize_Impl(writer);
+}
+
+void World::Deserialize(Deserializer& reader)
+{
+    return Get()->Deserialize_Impl(reader);
 }

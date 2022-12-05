@@ -26,7 +26,7 @@ private:
 
 	Entity*					CreateEntity_Impl(std::string Name = "unnamed", Transform SpawnTransform = Transform(), Entity* Parent = nullptr);
 	void					DestroyEntity_Impl(Entity* entity);
-	void					ClearupEntities();
+	void					ClearupDeadEntities();
 
 	void					Update_Impl(float DeltaTime);
 	void					Render_Impl(SDL_Renderer&);
@@ -35,7 +35,7 @@ private:
 	Entity*					FindNearestEntityToPosition_Impl(Vector2 WorldPosition);
 
 	void Serialize_Impl(Serializer& writer) const;
-	//void Load_Impl(tinyxml2::XMLDocument& saveFile);
+	void Deserialize_Impl(Deserializer& reader);
 	void ClearAllEntities();
 
 protected:
@@ -51,10 +51,12 @@ public:
 	static Entity*			GetEntityByName(std::string name);
 
 	static void				Serialize(Serializer& writer);
-	//static void				Load(tinyxml2::XMLDocument& saveFile);
+	static void				Deserialize(Deserializer& reader);
 
 	static void				Update(float DeltaTime);
 	static void				Render(SDL_Renderer&);
+
+	static void				UnloadAll();
 };
 
 //void World::Load_Impl(tinyxml2::XMLDocument& saveFile)

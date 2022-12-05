@@ -478,7 +478,6 @@ void Game::Render()
 			{
 				static std::string projectName;
 				showNewProjectModal = true;
-				//ProjectLoader::CreateProject(nullptr, projectName);
 			}
 			
 			if (ImGui::MenuItem("Open Project"))
@@ -493,6 +492,11 @@ void Game::Render()
 			if (ImGui::MenuItem("Save Project"))
 			{
 				ProjectLoader::SaveProject();
+			}
+			
+			if (ImGui::MenuItem("Close Project"))
+			{
+				ProjectLoader::UnloadProject();
 			}
 
 			if (ImGui::BeginMenu("Exit##Menu"))
@@ -582,7 +586,7 @@ bool Game::OpenProject(std::string& path)
 	ofn.hwndOwner = wmInfo.info.win.window;
 	ofn.lpstrFile = szFile;
 	ofn.nMaxFile = sizeof(szFile);
-	ofn.lpstrFilter = TEXT("Project Files\0*.hTechProj\0");
+	ofn.lpstrFilter = TEXT("Scene Files\0*.hScene\0");
 	ofn.nFilterIndex = 1;
 	ofn.lpstrFileTitle = NULL;
 	ofn.nMaxFileTitle = 0;
