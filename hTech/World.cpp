@@ -162,7 +162,7 @@ World::World()
         {
             Entity* entity = CreateEntity_Impl("Test", Transform(InputManager::Get()->GetMouseWorldPosition()));
             entity->AddComponent<SpriteComponent>();
-            entity->GetComponent<SpriteComponent>()->LoadTexture("Assets/test.png");
+            entity->GetComponent<SpriteComponent>()->LoadTexture("test.png");
             entity->AddComponent<ScriptComponent>();
         });   
 }

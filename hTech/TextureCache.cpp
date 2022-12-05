@@ -43,7 +43,7 @@ Texture* TextureCache::GetTexture_Internal(const std::string& texture_path)
 
 		if (std::filesystem::exists(fullPath))
 		{
-			mTextures.insert(std::make_pair(texture_path, new Texture(texture_path)));
+			mTextures.insert(std::make_pair(texture_path, new Texture(fullPath, texture_path)));
 			itr = mTextures.find(texture_path);
 		}
 		else
@@ -96,12 +96,15 @@ void TextureCache::RenderProperties()
 
 void TextureCache::RenderProperties_Impl()
 {
-	//ImTextureID IMtexture = nullptr;
-	//
-	//for (auto& itr : mTextures)
-	//{
-	//
-	//}
-	//
-	//ImGui::Image(IMtexture, Vector2(64.0f, 64.0f));
+	ImTextureID IMtexture = nullptr;
+	
+	for (auto& itr : mTextures)
+	{
+		SDL_Texture* texture = &itr.second->GetSDLTexture();
+		IMtexture = (void*)texture;
+		ImGui::Image(IMtexture, Vector2(64.0f, 64.0f));
+		texture = nullptr;
+	}
+	
+	IMtexture = nullptr;
 }
