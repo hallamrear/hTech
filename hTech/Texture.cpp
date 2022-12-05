@@ -7,12 +7,13 @@
 #include "ProjectLoader.h"
 #include <SDL_stbimage.h>
 
-Texture::Texture(std::string texture_path)
+Texture::Texture(std::string texture_path, std::string name)
 {
 	Width = NULL;
 	Height = NULL;
 	mName = "";
-	Create(texture_path);
+	mPath = "";
+	Create(texture_path, name);
 }
 
 Texture::~Texture()
@@ -32,6 +33,11 @@ SDL_Texture& Texture::GetSDLTexture()
 }
 
 const std::string& Texture::GetLocation() const
+{
+	return mPath;
+}
+
+const std::string& Texture::GetName() const
 {
 	return mName;
 }
@@ -117,7 +123,7 @@ void Texture::Render(SDL_Renderer& renderer, Vector2 position, float rotation, V
 		SDL_RenderCopyEx(&renderer, &GetSDLTexture(), &srcRect, &destRect, (double)rotation, NULL, SDL_FLIP_HORIZONTAL);
 }
 
-void Texture::Create(std::string texture_path)
+void Texture::Create(std::string texture_path, std::string name)
 {
 	assert(mTexture == nullptr);
 
@@ -158,6 +164,7 @@ void Texture::Create(std::string texture_path)
 			return;
 		}
 
-		mName = texture_path;
+		mPath = texture_path;
+		mName = name;
 	}
 }
