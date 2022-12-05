@@ -103,6 +103,7 @@ void TextureCache::RenderProperties_Impl()
 		SDL_Texture* texture = &itr.second->GetSDLTexture();
 		IMtexture = (void*)texture;
 		ImGui::Image(IMtexture, Vector2(64.0f, 64.0f));
+		ImGui::Text(itr.first.c_str());
 		texture = nullptr;
 	}
 	

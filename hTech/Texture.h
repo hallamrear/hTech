@@ -31,5 +31,3 @@ public:
 	virtual void Render(SDL_Renderer& renderer, Vector2 position, float rotation, bool flipped);
 	virtual void Render(SDL_Renderer& renderer, Vector2 position, float rotation);
 };
-
-

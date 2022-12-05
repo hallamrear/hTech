@@ -231,14 +231,10 @@ bool Game::InitialiseDearIMGUI()
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
 
-
 	ImGuiViewport* viewport = ImGui::GetMainViewport();
 	ImGui::SetNextWindowPos(viewport->WorkPos);
 	ImGui::SetNextWindowSize(viewport->WorkSize);
 	ImGui::SetNextWindowViewport(viewport->ID);
-
-	
-
 
 	// Setup Platform/Renderer backends
 	return (ImGui_ImplSDL2_InitForSDLRenderer(mWindow, Renderer) && ImGui_ImplSDLRenderer_Init(Renderer));
@@ -455,7 +451,8 @@ void Game::Render()
 
 	ImGui::Begin("DockSpace Window", nullptr, host_window_flags);
 	ImGuiID dockspace_id = ImGui::GetID("DockSpace");
-	ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags, nullptr);
+	//ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags, nullptr);
+	ImGui::DockSpaceOverViewport(0, dockspace_flags);
 	ImGui::End();
 
 	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
