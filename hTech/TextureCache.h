@@ -17,11 +17,13 @@ private:
 
 	Texture* GetTexture_Internal(const std::string& texture_path);
 	void UnloadAll_Impl();
+	void RenderProperties_Impl();
 
 public:
 	static TextureCache* Get();
 	static Texture* GetTexture(const std::string& texture_path);
 	static void UnloadAll();
+	static void RenderProperties();
 
 	~TextureCache();
 };

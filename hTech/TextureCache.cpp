@@ -5,6 +5,7 @@
 #include "Texture.h"
 #include "TextureCache.h"
 #include "ProjectLoader.h"
+#include "imgui.h"
 
 TextureCache* TextureCache::mInstance = nullptr;
 
@@ -88,3 +89,19 @@ void TextureCache::UnloadAll()
 	return Get()->UnloadAll_Impl();
 }
 
+void TextureCache::RenderProperties()
+{
+	return Get()->RenderProperties_Impl();
+}
+
+void TextureCache::RenderProperties_Impl()
+{
+	//ImTextureID IMtexture = nullptr;
+	//
+	//for (auto& itr : mTextures)
+	//{
+	//
+	//}
+	//
+	//ImGui::Image(IMtexture, Vector2(64.0f, 64.0f));
+}

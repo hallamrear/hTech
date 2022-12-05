@@ -199,6 +199,8 @@ bool Game::InitialiseWindow(const char* title, int xpos, int ypos, int width, in
 
 	//For IMGUI
 	flags |= SDL_WINDOW_ALLOW_HIGHDPI;
+	
+	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
 
 	mWindow = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
 
@@ -309,7 +311,7 @@ bool Game::InitialiseSystems(WindowDetails details)
 
 		Log::LogMessage(LogLevel::LOG_MESSAGE, "Subsystem created.");
 
-		if (InitialiseWindow(details.title.c_str(), (int)details.position.X, (int)details.position.Y, (int)details.dimensions.X, (int)details.dimensions.Y, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED, false) == false)
+		if (InitialiseWindow(details.title.c_str(), (int)details.position.X, (int)details.position.Y, (int)details.dimensions.X, (int)details.dimensions.Y, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED | SDL_WINDOW_OPENGL, false) == false)
 			return false;
 
 		int w, h;

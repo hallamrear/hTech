@@ -227,6 +227,7 @@ void Editor::Render_Impl(SDL_Renderer& renderer)
     if (ImGui::Begin("Assets"))
     {
         //IMPLEMENT Assets Window.
+        TextureCache::RenderProperties();
     }
     ImGui::End();
 
