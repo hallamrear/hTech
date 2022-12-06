@@ -13,6 +13,7 @@
 #include <filesystem>
 #include <ShlObj_core.h>
 #include <SDL_syswm.h>
+#include <SDL.h>
 
 SDL_Renderer* Game::Renderer = nullptr;
 
@@ -44,6 +45,7 @@ Game::Game()
 	mIsInitialised = false;
 	mIsRunning = false;
 	mWindow = nullptr;
+	m_RenderToTextureTarget = nullptr;
 }
 
 Game::~Game()
@@ -252,9 +254,21 @@ bool Game::InitialiseGraphics()
 	{
 		Log::LogMessage(LogLevel::LOG_MESSAGE, "Renderer created.");
 
+#ifdef _DEBUG
+		if (!CreateRenderTargetTexture())
+		{
+			Log::LogMessage(LogLevel::LOG_ERROR, "Failed to render target texture.");
+			Log::LogMessage(LogLevel::LOG_ERROR, SDL_GetError());
+			return false;
+		}
+
+		Log::LogMessage(LogLevel::LOG_MESSAGE, "Created render target texture.");
+#endif
+
 		if (InitialiseDearIMGUI())
 		{
 			Log::LogMessage(LogLevel::LOG_MESSAGE, "DearIMGUI initialised.");
+
 			return true;
 		}
 		
@@ -265,6 +279,28 @@ bool Game::InitialiseGraphics()
 		Log::LogMessage(LogLevel::LOG_ERROR, "Renderer failed to create.");
 		return false;
 	}
+}
+
+bool Game::CreateRenderTargetTexture()
+{
+	bool success = true;
+
+	if (m_RenderToTextureTarget != nullptr)
+	{
+		SDL_DestroyTexture(m_RenderToTextureTarget);
+	}
+
+	int w, h;
+	SDL_GetWindowSize(mWindow, &w, &h);
+
+	m_RenderToTextureTarget = SDL_CreateTexture(Renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, w, h);
+
+	if (!m_RenderToTextureTarget)
+	{
+		success = false;
+	}
+	
+	return success;
 }
 
 bool Game::InitialiseApplicationControls()
@@ -439,6 +475,7 @@ void Game::Render()
 
 	ImGui::DockSpaceOverViewport(0, ImGuiDockNodeFlags_PassthruCentralNode);
 
+	SDL_SetRenderTarget(Renderer, m_RenderToTextureTarget);
 	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
 	SDL_RenderClear(Renderer);
 
@@ -543,8 +580,42 @@ void Game::Render()
 
 	Editor::Render(*Renderer);
 
+	SDL_SetRenderTarget(Renderer, NULL);
+
+	bool t = true;
+	ImGui::Begin("Render Window", &t, ImGuiWindowFlags_::ImGuiWindowFlags_NoResize | ImGuiWindowFlags_::ImGuiWindowFlags_NoCollapse);
+	//int x, y, width, height;
+	//Vector2 pos = ImGui::GetWindowPos();
+	//x = (int)pos.X;
+	//y = (int)pos.Y;
+	//Vector2 size = ImGui::GetWindowSize();
+	//width = (int)size.X;
+	//height = (int)size.Y;
+
+	int w, h;
+	SDL_QueryTexture(m_RenderToTextureTarget, nullptr, nullptr, &w, &h);
+	w = (int)ImGui::GetWindowWidth();
+	h = (int)ImGui::GetWindowHeight();
+	ImGui::Image((void*)m_RenderToTextureTarget, Vector2(w, h));
+	ImGui::End();
+
 	ImGui::Render();
-	ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
+	ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());	
+
+	////Set rendering space and render to screen
+	//SDL_Rect renderQuad = {x, y, width, height };
+	//
+	////Set clip rendering dimensions
+	////if (clip != NULL)
+	////{
+	////	renderQuad.w = clip->w;
+	////	renderQuad.h = clip->h;
+	////}
+	//
+	////Render to screen
+	//SDL_Point center = { x + (width / 2), y + (height / 2) };
+	//SDL_RenderCopyEx(Renderer, m_RenderToTextureTarget, NULL, &renderQuad, 0.0F, &center, SDL_RendererFlip::SDL_FLIP_NONE);
+
 	SDL_RenderPresent(Game::Renderer);
 }
 
