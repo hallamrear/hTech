@@ -11,6 +11,7 @@
 #include <reader.h>
 #include <document.h>
 #include "Console.h"
+#include "Editor.h"
 
 bool ProjectLoader::m_HasProjectLoaded = false;
 std::string ProjectLoader::m_ProjectName = "No Project Loaded";
@@ -76,6 +77,7 @@ void ProjectLoader::UnloadProject(bool save)
 		}
 
 		//IMPLEMENT Unload Project
+		Editor::ClearSelected();
 		TextureCache::UnloadAll();
 		World::UnloadAll();
 
@@ -100,7 +102,7 @@ void ProjectLoader::SaveProject()
 
 		std::string fileName;
 		GetEngineProjectsLocation(fileName);
-		fileName += (m_ProjectName + "\\Scenes\\" + m_ProjectName + ".hScene");
+		fileName += (m_ProjectName + "\\" + m_ProjectName + ".hProj");
 
 		std::fstream fileStream;
 		fileStream.open(fileName, std::ios::out | std::ios::trunc);
@@ -159,14 +161,12 @@ void ProjectLoader::CreateProject(std::string projectName)
 		std::filesystem::path solutionPath = projectRootLocation + projectName + '\\' + std::string(projectName + ".sln");
 		std::string command = "start devenv " + solutionPath.string();
 		system(command.c_str());
+
 		m_HasProjectLoaded = true;
 		m_ProjectName = projectName;
-	}
-}
 
-void ProjectLoader::CreateEmptyProjectFile(const std::string& projectName)
-{
-	//IMPLEMENT ROOT PROJECT FILE
+		SaveProject();
+	}
 }
 
 void ProjectLoader::CreateEmptyProjectHierarchy(const std::string& projectName, const std::string& folderRoot)
@@ -182,8 +182,6 @@ void ProjectLoader::CreateEmptyProjectHierarchy(const std::string& projectName, 
 		{
 			std::filesystem::create_directories(projectFolderRoot.string().append(ProjectDirectoryLayout[i]));
 		}
-
-		CreateEmptyProjectFile(projectName);
 	}
 	else
 	{

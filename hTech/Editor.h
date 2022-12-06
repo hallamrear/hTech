@@ -51,7 +51,7 @@ private:
 	void MousePress();
 	void MouseRelease();
 	void MouseHold();
-
+	void ClearSelected_Impl();
 
 protected:
 	Editor();
@@ -63,6 +63,7 @@ public:
 	static void Update(float deltaTime);
 	static void Render(SDL_Renderer&);
 	static void SetEditorCursorState(EDITOR_STATE state);
+	static void ClearSelected();
 };
 
 #else

@@ -18,7 +18,6 @@ class ProjectLoader
 		"\\Logs\\"
 	};
 
-	static void CreateEmptyProjectFile(const std::string& projectName);
 	static void CreateScriptSolution(const std::filesystem::path& projectFolderRoot, const std::string& projectName);
 	static void CreateEmptyProjectHierarchy(const std::string& projectName, const std::string& folderRoot);
 	static void ReplaceExampleReferencesInFile(const std::filesystem::path& filePath, const std::string& projectName);

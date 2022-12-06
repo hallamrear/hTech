@@ -231,10 +231,6 @@ bool Game::InitialiseDearIMGUI()
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
 
-	ImGuiViewport* viewport = ImGui::GetMainViewport();
-	ImGui::SetNextWindowPos(viewport->WorkPos);
-	ImGui::SetNextWindowSize(viewport->WorkSize);
-	ImGui::SetNextWindowViewport(viewport->ID);
 
 	// Setup Platform/Renderer backends
 	return (ImGui_ImplSDL2_InitForSDLRenderer(mWindow, Renderer) && ImGui_ImplSDLRenderer_Init(Renderer));
@@ -441,19 +437,7 @@ void Game::Render()
 	ImGui_ImplSDL2_NewFrame();
 	ImGui::NewFrame();
 
-	///Dockspace Window
-	ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
-	ImGuiWindowFlags host_window_flags = 0;
-	host_window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking;
-	host_window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-	if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
-		host_window_flags |= ImGuiWindowFlags_NoBackground;
-
-	ImGui::Begin("DockSpace Window", nullptr, host_window_flags);
-	ImGuiID dockspace_id = ImGui::GetID("DockSpace");
-	//ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags, nullptr);
-	ImGui::DockSpaceOverViewport(0, dockspace_flags);
-	ImGui::End();
+	ImGui::DockSpaceOverViewport(0, ImGuiDockNodeFlags_PassthruCentralNode);
 
 	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
 	SDL_RenderClear(Renderer);
@@ -585,7 +569,7 @@ bool Game::OpenProject(std::string& path)
 	ofn.hwndOwner = wmInfo.info.win.window;
 	ofn.lpstrFile = szFile;
 	ofn.nMaxFile = sizeof(szFile);
-	ofn.lpstrFilter = TEXT("Scene Files\0*.hScene\0");
+	ofn.lpstrFilter = TEXT("Project Files\0*.hProj\0");
 	ofn.nFilterIndex = 1;
 	ofn.lpstrFileTitle = NULL;
 	ofn.nMaxFileTitle = 0;

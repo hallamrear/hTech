@@ -286,6 +286,17 @@ void Editor::SetEditorCursorState(EDITOR_STATE state)
     Get()->SetEditorCursorState_Impl(state);
 }
 
+void Editor::ClearSelected()
+{
+    return Get()->ClearSelected_Impl();
+}
+
+void Editor::ClearSelected_Impl()
+{
+    selected = nullptr;
+    mSelectedEntities.clear();
+}
+
 void Editor::SetEditorCursorState_Impl(EDITOR_STATE state)
 {
     mCurrentCursorState = state;
