@@ -36,3 +36,14 @@ void Component::Render(SDL_Renderer& renderer)
 {
 
 }
+
+void Component::Serialize(Serializer& writer) const
+{
+	writer.String("Component Name"); writer.String(mComponentName.c_str());
+	writer.String("IsEnabled");      writer.Bool(mIsEnabled);
+}
+
+void Component::Deserialize(SerializedValue& value)
+{
+	value["IsEnabled"].IsBool() ? mIsEnabled = value["IsEnabled"].GetBool() : true;
+}

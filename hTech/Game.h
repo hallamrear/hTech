@@ -26,7 +26,6 @@ class HTECH_FUNCTION_EXPORT Game
 private:
 	bool						mIsInitialised;
 	bool						mIsRunning;
-
 	struct SDL_Window*			mWindow;
 
 	bool		InitialiseGraphics();
@@ -58,8 +57,6 @@ public:
 	const bool  GetIsInitialised() const { return mIsInitialised; };
 
 	void		TakeScreenshot(std::string name);
-	void		CreateProjectFolder(std::string name);
-	void		OpenProject();
-	void		SaveProject();
+	bool		OpenProject(std::string& path);
 };
 

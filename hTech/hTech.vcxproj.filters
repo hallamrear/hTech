@@ -171,6 +171,9 @@
     <ClInclude Include="imgui_stdlib.h">
       <Filter>DearIMGUI</Filter>
     </ClInclude>
+    <ClInclude Include="ProjectLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -319,6 +322,9 @@
     </ClCompile>
     <ClCompile Include="imgui_stdlib.cpp">
       <Filter>DearIMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="ProjectLoader.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

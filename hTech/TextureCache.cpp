@@ -4,6 +4,8 @@
 #include "Log.h"
 #include "Texture.h"
 #include "TextureCache.h"
+#include "ProjectLoader.h"
+#include "imgui.h"
 
 TextureCache* TextureCache::mInstance = nullptr;
 
@@ -33,15 +35,38 @@ Texture* TextureCache::GetTexture_Internal(const std::string& texture_path)
 
 	auto itr = mTextures.find(texture_path);
 
-	if(itr == mTextures.end())
+	if (itr == mTextures.end())
 	{
-		mTextures.insert(std::make_pair(texture_path, new Texture(texture_path)));
-		itr = mTextures.find(texture_path);
+		std::string fullPath = ""; std::string projectName = ProjectLoader::GetLoadedProjectName();
+		ProjectLoader::GetEngineProjectsLocation(fullPath);
+		fullPath += (projectName + "\\Assets\\" + texture_path);
+
+		if (std::filesystem::exists(fullPath))
+		{
+			mTextures.insert(std::make_pair(texture_path, new Texture(fullPath, texture_path)));
+			itr = mTextures.find(texture_path);
+		}
+		else
+		{
+			Log::LogMessage(LogLevel::LOG_ERROR, "TextureCache -> Error loading texture file at [" + fullPath + "]");
+			return nullptr;
+		}
 	}
 
 	assert(itr->second != nullptr);
 
 	return itr->second;
+}
+
+void TextureCache::UnloadAll_Impl()
+{
+	for (auto itr : mTextures)
+	{
+		delete itr.second;
+		itr.second = nullptr;
+	}
+
+	mTextures.clear();
 }
 
 TextureCache* TextureCache::Get()
@@ -59,3 +84,28 @@ Texture* TextureCache::GetTexture(const std::string& texture_path)
 	return Get()->GetTexture_Internal(texture_path);
 }
 
+void TextureCache::UnloadAll()
+{
+	return Get()->UnloadAll_Impl();
+}
+
+void TextureCache::RenderProperties()
+{
+	return Get()->RenderProperties_Impl();
+}
+
+void TextureCache::RenderProperties_Impl()
+{
+	ImTextureID IMtexture = nullptr;
+	
+	for (auto& itr : mTextures)
+	{
+		SDL_Texture* texture = &itr.second->GetSDLTexture();
+		IMtexture = (void*)texture;
+		ImGui::Image(IMtexture, Vector2(64.0f, 64.0f));
+		ImGui::Text(itr.first.c_str());
+		texture = nullptr;
+	}
+	
+	IMtexture = nullptr;
+}

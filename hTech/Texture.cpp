@@ -4,15 +4,16 @@
 #include "Camera.h"
 #include "Game.h"
 #include "Log.h"
-
+#include "ProjectLoader.h"
 #include <SDL_stbimage.h>
 
-Texture::Texture(std::string texture_path)
+Texture::Texture(std::string texture_path, std::string name)
 {
 	Width = NULL;
 	Height = NULL;
 	mName = "";
-	Create(texture_path);
+	mPath = "";
+	Create(texture_path, name);
 }
 
 Texture::~Texture()
@@ -32,6 +33,11 @@ SDL_Texture& Texture::GetSDLTexture()
 }
 
 const std::string& Texture::GetLocation() const
+{
+	return mPath;
+}
+
+const std::string& Texture::GetName() const
 {
 	return mName;
 }
@@ -117,7 +123,7 @@ void Texture::Render(SDL_Renderer& renderer, Vector2 position, float rotation, V
 		SDL_RenderCopyEx(&renderer, &GetSDLTexture(), &srcRect, &destRect, (double)rotation, NULL, SDL_FLIP_HORIZONTAL);
 }
 
-void Texture::Create(std::string texture_path)
+void Texture::Create(std::string texture_path, std::string name)
 {
 	assert(mTexture == nullptr);
 
@@ -131,27 +137,34 @@ void Texture::Create(std::string texture_path)
 		if (surface == nullptr)
 		{
 			Log::LogMessage(LogLevel::LOG_ERROR, std::string("Failed to load surface <" + texture_path + "> error : " + SDL_GetError() + "\n"));
+			SDL_FreeSurface(surface);
+			return;
 		}
-
-		assert(surface != nullptr);
 
 		// SDL_Surface is just the raw pixels
 		// Convert it to a hardware-optimzed texture so we can render it
 		mTexture = SDL_CreateTextureFromSurface(Game::Renderer, surface);
 		if (mTexture == nullptr)
+		{
 			Log::LogMessage(LogLevel::LOG_ERROR, std::string("Failed to load texture <" + texture_path + "> error : " + SDL_GetError() + "\n"));
-
-		assert(mTexture != nullptr);
+			SDL_DestroyTexture(mTexture);
+			SDL_FreeSurface(surface);
+			return;
+		}
 
 		SDL_QueryTexture(mTexture, NULL, NULL, &Width, &Height);
 		// Don't need the orignal texture, release the memory
 		SDL_FreeSurface(surface);
 
 		if (mTexture == nullptr)
+		{
 			Log::LogMessage(LogLevel::LOG_ERROR, std::string("Failed to load texture <" + texture_path + "> error : " + SDL_GetError() + "\n"));
+			SDL_DestroyTexture(mTexture);
+			SDL_FreeSurface(surface);
+			return;
+		}
 
-		assert(mTexture != nullptr);
-
-		mName = texture_path;
+		mPath = texture_path;
+		mName = name;
 	}
 }

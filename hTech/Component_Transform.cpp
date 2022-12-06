@@ -25,6 +25,40 @@ Transform& TransformComponent::GetTransform()
 	return mTransform;
 }
 
+void TransformComponent::Serialize(Serializer& writer) const
+{
+	Component::Serialize(writer);
+
+	writer.String("Position");
+	writer.StartObject();
+	writer.String("X"); writer.Double((double)mTransform.Position.X);
+	writer.String("Y"); writer.Double((double)mTransform.Position.X);
+	writer.EndObject();
+
+	writer.String("Rotation");
+	writer.StartObject();
+	writer.String("degrees"); writer.Double((double)mTransform.Rotation);
+	writer.EndObject();
+}
+
+void TransformComponent::Deserialize(SerializedValue& value)
+{
+	Component::Deserialize(value);
+
+	auto positionMember = value.FindMember("Position");
+	if (positionMember->value.IsObject())
+	{
+		mTransform.Position.X = (float)positionMember->value["X"].GetDouble();
+		mTransform.Position.Y = (float)positionMember->value["Y"].GetDouble();		
+	}
+
+	auto rotationMember = value.FindMember("Rotation");
+	if (rotationMember->value.IsObject())
+	{
+		mTransform.Rotation = (float)rotationMember->value["degrees"].GetDouble();
+	}
+}
+
 void TransformComponent::RenderProperties()
 {
 	float floats[2];

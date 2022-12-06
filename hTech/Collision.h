@@ -38,9 +38,9 @@ enum class HTECH_FUNCTION_EXPORT COLLIDER_TYPE
 	COLLIDER_POLYGON
 };
 
-//OBB - Red outline
+//OBB  - Red outline
 //AABB - Green outline
-//BS - Blue outline
+//BS   - Blue outline
 
 class HTECH_FUNCTION_EXPORT Transform;
 

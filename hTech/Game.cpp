@@ -9,8 +9,9 @@
 #include "UI.h"
 #include "Editor.h"
 #include "Console.h"
+#include "ProjectLoader.h"
 #include <filesystem>
-#include <ShObjIdl_core.h>
+#include <ShlObj_core.h>
 #include <SDL_syswm.h>
 
 SDL_Renderer* Game::Renderer = nullptr;
@@ -198,6 +199,8 @@ bool Game::InitialiseWindow(const char* title, int xpos, int ypos, int width, in
 
 	//For IMGUI
 	flags |= SDL_WINDOW_ALLOW_HIGHDPI;
+	
+	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
 
 	mWindow = SDL_CreateWindow(title, xpos, ypos, width, height, flags);
 
@@ -227,14 +230,6 @@ bool Game::InitialiseDearIMGUI()
 
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
-
-
-	ImGuiViewport* viewport = ImGui::GetMainViewport();
-	ImGui::SetNextWindowPos(viewport->WorkPos);
-	ImGui::SetNextWindowSize(viewport->WorkSize);
-	ImGui::SetNextWindowViewport(viewport->ID);
-
-	
 
 
 	// Setup Platform/Renderer backends
@@ -308,7 +303,7 @@ bool Game::InitialiseSystems(WindowDetails details)
 
 		Log::LogMessage(LogLevel::LOG_MESSAGE, "Subsystem created.");
 
-		if (InitialiseWindow(details.title.c_str(), (int)details.position.X, (int)details.position.Y, (int)details.dimensions.X, (int)details.dimensions.Y, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED, false) == false)
+		if (InitialiseWindow(details.title.c_str(), (int)details.position.X, (int)details.position.Y, (int)details.dimensions.X, (int)details.dimensions.Y, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED | SDL_WINDOW_OPENGL, false) == false)
 			return false;
 
 		int w, h;
@@ -442,18 +437,7 @@ void Game::Render()
 	ImGui_ImplSDL2_NewFrame();
 	ImGui::NewFrame();
 
-	///Dockspace Window
-	ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
-	ImGuiWindowFlags host_window_flags = 0;
-	host_window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking;
-	host_window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-	if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
-		host_window_flags |= ImGuiWindowFlags_NoBackground;
-
-	ImGui::Begin("DockSpace Window", nullptr, host_window_flags);
-	ImGuiID dockspace_id = ImGui::GetID("DockSpace");
-	ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags, nullptr);
-	ImGui::End();
+	ImGui::DockSpaceOverViewport(0, ImGuiDockNodeFlags_PassthruCentralNode);
 
 	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
 	SDL_RenderClear(Renderer);
@@ -477,24 +461,32 @@ void Game::Render()
 			{
 				static std::string projectName;
 				showNewProjectModal = true;
-				CreateProjectFolder(projectName);
 			}
 			
 			if (ImGui::MenuItem("Open Project"))
 			{
-				OpenProject();
+				std::string projectFilePath = "";
+				if (OpenProject(projectFilePath))
+				{
+					ProjectLoader::LoadProject(projectFilePath);
+				}
 			}
 
 			if (ImGui::MenuItem("Save Project"))
 			{
-				SaveProject();
+				ProjectLoader::SaveProject();
+			}
+			
+			if (ImGui::MenuItem("Close Project"))
+			{
+				ProjectLoader::UnloadProject();
 			}
 
 			if (ImGui::BeginMenu("Exit##Menu"))
 			{
 				if (ImGui::MenuItem("Exit with Saving"))
 				{
-					SaveProject();
+					ProjectLoader::SaveProject();
 					mIsRunning = false;
 				}
 
@@ -529,7 +521,7 @@ void Game::Render()
 
 				if (ImGui::Button("Create", ImVec2(120, 0)))
 				{ 
-					CreateProjectFolder(projectName);
+					ProjectLoader::CreateProject(projectName);
 					projectName = "";
 					showNewProjectModal = false;
 					ImGui::CloseCurrentPopup();
@@ -556,19 +548,41 @@ void Game::Render()
 	SDL_RenderPresent(Game::Renderer);
 }
 
-//IMPLEMENT New Project
-void Game::CreateProjectFolder(std::string name)
+// callback function
+INT CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lp, LPARAM pData)
 {
-
+	if (uMsg == BFFM_INITIALIZED) SendMessage(hwnd, BFFM_SETSELECTION, TRUE, pData);
+	return 0;
 }
 
-//IMPLEMENT Open Project
-void Game::OpenProject()
+bool Game::OpenProject(std::string& path)
 {
-	
-}
+	SDL_SysWMinfo wmInfo;
+	SDL_VERSION(&wmInfo.version);
+	SDL_GetWindowWMInfo(mWindow, &wmInfo);
 
-//IMPLEMENT Save Project
-void Game::SaveProject()
-{
+	// common dialog box structure, setting all fields to 0 is important
+	OPENFILENAME ofn = { 0 };
+	TCHAR szFile[260] = { 0 };
+	// Initialize remaining fields of OPENFILENAME structure
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = wmInfo.info.win.window;
+	ofn.lpstrFile = szFile;
+	ofn.nMaxFile = sizeof(szFile);
+	ofn.lpstrFilter = TEXT("Project Files\0*.hProj\0");
+	ofn.nFilterIndex = 1;
+	ofn.lpstrFileTitle = NULL;
+	ofn.nMaxFileTitle = 0;
+	ofn.lpstrInitialDir = NULL;
+	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+	if (GetOpenFileName(&ofn) == TRUE)
+	{
+		// use ofn.lpstrFile here
+		path = ofn.lpstrFile;		
+		return true;
+	}
+
+	path = "";
+	return false;
 }

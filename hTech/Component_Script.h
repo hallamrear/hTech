@@ -59,5 +59,8 @@ public:
     void Update(float deltaTime);
 
 	ScriptObject const * GetScriptObject();
+
+	void Serialize(Serializer& writer) const override;
+	void Deserialize(SerializedValue& value) override;
 };
 

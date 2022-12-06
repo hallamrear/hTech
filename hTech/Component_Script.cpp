@@ -9,8 +9,9 @@ void ScriptComponent::Destroy()
 {
 	if (mScriptObject)
 	{
-		mScriptObject->Destroy();
-		mScriptObject = nullptr;
+		//IMPLEMENT Proper destruction of script object.
+		//mScriptObject->Destroy();
+		//mScriptObject = nullptr;
 	}
 }
 
@@ -87,4 +88,18 @@ ScriptObject const * ScriptComponent::GetScriptObject()
 		return mScriptObject;
 	else
 		return nullptr;
+}
+
+void ScriptComponent::Serialize(Serializer& writer) const
+{
+	Component::Serialize(writer);
+	//I don't think I need to initialise this because 
+	//all of the script values will be in the script object
+	//when it's created.
+}
+
+void ScriptComponent::Deserialize(SerializedValue& value)
+{
+	Component::Deserialize(value);
+	//See serialize function
 }

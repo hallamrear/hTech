@@ -19,7 +19,6 @@ class Texture;
 class Editor
 {
 private:
-	Texture* mCursorTextures[4];
 	std::vector<Entity*> mSelectedEntities;
 	Vector2 mDragStartWS, mDragCurrentWS, mDragEndWS;
 	Vector2 mDragDifferenceThisFrame, mMovementMousePosLastFrame;
@@ -52,7 +51,7 @@ private:
 	void MousePress();
 	void MouseRelease();
 	void MouseHold();
-
+	void ClearSelected_Impl();
 
 protected:
 	Editor();
@@ -64,6 +63,7 @@ public:
 	static void Update(float deltaTime);
 	static void Render(SDL_Renderer&);
 	static void SetEditorCursorState(EDITOR_STATE state);
+	static void ClearSelected();
 };
 
 #else

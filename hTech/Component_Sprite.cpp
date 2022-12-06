@@ -2,7 +2,6 @@
 #include "Entity.h"
 #include "Component_Sprite.h"
 #include "TextureCache.h"
-#include "Texture.h"
 
 void SpriteComponent::RenderProperties()
 {
@@ -19,6 +18,7 @@ void SpriteComponent::RenderProperties()
 	if (mTexture != nullptr)
 	{
 		ImGui::Text("Texture Location: %s", mTexture->GetLocation().c_str());
+		ImGui::Text("Texture Name: %s", mTexture->GetName().c_str());
 		ImGui::Text("Height: %i", mTexture->Height);
 		ImGui::Text("Width: %i", mTexture->Width);
 		ImGui::Checkbox("Flip texture", &mIsFlipped);
@@ -74,5 +74,42 @@ void SpriteComponent::Render(SDL_Renderer& renderer)
 	if (mTexture)
 	{
 		mTexture->Render(renderer, Parent.GetTransform().Position, Parent.GetTransform().Rotation, mIsFlipped);
+	}
+}
+
+void SpriteComponent::Serialize(Serializer& writer) const
+{
+	Component::Serialize(writer);
+
+	writer.String("Texture");  
+	if (mTexture != nullptr)
+	{
+		writer.String(mTexture->GetLocation().c_str());
+	}
+	else
+	{
+		writer.Null();
+	}
+
+	writer.String("IsFlipped"); writer.Bool(mIsFlipped);
+}
+
+void SpriteComponent::Deserialize(SerializedValue& value)
+{
+	Component::Deserialize(value);
+
+	if (value["Texture"].IsString())
+	{
+		std::string texturePath = value["Texture"].GetString();
+		LoadTexture(texturePath);
+	}
+	else
+	{
+		mTexture = nullptr;
+	}
+
+	if (value["IsFlipped"].IsBool())
+	{
+		mIsFlipped = value["IsFlipped"].GetBool();
 	}
 }

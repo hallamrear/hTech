@@ -64,6 +64,28 @@ void AnimationComponent::Render(SDL_Renderer& renderer)
 	}
 }
 
+void AnimationComponent::Serialize(Serializer& writer) const
+{
+	Component::Serialize(writer);
+
+	writer.String("Duration"			 ); writer.Double((double)mDuration);
+	writer.String("Animation Frame Count"); writer.Int(mTotalFrames);
+	writer.String("Animation Count"		 ); writer.Int(mAnimationCount);
+
+	writer.String("Texture");
+	if (mAnimationSheet != nullptr)
+	{
+		writer.String(mAnimationSheet->GetLocation().c_str());
+	}
+	else
+	{
+		writer.Null();
+	}
+
+	writer.String("IsFlipped"); writer.Bool(IsFlipped);
+	writer.String("IsLooping"); writer.Bool(IsLooping);
+}
+
 void AnimationComponent::LoadAnimationSheet(std::string sheet_path)
 {
 	if (mAnimationSheet)
@@ -74,19 +96,15 @@ void AnimationComponent::LoadAnimationSheet(std::string sheet_path)
 	mAnimationSheet = TextureCache::GetTexture(sheet_path);
 	
 	RecalculateFrameAndAnimationData();
-
-	mTimeElapsed = 0.0f;
-	IsLooping = false;
-	mDuration = 1.0f;
-	mAnimationCount = 1;
-	mTotalFrames = 4;
-	mHasFinished = false;
 }
 
 void AnimationComponent::RecalculateFrameAndAnimationData()
 {
-	mTimeBetweenFrames = mDuration / (float)(mTotalFrames);
-	mFrameSize = Vector2(mAnimationSheet->Width / (float)mTotalFrames, mAnimationSheet->Height / (float)mAnimationCount);
+	if (mAnimationSheet)
+	{
+		mTimeBetweenFrames = mDuration / (float)(mTotalFrames);
+		mFrameSize = Vector2(mAnimationSheet->Width / (float)mTotalFrames, mAnimationSheet->Height / (float)mAnimationCount);
+	}
 }
 
 void AnimationComponent::RenderProperties()
@@ -110,6 +128,8 @@ void AnimationComponent::RenderProperties()
 		LoadAnimationSheet(mUINewAnimationSheetString);
 		mUINewAnimationSheetString = "";
 	}
+
+	RecalculateFrameAndAnimationData();
 }
 
 void AnimationComponent::SetAnimationCount(unsigned int animationCount)
@@ -138,4 +158,10 @@ float AnimationComponent::GetTimeElapsed() const
 bool AnimationComponent::HasFinished() const
 {
 	return mHasFinished;
+}
+
+void AnimationComponent::Deserialize(SerializedValue& value)
+{
+	Component::Deserialize(value);
+
 }

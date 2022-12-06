@@ -4,13 +4,13 @@
 #include <string>
 #include "Transform.h"
 #include "UI.h"
+#include "Component.h"
 
 enum class ENUM_COMPONENT_LIST;
 
 struct SDL_Renderer;
 class HTECH_FUNCTION_EXPORT  Collider;
 class HTECH_FUNCTION_EXPORT  Texture;
-class HTECH_FUNCTION_EXPORT Component;
 class HTECH_FUNCTION_EXPORT TransformComponent;
 
 class HTECH_FUNCTION_EXPORT Entity
@@ -18,34 +18,33 @@ class HTECH_FUNCTION_EXPORT Entity
 private:
 
 protected:
-	std::string				mName;
+	std::string mName;
 	std::vector<Component*> mComponents;
 
-	bool					mIsWaitingToBeDestroyed;
-	bool					mIsAlive;
-	void					ClampRotation();
+	bool mIsWaitingToBeDestroyed;
+	bool mIsAlive;
+	void ClampRotation();
 
 public:
-	const std::string&      GetName() const;
-	bool					IsEnabled;
+	const std::string& GetName() const;
+	bool IsEnabled;
 
-							Entity(Transform SpawnTransform = Transform(), std::string Name = "unnamed", Entity* Parent = nullptr);
-	virtual					~Entity();
+	Entity(Transform SpawnTransform = Transform(), std::string Name = "unnamed", Entity* Parent = nullptr);
+	virtual ~Entity();
 
-	virtual void			Update(float DeltaTime);
-	virtual void			Render();
+	virtual void Update(float DeltaTime);
+	virtual void Render();
 
-	void					RenderProperties();
+	void RenderProperties();
 
-	bool const				GetIsAlive()		 const { return mIsAlive; }
-	virtual void			SetAlive(const bool state) { mIsAlive = state; }
+	bool const GetIsAlive()		 const { return mIsAlive; }
+	virtual void SetAlive(const bool state) { mIsAlive = state; }
 
-	Entity*					GetParent();
-	void					SetParent(Entity* entity);
+	Entity* GetParent();
+	void SetParent(Entity* entity);
 
-	bool					GetIsBeingDestroyed() const;
-	void					Destroy();
-
+	bool GetIsBeingDestroyed() const;
+	void Destroy();
 
 	template<typename T>
 	T* GetComponent();
@@ -55,6 +54,9 @@ public:
 	Entity* RemoveComponent();
 
 	Transform& GetTransform();
+
+	void Serialize(Serializer& writer) const;
+	void Deserialize(SerializedValue& serializedEntity);
 };
 
 template<class C>

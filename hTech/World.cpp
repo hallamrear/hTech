@@ -41,7 +41,7 @@ void World::DestroyEntity_Impl(Entity* entity)
     }
 }
 
-void World::ClearupEntities()
+void World::ClearupDeadEntities()
 {
     if (mEntityList.size() != 0)
     {
@@ -79,14 +79,17 @@ void World::Update_Impl(float DeltaTime)
     {
         if (mEntityList[i] != nullptr)
         {
-            mEntityList[i]->Update(DeltaTime);
+            if (mEntityList[i]->IsEnabled)
+            {
+                mEntityList[i]->Update(DeltaTime);
+            }
+
             mWorldHashMap->Insert(mEntityList[i]);
         }
     }
 
-    ClearupEntities();
+    ClearupDeadEntities();
 }
-
 
 #ifdef _DEBUG
 void World::Render_Impl(SDL_Renderer& renderer)
@@ -102,7 +105,7 @@ void World::Render_Impl(SDL_Renderer& renderer)
     {
         if (mEntityList[i] != nullptr)
         {
-            
+            ImGui::Text(mEntityList[i]->GetName().c_str());
             mEntityList[i]->Render();
         }
     }
@@ -159,7 +162,7 @@ World::World()
         {
             Entity* entity = CreateEntity_Impl("Test", Transform(InputManager::Get()->GetMouseWorldPosition()));
             entity->AddComponent<SpriteComponent>();
-            entity->GetComponent<SpriteComponent>()->LoadTexture("Assets/test.png");
+            entity->GetComponent<SpriteComponent>()->LoadTexture("test.png");
             entity->AddComponent<ScriptComponent>();
         });   
 }
@@ -207,7 +210,7 @@ Entity* World::GetEntityByName(std::string name)
 {
     return Get()->GetEntityByName_Impl(name);
 }
-
+  
 void World::Update(float DeltaTime)
 {
     Get()->Update_Impl(DeltaTime);
@@ -216,6 +219,11 @@ void World::Update(float DeltaTime)
 void World::Render(SDL_Renderer& renderer)
 {
     Get()->Render_Impl(renderer);
+}
+
+void World::UnloadAll()
+{
+    return Get()->ClearAllEntities();
 }
 
 Entity* World::FindNearestEntityToPosition_Impl(Vector2 WorldPosition)
@@ -248,7 +256,57 @@ Entity* World::FindNearestEntityToPosition_Impl(Vector2 WorldPosition)
         return nullptr;
 }
 
+void World::ClearAllEntities()
+{
+    for (size_t i = 0; i < mEntityList.size(); i++)
+    {
+        delete mEntityList[i];
+        mEntityList[i] = nullptr;
+    }
+
+    mEntityList.clear();
+}
+
 Entity* World::FindNearestEntityToPosition(Vector2 WorldPosition)
 {
     return Get()->FindNearestEntityToPosition_Impl(WorldPosition);
+}
+
+void World::Serialize_Impl(Serializer& writer) const
+{
+    writer.String("Entities");
+    writer.StartArray();
+    for (size_t i = 0; i < mEntityList.size(); i++)
+    {
+        mEntityList[i]->Serialize(writer);
+    }
+    writer.EndArray();
+}
+
+void World::Deserialize_Impl(Deserializer& reader)
+{
+    auto value = reader.IsArray();
+    SerializedValue results = reader["Entities"].GetArray();
+
+    Entity* entity = nullptr;
+    for (rapidjson::SizeType i = 0; i < results.Size(); i++)
+    {
+        if (results[i]["Name"].IsString())
+        {
+            entity = CreateEntity_Impl(results[i]["Name"].GetString());
+            entity->Deserialize(results[i]);
+        }
+    }
+
+    entity = nullptr;
+}
+
+void World::Serialize(Serializer& writer)
+{
+    Get()->Serialize_Impl(writer);
+}
+
+void World::Deserialize(Deserializer& reader)
+{
+    return Get()->Deserialize_Impl(reader);
 }

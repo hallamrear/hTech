@@ -11,6 +11,7 @@
 #include "Component_Animation.h"
 #include "Component_Script.h"
 #include "Component_Rigidbody.h"
+#include "rapidjson/rapidjson.h"
 
 Entity::Entity(Transform SpawnTransform, std::string Name, Entity* Parent)
 {
@@ -62,21 +63,16 @@ void Entity::Render()
 		}
 	}
 
-	if (mComponents.size() <= 1)
-	{
-		Vector2 pos = Camera::WorldToScreen(GetTransform().Position);
-		SDL_Rect rect{ (int)pos.X, (int)pos.Y, 4, 4 };
-		SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
-		SDL_RenderDrawRect(&renderer, &rect);
-	}
+	Vector2 pos = Camera::WorldToScreen(GetTransform().Position);
+	SDL_Rect rect{ (int)pos.X, (int)pos.Y, 4, 4 };
+	SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
+	SDL_RenderDrawRect(&renderer, &rect);
 }
 
 void Entity::RenderProperties()
 {
 	//This is called from editor window and so you can call imgui items directly.
-	bool e = IsEnabled;
-	e = ImGui::Checkbox("Enabled", &e);
-	e = IsEnabled;
+	ImGui::Checkbox("Enabled", &IsEnabled);
 	ImGui::InputText("Name: ", &mName);	
 	ImGui::Text("Component Count: %i", mComponents.size());
 	ImGui::Text("Alive: %i", mIsAlive);
@@ -121,11 +117,6 @@ void Entity::RenderProperties()
 			ImGui::EndPopup();
 		}
 
-
-
-
-
-
 		if (ImGui::BeginPopupContextItem("RemoveComponentPopup"))
 		{
 			for (size_t i = 1; i < mComponents.size(); i++)
@@ -142,9 +133,6 @@ void Entity::RenderProperties()
 			}
 			ImGui::EndPopup();
 		}
-
-
-
 
 		if (ImGui::Button("Add Component"))
 		{
@@ -202,4 +190,80 @@ void Entity::ClampRotation()
 const std::string& Entity::GetName() const
 {
 	return mName;
+}
+
+void Entity::Serialize(Serializer& writer) const
+{
+	writer.StartObject();
+
+	writer.String("Name");	  writer.String(mName.c_str());
+	writer.String("IsAlive"); writer.Bool(mIsAlive);
+	writer.String("IsEnabled"); writer.Bool(IsEnabled);
+
+	writer.String("Components");
+	writer.StartArray();
+	for (size_t i = 0; i < mComponents.size(); i++)
+	{
+		writer.StartObject();
+		mComponents[i]->Serialize(writer);
+		writer.EndObject();
+	}
+	writer.EndArray();
+
+	writer.EndObject();
+}
+
+void Entity::Deserialize(SerializedValue& serializedEntity)
+{
+	if (serializedEntity["IsAlive"].IsBool())
+	{
+		mIsAlive = serializedEntity["IsAlive"].GetBool();
+	}
+
+	if (serializedEntity["IsEnabled"].IsBool())
+	{
+		IsEnabled = serializedEntity["IsEnabled"].GetBool();
+	}
+
+	if (serializedEntity.HasMember("Components"))
+	{
+		SerializedValue components = serializedEntity["Components"].GetArray();
+
+		for (size_t i = 0; i < components.Size(); i++)
+		{
+			if (components[i]["Component Name"].IsString())
+			{
+				std::string name = components[i]["Component Name"].GetString();
+
+				Component* component = nullptr;
+
+				if (name == "Transform Component")
+				{
+					component = GetComponent<TransformComponent>();
+				}
+				else if (name == "Sprite Component")
+				{
+					AddComponent<SpriteComponent>();
+					component = GetComponent<SpriteComponent>();
+				}
+				else if (name == "Rigidbody Component")
+				{
+					AddComponent<RigidbodyComponent>();
+					component = GetComponent<RigidbodyComponent>();
+				}
+				else if (name == "Animation Component")
+				{
+					AddComponent<AnimationComponent>();
+					component = GetComponent<AnimationComponent>();
+				}
+				else if (name == "Script Component")
+				{
+					AddComponent<ScriptComponent>();
+					component = GetComponent<ScriptComponent>();
+				}
+
+				component->Deserialize(components[i]);
+			}
+		}
+	}
 }

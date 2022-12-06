@@ -20,10 +20,6 @@ Editor* Editor::mInstance = nullptr;
 
 Editor::Editor() : mMouseScreenPosition(InputManager::Get()->GetMouseScreenPosition()), mMouseWorldPosition(InputManager::Get()->GetMouseWorldPosition())
 {
-    mCursorTextures[0] = TextureCache::GetTexture("Assets/Cursor_Select.png");
-    mCursorTextures[1] = TextureCache::GetTexture("Assets/Cursor_Move.png");
-    mCursorTextures[2] = TextureCache::GetTexture("Assets/Cursor_Inspect.png");
-    mCursorTextures[3] = TextureCache::GetTexture("Assets/Cursor_Rotate.png");
     mSelectedEntities = std::vector<Entity*>();
 
     //Setting up editor controls!
@@ -231,17 +227,9 @@ void Editor::Render_Impl(SDL_Renderer& renderer)
     if (ImGui::Begin("Assets"))
     {
         //IMPLEMENT Assets Window.
+        TextureCache::RenderProperties();
     }
     ImGui::End();
-
-
-    if (mCurrentCursorState != EDITOR_STATE::NONE)
-    {
-        if (mCursorTextures[(int)mCurrentCursorState] != nullptr)
-        {
-            mCursorTextures[(int)mCurrentCursorState]->Render(renderer, InputManager::Get()->GetMouseWorldPosition(), 0.0f);
-        }
-    }
 
     for (size_t i = 0; i < mSelectedEntities.size(); i++)
     {
@@ -298,6 +286,17 @@ void Editor::SetEditorCursorState(EDITOR_STATE state)
     Get()->SetEditorCursorState_Impl(state);
 }
 
+void Editor::ClearSelected()
+{
+    return Get()->ClearSelected_Impl();
+}
+
+void Editor::ClearSelected_Impl()
+{
+    selected = nullptr;
+    mSelectedEntities.clear();
+}
+
 void Editor::SetEditorCursorState_Impl(EDITOR_STATE state)
 {
     mCurrentCursorState = state;
@@ -306,31 +305,26 @@ void Editor::SetEditorCursorState_Impl(EDITOR_STATE state)
 void Editor::SetCursorStateToMoveMode()
 {
     mCurrentCursorState = EDITOR_STATE::MOVE;
-    SDL_ShowCursor(false);
 }
 
 void Editor::SetCursorStateToRotateMode()
 {
     mCurrentCursorState = EDITOR_STATE::ROTATE;
-    SDL_ShowCursor(false);
 }
 
 void Editor::SetCursorStateToInspectMode()
 {
     mCurrentCursorState = EDITOR_STATE::INSPECT;
-    SDL_ShowCursor(false);
 }
 
 void Editor::SetCursorStateToNoMode()
 {
     mCurrentCursorState = EDITOR_STATE::NONE;
-    SDL_ShowCursor(true);
 }
 
 void Editor::SetCursorStateToSelectMode()
 {
     mCurrentCursorState = EDITOR_STATE::SELECT;
-    SDL_ShowCursor(true);
     selected = nullptr;
 }
 
