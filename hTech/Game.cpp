@@ -588,22 +588,37 @@ void Game::Render()
 
 	ImGui::BeginMenuBar();
 	{
-		int i = Console::Query("DrawHashMap");
-		bool drawHashMap = (bool)i;
-		if (ImGui::MenuItem("Toggle Spatial Hash"))
+		bool query = (bool)Console::Query("DrawHashMap");
+		if (ImGui::MenuItem("Spatial Hash"))
 		{
-			if (drawHashMap)
+			if (query)
 			{
 				Console::Run("DrawHashMap 0");
 			}
 			else
 			{
-				Console::Run("DrawHashMap 2523");
+				Console::Run("DrawHashMap 1");
 			}
 		}
 		
 		ImGui::SameLine();
-		ImGui::Checkbox("##showingHashMap", &drawHashMap);
+		ImGui::Checkbox("##showingHashMap", &query);
+
+		query = (bool)Console::Query("DrawColliders");
+		if (ImGui::MenuItem("Collider Outlines"))
+		{
+			if (query)
+			{
+				Console::Run("DrawColliders 0");
+			}
+			else
+			{
+				Console::Run("DrawColliders 1");
+			}
+		}
+
+		ImGui::SameLine();
+		ImGui::Checkbox("##showingColliders", &query);
 
 	}
 	ImGui::EndMenuBar();
