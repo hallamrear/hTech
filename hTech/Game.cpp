@@ -174,6 +174,8 @@ void Game::Initialise(int argc, char* argv[], WindowDetails details)
 	{
 		Shutdown();
 	}
+
+	Console::Run("DrawHashMap 1");
 }
 
 bool Game::InitialiseWindow(const char* title, int xpos, int ypos, int width, int height, unsigned int flags, bool isFullscreen)
@@ -475,6 +477,7 @@ void Game::Render()
 
 	ImGui::DockSpaceOverViewport(0, ImGuiDockNodeFlags_PassthruCentralNode);
 
+	SDL_RenderClear(Renderer);
 	SDL_SetRenderTarget(Renderer, m_RenderToTextureTarget);
 	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
 	SDL_RenderClear(Renderer);
@@ -576,45 +579,65 @@ void Game::Render()
 			}
 		}
 	}
-#endif
 
 	Editor::Render(*Renderer);
 
 	SDL_SetRenderTarget(Renderer, NULL);
 
-	bool t = true;
-	ImGui::Begin("Render Window", &t, ImGuiWindowFlags_::ImGuiWindowFlags_NoResize | ImGuiWindowFlags_::ImGuiWindowFlags_NoCollapse);
-	//int x, y, width, height;
-	//Vector2 pos = ImGui::GetWindowPos();
-	//x = (int)pos.X;
-	//y = (int)pos.Y;
-	//Vector2 size = ImGui::GetWindowSize();
-	//width = (int)size.X;
-	//height = (int)size.Y;
+	ImGui::Begin("Render Window", 0, ImGuiWindowFlags_::ImGuiWindowFlags_MenuBar);
+
+	ImGui::BeginMenuBar();
+	{
+		int i = Console::Query("DrawHashMap");
+		bool drawHashMap = (bool)i;
+		if (ImGui::MenuItem("Toggle Spatial Hash"))
+		{
+			if (drawHashMap)
+			{
+				Console::Run("DrawHashMap 0");
+			}
+			else
+			{
+				Console::Run("DrawHashMap 2523");
+			}
+		}
+		
+		ImGui::SameLine();
+		ImGui::Checkbox("##showingHashMap", &drawHashMap);
+
+	}
+	ImGui::EndMenuBar();
 
 	int w, h;
-	SDL_QueryTexture(m_RenderToTextureTarget, nullptr, nullptr, &w, &h);
-	w = (int)ImGui::GetWindowWidth();
-	h = (int)ImGui::GetWindowHeight();
-	ImGui::Image((void*)m_RenderToTextureTarget, Vector2(w, h));
+	Vector2 size;
+	size.X = (int)ImGui::GetWindowWidth();
+	size.Y = (int)ImGui::GetWindowHeight();
+	Vector2 pos;
+	pos.X = (int)ImGui::GetWindowPos().x;
+	pos.Y = (int)ImGui::GetWindowPos().y;
+	ImVec2 vMin = ImGui::GetWindowContentRegionMin();
+	ImVec2 vMax = ImGui::GetWindowContentRegionMax();
+
+	Console::Run("WindowDimensionsW " + std::to_string(size.X));
+	Console::Run("WindowDimensionsH " + std::to_string(size.Y));
+	Console::Run("WindowCentreX " + std::to_string(size.X / 2));
+	Console::Run("WindowCentreY " + std::to_string(size.Y / 2));
+
+	SDL_Rect renderQuad = { (int)(pos.X + vMin.x), (int)(pos.Y + vMin.y), (int)(vMax.x - vMin.x), (int)(vMax.y - vMin.y) };
+	SDL_RenderSetClipRect(Renderer, &renderQuad);
+	//Render to screen
+	SDL_Point center = { (int)(renderQuad.x + (renderQuad.w / 2)),  (int)(renderQuad.y + (renderQuad.h / 2)) };
 	ImGui::End();
 
-	ImGui::Render();
-	ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());	
 
-	////Set rendering space and render to screen
-	//SDL_Rect renderQuad = {x, y, width, height };
-	//
-	////Set clip rendering dimensions
-	////if (clip != NULL)
-	////{
-	////	renderQuad.w = clip->w;
-	////	renderQuad.h = clip->h;
-	////}
-	//
-	////Render to screen
-	//SDL_Point center = { x + (width / 2), y + (height / 2) };
-	//SDL_RenderCopyEx(Renderer, m_RenderToTextureTarget, NULL, &renderQuad, 0.0F, &center, SDL_RendererFlip::SDL_FLIP_NONE);
+
+
+	ImGui::Render();
+	ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
+
+	SDL_RenderCopyEx(Renderer, m_RenderToTextureTarget, nullptr, nullptr, 0.0F, &center, SDL_RendererFlip::SDL_FLIP_NONE);
+
+#endif
 
 	SDL_RenderPresent(Game::Renderer);
 }

@@ -55,6 +55,18 @@ void ProjectLoader::LoadProject(std::filesystem::path sceneFilePath)
 		m_ProjectName = sceneFilePath.filename().string();
 		//Remove extension.
 		m_ProjectName = m_ProjectName.substr(0, m_ProjectName.size() - sceneFilePath.extension().string().size()).c_str();
+
+		std::filesystem::path projectPath = sceneFilePath;
+		projectPath = projectPath.parent_path().string() + "\\Assets\\";
+
+		//If the assets folder exists, try and load all the assets in it, to their caches.
+		if (std::filesystem::exists(projectPath))
+		{
+			for (const auto& dirEntry : std::filesystem::recursive_directory_iterator(projectPath))
+			{
+				TextureCache::GetTexture(dirEntry.path().filename().string());
+			}
+		}
 	}
 	else
 	{
@@ -77,7 +89,9 @@ void ProjectLoader::UnloadProject(bool save)
 		}
 
 		//IMPLEMENT Unload Project
+#ifdef _DEBUG
 		Editor::ClearSelected();
+#endif
 		TextureCache::UnloadAll();
 		World::UnloadAll();
 

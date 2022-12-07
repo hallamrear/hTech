@@ -12,7 +12,6 @@ enum class EDITOR_STATE
 
 #if _DEBUG
 
-
 class Entity;
 class Texture;
 
