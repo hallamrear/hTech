@@ -145,8 +145,20 @@ void Entity::RenderProperties()
 		}
 
 		ImGui::Separator(); ImGui::Spacing();
+
+		bool isComponentEnabled = false;
+		std::string label = "";
 		for (size_t i = 0; i < mComponents.size(); i++)
 		{
+			if (mComponents[i]->GetComponentName() != "Transform Component")
+			{
+				label = "##" +mComponents[i]->GetComponentName() + "componentEnabledCheckbox";
+				bool isComponentEnabled = mComponents[i]->GetIsEnabled();
+				ImGui::Checkbox(label.c_str(), &isComponentEnabled);
+				mComponents[i]->SetIsEnabled(isComponentEnabled);
+				ImGui::SameLine();
+			}
+
 			if (ImGui::CollapsingHeader(mComponents[i]->GetComponentName().c_str(), ImGuiTreeNodeFlags_None))
 			{
 				mComponents[i]->RenderProperties();

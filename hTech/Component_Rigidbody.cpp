@@ -173,6 +173,41 @@ void RigidbodyComponent::AddForce(float X, float Y)
 void RigidbodyComponent::RenderProperties()
 {
 	//IMPLEMENT Component properties panel.
+
+	ImGui::Checkbox("Static", &mIsStatic);
+	ImGui::Checkbox("Gravity Enabled", &mGravityEnabled);
+	ImGui::Checkbox("Drag Enabled", &mDragEnabled);
+
+	static const std::string colldierStrs[5] = { "None", "AABB", "Sphere", "OBB", "Polygon" };
+	static std::string currentItem = colldierStrs[0];
+	if (ImGui::BeginCombo("Collider Type", currentItem.c_str()))
+	{
+		for (int n = 0; n < IM_ARRAYSIZE(colldierStrs); n++)
+		{
+			bool is_selected = (currentItem == colldierStrs[n]); // You can store your selection however you want, outside or inside your objects
+			if (ImGui::Selectable(colldierStrs[n].c_str(), is_selected))
+			{
+				if (currentItem != colldierStrs[n])
+				{
+					currentItem = colldierStrs[n];
+					SetCollider((COLLIDER_TYPE)n);
+					if (is_selected)
+						ImGui::SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
+				}
+			}
+		}
+		ImGui::EndCombo();
+	}
+
+	ImGui::InputFloat("Mass (kg)", &mMass);
+	ImGui::InputFloat("Drag Coefficient", &mDragCoefficient);
+	ImGui::InputFloat("Speed cap (u/s)", &mSpeedCap);
+	ImGui::InputFloat("Restitution", &mRestitution);
+
+	ImGui::Text("      Velocity -> X: %f, Y: %f", mVelocity.X, mVelocity.Y);
+	ImGui::Text("  Acceleration -> X: %f, Y: %f", mAcceleration.X, mAcceleration.Y);
+	ImGui::Text("     Net Force -> X: %f, Y: %f", mNetForce.X, mNetForce.Y);
+	ImGui::Text("External Force -> X: %f, Y: %f", mExternalForce.X, mExternalForce.Y);
 }
 
 void RigidbodyComponent::CalculateInverseMass()
