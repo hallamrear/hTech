@@ -4,10 +4,6 @@
 #ifndef PCH_H
 #define PCH_H
 
-#ifndef HTECH_FUNCTION_EXPORT
-#define HTECH_FUNCTION_EXPORT __declspec(dllexport)
-#endif
-
 #define _USE_MATH_DEFINES
 #define NOMINMAX
 
@@ -36,16 +32,16 @@
 #include <algorithm>
 #include <cassert>
 
-#include "Helper.h"
-
-static float TEST_ZOOM = 1.0f;
-static unsigned short UI_TILE_SIZE = 16;
-
+//rapidjson
 #include <stringbuffer.h>
 #include <prettywriter.h>
 #include <document.h>
 typedef rapidjson::PrettyWriter<rapidjson::StringBuffer> Serializer;
 typedef rapidjson::Document Deserializer;
 typedef rapidjson::Value SerializedValue;
+
+#include "Helper.h"
+
+static unsigned short UI_TILE_SIZE = 16;
 
 #endif
