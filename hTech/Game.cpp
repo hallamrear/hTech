@@ -13,6 +13,7 @@
 #include <filesystem>
 #include <ShlObj_core.h>
 #include <SDL_syswm.h>
+#include <SDL.h>
 
 SDL_Renderer* Game::Renderer = nullptr;
 
@@ -44,6 +45,7 @@ Game::Game()
 	mIsInitialised = false;
 	mIsRunning = false;
 	mWindow = nullptr;
+	m_RenderToTextureTarget = nullptr;
 }
 
 Game::~Game()
@@ -172,6 +174,8 @@ void Game::Initialise(int argc, char* argv[], WindowDetails details)
 	{
 		Shutdown();
 	}
+
+	Console::Run("DrawHashMap 1");
 }
 
 bool Game::InitialiseWindow(const char* title, int xpos, int ypos, int width, int height, unsigned int flags, bool isFullscreen)
@@ -252,9 +256,21 @@ bool Game::InitialiseGraphics()
 	{
 		Log::LogMessage(LogLevel::LOG_MESSAGE, "Renderer created.");
 
+#ifdef _DEBUG
+		if (!CreateRenderTargetTexture())
+		{
+			Log::LogMessage(LogLevel::LOG_ERROR, "Failed to render target texture.");
+			Log::LogMessage(LogLevel::LOG_ERROR, SDL_GetError());
+			return false;
+		}
+
+		Log::LogMessage(LogLevel::LOG_MESSAGE, "Created render target texture.");
+#endif
+
 		if (InitialiseDearIMGUI())
 		{
 			Log::LogMessage(LogLevel::LOG_MESSAGE, "DearIMGUI initialised.");
+
 			return true;
 		}
 		
@@ -265,6 +281,28 @@ bool Game::InitialiseGraphics()
 		Log::LogMessage(LogLevel::LOG_ERROR, "Renderer failed to create.");
 		return false;
 	}
+}
+
+bool Game::CreateRenderTargetTexture()
+{
+	bool success = true;
+
+	if (m_RenderToTextureTarget != nullptr)
+	{
+		SDL_DestroyTexture(m_RenderToTextureTarget);
+	}
+
+	int w, h;
+	SDL_GetWindowSize(mWindow, &w, &h);
+
+	m_RenderToTextureTarget = SDL_CreateTexture(Renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, w, h);
+
+	if (!m_RenderToTextureTarget)
+	{
+		success = false;
+	}
+	
+	return success;
 }
 
 bool Game::InitialiseApplicationControls()
@@ -439,6 +477,8 @@ void Game::Render()
 
 	ImGui::DockSpaceOverViewport(0, ImGuiDockNodeFlags_PassthruCentralNode);
 
+	SDL_RenderClear(Renderer);
+	SDL_SetRenderTarget(Renderer, m_RenderToTextureTarget);
 	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
 	SDL_RenderClear(Renderer);
 
@@ -539,12 +579,81 @@ void Game::Render()
 			}
 		}
 	}
-#endif
 
 	Editor::Render(*Renderer);
 
+	SDL_SetRenderTarget(Renderer, NULL);
+
+	ImGui::Begin("Render Window", 0, ImGuiWindowFlags_::ImGuiWindowFlags_MenuBar);
+
+	ImGui::BeginMenuBar();
+	{
+		bool query = (bool)Console::Query("DrawHashMap");
+		if (ImGui::MenuItem("Spatial Hash"))
+		{
+			if (query)
+			{
+				Console::Run("DrawHashMap 0");
+			}
+			else
+			{
+				Console::Run("DrawHashMap 1");
+			}
+		}
+		
+		ImGui::SameLine();
+		ImGui::Checkbox("##showingHashMap", &query);
+
+		query = (bool)Console::Query("DrawColliders");
+		if (ImGui::MenuItem("Collider Outlines"))
+		{
+			if (query)
+			{
+				Console::Run("DrawColliders 0");
+			}
+			else
+			{
+				Console::Run("DrawColliders 1");
+			}
+		}
+
+		ImGui::SameLine();
+		ImGui::Checkbox("##showingColliders", &query);
+
+	}
+	ImGui::EndMenuBar();
+
+	int w, h;
+	Vector2 size;
+	size.X = (int)ImGui::GetWindowWidth();
+	size.Y = (int)ImGui::GetWindowHeight();
+	Vector2 pos;
+	pos.X = (int)ImGui::GetWindowPos().x;
+	pos.Y = (int)ImGui::GetWindowPos().y;
+	ImVec2 vMin = ImGui::GetWindowContentRegionMin();
+	ImVec2 vMax = ImGui::GetWindowContentRegionMax();
+
+	Console::Run("WindowDimensionsW " + std::to_string(size.X));
+	Console::Run("WindowDimensionsH " + std::to_string(size.Y));
+	Console::Run("WindowCentreX " + std::to_string(size.X / 2));
+	Console::Run("WindowCentreY " + std::to_string(size.Y / 2));
+
+	SDL_Rect renderQuad = { (int)(pos.X + vMin.x), (int)(pos.Y + vMin.y), (int)(vMax.x - vMin.x), (int)(vMax.y - vMin.y) };
+	SDL_RenderSetClipRect(Renderer, &renderQuad);
+	//Render to screen
+	SDL_Point center = { (int)(renderQuad.x + (renderQuad.w / 2)),  (int)(renderQuad.y + (renderQuad.h / 2)) };
+	ImGui::End();
+
+
+
+
 	ImGui::Render();
 	ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
+
+	SDL_RenderCopyEx(Renderer, m_RenderToTextureTarget, nullptr, nullptr, 0.0F, &center, SDL_RendererFlip::SDL_FLIP_NONE);
+
+#endif
+
 	SDL_RenderPresent(Game::Renderer);
 }
 

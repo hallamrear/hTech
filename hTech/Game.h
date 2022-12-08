@@ -1,8 +1,6 @@
 #pragma once
  #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
-
-
 #include <string>
 #include "Vector2.h"
 
@@ -27,8 +25,10 @@ private:
 	bool						mIsInitialised;
 	bool						mIsRunning;
 	struct SDL_Window*			mWindow;
+	class SDL_Texture*			m_RenderToTextureTarget;
 
 	bool		InitialiseGraphics();
+	bool		CreateRenderTargetTexture();
 															
 	//4 == SDL_WINDOW_SHOWN 
 	bool		InitialiseWindow(const char* title = "", int xpos = 0, int ypos = 0, int width = 0, int height = 0, unsigned int flags = 4, bool isFullscreen = false);
