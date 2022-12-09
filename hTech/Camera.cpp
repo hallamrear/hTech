@@ -4,7 +4,7 @@
 #include "InputManager.h"
 #include "Console.h"
 
-//Camera* Camera::mInstance = nullptr;
+Camera* Camera::mInstance = nullptr;
 
 Camera::Camera()
 {
@@ -50,14 +50,11 @@ Camera::~Camera()
 }
 
 Camera* Camera::Get()
-{
-	static Camera mInstance;
-	//todo : fix : Was static Camera* mInstance;
-	 
-	//if (!mInstance)
-	//	mInstance = new Camera();
+{	 
+	if (!mInstance)
+		mInstance = new Camera();
 
-	return &mInstance;
+	return mInstance;
 }
 
 void Camera::SetCameraPosition_Impl(Vector2 position)

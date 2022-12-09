@@ -170,13 +170,13 @@ void Entity::RenderProperties()
 
 Entity* Entity::GetParent()
 {
-	//TODO : Implement
+	//TODO : Implement Parenting
 	return nullptr;
 }
 
 void Entity::SetParent(Entity* entity)
 {
-	//TODO : Implement
+	//TODO : Implement Parenting
 }
 
 bool Entity::GetIsBeingDestroyed() const

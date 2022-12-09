@@ -172,8 +172,6 @@ void RigidbodyComponent::AddForce(float X, float Y)
 
 void RigidbodyComponent::RenderProperties()
 {
-	//IMPLEMENT Component properties panel.
-
 	ImGui::Checkbox("Static", &mIsStatic);
 	ImGui::Checkbox("Gravity Enabled", &mGravityEnabled);
 	ImGui::Checkbox("Drag Enabled", &mDragEnabled);
@@ -309,12 +307,6 @@ void RigidbodyComponent::Serialize(Serializer& writer) const
 void RigidbodyComponent::Deserialize(SerializedValue& value)
 {
 	Component::Deserialize(value);
-
-	//TODO FINISH THIS AND ANIMATION AND I THINK ITLL BE NEARLY DONE WITH SOME TESTING;
-
-
-
-
 
 	auto propertiesMember = value.FindMember("Properties");
 

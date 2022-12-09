@@ -8,6 +8,7 @@
 class HTECH_FUNCTION_EXPORT Camera
 {
 private:
+	static Camera* mInstance;
 	Vector2 mPosition;
 
 	Camera();

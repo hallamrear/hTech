@@ -3,8 +3,7 @@
 #include "Camera.h"
 #include "Log.h"
 
-//todo : put singleton back
-//InputManager* InputManager::mInstance = nullptr;
+InputManager* InputManager::mInstance = nullptr;
 
 InputManager::InputManager()
 {
@@ -15,7 +14,7 @@ InputManager::InputManager()
 
 InputManager::~InputManager()
 {
-	//todo : fin
+
 }
 
 void InputManager::Bind_Impl(IM_MOUSE_CODE keycode, IM_KEY_STATE mouseState, std::function<void()> func)
@@ -280,12 +279,10 @@ void InputManager::MousePressUpdate(SDL_Keycode key, bool state)
 
 InputManager* InputManager::Get()
 {
-	//todo : put singleton back
-	//if (!mInstance)
-	//	mInstance = new InputManager();
+	if (!mInstance)
+		mInstance = new InputManager();
 
-	static InputManager mInstance;
-	return &mInstance;
+	return mInstance;
 }
 
 void InputManager::MousePositionUpdate(int x, int y)

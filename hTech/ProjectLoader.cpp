@@ -18,7 +18,6 @@ std::string ProjectLoader::m_ProjectName = "No Project Loaded";
 
 void ProjectLoader::LoadProject(std::filesystem::path sceneFilePath)
 {
-	//IMPLEMENT Load Project
 	if (m_HasProjectLoaded == true)
 	{
 		UnloadProject();
@@ -29,8 +28,6 @@ void ProjectLoader::LoadProject(std::filesystem::path sceneFilePath)
 
 	if (stream.good())
 	{
-		//IMPLEMENT Save Project
-
 		stream.seekg(0, std::ios::end); int end = stream.tellg();
 		stream.seekg(0, std::ios::beg); int start = stream.tellg();
 		int size = end - start;
@@ -88,7 +85,6 @@ void ProjectLoader::UnloadProject(bool save)
 			SaveProject();
 		}
 
-		//IMPLEMENT Unload Project
 #ifdef _DEBUG
 		Editor::ClearSelected();
 #endif
@@ -109,7 +105,6 @@ void ProjectLoader::SaveProject()
 
 		//IMPLEMENT Saving Console variables from project.
 
-		//IMPLEMENT Save Project
 		writer.StartObject();
 		World::Serialize(writer);
 		writer.EndObject();
