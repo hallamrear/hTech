@@ -45,8 +45,8 @@ Camera::Camera()
 
 Camera::~Camera()
 {
-	//delete mInstance;
-	//mInstance = nullptr;
+	delete mInstance;
+	mInstance = nullptr;
 }
 
 Camera* Camera::Get()
