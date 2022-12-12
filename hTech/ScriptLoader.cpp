@@ -92,10 +92,11 @@ ScriptObject* ScriptLoader::GetScriptObject(std::string externalClassName)
     {
         if (LoadScriptObjectToMap(externalClassName) == false)
         {
+			std::string str = "Script Object not found: " + externalClassName;
+			Log::LogMessage(LogLevel::LOG_ERROR, str);
 			return nullptr;
         }
     }
 
-    //todo : log not found.
 	return mLoadedScriptMap.find(externalClassName)->second;
 }

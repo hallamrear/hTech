@@ -14,6 +14,7 @@
 #include <ShlObj_core.h>
 #include <SDL_syswm.h>
 #include <SDL.h>
+#include "Camera.h"
 
 SDL_Renderer* Game::Renderer = nullptr;
 
@@ -485,16 +486,14 @@ void Game::Render()
 	World::Render(*Renderer);
 	UI::Render(*Renderer);
 
-	ImGui::ShowDemoWindow();
-
 	if (Console::Query("DrawLog") != 0)
 		Log::Render(*Renderer);
 
 #ifdef _DEBUG
+	static bool showNewProjectModal = false,
+		showOpenProjectModal = false;
 	if (ImGui::BeginMainMenuBar())
 	{
-		static bool showNewProjectModal = false,
-			showOpenProjectModal = false;
 		if (ImGui::BeginMenu("File"))
 		{
 			if (ImGui::MenuItem("New Project"))
@@ -541,6 +540,9 @@ void Game::Render()
 			
 			ImGui::EndMenu();
 		}
+
+		ImGui::Text(ProjectLoader::GetLoadedProjectName().c_str());
+
 		ImGui::EndMainMenuBar();
 
 		if (showNewProjectModal)
@@ -588,10 +590,10 @@ void Game::Render()
 
 	ImGui::BeginMenuBar();
 	{
-		bool query = (bool)Console::Query("DrawHashMap");
+		bool queryHash = (bool)Console::Query("DrawHashMap");
 		if (ImGui::MenuItem("Spatial Hash"))
 		{
-			if (query)
+			if (queryHash)
 			{
 				Console::Run("DrawHashMap 0");
 			}
@@ -601,13 +603,10 @@ void Game::Render()
 			}
 		}
 		
-		ImGui::SameLine();
-		ImGui::Checkbox("##showingHashMap", &query);
-
-		query = (bool)Console::Query("DrawColliders");
+		bool queryC = (bool)Console::Query("DrawColliders");
 		if (ImGui::MenuItem("Collider Outlines"))
 		{
-			if (query)
+			if (queryC)
 			{
 				Console::Run("DrawColliders 0");
 			}
@@ -617,10 +616,61 @@ void Game::Render()
 			}
 		}
 
-		ImGui::SameLine();
-		ImGui::Checkbox("##showingColliders", &query);
+		//IMPLEMENT Editor tools window
+		std::string modeStr = "";
+		EDITOR_STATE state = Editor::GetEditorCursorState();
+	
+		int buttonSize = 16;
 
+		if (ImGui::Button("M##Move", Vector2(buttonSize, buttonSize)))
+		{
+			Editor::SetEditorCursorState(EDITOR_STATE::MOVE);
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("R##Rotate", Vector2(buttonSize, buttonSize)))
+		{
+			Editor::SetEditorCursorState(EDITOR_STATE::ROTATE);
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("I##Inspect", Vector2(buttonSize, buttonSize)))
+		{
+			Editor::SetEditorCursorState(EDITOR_STATE::INSPECT);
+		}
+
+		ImGui::SameLine();
+
+		if (ImGui::Button("S##Select", Vector2(buttonSize, buttonSize)))
+		{
+			Editor::SetEditorCursorState(EDITOR_STATE::SELECT);
+		}
+
+		switch (state)
+		{
+		case EDITOR_STATE::SELECT:
+			modeStr = "Selection";
+			break;
+		case EDITOR_STATE::MOVE:
+			modeStr = "Move";
+			break;
+		case EDITOR_STATE::INSPECT:
+			modeStr = "Inspect";
+			break;
+		case EDITOR_STATE::ROTATE:
+			modeStr = "Rotate";
+			break;
+		case EDITOR_STATE::NONE:
+		default:
+			modeStr = "No mode";
+			break;
+		}
+		ImGui::SameLine(0.0f, buttonSize);
+		ImGui::Text("Current mode: %s", modeStr.c_str());
 	}
+
 	ImGui::EndMenuBar();
 
 	int w, h;
@@ -644,13 +694,13 @@ void Game::Render()
 	SDL_Point center = { (int)(renderQuad.x + (renderQuad.w / 2)),  (int)(renderQuad.y + (renderQuad.h / 2)) };
 	ImGui::End();
 
-
-
-
 	ImGui::Render();
 	ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
 
-	SDL_RenderCopyEx(Renderer, m_RenderToTextureTarget, nullptr, nullptr, 0.0F, &center, SDL_RendererFlip::SDL_FLIP_NONE);
+	if (showNewProjectModal == false)
+	{
+		SDL_RenderCopyEx(Renderer, m_RenderToTextureTarget, nullptr, nullptr, 0.0F, &center, SDL_RendererFlip::SDL_FLIP_NONE);
+	}
 
 #endif
 

@@ -1,7 +1,7 @@
 #pragma once
  #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
-
+#include "pch.h"
 
 #include "Vector2.h"
 #include "Helper.h"
@@ -15,8 +15,9 @@ class HTECH_FUNCTION_EXPORT BoundingBox;
 class HTECH_FUNCTION_EXPORT RigidbodyComponent;
 class HTECH_FUNCTION_EXPORT OrientedBoundingBox;
 class HTECH_FUNCTION_EXPORT BoundingPolygon;
-struct SDL_Renderer;
 class HTECH_FUNCTION_EXPORT Entity;
+class HTECH_FUNCTION_EXPORT Transform;
+struct SDL_Renderer;
 
 class HTECH_FUNCTION_EXPORT CollisionManifold
 {
@@ -29,7 +30,7 @@ public:
 	RigidbodyComponent* ObjB = nullptr;
 };
 
-enum class HTECH_FUNCTION_EXPORT COLLIDER_TYPE
+enum COLLIDER_TYPE
 {
 	COLLIDER_UNKNOWN = -1,
 	COLLIDER_AABB = 0,
@@ -42,10 +43,11 @@ enum class HTECH_FUNCTION_EXPORT COLLIDER_TYPE
 //AABB - Green outline
 //BS   - Blue outline
 
-class HTECH_FUNCTION_EXPORT Transform;
 
 class HTECH_FUNCTION_EXPORT Collider
 {
+protected:
+
 public:
 	Transform& mTransform;
 	COLLIDER_TYPE mType;
@@ -58,6 +60,10 @@ public:
 
 	virtual Vector2 FindFurthestPoint(Vector2 direction) const = 0;
 	virtual void GetColliderAsPoints(Vector2 points[]) const = 0;
+
+	virtual void Serialize(Serializer& writer) const;
+	virtual void Deserialize(SerializedValue& value);
+	virtual void RenderProperties();
 };
  
 class HTECH_FUNCTION_EXPORT Collision

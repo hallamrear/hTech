@@ -11,7 +11,7 @@
 
 RigidbodyComponent::RigidbodyComponent(Entity& entity) : Component("Rigidbody Component", entity)
 {
-	mIsStatic = false;
+	mIsStatic = true;
 	mGravityEnabled = true;
 	mDragEnabled = true;
 	mMass = 100.0f; 
@@ -40,7 +40,7 @@ RigidbodyComponent::~RigidbodyComponent()
 	mAcceleration	 = Vector2();
 	mNetForce		 = Vector2();
 	mExternalForce	 = Vector2();
-	mIsStatic = false;
+	mIsStatic = true;
 }
 
 /// <summary>
@@ -142,7 +142,7 @@ void RigidbodyComponent::SetCollider(COLLIDER_TYPE type)
 		mCollider = new OrientedBoundingBox(Parent.GetTransform(), 64, 64);
 		break;
 	case COLLIDER_TYPE::COLLIDER_POLYGON:
-		//TODO : Implement
+		mCollider = new BoundingPolygon(Parent.GetTransform());
 		break;
 	}
 }
@@ -172,25 +172,34 @@ void RigidbodyComponent::AddForce(float X, float Y)
 
 void RigidbodyComponent::RenderProperties()
 {
-	//IMPLEMENT Component properties panel.
-
 	ImGui::Checkbox("Static", &mIsStatic);
 	ImGui::Checkbox("Gravity Enabled", &mGravityEnabled);
 	ImGui::Checkbox("Drag Enabled", &mDragEnabled);
-
+	
 	static const std::string colldierStrs[5] = { "None", "AABB", "Sphere", "OBB", "Polygon" };
-	static std::string currentItem = colldierStrs[0];
+	static std::string currentItem;
+
+	if (mCollider)
+	{
+		currentItem = colldierStrs[(int)mCollider->mType + 1];
+	}
+	else
+	{
+		currentItem = colldierStrs[0];
+	}
+
+	ImGui::Separator();
 	if (ImGui::BeginCombo("Collider Type", currentItem.c_str()))
 	{
 		for (int n = 0; n < IM_ARRAYSIZE(colldierStrs); n++)
 		{
-			bool is_selected = (currentItem == colldierStrs[n]); // You can store your selection however you want, outside or inside your objects
+			bool is_selected = (currentItem == colldierStrs[n].c_str()); // You can store your selection however you want, outside or inside your objects
 			if (ImGui::Selectable(colldierStrs[n].c_str(), is_selected))
 			{
 				if (currentItem != colldierStrs[n])
 				{
 					currentItem = colldierStrs[n];
-					SetCollider((COLLIDER_TYPE)n);
+					SetCollider((COLLIDER_TYPE)(n - 1));
 					if (is_selected)
 						ImGui::SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
 				}
@@ -198,6 +207,12 @@ void RigidbodyComponent::RenderProperties()
 		}
 		ImGui::EndCombo();
 	}
+
+	if (mCollider != nullptr)
+	{
+		mCollider->RenderProperties();
+	}
+	ImGui::Separator();
 
 	ImGui::InputFloat("Mass (kg)", &mMass);
 	ImGui::InputFloat("Drag Coefficient", &mDragCoefficient);
@@ -262,7 +277,9 @@ void RigidbodyComponent::Serialize(Serializer& writer) const
 	writer.String("Collider Type");
 	if (mCollider != nullptr)
 	{
-		writer.Int((int)mCollider->mType);
+		int value = (int)mCollider->mType;
+		writer.Int(value);
+		mCollider->Serialize(writer);
 	}
 	else
 	{
@@ -270,13 +287,13 @@ void RigidbodyComponent::Serialize(Serializer& writer) const
 	}
 
 	writer.String("Static");			writer.Bool(mIsStatic);
-	writer.String("Gravity Enabled");    writer.Bool(mGravityEnabled);
-	writer.String("Drag Enabled");       writer.Bool(mDragEnabled);
-	writer.String("Mass");					writer.Double(mMass);
-	writer.String("Inverse Mass");					writer.Double(mInverseMass);
-	writer.String("Drag Coefficient");					writer.Double(mDragCoefficient);
-	writer.String("Speed cap");					writer.Double(mSpeedCap);
-	writer.String("Restitution");					writer.Double(mRestitution);
+	writer.String("Gravity Enabled");   writer.Bool(mGravityEnabled);
+	writer.String("Drag Enabled");      writer.Bool(mDragEnabled);
+	writer.String("Mass");				writer.Double(mMass);
+	writer.String("Inverse Mass");		writer.Double(mInverseMass);
+	writer.String("Drag Coefficient");	writer.Double(mDragCoefficient);
+	writer.String("Speed cap");			writer.Double(mSpeedCap);
+	writer.String("Restitution");		writer.Double(mRestitution);
 
 	writer.String("Velocity"); 
 	writer.StartObject();
@@ -310,13 +327,7 @@ void RigidbodyComponent::Deserialize(SerializedValue& value)
 {
 	Component::Deserialize(value);
 
-	//TODO FINISH THIS AND ANIMATION AND I THINK ITLL BE NEARLY DONE WITH SOME TESTING;
-
-
-
-
-
-	auto propertiesMember = value.FindMember("Properties");
+	auto propertiesMember = value.FindMember("Physics Properties");
 
 	if (propertiesMember->value.IsObject())
 	{
@@ -325,7 +336,12 @@ void RigidbodyComponent::Deserialize(SerializedValue& value)
 		auto colliderMember = properties.FindMember("Collider Type");
 		if (colliderMember->value.IsInt())
 		{
-			SetCollider((COLLIDER_TYPE)value.GetInt());
+			int colliderValue = colliderMember->value.GetInt();
+			SetCollider((COLLIDER_TYPE)colliderValue);
+			if (mCollider != nullptr)
+			{
+				mCollider->Deserialize(value);
+			}
 		}
 		else
 		{
@@ -357,11 +373,11 @@ void RigidbodyComponent::Deserialize(SerializedValue& value)
 			mDragCoefficient = dragcoeffMember->value.GetDouble();
 
 		auto speedCapMember = properties.FindMember("Speed cap");
-		if (speedCapMember->value.IsBool())
+		if (speedCapMember->value.IsDouble())
 			mSpeedCap = speedCapMember->value.GetDouble();
 
 		auto restMember = properties.FindMember("Restitution");
-		if (restMember->value.IsBool())
+		if (restMember->value.IsDouble())
 			mRestitution = restMember->value.GetDouble();
 
 		auto externalForceMember = properties.FindMember("External Force");

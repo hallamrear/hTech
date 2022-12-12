@@ -24,4 +24,8 @@ public:
 	virtual void GetColliderAsPoints(Vector2 points[]) const;
 
 	virtual Vector2 FindFurthestPoint(Vector2 direction) const override;
+
+	void Serialize(Serializer& writer) const override;
+	void Deserialize(SerializedValue& value) override;
+	void RenderProperties() override;
 };

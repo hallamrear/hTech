@@ -9,8 +9,11 @@
 #define M_PI 3.14159265358979323846
 #endif
 
+#define M_GOLDENRATIO ((1.0 + sqrt(5.0)) / 2.0)
+#define M_TAU (2 * M_PI)
+
 namespace MathsHelp
-{
+{	
 	////Works equally each direction from 0
 	////e.g. GetRandomIntExcludingCentre(256, 128)
 	////		can return between -256 -> -128 & 128 -> 256

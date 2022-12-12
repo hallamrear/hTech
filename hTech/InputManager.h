@@ -224,8 +224,7 @@ public:
 class HTECH_FUNCTION_EXPORT InputManager
 {
 private:
-	//todo : put singleton back
-	//static InputManager* mInstance;
+	static InputManager* mInstance;
 
 	const int mKeyCount = 36;
 	const int mMouseCount = 5;

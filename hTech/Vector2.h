@@ -20,6 +20,9 @@ public:
 	Vector2 GetVectorRotatedByAngle(float angleDegrees);
 	float Dot(Vector2 vector) const;
 
+	void ToString(std::string& stringToFill);
+	const std::string ToString() const;
+
 	//Operators
 	Vector2& operator= (const Vector2& other);
 	Vector2 operator+(const Vector2& rhs);
@@ -33,6 +36,4 @@ public:
 
 	void RotatePointAroundOriginRadians(float rotationRad, Vector2 origin);
 	void RotatePointAroundOriginDegrees(float rotationDeg, Vector2 origin);
-	//friend bool operator==(const Vector2& lhs, const Vector2& rhs);
-	//friend Vector2 operator-(const Vector2& lhs, const Vector2& rhs);
 };

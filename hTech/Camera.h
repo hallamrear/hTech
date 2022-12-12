@@ -8,6 +8,7 @@
 class HTECH_FUNCTION_EXPORT Camera
 {
 private:
+	static Camera* mInstance;
 	Vector2 mPosition;
 
 	Camera();
@@ -16,6 +17,7 @@ private:
 	Vector2 GetCameraPosition_Impl();
 	Vector2 WorldToScreen_Impl(Vector2 entityWorldPosition);
 	Vector2 ScreenToWorld_Impl(Vector2 screenPosition);
+	void RenderProperties_Impl();
 
 public:
 	~Camera();
@@ -25,4 +27,5 @@ public:
 	static Vector2 GetCameraPosition();
 	static Vector2 WorldToScreen(Vector2 entityWorldPosition);
 	static Vector2 ScreenToWorld(Vector2 screenPosition);
+	static void RenderProperties();
 };

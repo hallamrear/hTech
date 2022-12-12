@@ -64,8 +64,13 @@ void Entity::Render()
 	}
 
 	Vector2 pos = Camera::WorldToScreen(GetTransform().Position);
-	SDL_Rect rect{ (int)pos.X, (int)pos.Y, 4, 4 };
-	SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
+	SDL_Rect rect{ (int)pos.X - 2, (int)pos.Y - 2, 4, 4 };
+	float a = 255;
+
+	if (IsEnabled == false)
+		a = 100;
+
+	SDL_SetRenderDrawColor(&renderer, 0, 255, 0, a);
 	SDL_RenderDrawRect(&renderer, &rect);
 }
 
@@ -152,7 +157,7 @@ void Entity::RenderProperties()
 		{
 			if (mComponents[i]->GetComponentName() != "Transform Component")
 			{
-				label = "##" +mComponents[i]->GetComponentName() + "componentEnabledCheckbox";
+				label = "##" + mComponents[i]->GetComponentName() + "componentEnabledCheckbox";
 				bool isComponentEnabled = mComponents[i]->GetIsEnabled();
 				ImGui::Checkbox(label.c_str(), &isComponentEnabled);
 				mComponents[i]->SetIsEnabled(isComponentEnabled);
@@ -170,13 +175,13 @@ void Entity::RenderProperties()
 
 Entity* Entity::GetParent()
 {
-	//TODO : Implement
+	//TODO : Implement Parenting
 	return nullptr;
 }
 
 void Entity::SetParent(Entity* entity)
 {
-	//TODO : Implement
+	//TODO : Implement Parenting
 }
 
 bool Entity::GetIsBeingDestroyed() const

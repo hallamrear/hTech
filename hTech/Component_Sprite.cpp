@@ -84,7 +84,7 @@ void SpriteComponent::Serialize(Serializer& writer) const
 	writer.String("Texture");  
 	if (mTexture != nullptr)
 	{
-		writer.String(mTexture->GetLocation().c_str());
+		writer.String(mTexture->GetName().c_str());
 	}
 	else
 	{

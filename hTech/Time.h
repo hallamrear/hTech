@@ -6,8 +6,7 @@
 class HTECH_FUNCTION_EXPORT Time
 {
 private:
-	//todo : put singleton back
-	//static Time* mInstance;
+	static Time* mInstance;
 	float& mDeltaTime;
 
 	inline Time(float& dt)
@@ -24,22 +23,19 @@ private:
 public:
 	static Time* Get(float& dt)
 	{
-		//todo : put singleton back
-		//if (!mInstance)
-		//	mInstance = new Time(dt);
+		if (!mInstance)
+			mInstance = new Time(dt);
 
-		static Time mInstance(dt);
-		return &mInstance;
+		return mInstance;
 	}
 
 	static void Release()
 	{
-		//todo : put singleton back
-		//if (mInstance)
-		//{
-		//	delete mInstance;
-		//	mInstance = nullptr;
-		//}
+		if (mInstance)
+		{
+			delete mInstance;
+			mInstance = nullptr;
+		}
 	}
 
 	static float& DeltaTime()

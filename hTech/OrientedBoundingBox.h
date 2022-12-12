@@ -21,5 +21,9 @@ public:
 	virtual void Render(SDL_Renderer& renderer);
 
 	//Fills array with points of the box.
-	void GetColliderAsPoints(Vector2 points[]) const;
+	void GetColliderAsPoints(Vector2 points[]) const; 
+	
+	void Serialize(Serializer& writer) const override;
+	void Deserialize(SerializedValue& value) override;
+	void RenderProperties() override;
 };

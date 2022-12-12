@@ -45,5 +45,9 @@ void Component::Serialize(Serializer& writer) const
 
 void Component::Deserialize(SerializedValue& value)
 {
-	value["IsEnabled"].IsBool() ? mIsEnabled = value["IsEnabled"].GetBool() : true;
+	if (value["IsEnabled"].IsBool())
+	{
+		bool isEnabled = value["IsEnabled"].GetBool();
+		mIsEnabled = isEnabled;
+	}
 }

@@ -23,12 +23,6 @@ Editor::Editor() : mMouseScreenPosition(InputManager::Get()->GetMouseScreenPosit
     mSelectedEntities = std::vector<Entity*>();
 
     //Setting up editor controls!
-    InputManager::Get()->Bind(IM_KEY_CODE::IM_KEY_0, IM_KEY_STATE::IM_KEY_PRESSED, std::bind(&Editor::SetCursorStateToNoMode, this));
-    InputManager::Get()->Bind(IM_KEY_CODE::IM_KEY_1, IM_KEY_STATE::IM_KEY_PRESSED, std::bind(&Editor::SetCursorStateToSelectMode, this));
-    InputManager::Get()->Bind(IM_KEY_CODE::IM_KEY_2, IM_KEY_STATE::IM_KEY_PRESSED, std::bind(&Editor::SetCursorStateToMoveMode, this));
-    InputManager::Get()->Bind(IM_KEY_CODE::IM_KEY_3, IM_KEY_STATE::IM_KEY_PRESSED, std::bind(&Editor::SetCursorStateToRotateMode, this));
-    InputManager::Get()->Bind(IM_KEY_CODE::IM_KEY_4, IM_KEY_STATE::IM_KEY_PRESSED, std::bind(&Editor::SetCursorStateToInspectMode, this));
-
     mCurrentCursorState = EDITOR_STATE::NONE;
 
     InputManager::Bind(IM_MOUSE_CODE::IM_MOUSE_LEFT_CLICK, IM_KEY_STATE::IM_KEY_PRESSED,  std::bind(&Editor::MousePress, this));
@@ -209,13 +203,9 @@ void Editor::Render(SDL_Renderer& renderer)
 
 void Editor::Render_Impl(SDL_Renderer& renderer)
 {
-    if (ImGui::Begin("Editor Tools"))
-    {
-        //IMPLEMENT Editor tools window
-    }
-    ImGui::End();
+    Camera::RenderProperties();
 
-    if (ImGui::Begin("Properties"))
+    if (ImGui::Begin("Properties", 0, ImGuiWindowFlags_AlwaysAutoResize))
     {
         if (selected)
         {
@@ -224,9 +214,8 @@ void Editor::Render_Impl(SDL_Renderer& renderer)
     }
     ImGui::End();
 
-    if (ImGui::Begin("Assets"))
+    if (ImGui::Begin("Assets", 0, ImGuiWindowFlags_AlwaysAutoResize))
     {
-        //IMPLEMENT Assets Window.
         TextureCache::RenderProperties();
     }
     ImGui::End();
@@ -271,19 +260,26 @@ void Editor::Render_Impl(SDL_Renderer& renderer)
     if (selected)
     {
         SDL_Rect d{};
-        Vector2 position = Camera::WorldToScreen(selected->GetTransform().Position + Vector2(-32.0f, 32.0f));
+        d.w = 256;
+        d.h = 256;
+        Vector2 position = Camera::WorldToScreen(selected->GetTransform().Position + Vector2(0 - (d.w / 2), d.h / 2));
         d.x = (int)position.X;
         d.y = (int)position.Y;
-        d.w = 64;
-        d.h = 64;
         SDL_SetRenderDrawColor(&renderer, 255, 255, 0, 255);
         SDL_RenderDrawRect(&renderer, &d);
+        SDL_RenderDrawLine(&renderer, d.x, d.y, d.x + d.w, d.y + d.h);
+        SDL_RenderDrawLine(&renderer, d.x + d.w, d.y, d.x, d.y + d.h);
     }
 }
 
 void Editor::SetEditorCursorState(EDITOR_STATE state)
 {
     Get()->SetEditorCursorState_Impl(state);
+}
+
+EDITOR_STATE Editor::GetEditorCursorState()
+{
+    return Get()->mCurrentCursorState;
 }
 
 void Editor::ClearSelected()

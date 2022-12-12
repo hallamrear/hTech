@@ -55,7 +55,6 @@ bool Collision::CheckCollision_OBBvsSPHERE(const OrientedBoundingBox& one, const
 
 bool Collision::CheckCollision_AABBvsSPHERE(const BoundingBox& one, const BoundingSphere& two, CollisionManifold* const manifold)
 {
-	//todo : this can be improved by using obb -> aabb and running it here rather than vice versa
 	OrientedBoundingBox obb{ one.mTransform, one.Size.X, one.Size.Y };
 	return SeperatingAxisTheory_PolygonCircle(4, obb, two, manifold);
 }
@@ -207,7 +206,6 @@ bool Collision::SeperatingAxisTheory_PolygonPolygon(const int shapeOnePointCount
 		}
 	}
 
-	//todo : if you uncomment this, remove the axisproj.getnormalized
 	manifold->Depth /= manifold->Normal.GetMagnitude();
 	manifold->Normal = manifold->Normal.GetNormalized();
 
@@ -342,7 +340,6 @@ bool Collision::SeperatingAxisTheory_PolygonCircle(const int polygonVertexCount,
 		manifold->Normal = axisProj;
 	}
 
-	//todo : if you uncomment this, remove the axisproj.getnormalized
 	manifold->Depth /= manifold->Normal.GetMagnitude();
 	manifold->Normal = manifold->Normal.GetNormalized();
 
@@ -495,7 +492,6 @@ bool Collision::SeperatingAxisTheory_Depreciated(const int shapeOnePointCount, c
 	delete[] shapeTwoPoints;
 	shapeTwoPoints = nullptr;
 
-	//todo : construct manifold
 	manifold->HasCollided = true;
 	return manifold->HasCollided;
 }
@@ -522,10 +518,6 @@ bool Collision::CheckCollision(const Collider& one, const Collider& two, Collisi
 	manifold->ObjA = nullptr;
 	manifold->ObjB = nullptr;
 	
-	//todo : improve
-	//1) std::Variant
-	//2) 2d array of funciton pointers, indexed by collider_type. most likely out the question
-
 	if (one.mType == COLLIDER_TYPE::COLLIDER_AABB && two.mType == COLLIDER_TYPE::COLLIDER_AABB)
 		return CheckCollision_AABBvsAABB(dynamic_cast<const BoundingBox&>(one), dynamic_cast<const BoundingBox&>(two), manifold);
 	if (one.mType == COLLIDER_TYPE::COLLIDER_SPHERE && two.mType == COLLIDER_TYPE::COLLIDER_SPHERE)
@@ -616,4 +608,32 @@ void Collision::ResolveCollision(RigidbodyComponent& one, RigidbodyComponent& tw
 	one.AddVelocity(relativeNormal * impulse / one.GetMass());
 	two.AddVelocity(relativeNormal * impulse / two.GetMass() * -1);
 
+}
+
+void Collider::RenderProperties()
+{
+	ImGui::Checkbox("Is Overlap?", &IsOverlap);
+}
+
+void Collider::Serialize(Serializer& writer) const
+{
+	writer.String("Is Overlap");
+	writer.Bool(IsOverlap);
+}
+
+void Collider::Deserialize(SerializedValue& value)
+{
+	auto propertiesMember = value.FindMember("Physics Properties");
+
+	if (propertiesMember->value.IsObject())
+	{
+		auto properties = propertiesMember->value.GetObjectA();
+
+		auto overlapMember = properties.FindMember("Is Overlap");
+
+		if (overlapMember->value.IsBool())
+		{
+			IsOverlap = overlapMember->value.GetBool();
+		}
+	}
 }
