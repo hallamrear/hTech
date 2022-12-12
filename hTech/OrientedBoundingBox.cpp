@@ -2,6 +2,8 @@
 #include "OrientedBoundingBox.h"
 #include "Camera.h"
 #include "Transform.h"
+#include "rapidjson/rapidjson.h"
+#include "imgui.h"
 
 OrientedBoundingBox::OrientedBoundingBox(Transform& transform, float size_x, float size_y)
 	: BoundingBox(transform, size_x, size_y)
@@ -36,7 +38,7 @@ void OrientedBoundingBox::Render(SDL_Renderer& renderer)
 {
 	if (Console::Query("DrawColliders") != 0)
 	{
-		SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
+		SDL_SetRenderDrawColor(&renderer, 0, 255, 255, 255);
 
 		const Vector2 TopLeft_ScreenSpace = Camera::WorldToScreen(TopLeft);
 		const Vector2 TopRight_ScreenSpace = Camera::WorldToScreen(TopRight);
@@ -61,4 +63,19 @@ void OrientedBoundingBox::GetColliderAsPoints(Vector2 points[]) const
 	points[1] = BottomRight;
 	points[2] = TopRight;
 	points[3] = TopLeft;
+}
+
+void OrientedBoundingBox::Serialize(Serializer& writer) const
+{
+	BoundingBox::Serialize(writer);
+}
+
+void OrientedBoundingBox::Deserialize(SerializedValue& value)
+{
+	BoundingBox::Deserialize(value);
+}
+
+void OrientedBoundingBox::RenderProperties()
+{
+	BoundingBox::RenderProperties();
 }

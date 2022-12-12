@@ -20,9 +20,9 @@ class HTECH_FUNCTION_EXPORT Text;
 class HTECH_FUNCTION_EXPORT World
 {
 private:
-	static World*			mInstance;
-	std::vector<Entity*>	mEntityList;
-	SpatialHash*			mWorldHashMap;
+	static World*								mInstance;
+	std::unordered_map<std::string, Entity*>	m_EntityMap;
+	SpatialHash*								mWorldHashMap;
 
 	Entity*					CreateEntity_Impl(std::string Name = "unnamed", Transform SpawnTransform = Transform(), Entity* Parent = nullptr);
 	void					DestroyEntity_Impl(Entity* entity);
@@ -58,15 +58,3 @@ public:
 
 	static void				UnloadAll();
 };
-
-//void World::Load_Impl(tinyxml2::XMLDocument& saveFile)
-//{
-//    if (mEntityList.size() != 0)
-//    {
-//        ClearAllEntities();
-//    }
-// }
-//}//void World::Load(tinyxml2::XMLDocument& saveFile)
-//{
-//    return Get()->Load_Impl(saveFile);
-//}

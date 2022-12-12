@@ -12,10 +12,13 @@
 class HTECH_FUNCTION_EXPORT BoundingSphere
 	: public Collider
 {
+private:
+	int mPointCount;
+
 public:
 	float Radius = 0;
 
-	BoundingSphere(Transform& transform, float radius);
+	BoundingSphere(Transform& transform, float radius, int PointCount = 12);
 	virtual ~BoundingSphere();
 
 	/// <summary>
@@ -41,4 +44,10 @@ public:
 	/// </summary>
 	/// <param name="points">Array of points on the circle outline.</param>
 	virtual void GetColliderAsPoints(Vector2 points[]) const override;
+
+	void SetPointCount(int pointCount);
+
+	void Serialize(Serializer& writer) const override;
+	void Deserialize(SerializedValue& value) override;
+	void RenderProperties() override;
 };

@@ -3,7 +3,7 @@
 
 #include "Component.h"
 
-enum class HTECH_FUNCTION_EXPORT COLLIDER_TYPE;
+enum COLLIDER_TYPE;
 class HTECH_FUNCTION_EXPORT CollisionManifold;
 class HTECH_FUNCTION_EXPORT Collider;
 
@@ -31,7 +31,7 @@ protected:
 	void					CalculateInverseMass();
 	void					AddForce(Vector2 force);
 	void					AddForce(float X = 0.0f, float Y = 0.0f);
-	void RenderProperties();
+	void					RenderProperties();
 
 public:
     RigidbodyComponent(Entity& entity);

@@ -41,14 +41,7 @@ void ProjectLoader::LoadProject(std::filesystem::path sceneFilePath)
 
 		//IMPLEMENT Loading Console variables from project.
 		 		
-		if (buffer != "")
-		{
-			rapidjson::Document loadedDoc;
-			loadedDoc.Parse<rapidjson::kParseStopWhenDoneFlag>(buffer);
-			World::Deserialize(loadedDoc);
-		}
-
-		m_HasProjectLoaded = true;
+		/// ---- This section was previously underneath m_HasProjectLoaded = true;
 		m_ProjectName = sceneFilePath.filename().string();
 		//Remove extension.
 		m_ProjectName = m_ProjectName.substr(0, m_ProjectName.size() - sceneFilePath.extension().string().size()).c_str();
@@ -64,6 +57,18 @@ void ProjectLoader::LoadProject(std::filesystem::path sceneFilePath)
 				TextureCache::GetTexture(dirEntry.path().filename().string());
 			}
 		}
+		///----
+
+
+		if (buffer != "")
+		{
+			rapidjson::Document loadedDoc;
+			loadedDoc.Parse<rapidjson::kParseStopWhenDoneFlag>(buffer);
+			World::Deserialize(loadedDoc);
+		}
+
+		m_HasProjectLoaded = true;
+
 	}
 	else
 	{

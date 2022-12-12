@@ -32,7 +32,7 @@ void TransformComponent::Serialize(Serializer& writer) const
 	writer.String("Position");
 	writer.StartObject();
 	writer.String("X"); writer.Double((double)mTransform.Position.X);
-	writer.String("Y"); writer.Double((double)mTransform.Position.X);
+	writer.String("Y"); writer.Double((double)mTransform.Position.Y);
 	writer.EndObject();
 
 	writer.String("Rotation");
@@ -61,11 +61,15 @@ void TransformComponent::Deserialize(SerializedValue& value)
 
 void TransformComponent::RenderProperties()
 {
-	float floats[2];
-	floats[0] = mTransform.Position.X;
-	floats[1] = mTransform.Position.Y;
-	ImGui::InputFloat2("Position:", floats);
-	mTransform.Position.X = floats[0];
-	mTransform.Position.Y = floats[1];
+	ImGui::Text("Position: ");
+	ImGui::SameLine();
+	ImGui::InputFloat("##posX:", &mTransform.Position.X); 
+	ImGui::SameLine();
+	ImGui::InputFloat("##posY", &mTransform.Position.Y);
 	ImGui::InputFloat("Rotation:", &mTransform.Rotation);
+	if (ImGui::Button("Reset to 0, 0"))
+	{
+		mTransform.Position.X = 0.0f;
+		mTransform.Position.Y = 0.0f;
+	}
 }

@@ -2,6 +2,8 @@
 #include "BoundingBox.h"
 #include "Transform.h"
 #include "Camera.h"
+#include "imgui.h"
+#include "rapidjson/rapidjson.h"
 
 BoundingBox::BoundingBox(Transform& transform, float size_x, float size_y)
 	: Collider(transform)
@@ -37,7 +39,7 @@ void BoundingBox::Render(SDL_Renderer& renderer)
 		r.w = (int)(Size.X);
 		r.h = (int)(Size.Y);
 
-		SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
+		SDL_SetRenderDrawColor(&renderer, 0, 255, 255, 255);
 		SDL_RenderDrawRect(&renderer, &r);
 	}
 }
@@ -69,4 +71,54 @@ Vector2 BoundingBox::FindFurthestPoint(Vector2 direction) const
 	}
 
 	return maxPoint;
+}
+
+void BoundingBox::Serialize(Serializer& writer) const
+{
+	Collider::Serialize(writer);
+
+	writer.String("BoundingBoxSize");
+	writer.StartObject();
+	writer.String("X"); writer.Double((double)Size.X);
+	writer.String("Y"); writer.Double((double)Size.Y);
+	writer.EndObject();
+}
+
+void BoundingBox::Deserialize(SerializedValue& value)
+{
+	Collider::Deserialize(value);
+
+	auto propertiesMember = value.FindMember("Physics Properties");
+	if (propertiesMember->value.IsObject())
+	{
+		auto propertiesObject = propertiesMember->value.GetObjectA();
+
+		auto bbSizeMember = propertiesObject.FindMember("BoundingBoxSize");
+		bool aaaaaa = propertiesObject.HasMember("BoundingBoxSize");
+
+		auto bbSizeObject = bbSizeMember->value.GetObjectA();
+		if (bbSizeMember->value.IsObject())
+		{
+			auto bbSizeObject = bbSizeMember->value.GetObjectA();
+
+			auto x = bbSizeObject.FindMember("X");
+			auto y = bbSizeObject.FindMember("Y");
+			Size.X = (float)x->value.GetDouble();
+			Size.Y = (float)y->value.GetDouble();
+		}
+
+		//Call update to recalcuate the TL and BR.
+		Update(0.0f);
+	}
+}
+
+void BoundingBox::RenderProperties()
+{
+	Collider::RenderProperties();
+
+	ImGui::Text("Box Size: ");
+	ImGui::SameLine();
+	ImGui::InputFloat("##boxSizeX", &Size.X); 
+	ImGui::SameLine();
+	ImGui::InputFloat("##boxSizeY", &Size.Y);
 }

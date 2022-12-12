@@ -609,3 +609,31 @@ void Collision::ResolveCollision(RigidbodyComponent& one, RigidbodyComponent& tw
 	two.AddVelocity(relativeNormal * impulse / two.GetMass() * -1);
 
 }
+
+void Collider::RenderProperties()
+{
+	ImGui::Checkbox("Is Overlap?", &IsOverlap);
+}
+
+void Collider::Serialize(Serializer& writer) const
+{
+	writer.String("Is Overlap");
+	writer.Bool(IsOverlap);
+}
+
+void Collider::Deserialize(SerializedValue& value)
+{
+	auto propertiesMember = value.FindMember("Physics Properties");
+
+	if (propertiesMember->value.IsObject())
+	{
+		auto properties = propertiesMember->value.GetObjectA();
+
+		auto overlapMember = properties.FindMember("Is Overlap");
+
+		if (overlapMember->value.IsBool())
+		{
+			IsOverlap = overlapMember->value.GetBool();
+		}
+	}
+}

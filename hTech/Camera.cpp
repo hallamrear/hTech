@@ -101,6 +101,11 @@ Vector2 Camera::ScreenToWorld(Vector2 screenPosition)
 	return Get()->ScreenToWorld_Impl(screenPosition);
 }
 
+void Camera::RenderProperties()
+{
+	return Get()->RenderProperties_Impl();
+}
+
 Vector2 Camera::ScreenToWorld_Impl(Vector2 screenPosition)
 {
 	Vector2 WindowCentre;
@@ -112,4 +117,15 @@ Vector2 Camera::ScreenToWorld_Impl(Vector2 screenPosition)
 	Vector2 out = Vector2((screenPosition + camPosition) - WindowCentre);
 	out.Y *= -1;
 	return out;
+}
+
+void Camera::RenderProperties_Impl()
+{
+	ImGui::Begin("Camera details");
+	float position[2] = { mPosition.X, mPosition.Y };
+	ImGui::InputFloat2("Position", position);
+	mPosition.X = position[0];
+	mPosition.Y = position[1];
+
+	ImGui::End();
 }

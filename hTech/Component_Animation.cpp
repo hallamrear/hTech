@@ -5,7 +5,7 @@
 #include "Entity.h"
 #include "Game.h"
 
-AnimationComponent::AnimationComponent(Entity& entity) : Component("Animation Controller", entity)
+AnimationComponent::AnimationComponent(Entity& entity) : Component("Animation Component", entity)
 {
 	mAnimationSheet = nullptr;
 	mTimeElapsed = 0.0f;
@@ -26,6 +26,11 @@ AnimationComponent::~AnimationComponent()
 
 void AnimationComponent::Update(float DeltaTime)
 {
+	if (IsLooping && mHasFinished)
+	{
+		mHasFinished = false;
+	}
+
 	if (mAnimationSheet)
 	{
 		if (mHasFinished == false)
@@ -75,7 +80,7 @@ void AnimationComponent::Serialize(Serializer& writer) const
 	writer.String("Texture");
 	if (mAnimationSheet != nullptr)
 	{
-		writer.String(mAnimationSheet->GetLocation().c_str());
+		writer.String(mAnimationSheet->GetName().c_str());
 	}
 	else
 	{
@@ -84,6 +89,24 @@ void AnimationComponent::Serialize(Serializer& writer) const
 
 	writer.String("IsFlipped"); writer.Bool(IsFlipped);
 	writer.String("IsLooping"); writer.Bool(IsLooping);
+}
+
+void AnimationComponent::Deserialize(SerializedValue& value)
+{
+	Component::Deserialize(value);
+
+	mDuration = value.FindMember("Duration")->value.GetDouble();
+	mTotalFrames = value.FindMember("Animation Frame Count")->value.GetInt();
+	mAnimationCount = value.FindMember("Animation Count")->value.GetInt();
+	IsFlipped = value.FindMember("IsFlipped")->value.GetBool();
+	IsLooping = value.FindMember("IsLooping")->value.GetBool();
+	
+	auto texture = value.FindMember("Texture");
+	if (texture->value.IsNull() == false)
+	{
+		std::string textureSheet = texture->value.GetString();
+		LoadAnimationSheet(textureSheet);
+	}
 }
 
 void AnimationComponent::LoadAnimationSheet(std::string sheet_path)
@@ -158,10 +181,4 @@ float AnimationComponent::GetTimeElapsed() const
 bool AnimationComponent::HasFinished() const
 {
 	return mHasFinished;
-}
-
-void AnimationComponent::Deserialize(SerializedValue& value)
-{
-	Component::Deserialize(value);
-
 }
