@@ -267,8 +267,6 @@ void Editor::Render_Impl(SDL_Renderer& renderer)
         d.y = (int)Position.Y;
         SDL_SetRenderDrawColor(&renderer, 255, 255, 0, 255);
         SDL_RenderDrawRect(&renderer, &d);
-        SDL_RenderDrawLine(&renderer, d.x, d.y, d.x + d.w, d.y + d.h);
-        SDL_RenderDrawLine(&renderer, d.x + d.w, d.y, d.x, d.y + d.h);
     }
 }
 

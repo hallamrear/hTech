@@ -19,6 +19,16 @@ public:
 	Vector2 Dimensions = Vector2(600.0f, 300.0f);
 };
 
+/// <summary>
+/// GAME_STATE::Paused does not call update functions for anything in the world.
+/// GAME_STATE::Playing calls all update functions.
+/// </summary>
+enum class HTECH_FUNCTION_EXPORT GAME_STATE
+{
+	Paused,
+	Playing
+};
+
 class HTECH_FUNCTION_EXPORT Game
 {
 private:
@@ -26,6 +36,7 @@ private:
 	bool						m_IsRunning;
 	struct SDL_Window*			m_Window;
 	struct SDL_Texture*			m_RenderToTextureTarget;
+	GAME_STATE					m_GameState;
 
 	bool		InitialiseGraphics();
 	bool		CreateRenderTargetTexture();
@@ -42,6 +53,8 @@ private:
 	void		Render();
 	void		Shutdown();
 
+	void		SetPlayState(GAME_STATE state);
+	void		GetPlayState(GAME_STATE state);
 
 public:
 	static struct SDL_Renderer* Renderer;

@@ -425,6 +425,14 @@ void Game::Shutdown()
 	m_IsInitialised = false;
 }
 
+void Game::SetPlayState(GAME_STATE state)
+{
+}
+
+void Game::GetPlayState(GAME_STATE state)
+{
+}
+
 void Game::HandleEvents()
 {
 	SDL_Event event;
@@ -508,9 +516,13 @@ void Game::HandleEvents()
 void Game::Update(float DeltaTime)
 {
 	InputManager::Update();
-	Physics::Update(DeltaTime);
-	World::Update(DeltaTime);
-	UI::Update(DeltaTime);
+
+	if (m_GameState == GAME_STATE::Playing)
+	{
+		Physics::Update(DeltaTime);
+		World::Update(DeltaTime);
+		UI::Update(DeltaTime);
+	}
 
 	if(Console::Query("DrawLog") != 0)
 		Log::Update(DeltaTime);
@@ -528,7 +540,7 @@ void Game::Render()
 
 	SDL_RenderClear(Renderer);
 	SDL_SetRenderTarget(Renderer, m_RenderToTextureTarget);
-	SDL_SetRenderDrawColor(Renderer, 207, 235, 236, 255);
+	SDL_SetRenderDrawColor(Renderer, 29, 49, 68, 255);
 	SDL_RenderClear(Renderer);
 
 	World::Render(*Renderer);
@@ -590,6 +602,24 @@ void Game::Render()
 		}
 
 		ImGui::Text(ProjectLoader::GetLoadedProjectName().c_str());
+
+		switch (m_GameState)
+		{
+		case GAME_STATE::Paused:
+			if (ImGui::Button("Start Playing"))
+			{
+				m_GameState = GAME_STATE::Playing;
+			}
+			break;
+		case GAME_STATE::Playing:
+			if (ImGui::Button("Stop Playing"))
+			{
+				m_GameState = GAME_STATE::Paused;
+			}
+			break;
+		default:
+			break;
+		}
 
 		ImGui::EndMainMenuBar();
 

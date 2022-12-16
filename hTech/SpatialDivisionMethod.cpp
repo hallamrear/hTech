@@ -179,7 +179,7 @@ void SpatialHash::Render(SDL_Renderer& renderer)
 {
 	for (const auto& itr : m_HashBucketMap)
 	{
-		SDL_SetRenderDrawColor(&renderer, 0, 0, 255, 255);
+		SDL_SetRenderDrawColor(&renderer, 244, 51, 68, 255);
 
 		Vector2 wPosition = Vector2(itr.first.X * (float)WORLD_TILE_SIZE, (itr.first.Y + 1) * (float)WORLD_TILE_SIZE);
 		Vector2 sPosition = Camera::WorldToScreen(wPosition);
@@ -192,16 +192,10 @@ void SpatialHash::Render(SDL_Renderer& renderer)
 
 		if (itr.second.Count() != 0)
 		{
-			Vector2 offset = wPosition + Vector2(WORLD_TILE_SIZE / 2, -WORLD_TILE_SIZE / 2 + (WORLD_TILE_SIZE / 4));
-			m_DebugText->SetPosition(Camera::WorldToScreen(offset));
-			m_DebugText->SetString(std::to_string(itr.second.Count()));
-			m_DebugText->Update(0.0f);
-			m_DebugText->Render(renderer);
-
 			std::string str = "";
-			offset = wPosition + Vector2(WORLD_TILE_SIZE / 2, -WORLD_TILE_SIZE / 2 - (WORLD_TILE_SIZE / 4));
+			Vector2 offset = wPosition + Vector2(WORLD_TILE_SIZE / 2 - (WORLD_TILE_SIZE / 4), -WORLD_TILE_SIZE / 2 + (WORLD_TILE_SIZE / 4));
 			m_DebugText->SetPosition(Camera::WorldToScreen(offset));
-			str = std::to_string((int)itr.first.X) + ", " + std::to_string((int)itr.first.Y);
+			str = "Pos: " + std::to_string((int)itr.first.X) + ", " + std::to_string((int)itr.first.Y) + "\nNum: " + std::to_string(itr.second.Count());
 			m_DebugText->SetString(str);
 			m_DebugText->Update(0.0f);
 			m_DebugText->Render(renderer);
