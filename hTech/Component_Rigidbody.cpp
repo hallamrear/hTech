@@ -295,29 +295,29 @@ void RigidbodyComponent::Serialize(Serializer& writer) const
 	writer.String("Speed cap");			writer.Double(m_SpeedCap);
 	writer.String("Restitution");		writer.Double(m_Restitution);
 
-	writer.String("Velocity"); 
-	writer.StartObject();
-	writer.String("X");					writer.Double((double)m_Velocity.X);
-	writer.String("Y");					writer.Double((double)m_Velocity.Y);
-	writer.EndObject();
+	//writer.String("Velocity"); 
+	//writer.StartObject();
+	//writer.String("X");					writer.Double((double)m_Velocity.X);
+	//writer.String("Y");					writer.Double((double)m_Velocity.Y);
+	//writer.EndObject();
 
-	writer.String("Acceleration"); 
-	writer.StartObject();
-	writer.String("X");					writer.Double((double)m_Acceleration.X);
-	writer.String("Y");					writer.Double((double)m_Acceleration.Y);
-	writer.EndObject();
+	//writer.String("Acceleration"); 
+	//writer.StartObject();
+	//writer.String("X");					writer.Double((double)m_Acceleration.X);
+	//writer.String("Y");					writer.Double((double)m_Acceleration.Y);
+	//writer.EndObject();
 
-	writer.String("Net Force"); 
-	writer.StartObject();
-	writer.String("X");					writer.Double((double)m_NetForce.X);
-	writer.String("Y");					writer.Double((double)m_NetForce.Y);
-	writer.EndObject();
+	//writer.String("Net Force"); 
+	//writer.StartObject();
+	//writer.String("X");					writer.Double((double)m_NetForce.X);
+	//writer.String("Y");					writer.Double((double)m_NetForce.Y);
+	//writer.EndObject();
 
-	writer.String("External Force"); 
-	writer.StartObject();
-	writer.String("X");					writer.Double((double)m_ExternalForce.X);
-	writer.String("Y");					writer.Double((double)m_ExternalForce.Y);
-	writer.EndObject();
+	//writer.String("External Force"); 
+	//writer.StartObject();
+	//writer.String("X");					writer.Double((double)m_ExternalForce.X);
+	//writer.String("Y");					writer.Double((double)m_ExternalForce.Y);
+	//writer.EndObject();
 
 	writer.EndObject();
 
@@ -380,32 +380,32 @@ void RigidbodyComponent::Deserialize(SerializedValue& value)
 		if (restMember->value.IsDouble())
 			m_Restitution = (float)restMember->value.GetDouble();
 
-		auto externalForceMember = properties.FindMember("External Force");
-		if (externalForceMember->value.IsObject())
-		{
-			m_ExternalForce.X = (float)externalForceMember->value["X"].GetDouble();
-			m_ExternalForce.Y = (float)externalForceMember->value["Y"].GetDouble();
-		}
+		//auto externalForceMember = properties.FindMember("External Force");
+		//if (externalForceMember->value.IsObject())
+		//{
+		//	m_ExternalForce.X = (float)externalForceMember->value["X"].GetDouble();
+		//	m_ExternalForce.Y = (float)externalForceMember->value["Y"].GetDouble();
+		//}
 
-		auto netForceMember = properties.FindMember("Net Force");
-		if (netForceMember->value.IsObject())
-		{
-			m_NetForce.X = (float)netForceMember->value["X"].GetDouble();
-			m_NetForce.Y = (float)netForceMember->value["Y"].GetDouble();
-		}
+		//auto netForceMember = properties.FindMember("Net Force");
+		//if (netForceMember->value.IsObject())
+		//{
+		//	m_NetForce.X = (float)netForceMember->value["X"].GetDouble();
+		//	m_NetForce.Y = (float)netForceMember->value["Y"].GetDouble();
+		//}
 
-		auto accelerationMember = properties.FindMember("Acceleration");
-		if (accelerationMember->value.IsObject())
-		{
-			m_Acceleration.X = (float)accelerationMember->value["X"].GetDouble();
-			m_Acceleration.Y = (float)accelerationMember->value["Y"].GetDouble();
-		}
+		//auto accelerationMember = properties.FindMember("Acceleration");
+		//if (accelerationMember->value.IsObject())
+		//{
+		//	m_Acceleration.X = (float)accelerationMember->value["X"].GetDouble();
+		//	m_Acceleration.Y = (float)accelerationMember->value["Y"].GetDouble();
+		//}
 
-		auto velocityMember = properties.FindMember("Velocity");
-		if (velocityMember->value.IsObject())
-		{
-			m_Velocity.X = (float)velocityMember->value["X"].GetDouble();
-			m_Velocity.Y = (float)velocityMember->value["Y"].GetDouble();
-		}
+		//auto velocityMember = properties.FindMember("Velocity");
+		//if (velocityMember->value.IsObject())
+		//{
+		//	m_Velocity.X = (float)velocityMember->value["X"].GetDouble();
+		//	m_Velocity.Y = (float)velocityMember->value["Y"].GetDouble();
+		//}
 	}
 }
