@@ -285,10 +285,20 @@ void Editor::ClearSelected()
     return Get()->ClearSelected_Impl();
 }
 
+void Editor::SetSelectedEntity(Entity* entity)
+{
+    return Get()->SetSelectedEntity_Impl(entity);
+}
+
 void Editor::ClearSelected_Impl()
 {
     selected = nullptr;
     m_SelectedEntities.clear();
+}
+
+void Editor::SetSelectedEntity_Impl(Entity* entity)
+{
+    selected = entity;
 }
 
 void Editor::SetEditorCursorState_Impl(EDITOR_STATE state)

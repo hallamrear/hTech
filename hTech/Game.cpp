@@ -427,10 +427,12 @@ void Game::Shutdown()
 
 void Game::SetPlayState(GAME_STATE state)
 {
+	m_GameState = state;
 }
 
-void Game::GetPlayState(GAME_STATE state)
+GAME_STATE Game::GetPlayState()
 {
+	return m_GameState;
 }
 
 void Game::HandleEvents()
@@ -567,24 +569,29 @@ void Game::Render()
 				std::string projectFilePath = "";
 				if (OpenProject(projectFilePath))
 				{
+					SetPlayState(GAME_STATE::Paused);
 					ProjectLoader::LoadProject(projectFilePath);
 				}
 			}
 
 			if (ImGui::MenuItem("Save Project"))
 			{
+				SetPlayState(GAME_STATE::Paused);
+				Log::LogMessage(LogLevel::LOG_MESSAGE, "Paused to save project...");
 				ProjectLoader::SaveProject();
 			}
 			
 			if (ImGui::MenuItem("Close Project"))
 			{
 				ProjectLoader::UnloadProject();
+				SetPlayState(GAME_STATE::Paused);
 			}
 
 			if (ImGui::BeginMenu("Exit##Menu"))
 			{
 				if (ImGui::MenuItem("Exit with Saving"))
 				{
+					SetPlayState(GAME_STATE::Paused);
 					ProjectLoader::SaveProject();
 					m_IsRunning = false;
 				}
@@ -640,7 +647,8 @@ void Game::Render()
 				ImGui::Separator();
 
 				if (ImGui::Button("Create", ImVec2(120, 0)))
-				{ 
+				{
+					SetPlayState(GAME_STATE::Paused);
 					ProjectLoader::CreateProject(projectName);
 					projectName = "";
 					showNewProjectModal = false;

@@ -57,14 +57,14 @@ Camera* Camera::Get()
 	return m_Instance;
 }
 
-void Camera::SetCameraPosition_Impl(Vector2 Position)
+void Camera::SetCameraPosition_Impl(Vector2 WorldPosition)
 {
-	m_Position = Position;
+	m_Position = WorldPosition;
 }
 
-void Camera::SetCameraPosition(Vector2 Position)
+void Camera::SetCameraPosition(Vector2 WorldPosition)
 {
-	Get()->SetCameraPosition_Impl(Position);
+	Get()->SetCameraPosition_Impl(WorldPosition);
 }
 
 Vector2 Camera::GetCameraPosition()

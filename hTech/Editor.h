@@ -51,7 +51,8 @@ private:
 	void MousePress();
 	void MouseRelease();
 	void MouseHold();
-	void ClearSelected_Impl();
+	void ClearSelected_Impl();	
+	void SetSelectedEntity_Impl(Entity* entity);
 
 protected:
 	Editor();
@@ -65,6 +66,7 @@ public:
 	static void SetEditorCursorState(EDITOR_STATE state);
 	static EDITOR_STATE GetEditorCursorState();
 	static void ClearSelected();
+	static void SetSelectedEntity(Entity* entity);
 };
 
 #else

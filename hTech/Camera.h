@@ -13,7 +13,7 @@ private:
 
 	Camera();
 
-	void SetCameraPosition_Impl(Vector2 Position);
+	void SetCameraPosition_Impl(Vector2 WorldPosition);
 	Vector2 GetCameraPosition_Impl();
 	Vector2 WorldToScreen_Impl(Vector2 entityWorldPosition);
 	Vector2 ScreenToWorld_Impl(Vector2 screenPosition);
@@ -23,7 +23,7 @@ public:
 	~Camera();
 	static Camera* Get();
 
-	static void SetCameraPosition(Vector2 Position);
+	static void SetCameraPosition(Vector2 WorldPosition);
 	static Vector2 GetCameraPosition();
 	static Vector2 WorldToScreen(Vector2 entityWorldPosition);
 	static Vector2 ScreenToWorld(Vector2 screenPosition);

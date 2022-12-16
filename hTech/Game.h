@@ -54,7 +54,7 @@ private:
 	void		Shutdown();
 
 	void		SetPlayState(GAME_STATE state);
-	void		GetPlayState(GAME_STATE state);
+	GAME_STATE	GetPlayState();
 
 public:
 	static struct SDL_Renderer* Renderer;

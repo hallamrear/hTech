@@ -11,6 +11,7 @@
 
 #include "Component_Sprite.h"
 #include "Component_Script.h"
+#include "Editor.h"
 
 World* World::m_Instance = nullptr;
 
@@ -103,7 +104,12 @@ void World::Render_Impl(SDL_Renderer& renderer)
     {
         if (itr.second != nullptr)
         {
-            ImGui::Text(itr.second->GetName().c_str());
+            if (ImGui::Selectable(itr.second->GetName().c_str(), false))
+            {
+                Camera::SetCameraPosition(itr.second->GetTransform().Position);
+                Editor::SetSelectedEntity(itr.second);
+            }
+
             itr.second->Render();
         }
     }
