@@ -33,6 +33,7 @@ private:
 	//4 == SDL_WINDOW_SHOWN 
 	bool		InitialiseWindow(const char* Title = "", int xpos = 0, int ypos = 0, int width = 0, int height = 0, unsigned int flags = 4, bool isFullscreen = false);
 	bool		InitialiseDearIMGUI();
+	void		SettingDearIMGUIColourScheme();
 	bool		InitialiseApplicationControls();
 	bool		InitialiseSystems(WindowDetails details);
 
