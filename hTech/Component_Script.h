@@ -12,7 +12,7 @@ class HTECH_FUNCTION_EXPORT ScriptComponent :
     public Component
 {
 private:
-    ScriptObject* mScriptObject; 
+    ScriptObject* m_ScriptObject; 
     
 protected:
     virtual void Destroy();

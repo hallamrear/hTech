@@ -14,24 +14,24 @@ enum class HTECH_FUNCTION_EXPORT SCREEN_STATE
 class HTECH_FUNCTION_EXPORT WindowDetails
 {
 public:
-	std::string title = "";
-	Vector2 position = Vector2();
-	Vector2 dimensions = Vector2(600.0f, 300.0f);
+	std::string Title = "";
+	Vector2 Position = Vector2();
+	Vector2 Dimensions = Vector2(600.0f, 300.0f);
 };
 
 class HTECH_FUNCTION_EXPORT Game
 {
 private:
-	bool						mIsInitialised;
-	bool						mIsRunning;
-	struct SDL_Window*			mWindow;
-	class SDL_Texture*			m_RenderToTextureTarget;
+	bool						m_IsInitialised;
+	bool						m_IsRunning;
+	struct SDL_Window*			m_Window;
+	struct SDL_Texture*			m_RenderToTextureTarget;
 
 	bool		InitialiseGraphics();
 	bool		CreateRenderTargetTexture();
 															
 	//4 == SDL_WINDOW_SHOWN 
-	bool		InitialiseWindow(const char* title = "", int xpos = 0, int ypos = 0, int width = 0, int height = 0, unsigned int flags = 4, bool isFullscreen = false);
+	bool		InitialiseWindow(const char* Title = "", int xpos = 0, int ypos = 0, int width = 0, int height = 0, unsigned int flags = 4, bool isFullscreen = false);
 	bool		InitialiseDearIMGUI();
 	bool		InitialiseApplicationControls();
 	bool		InitialiseSystems(WindowDetails details);
@@ -52,9 +52,9 @@ public:
 	void		Start();
 
 	void		SetFullscreen(SCREEN_STATE state);
-	void	    SetIsRunning(bool state) { mIsRunning = state; };
-	const bool  GetIsRunning() const { return mIsRunning; };
-	const bool  GetIsInitialised() const { return mIsInitialised; };
+	void	    SetIsRunning(bool state) { m_IsRunning = state; };
+	const bool  GetIsRunning() const { return m_IsRunning; };
+	const bool  GetIsInitialised() const { return m_IsInitialised; };
 
 	void		TakeScreenshot(std::string name);
 	bool		OpenProject(std::string& path);

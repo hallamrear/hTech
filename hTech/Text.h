@@ -1,32 +1,30 @@
 #pragma once
  #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
-
-
 #include "Colour.h"
 
 class HTECH_FUNCTION_EXPORT Text
 {
 private:
-	static TTF_Font* mFont;
 	static bool CreateTTFFontAsset(const int& fontSize = 14.0f, const std::string& fontLocation = "Assets/arial.ttf");
 	static bool DestroyTTFFontAsset();
 
-	int mWrapWidth = 0;
 	SDL_Texture* mTextTexture;
-	Vector2 mPosition;
-	std::string mData;
-	bool mIsDirty;
-	int mTextWidth;
-	int mTextHeight;
-	Colour mColour;
+	static TTF_Font* m_Font;
+	int m_WrapWidth = 0;
+	Vector2 m_Position;
+	std::string m_Data;
+	Colour m_Colour;
+	bool m_IsDirty;
+	int m_Height;
+	int m_Width;
 
 	void CreateTextTexture();
 	void DestroyTextTexture();
 
 
 public:
-	Text(Vector2 position = Vector2(), std::string text = "Empty.", Colour colour = Colour());
+	Text(Vector2 Position = Vector2(), std::string text = "Empty.", Colour colour = Colour());
 	~Text();
 
 	void Update(float DeltaTime);
@@ -43,7 +41,6 @@ public:
 	void SetString(const char* str);
 
 	const Vector2 GetTextureSize() const;
-
 
 };
 

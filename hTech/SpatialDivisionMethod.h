@@ -35,7 +35,7 @@ class Text;
 class HTECH_FUNCTION_EXPORT HashBucket
 {
 private:
-	std::vector<Entity*> Data;
+	std::vector<Entity*> m_Data;
 
 public:
 	HashBucket();
@@ -51,11 +51,11 @@ public:
 class HTECH_FUNCTION_EXPORT SpatialHash
 {
 private:
-	float mCleanupTimeElapsed = 0.0f;
-	Text* mText;
-	int mSizeX;
-	int mSizeY;
-	std::unordered_map<Vector2, HashBucket> mMap;
+	float m_CleanupTimeElapsed = 0.0f;
+	Text* m_DebugText;
+	int m_SizeX;
+	int m_SizeY;
+	std::unordered_map<Vector2, HashBucket> m_HashBucketMap;
 	Vector2 GetIDFromEntity(Entity* entity);
 
 public:

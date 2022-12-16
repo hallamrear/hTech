@@ -4,9 +4,9 @@
 #include "Log.h"
 #include <unordered_map>
 
-static HINSTANCE mLoadedLibrary;
-HINSTANCE ScriptLoader::mLoadedLibrary = nullptr;
-std::unordered_map<std::string, ScriptObject*> ScriptLoader::mLoadedScriptMap = std::unordered_map<std::string, ScriptObject*>();
+static HINSTANCE m_LoadedLibraryInstance;
+HINSTANCE ScriptLoader::m_LoadedLibraryInstance = nullptr;
+std::unordered_map<std::string, ScriptObject*> ScriptLoader::m_LoadedScriptMap = std::unordered_map<std::string, ScriptObject*>();
 
 typedef ScriptObject* (__stdcall* scriptPtr)();
 
@@ -17,9 +17,9 @@ ScriptLoader::~ScriptLoader()
 
 void ScriptLoader::UnloadLibrary()
 {
-	if (mLoadedLibrary)
+	if (m_LoadedLibraryInstance)
 	{
-		FreeLibrary(mLoadedLibrary);
+		FreeLibrary(m_LoadedLibraryInstance);
 	}
 }
 
@@ -34,10 +34,10 @@ void ScriptLoader::LoadCustomScriptDLL(std::string libraryLocation)
 
 	//Load libary into handle instance
 	//loadA loads out DLL into memory for the program
-	mLoadedLibrary = LoadLibraryEx(tempPath.c_str(), NULL, 0);
+	m_LoadedLibraryInstance = LoadLibraryEx(tempPath.c_str(), NULL, 0);
 
 	//validate
-	if (!mLoadedLibrary)
+	if (!m_LoadedLibraryInstance)
 	{
 		Log::LogMessage(LogLevel::LOG_ERROR, "Could not load library");
 	}
@@ -49,11 +49,11 @@ void ScriptLoader::LoadCustomScriptDLL(std::string libraryLocation)
 
 ScriptObject* ScriptLoader::GetFunctionPtrFromLibrary(std::string externalClassName)
 {
-	if (mLoadedLibrary)
+	if (m_LoadedLibraryInstance)
 	{
 		//GetPRocAddress returns the ptr to the function we are trying to find within the DLL instance.
 		std::string functionName = "Create_" + externalClassName;
-		scriptPtr DLLFunction = (scriptPtr)GetProcAddress(mLoadedLibrary, functionName.c_str());
+		scriptPtr DLLFunction = (scriptPtr)GetProcAddress(m_LoadedLibraryInstance, functionName.c_str());
 
 		if (!DLLFunction)
 		{
@@ -73,12 +73,12 @@ bool ScriptLoader::LoadScriptObjectToMap(std::string externalClassName)
     std::string dllLocation = "C://Users//ryem_//source//repos//hTech//Scripting//Project//test//Debug//test.dll";
 	LoadCustomScriptDLL(dllLocation);
 
-	if (mLoadedLibrary)
+	if (m_LoadedLibraryInstance)
 	{
 		ScriptObject* scriptObject = GetFunctionPtrFromLibrary(externalClassName);
 		if (scriptObject != nullptr)
 		{
-			mLoadedScriptMap.insert(std::make_pair(externalClassName, scriptObject));
+			m_LoadedScriptMap.insert(std::make_pair(externalClassName, scriptObject));
 			return true;
 		}
 	}
@@ -88,7 +88,7 @@ bool ScriptLoader::LoadScriptObjectToMap(std::string externalClassName)
 
 ScriptObject* ScriptLoader::GetScriptObject(std::string externalClassName)
 {
-    if (mLoadedScriptMap.find(externalClassName) == mLoadedScriptMap.end())
+    if (m_LoadedScriptMap.find(externalClassName) == m_LoadedScriptMap.end())
     {
         if (LoadScriptObjectToMap(externalClassName) == false)
         {
@@ -98,5 +98,5 @@ ScriptObject* ScriptLoader::GetScriptObject(std::string externalClassName)
         }
     }
 
-	return mLoadedScriptMap.find(externalClassName)->second;
+	return m_LoadedScriptMap.find(externalClassName)->second;
 }

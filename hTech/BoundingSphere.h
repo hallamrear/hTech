@@ -13,12 +13,12 @@ class HTECH_FUNCTION_EXPORT BoundingSphere
 	: public Collider
 {
 private:
-	int mPointCount;
+	int m_PointCount;
 
 public:
 	float Radius = 0;
 
-	BoundingSphere(Transform& transform, float radius, int PointCount = 12);
+	BoundingSphere(const Transform& transform, float radius, int pointCount = 12);
 	virtual ~BoundingSphere();
 
 	/// <summary>

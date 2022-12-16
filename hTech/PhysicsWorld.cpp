@@ -2,7 +2,7 @@
 #include "PhysicsWorld.h"
 #include "Component_Rigidbody.h"
 
-Physics* Physics::mInstance = nullptr;
+Physics* Physics::m_Instance = nullptr;
 
 Physics::Physics(float fixedTimeStep)
 {
@@ -11,14 +11,14 @@ Physics::Physics(float fixedTimeStep)
 
 Physics::~Physics()
 {
-	mRigidbodies.clear();
+	m_RigidbodyVector.clear();
 }
 
 void Physics::FixedUpdate()
 {
-	mManifolds.clear();
+	m_ManifoldVector.clear();
 
-	size_t rbCount = mRigidbodies.size();
+	size_t rbCount = m_RigidbodyVector.size();
 
 	//Find our collisions
 	for (size_t i = 0; i < rbCount; i++)
@@ -30,46 +30,46 @@ void Physics::FixedUpdate()
 
 			CollisionManifold manifold;
 
-			if (mRigidbodies[i]->HasCollider() && mRigidbodies[j]->HasCollider() && mRigidbodies[i]->GetIsEnabled() && mRigidbodies[j]->GetIsEnabled())
+			if (m_RigidbodyVector[i]->HasCollider() && m_RigidbodyVector[j]->HasCollider() && m_RigidbodyVector[i]->GetIsEnabled() && m_RigidbodyVector[j]->GetIsEnabled())
 			{
-				if (Collision::CheckCollision(*mRigidbodies[i]->GetCollider(), *mRigidbodies[j]->GetCollider(), &manifold))
+				if (Collision::CheckCollision(*m_RigidbodyVector[i]->GetCollider(), *m_RigidbodyVector[j]->GetCollider(), &manifold))
 				{
-					manifold.ObjA = mRigidbodies[i];
-					manifold.ObjB = mRigidbodies[j];
-					mManifolds.push_back(manifold);
+					manifold.ObjA = m_RigidbodyVector[i];
+					manifold.ObjB = m_RigidbodyVector[j];
+					m_ManifoldVector.push_back(manifold);
 
-					if (mRigidbodies[i]->GetCollider()->IsOverlap)
-						mRigidbodies[i]->OnOverlap(manifold, *mRigidbodies[j]);
+					if (m_RigidbodyVector[i]->GetCollider()->IsOverlap())
+						m_RigidbodyVector[i]->OnOverlap(manifold, *m_RigidbodyVector[j]);
 					else
-						mRigidbodies[i]->OnCollision(manifold, *mRigidbodies[j]);
+						m_RigidbodyVector[i]->OnCollision(manifold, *m_RigidbodyVector[j]);
 
-					if (mRigidbodies[j]->GetCollider()->IsOverlap)
-						mRigidbodies[j]->OnOverlap(manifold, *mRigidbodies[i]);
+					if (m_RigidbodyVector[j]->GetCollider()->IsOverlap())
+						m_RigidbodyVector[j]->OnOverlap(manifold, *m_RigidbodyVector[i]);
 					else
-						mRigidbodies[j]->OnCollision(manifold, *mRigidbodies[i]);
+						m_RigidbodyVector[j]->OnCollision(manifold, *m_RigidbodyVector[i]);
 				}
 			}
 		}
 	}
 
 	//Resolve our collisions via iterative impulse resolution
-	size_t manifoldCount = mManifolds.size();
+	size_t manifoldCount = m_ManifoldVector.size();
 	CollisionManifold* currentManifold = nullptr;
 
 	for (size_t i = 0; i < manifoldCount; i++)
 	{
-		currentManifold = &mManifolds[i];
+		currentManifold = &m_ManifoldVector[i];
 
 		for (int k = 0; k < IMPULSE_ITERATION_COUNT; k++)
 		{
 			//todo : add should resolve to rigidbody to allow for triggers.
-			if(!(currentManifold->ObjA->GetCollider()->IsOverlap || currentManifold->ObjB->GetCollider()->IsOverlap))
+			if(!(currentManifold->ObjA->GetCollider()->IsOverlap() || currentManifold->ObjB->GetCollider()->IsOverlap()))
 				Collision::ResolveCollision(*currentManifold->ObjA, *currentManifold->ObjB, currentManifold);
 		}
 	}
 	
 	//Physics update
-	for (auto& itr : mRigidbodies)
+	for (auto& itr : m_RigidbodyVector)
 	{
 		if (itr->GetIsEnabled() == true)
 		{
@@ -95,7 +95,7 @@ void Physics::RegisterRigidbody(RigidbodyComponent* rb)
 
 void Physics::RegisterRigidbody_Impl(RigidbodyComponent* rb)
 {
-	mRigidbodies.push_back(rb);
+	m_RigidbodyVector.push_back(rb);
 }
 
 void Physics::DeregisterRigidbody(RigidbodyComponent* rb)
@@ -105,23 +105,23 @@ void Physics::DeregisterRigidbody(RigidbodyComponent* rb)
 
 void Physics::DeregisterRigidbody_Impl(RigidbodyComponent* rb)
 {
-	if (mRigidbodies.size() > 0)
+	if (m_RigidbodyVector.size() > 0)
 	{
-		auto itr = std::find(mRigidbodies.begin(), mRigidbodies.end(), rb);
+		auto itr = std::find(m_RigidbodyVector.begin(), m_RigidbodyVector.end(), rb);
 
-		if (itr != mRigidbodies.end())
+		if (itr != m_RigidbodyVector.end())
 		{
-			mRigidbodies.erase(itr);
+			m_RigidbodyVector.erase(itr);
 		}
 		else	
-			assert(itr == mRigidbodies.end());
+			assert(itr == m_RigidbodyVector.end());
 	}
 }
 
 Physics* Physics::Get()
 {
-	if (!mInstance)
-		mInstance = new Physics(FIXED_TIME_STEP);
+	if (!m_Instance)
+		m_Instance = new Physics(FIXED_TIME_STEP);
 
-	return mInstance;
+	return m_Instance;
 }

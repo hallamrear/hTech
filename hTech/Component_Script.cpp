@@ -7,11 +7,11 @@
 
 void ScriptComponent::Destroy()
 {
-	if (mScriptObject)
+	if (m_ScriptObject)
 	{
 		//IMPLEMENT Proper destruction of script object.
-		//mScriptObject->Destroy();
-		//mScriptObject = nullptr;
+		//m_ScriptObject->Destroy();
+		//m_ScriptObject = nullptr;
 	}
 }
 
@@ -25,16 +25,16 @@ void ScriptComponent::RenderProperties()
 
 void ScriptComponent::Update(float deltaTime)
 {
-	if (mScriptObject)
+	if (m_ScriptObject)
 	{
-		mScriptObject->Update(deltaTime);
+		m_ScriptObject->Update(deltaTime);
 	}
 }
 
 ScriptComponent::ScriptComponent(Entity& entity) : Component("Script Component", entity)
 {
 	std::string expectedName = entity.GetName();
-	mScriptObject = ScriptLoader::GetScriptObject(expectedName);
+	m_ScriptObject = ScriptLoader::GetScriptObject(expectedName);
 }
 
 ScriptComponent::~ScriptComponent()
@@ -44,48 +44,48 @@ ScriptComponent::~ScriptComponent()
 
 void ScriptComponent::Start()
 {
-	if (mScriptObject)
+	if (m_ScriptObject)
 	{
-		mScriptObject->Start();
+		m_ScriptObject->Start();
 	}
 }
 
 void ScriptComponent::OnEnable()
 {
-	if (mScriptObject)
+	if (m_ScriptObject)
 	{
-		mScriptObject->OnEnable();
+		m_ScriptObject->OnEnable();
 	}
 }
 
 void ScriptComponent::OnDisable()
 {
-	if (mScriptObject)
+	if (m_ScriptObject)
 	{
-		mScriptObject->OnDisable();
+		m_ScriptObject->OnDisable();
 	}
 }
 
 void ScriptComponent::OnCollision(const CollisionManifold& manifold, RigidbodyComponent& other)
 {
-	if (mScriptObject)
+	if (m_ScriptObject)
 	{
-		mScriptObject->OnCollision(manifold, other);
+		m_ScriptObject->OnCollision(manifold, other);
 	}
 }
 
 void ScriptComponent::OnOverlap(const CollisionManifold& manifold, RigidbodyComponent& other)
 {
-	if (mScriptObject)
+	if (m_ScriptObject)
 	{
-		mScriptObject->OnOverlap(manifold, other);
+		m_ScriptObject->OnOverlap(manifold, other);
 	}
 }
 
 ScriptObject const * ScriptComponent::GetScriptObject()
 {
-	if (mScriptObject)
-		return mScriptObject;
+	if (m_ScriptObject)
+		return m_ScriptObject;
 	else
 		return nullptr;
 }

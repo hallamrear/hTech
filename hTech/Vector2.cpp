@@ -167,3 +167,24 @@ void Vector2::RotatePointAroundOriginDegrees(float rotationDeg, Vector2 origin)
 	X = xnew + origin.X;
 	Y = ynew + origin.Y;
 }
+
+
+const Vector2 Vector2::operator+(const Vector2& rhs) const
+{
+	return Vector2(this->X + rhs.X, this->Y + rhs.Y);
+}
+
+const Vector2 Vector2::operator-(const Vector2& rhs) const
+{
+	return Vector2(this->X - rhs.X, this->Y - rhs.Y);
+}
+
+const Vector2 Vector2::operator*(const float& scalar) const
+{
+	return Vector2(this->X * scalar, this->Y * scalar);
+}
+
+const Vector2 Vector2::operator/(const float& scalar) const
+{
+	return Vector2(this->X / scalar, this->Y / scalar);
+}

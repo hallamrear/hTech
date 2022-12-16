@@ -3,7 +3,8 @@
 
 #include "Component.h"
 
-enum COLLIDER_TYPE;
+enum class COLLIDER_TYPE : int;
+
 class HTECH_FUNCTION_EXPORT CollisionManifold;
 class HTECH_FUNCTION_EXPORT Collider;
 
@@ -13,19 +14,19 @@ class HTECH_FUNCTION_EXPORT RigidbodyComponent :
 private:
 
 protected:
-	Collider*				mCollider;
-	bool					mGravityEnabled;
-	bool					mDragEnabled;
-	float					mMass; //Weight of Entity (kg)
-	float					mInverseMass;
-	float					mDragCoefficient;
-	float					mSpeedCap; //Speed cap (u/s)
-	float					mRestitution;
-	Vector2					mVelocity;
-	Vector2					mAcceleration;
-	Vector2					mNetForce;
-	Vector2					mExternalForce;
-	bool					mIsStatic;
+	Collider*				m_Collider;
+	bool					m_GravityEnabled;
+	bool					m_DragEnabled;
+	float					m_Mass; //Weight of Entity (kg)
+	float					m_InverseMass;
+	float					m_DragCoefficient;
+	float					m_SpeedCap; //Speed cap (u/s)
+	float					m_Restitution;
+	Vector2					m_Velocity;
+	Vector2					m_Acceleration;
+	Vector2					m_NetForce;
+	Vector2					m_ExternalForce;
+	bool					m_IsStatic;
 
 	//Recalculates the inverse mass based on the current mass
 	void					CalculateInverseMass();
@@ -42,26 +43,26 @@ public:
 
 	void DestroyCollider();
 
-	Vector2 const	GetVelocity()		const { return mVelocity; }
-	Vector2 const	GetAcceleration()	const { return mAcceleration; }
-	bool	const	GetGravityEnabled() const { return mGravityEnabled; }
-	bool	const	GetDragEnabled()	const { return mDragEnabled; }
-	float	const	GetMass()			const { return mMass; };
-	float	const	GetInverseMass()	const { return mInverseMass; };
-	float	const	GetRestitution()	const { return mRestitution; };
-	bool	const	GetIsStatic()		const { return mIsStatic; };
-	bool	const	HasCollider()		const { return (mCollider != nullptr); }
+	Vector2 const	GetVelocity()		const { return m_Velocity; }
+	Vector2 const	GetAcceleration()	const { return m_Acceleration; }
+	bool	const	GetGravityEnabled() const { return m_GravityEnabled; }
+	bool	const	GetDragEnabled()	const { return m_DragEnabled; }
+	float	const	GetMass()			const { return m_Mass; };
+	float	const	GetInverseMass()	const { return m_InverseMass; };
+	float	const	GetRestitution()	const { return m_Restitution; };
+	bool	const	GetIsStatic()		const { return m_IsStatic; };
+	bool	const	HasCollider()		const { return (m_Collider != nullptr); }
 
 	void		    SetCollider(COLLIDER_TYPE type);
 	Collider* const GetCollider();
 
 	//Setters
-	virtual void	SetIsStatic(const bool state) { mIsStatic = state; }
-	virtual void	SetGravityEnabled(const bool state) { mGravityEnabled = state; }
-	virtual void	SetDragEnabled(const bool state) { mDragEnabled = state; }
+	virtual void	SetIsStatic(const bool state) { m_IsStatic = state; }
+	virtual void	SetGravityEnabled(const bool state) { m_GravityEnabled = state; }
+	virtual void	SetDragEnabled(const bool state) { m_DragEnabled = state; }
 	//Adjusters
-	virtual void	AddVelocity(const Vector2 velocity) { mVelocity += velocity; };
-	virtual void	AddExternalForce(const Vector2 force) { mExternalForce += force; };
+	virtual void	AddVelocity(const Vector2 velocity) { m_Velocity += velocity; };
+	virtual void	AddExternalForce(const Vector2 force) { m_ExternalForce += force; };
 
 	virtual void	OnCollision(const CollisionManifold& manifold, RigidbodyComponent& other);
 	virtual void	OnOverlap(const CollisionManifold& manifold, RigidbodyComponent& other);

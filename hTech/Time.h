@@ -6,41 +6,41 @@
 class HTECH_FUNCTION_EXPORT Time
 {
 private:
-	static Time* mInstance;
-	float& mDeltaTime;
+	static Time* m_Instance;
+	float& m_DeltaTime;
 
 	inline Time(float& dt)
-		: mDeltaTime(dt)
+		: m_DeltaTime(dt)
 	{
 
 	}
 
 	inline ~Time()
 	{
-		mDeltaTime = 0.0;
+		m_DeltaTime = 0.0;
 	}
 
 public:
 	static Time* Get(float& dt)
 	{
-		if (!mInstance)
-			mInstance = new Time(dt);
+		if (!m_Instance)
+			m_Instance = new Time(dt);
 
-		return mInstance;
+		return m_Instance;
 	}
 
 	static void Release()
 	{
-		if (mInstance)
+		if (m_Instance)
 		{
-			delete mInstance;
-			mInstance = nullptr;
+			delete m_Instance;
+			m_Instance = nullptr;
 		}
 	}
 
 	static float& DeltaTime()
 	{
 		float d;
-		return Get(d)->mDeltaTime;
+		return Get(d)->m_DeltaTime;
 	}
 };

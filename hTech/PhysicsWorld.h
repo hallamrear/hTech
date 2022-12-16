@@ -12,10 +12,10 @@ class HTECH_FUNCTION_EXPORT RigidbodyComponent;
 
 class HTECH_FUNCTION_EXPORT Physics
 {
-	static Physics* mInstance;
+	static Physics* m_Instance;
 	float mFixedTimestep;
-	std::vector<RigidbodyComponent*> mRigidbodies;
-	std::vector<CollisionManifold> mManifolds;
+	std::vector<RigidbodyComponent*> m_RigidbodyVector;
+	std::vector<CollisionManifold> m_ManifoldVector;
 
 	Physics(float fixedTimeStep);
 	~Physics();

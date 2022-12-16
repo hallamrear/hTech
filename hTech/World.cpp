@@ -12,16 +12,16 @@
 #include "Component_Sprite.h"
 #include "Component_Script.h"
 
-World* World::mInstance = nullptr;
+World* World::m_Instance = nullptr;
 
 Entity* World::CreateEntity_Impl(std::string Name, Transform SpawnTransform, Entity* Parent)
 {
     Entity* entity = new Entity(SpawnTransform, Name, Parent);
     m_EntityMap.insert(std::make_pair(Name, entity));
     
-    if (mWorldHashMap)
+    if (m_WorldHashMap)
     {
-        mWorldHashMap->Insert(entity);
+        m_WorldHashMap->Insert(entity);
     }
 
     return entity;
@@ -70,8 +70,8 @@ void World::ClearupDeadEntities()
 
 void World::Update_Impl(float DeltaTime)
 {
-    mWorldHashMap->Clear();
-    mWorldHashMap->Update(DeltaTime);
+    m_WorldHashMap->Clear();
+    m_WorldHashMap->Update(DeltaTime);
 
     for (auto& itr : m_EntityMap)
     {
@@ -82,7 +82,7 @@ void World::Update_Impl(float DeltaTime)
                 itr.second->Update(DeltaTime);
             }
 
-            mWorldHashMap->Insert(itr.second);
+            m_WorldHashMap->Insert(itr.second);
         }
     }
 
@@ -96,7 +96,7 @@ void World::Render_Impl(SDL_Renderer& renderer)
 
     if (Console::Query("DrawHashMap") != 0)
     {
-        mWorldHashMap->Render(renderer);
+        m_WorldHashMap->Render(renderer);
     }
 
     for(auto& itr : m_EntityMap)
@@ -138,7 +138,7 @@ Entity* World::GetEntityByName_Impl(std::string name)
 
 void World::QuerySpaceForEntities_Impl(WorldRectangle rect, std::vector<Entity*>& entities)
 {
-    mWorldHashMap->Retrieve(rect, entities);
+    m_WorldHashMap->Retrieve(rect, entities);
 }
 
 World::World()
@@ -151,7 +151,7 @@ World::World()
     int halfSizeX = WORLD_TILE_COUNT_X / 2;
     int halfSizeY = WORLD_TILE_COUNT_Y / 2;
 
-    mWorldHashMap = new SpatialHash(sizeX, sizeY);
+    m_WorldHashMap = new SpatialHash(sizeX, sizeY);
 
     InputManager::Bind(
         IM_KEY_CODE::IM_KEY_A,
@@ -167,10 +167,10 @@ World::World()
 
 World::~World()
 {
-    if (mWorldHashMap)
+    if (m_WorldHashMap)
     {
-        delete mWorldHashMap;
-        mWorldHashMap = nullptr;
+        delete m_WorldHashMap;
+        m_WorldHashMap = nullptr;
     }
 
     for (auto& itr : m_EntityMap)
@@ -183,10 +183,10 @@ World::~World()
 
 World* World::Get()
 {
-    if (mInstance == nullptr)
-        mInstance = new World();
+    if (m_Instance == nullptr)
+        m_Instance = new World();
 
-    return mInstance;
+    return m_Instance;
 }
 
 void World::QuerySpaceForEntities(WorldRectangle rect, std::vector<Entity*>& entities)
@@ -232,7 +232,7 @@ Entity* World::FindNearestEntityToPosition_Impl(Vector2 WorldPosition)
     WorldRectangle rect = WorldRectangle((int)WorldPosition.X - (size / 2), (int)WorldPosition.Y + (size / 2), size, size);
     float minDistance = FLT_MAX;
     rect = WorldRectangle((int)WorldPosition.X - (size / 2), (int)WorldPosition.Y + (size / 2), size, size);
-    mWorldHashMap->Retrieve(rect, entities);
+    m_WorldHashMap->Retrieve(rect, entities);
     
     for (std::vector<Entity*>::iterator itr = entities.begin(); itr != entities.end(); itr++)
     {

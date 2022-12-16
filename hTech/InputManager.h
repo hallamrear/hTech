@@ -73,29 +73,29 @@ enum class HTECH_FUNCTION_EXPORT IM_MOUSE_CODE : int
 
 class HTECH_FUNCTION_EXPORT Key
 {
-	std::function<void()> mPressFunction;
-	std::function<void()> mHeldFunction;
-	std::function<void()> mReleaseFunction;
+	std::function<void()> m_OnPressFunction;
+	std::function<void()> m_OnHoldFunction;
+	std::function<void()> m_OnReleaseFunction;
 
-	IM_KEY_CODE mKeyCode;
-	bool mPreviousState;
-	bool mState = false;
+	IM_KEY_CODE m_KeyCode;
+	bool m_PreviousState;
+	bool m_KeyState = false;
 
 public:
 	Key(IM_KEY_CODE keycode)
 	{
-		mKeyCode = keycode;
-		mState = false;
-		mPreviousState = false;
-		mPressFunction = nullptr;
-		mReleaseFunction = nullptr;
+		m_KeyCode = keycode;
+		m_KeyState = false;
+		m_PreviousState = false;
+		m_OnPressFunction = nullptr;
+		m_OnReleaseFunction = nullptr;
 	};
 
-	IM_KEY_CODE	GetKeyCode()				 { return mKeyCode; }
-	bool			GetState()					 { return mState; }
-	void			SetState(bool state)		 { mState = state; }
-	void			SetPreviousState(bool state) { mPreviousState = state; };
-	bool			GetPreviousState()			 { return mPreviousState; }
+	IM_KEY_CODE	GetKeyCode()				 { return m_KeyCode; }
+	const bool	GetState()					 { return m_KeyState; }
+	      void	SetState(bool state)		 { m_KeyState = state; }
+	      void	SetPreviousState(bool state) { m_PreviousState = state; };
+	const bool	GetPreviousState()			 { return m_PreviousState; }
 
 	void Bind(IM_KEY_STATE state, std::function<void()> func)
 	{
@@ -104,21 +104,21 @@ public:
 		case IM_KEY_STATE::IM_KEY_PRESSED:
 			if (func)
 			{
-				mPressFunction = func;
+				m_OnPressFunction = func;
 			}
 			break;
 
 		case IM_KEY_STATE::IM_KEY_HELD:
 			if(func)
 			{
-				mHeldFunction = func;
+				m_OnHoldFunction = func;
 			}
 			break;
 
 		case IM_KEY_STATE::IM_KEY_RELEASED:
 			if (func)
 			{
-				mReleaseFunction = func;
+				m_OnReleaseFunction = func;
 			}
 			break;
 		default:
@@ -129,48 +129,48 @@ public:
 
 	void RunOnPressFunction()
 	{
-		if (mPressFunction)
-			mPressFunction();
+		if (m_OnPressFunction)
+			m_OnPressFunction();
 	};
 
 	void RunOnHeldFunction()
 	{
-		if (mHeldFunction)
-			mHeldFunction();
+		if (m_OnHoldFunction)
+			m_OnHoldFunction();
 	}
 
 	void RunOnReleaseFunction()
 	{
-		if (mReleaseFunction)
-			mReleaseFunction();
+		if (m_OnReleaseFunction)
+			m_OnReleaseFunction();
 	}
 };
 
 class HTECH_FUNCTION_EXPORT Mouse
 {
-	std::function<void()> mPressFunction;
-	std::function<void()> mHeldFunction;
-	std::function<void()> mReleaseFunction;
+	std::function<void()> m_OnPressFunction;
+	std::function<void()> m_OnHoldFunction;
+	std::function<void()> m_OnReleaseFunction;
 
-	IM_MOUSE_CODE mKeyCode;
-	bool mPreviousState;
-	bool mState = false;
+	IM_MOUSE_CODE m_KeyCode;
+	bool m_PreviousState;
+	bool m_KeyState = false;
 
 public:
 	Mouse(IM_MOUSE_CODE keycode)
 	{
-		mKeyCode = keycode;
-		mState = false;
-		mPreviousState = false;
-		mPressFunction = nullptr;
-		mReleaseFunction = nullptr;
+		m_KeyCode = keycode;
+		m_KeyState = false;
+		m_PreviousState = false;
+		m_OnPressFunction = nullptr;
+		m_OnReleaseFunction = nullptr;
 	};
 
-	IM_MOUSE_CODE	GetMouseCode() { return mKeyCode; }
-	bool			GetState() { return mState; }
-	void			SetState(bool state) { mState = state; }
-	void			SetPreviousState(bool state) { mPreviousState = state; };
-	bool			GetPreviousState() { return mPreviousState; }
+	IM_MOUSE_CODE	GetMouseCode() { return m_KeyCode; }
+	bool			GetState() { return m_KeyState; }
+	void			SetState(bool state) { m_KeyState = state; }
+	void			SetPreviousState(bool state) { m_PreviousState = state; };
+	bool			GetPreviousState() { return m_PreviousState; }
 
 	void Bind(IM_KEY_STATE state, std::function<void()> func)
 	{
@@ -179,21 +179,21 @@ public:
 		case IM_KEY_STATE::IM_KEY_PRESSED:
 			if (func)
 			{
-				mPressFunction = func;
+				m_OnPressFunction = func;
 			}
 			break;
 
 		case IM_KEY_STATE::IM_KEY_HELD:
 			if (func)
 			{
-				mHeldFunction = func;
+				m_OnHoldFunction = func;
 			}
 			break;
 
 		case IM_KEY_STATE::IM_KEY_RELEASED:
 			if (func)
 			{
-				mReleaseFunction = func;
+				m_OnReleaseFunction = func;
 			}
 			break;
 		default:
@@ -204,35 +204,35 @@ public:
 
 	void RunOnPressFunction()
 	{
-		if (mPressFunction)
-			mPressFunction();
+		if (m_OnPressFunction)
+			m_OnPressFunction();
 	};
 
 	void RunOnHeldFunction()
 	{
-		if (mHeldFunction)
-			mHeldFunction();
+		if (m_OnHoldFunction)
+			m_OnHoldFunction();
 	}
 
 	void RunOnReleaseFunction()
 	{
-		if (mReleaseFunction)
-			mReleaseFunction();
+		if (m_OnReleaseFunction)
+			m_OnReleaseFunction();
 	}
 };
 
 class HTECH_FUNCTION_EXPORT InputManager
 {
 private:
-	static InputManager* mInstance;
+	static InputManager* m_Instance;
 
-	const int mKeyCount = 36;
-	const int mMouseCount = 5;
-	bool mIsMouseDown;
-	Vector2 mMousePositionScreenSpace;
-	Vector2 mMousePositionWorldSpace;
+	const int m_KeyCount = 36;
+	const int m_MouseCount = 5;
+	bool m_IsMouseDown;
+	Vector2 m_MousePosScreenSpace;
+	Vector2 m_MousePosWorldSpace;
 
-	Key mKeyStates[36] =
+	Key m_KeyStates[36] =
 	{
 		/*00*/ IM_KEY_CODE::IM_KEY_1,
 		/*01*/ IM_KEY_CODE::IM_KEY_2,
@@ -272,7 +272,7 @@ private:
 		/*35*/ IM_KEY_CODE::IM_KEY_F12
 	};
 
-	Mouse mMouseStates[5] =
+	Mouse m_MouseStates[5] =
 	{
 		/*00*/ IM_MOUSE_CODE::IM_MOUSE_SCROLL_UP,
 		/*01*/ IM_MOUSE_CODE::IM_MOUSE_SCROLL_DOWN,

@@ -14,8 +14,8 @@ private:
 	ScriptLoader();
 	~ScriptLoader();
 
-	static HINSTANCE mLoadedLibrary;
-	static std::unordered_map<std::string, ScriptObject*> mLoadedScriptMap;
+	static HINSTANCE m_LoadedLibraryInstance;
+	static std::unordered_map<std::string, ScriptObject*> m_LoadedScriptMap;
 
 	static void UnloadLibrary();
 	static void LoadCustomScriptDLL(std::string libraryLocation);

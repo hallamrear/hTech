@@ -285,7 +285,6 @@ xcopy /Y /E /H /C /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
     <ClInclude Include="UI_TextPanel.h" />
     <ClInclude Include="UI_VariableTracker.h" />
     <ClInclude Include="Vector2.h" />
-    <ClInclude Include="Vector3.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>
   <ItemGroup>
@@ -342,7 +341,6 @@ xcopy /Y /E /H /C /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
     <ClCompile Include="UI_TextPanel.cpp" />
     <ClCompile Include="UI_VariableTracker.cpp" />
     <ClCompile Include="Vector2.cpp" />
-    <ClCompile Include="Vector3.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

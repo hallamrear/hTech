@@ -10,7 +10,7 @@
 class HTECH_FUNCTION_EXPORT TransformComponent : public Component
 {
 protected:
-	Transform mTransform;
+	Transform m_Transform;
 	void RenderProperties();
 
 public:

@@ -5,10 +5,10 @@
 #include "rapidjson/rapidjson.h"
 #include "imgui.h"
 
-OrientedBoundingBox::OrientedBoundingBox(Transform& transform, float size_x, float size_y)
+OrientedBoundingBox::OrientedBoundingBox(const Transform& transform, float size_x, float size_y)
 	: BoundingBox(transform, size_x, size_y)
 {
-	mType = COLLIDER_TYPE::COLLIDER_OBB;
+	m_Type = COLLIDER_TYPE::COLLIDER_OBB;
 	CalculateRotations();
 }
 
@@ -19,13 +19,13 @@ OrientedBoundingBox::~OrientedBoundingBox()
 
 void OrientedBoundingBox::CalculateRotations()
 {
-	if (mTransform.Rotation != 0.0f || mTransform.Rotation != 360.0f)
+	if (m_EntityTransform.Rotation != 0.0f || m_EntityTransform.Rotation != 360.0f)
 	{
-		float rotation = 360.0f - mTransform.Rotation;
-			 TopLeft = MathsHelp::RotatePointAroundOriginDegrees(Vector2(mTransform.Position.X - (Size.X / 2), mTransform.Position.Y + (Size.Y / 2)), rotation, mTransform.Position);
-		  BottomLeft = MathsHelp::RotatePointAroundOriginDegrees(Vector2(mTransform.Position.X - (Size.X / 2), mTransform.Position.Y - (Size.Y / 2)), rotation, mTransform.Position);
-			TopRight = MathsHelp::RotatePointAroundOriginDegrees(Vector2(mTransform.Position.X + (Size.X / 2), mTransform.Position.Y + (Size.Y / 2)), rotation, mTransform.Position);
-		 BottomRight = MathsHelp::RotatePointAroundOriginDegrees(Vector2(mTransform.Position.X + (Size.X / 2), mTransform.Position.Y - (Size.Y / 2)), rotation, mTransform.Position);
+		float rotation = 360.0f - m_EntityTransform.Rotation;
+		m_TopLeft = MathsHelp::RotatePointAroundOriginDegrees(Vector2(m_EntityTransform.Position.X - (m_Size.X / 2), m_EntityTransform.Position.Y + (m_Size.Y / 2)), rotation, m_EntityTransform.Position);
+		m_BottomLeft = MathsHelp::RotatePointAroundOriginDegrees(Vector2(m_EntityTransform.Position.X - (m_Size.X / 2), m_EntityTransform.Position.Y - (m_Size.Y / 2)), rotation, m_EntityTransform.Position);
+		m_TopRight = MathsHelp::RotatePointAroundOriginDegrees(Vector2(m_EntityTransform.Position.X + (m_Size.X / 2), m_EntityTransform.Position.Y + (m_Size.Y / 2)), rotation, m_EntityTransform.Position);
+		m_BottomRight = MathsHelp::RotatePointAroundOriginDegrees(Vector2(m_EntityTransform.Position.X + (m_Size.X / 2), m_EntityTransform.Position.Y - (m_Size.Y / 2)), rotation, m_EntityTransform.Position);
 	}
 }
 
@@ -40,10 +40,10 @@ void OrientedBoundingBox::Render(SDL_Renderer& renderer)
 	{
 		SDL_SetRenderDrawColor(&renderer, 0, 255, 255, 255);
 
-		const Vector2 TopLeft_ScreenSpace = Camera::WorldToScreen(TopLeft);
-		const Vector2 TopRight_ScreenSpace = Camera::WorldToScreen(TopRight);
-		const Vector2 BottomLeft_ScreenSpace = Camera::WorldToScreen(BottomLeft);
-		const Vector2 BottomRight_ScreenSpace = Camera::WorldToScreen(BottomRight);
+		const Vector2 TopLeft_ScreenSpace = Camera::WorldToScreen(m_TopLeft);
+		const Vector2 TopRight_ScreenSpace = Camera::WorldToScreen(m_TopRight);
+		const Vector2 BottomLeft_ScreenSpace = Camera::WorldToScreen(m_BottomLeft);
+		const Vector2 BottomRight_ScreenSpace = Camera::WorldToScreen(m_BottomRight);
 
 		//Top
 		SDL_RenderDrawLine(&renderer, (int)TopLeft_ScreenSpace.X, (int)TopLeft_ScreenSpace.Y, (int)TopRight_ScreenSpace.X, (int)TopRight_ScreenSpace.Y);
@@ -59,10 +59,10 @@ void OrientedBoundingBox::Render(SDL_Renderer& renderer)
 //Fills array with points of the box.
 void OrientedBoundingBox::GetColliderAsPoints(Vector2 points[]) const
 {
-	points[0] = BottomLeft;
-	points[1] = BottomRight;
-	points[2] = TopRight;
-	points[3] = TopLeft;
+	points[0] = m_BottomLeft;
+	points[1] = m_BottomRight;
+	points[2] = m_TopRight;
+	points[3] = m_TopLeft;
 }
 
 void OrientedBoundingBox::Serialize(Serializer& writer) const

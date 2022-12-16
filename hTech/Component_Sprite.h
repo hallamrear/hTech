@@ -8,8 +8,8 @@ class HTECH_FUNCTION_EXPORT SpriteComponent :
     public Component
 {
 private:
-    Texture* mTexture;
-    bool     mIsFlipped;
+    Texture* m_SDLTexture;
+    bool     m_IsFlipped;
 
 protected:
     void RenderProperties();

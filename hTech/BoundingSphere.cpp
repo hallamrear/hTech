@@ -6,11 +6,11 @@
 #include "rapidjson/rapidjson.h"
 #include "imgui.h"
 
-BoundingSphere::BoundingSphere(Transform& transform, float radius, int pointCount)
+BoundingSphere::BoundingSphere(const Transform& transform, float radius, int pointCount)
 	: Collider(transform)
 {
-	mPointCount = pointCount;
-	mType = COLLIDER_TYPE::COLLIDER_SPHERE;
+	m_PointCount = pointCount;
+	m_Type = COLLIDER_TYPE::COLLIDER_SPHERE;
 	Radius = radius;
 }
 
@@ -32,11 +32,11 @@ void BoundingSphere::SetPointCount(int pointCount)
 {
 	if (pointCount > 4)
 	{
-		mPointCount = pointCount;
+		m_PointCount = pointCount;
 		return;
 	}
 
-	mPointCount = 4;
+	m_PointCount = 4;
 }
 
 void BoundingSphere::Render(SDL_Renderer& renderer)
@@ -46,13 +46,13 @@ void BoundingSphere::Render(SDL_Renderer& renderer)
 		//Fibonacci sphere
 		float angleIncrement = M_TAU * M_GOLDENRATIO;
 		SDL_SetRenderDrawColor(&renderer, 0, 255, 255, 255);
-		Vector2 centre = Camera::WorldToScreen(mTransform.Position);
+		Vector2 centre = Camera::WorldToScreen(m_EntityTransform.Position);
 		SDL_RenderDrawPoint(&renderer, (int)centre.X, (int)centre.Y);
 		Vector2 point;
 
-		for (int i = 0; i < mPointCount; i++)
+		for (int i = 0; i < m_PointCount; i++)
 		{
-			float t = (float)i / mPointCount;
+			float t = (float)i / m_PointCount;
 			float angle1 = acos(1 - 2 * t);
 			float angle2 = angleIncrement * i;
 
@@ -60,8 +60,8 @@ void BoundingSphere::Render(SDL_Renderer& renderer)
 			//float y = sin(angle1) * sin(angle2);
 			//float z = cos(angle1);
 
-			point.X = mTransform.Position.X + Radius * (float)cos(angle1);
-			point.Y = mTransform.Position.Y + Radius * (float)sin(angle2);
+			point.X = m_EntityTransform.Position.X + Radius * (float)cos(angle1);
+			point.Y = m_EntityTransform.Position.Y + Radius * (float)sin(angle2);
 			point = Camera::WorldToScreen(point);
 			SDL_RenderDrawPoint(&renderer, (int)point.X, (int)point.Y);
 		}
@@ -70,7 +70,7 @@ void BoundingSphere::Render(SDL_Renderer& renderer)
 
 Vector2 BoundingSphere::FindFurthestPoint(Vector2 direction) const
 {
-	return mTransform.Position + (direction.GetNormalized() * Radius);
+	return m_EntityTransform.Position + (direction.GetNormalized() * Radius);
 }
 
 void BoundingSphere::GetColliderAsPoints(Vector2 points[]) const
@@ -81,7 +81,7 @@ void BoundingSphere::GetColliderAsPoints(Vector2 points[]) const
 void BoundingSphere::Serialize(Serializer& writer) const
 {
 	writer.String("BoundingSphere_Radius");		writer.Double((double)Radius);
-	writer.String("BoundingSphere_PointCount"); writer.Int(mPointCount);
+	writer.String("BoundingSphere_PointCount"); writer.Int(m_PointCount);
 }
 
 void BoundingSphere::Deserialize(SerializedValue& value)
@@ -89,18 +89,18 @@ void BoundingSphere::Deserialize(SerializedValue& value)
 	auto radius = value.FindMember("BoundingSphere_Radius");
 	if (radius->value.IsDouble())
 	{
-		Radius = radius->value.GetDouble();
+		Radius = (float)radius->value.GetDouble();
 	}
 
 	auto pointCount = value.FindMember("BoundingSphere_PointCount");
 	if (pointCount->value.IsInt())
 	{
-		mPointCount = pointCount->value.GetInt();
+		m_PointCount = pointCount->value.GetInt();
 	}
 }
 
 void BoundingSphere::RenderProperties()
 {
 	ImGui::SliderFloat("Radius: ", &Radius, 1.0f, 512.0f, "%.0f");
-	ImGui::SliderInt("Point Count: ", &mPointCount, 4, 64);
+	ImGui::SliderInt("Point Count: ", &m_PointCount, 4, 64);
 }

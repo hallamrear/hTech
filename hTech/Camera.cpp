@@ -4,11 +4,11 @@
 #include "InputManager.h"
 #include "Console.h"
 
-Camera* Camera::mInstance = nullptr;
+Camera* Camera::m_Instance = nullptr;
 
 Camera::Camera()
 {
-	mPosition = Vector2();
+	m_Position = Vector2();
 
 	InputManager::Bind(IM_KEY_CODE::IM_KEY_UP_ARROW, IM_KEY_STATE::IM_KEY_HELD,
 		[this]
@@ -45,26 +45,26 @@ Camera::Camera()
 
 Camera::~Camera()
 {
-	delete mInstance;
-	mInstance = nullptr;
+	delete m_Instance;
+	m_Instance = nullptr;
 }
 
 Camera* Camera::Get()
 {	 
-	if (!mInstance)
-		mInstance = new Camera();
+	if (!m_Instance)
+		m_Instance = new Camera();
 
-	return mInstance;
+	return m_Instance;
 }
 
-void Camera::SetCameraPosition_Impl(Vector2 position)
+void Camera::SetCameraPosition_Impl(Vector2 Position)
 {
-	mPosition = position;
+	m_Position = Position;
 }
 
-void Camera::SetCameraPosition(Vector2 position)
+void Camera::SetCameraPosition(Vector2 Position)
 {
-	Get()->SetCameraPosition_Impl(position);
+	Get()->SetCameraPosition_Impl(Position);
 }
 
 Vector2 Camera::GetCameraPosition()
@@ -74,7 +74,7 @@ Vector2 Camera::GetCameraPosition()
 
 Vector2 Camera::GetCameraPosition_Impl()
 {
-	return mPosition;
+	return m_Position;
 }
 
 Vector2 Camera::WorldToScreen(Vector2 worldPosition)
@@ -84,7 +84,7 @@ Vector2 Camera::WorldToScreen(Vector2 worldPosition)
 
 Vector2 Camera::WorldToScreen_Impl(Vector2 worldPosition)
 {
-	Vector2 camPosition = mPosition;
+	Vector2 camPosition = m_Position;
 	camPosition.Y *= -1;
 	Vector2 wp = worldPosition;
 	wp.Y *= -1;
@@ -112,7 +112,7 @@ Vector2 Camera::ScreenToWorld_Impl(Vector2 screenPosition)
 	WindowCentre.X = Console::Query("WindowCentreX");
 	WindowCentre.Y = Console::Query("WindowCentreY");
 
-	Vector2 camPosition = mPosition;
+	Vector2 camPosition = m_Position;
 	camPosition.Y *= -1;
 	Vector2 out = Vector2((screenPosition + camPosition) - WindowCentre);
 	out.Y *= -1;
@@ -122,10 +122,10 @@ Vector2 Camera::ScreenToWorld_Impl(Vector2 screenPosition)
 void Camera::RenderProperties_Impl()
 {
 	ImGui::Begin("Camera details");
-	float position[2] = { mPosition.X, mPosition.Y };
-	ImGui::InputFloat2("Position", position);
-	mPosition.X = position[0];
-	mPosition.Y = position[1];
+	float Position[2] = { m_Position.X, m_Position.Y };
+	ImGui::InputFloat2("Position", Position);
+	m_Position.X = Position[0];
+	m_Position.Y = Position[1];
 
 	ImGui::End();
 }

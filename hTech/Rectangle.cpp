@@ -21,20 +21,20 @@ WorldRectangle::WorldRectangle(int x, int y, int w, int h)
 void WorldRectangle::Render(SDL_Renderer& renderer, bool drawFromCenter)
 {
 	SDL_Rect rect{};
-	Vector2 position = Vector2();
+	Vector2 Position = Vector2();
 	if (drawFromCenter)
 	{
-		position = Vector2((float)(X - (W / 2)), (float)(Y + (H / 2)));
+		Position = Vector2((float)(X - (W / 2)), (float)(Y + (H / 2)));
 	}
 	else
 	{
-		position.X = (float)X;
-		position.Y = (float)Y;
+		Position.X = (float)X;
+		Position.Y = (float)Y;
 	}
 
-	position = Camera::WorldToScreen(position);
-	rect.x = (int)position.X;
-	rect.y = (int)position.Y;
+	Position = Camera::WorldToScreen(Position);
+	rect.x = (int)Position.X;
+	rect.y = (int)Position.Y;
 	rect.w = W;
 	rect.h = H;
 	SDL_RenderDrawRect(&renderer, &rect);

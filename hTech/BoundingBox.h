@@ -12,12 +12,17 @@
 class HTECH_FUNCTION_EXPORT BoundingBox
 	: public Collider
 {
-public:
-	Vector2 TopLeft;
-	Vector2 BottomRight;
-	Vector2 Size;
+protected:
+	Vector2 m_TopLeft;
+	Vector2 m_BottomRight;
+	Vector2 m_Size;
 
-	BoundingBox(Transform& transform, float size_x, float size_y);
+public:
+	const Vector2 GetTopLeft() const;
+	const Vector2 GetBottomRight() const;
+	const Vector2 GetSize() const;	
+
+	BoundingBox(const Transform& transform, float size_x, float size_y);
 	virtual ~BoundingBox();
 	virtual void Update(float DeltaTime);
 	virtual void Render(SDL_Renderer& renderer);

@@ -8,20 +8,20 @@
 
 class HTECH_FUNCTION_EXPORT AnimationController
 {
-	float mTimeBetweenFrames;
-	float mTimeElapsed;
-	float mDuration;
-	unsigned int mCurrentFrame;
-	Texture* mAnimationSheet;
-	bool mIsLooping;
-	unsigned int mCurrentAnimation;
-	unsigned int mTotalFrames;
+	float m_TimeBetweenFrames;
+	float m_TimeElapsed;
+	float m_Duration;
+	unsigned int m_CurrentFrame;
+	Texture* m_AnimationSheet;
+	bool m_IsLooping;
+	unsigned int m_CurrentAnimation;
+	unsigned int m_TotalFrames;
 
 	//If the animation does not loop, this will set to true when it has finished playing.
-	bool mHasFinished;
+	bool m_HasFinished;
+	Vector2 m_FrameSize;
 
 public:
-	Vector2 FrameSize;
 
 	AnimationController(std::string sheetPath, unsigned int numberOfAnimations, unsigned int frameCount, float duration, bool looping);
 	~AnimationController();
@@ -29,6 +29,7 @@ public:
 	bool HasFinished();
 	void Start();
 	void SetAnimation(unsigned int animation);
+	const Vector2 GetFrameSize() const;
 	void Update(float DeltaTime);
 	void Render(SDL_Renderer& renderer, Transform transform);
 	void Render(SDL_Renderer& renderer, Transform transform, bool flipped);

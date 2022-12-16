@@ -8,7 +8,7 @@
 #include "Component_Transform.h"
 #include "Component_Rigidbody.h"
 
-Collider::Collider(Transform& transform) : mTransform(transform), mType(COLLIDER_TYPE::COLLIDER_UNKNOWN), IsOverlap(false)
+Collider::Collider(const Transform& transform) : m_EntityTransform(transform), m_Type(COLLIDER_TYPE::COLLIDER_UNKNOWN), m_IsOverlap(false)
 {
 
 }
@@ -24,7 +24,7 @@ Vector2 Collision::FindClosestPointOnPolygon(const BoundingSphere& circle, const
 	for (int i = 0; i < polygonVertexCount; i++)
 	{
 		Vector2 v = vertices[i];
-		float distance = Vector2(v - circle.mTransform.Position).GetMagnitude();
+		float distance = Vector2(v - circle.GetEntityTransform().Position).GetMagnitude();
 
 		if (distance < minDistance)
 		{
@@ -55,14 +55,16 @@ bool Collision::CheckCollision_OBBvsSPHERE(const OrientedBoundingBox& one, const
 
 bool Collision::CheckCollision_AABBvsSPHERE(const BoundingBox& one, const BoundingSphere& two, CollisionManifold* const manifold)
 {
-	OrientedBoundingBox obb{ one.mTransform, one.Size.X, one.Size.Y };
+	Vector2 size = one.GetSize();
+	
+	OrientedBoundingBox obb{ one.GetEntityTransform(), size.X, size.Y };
 	return SeperatingAxisTheory_PolygonCircle(4, obb, two, manifold);
 }
 
 bool Collision::CheckCollision_SPHEREvsSPHERE(const BoundingSphere& one, const BoundingSphere& two, CollisionManifold* const manifold)
 {
-	Vector2 p1 = one.mTransform.Position;
-	Vector2 p2 = two.mTransform.Position;
+	Vector2 p1 = one.GetEntityTransform().Position;
+	Vector2 p2 = two.GetEntityTransform().Position;
 	Vector2 distance = p2 - p1;
 	Vector2 distanceN = distance.GetNormalized();
 
@@ -78,7 +80,7 @@ bool Collision::CheckCollision_SPHEREvsSPHERE(const BoundingSphere& one, const B
 
 		//todo : contact points for sphere/sphere
 		float dtp = one.Radius - manifold->Depth;
-		Vector2 contact = one.mTransform.Position + distanceN * dtp;
+		Vector2 contact = one.GetEntityTransform().Position + distanceN * dtp;
 	}
 
 	return manifold->HasCollided;
@@ -209,7 +211,7 @@ bool Collision::SeperatingAxisTheory_PolygonPolygon(const int shapeOnePointCount
 	manifold->Depth /= manifold->Normal.GetMagnitude();
 	manifold->Normal = manifold->Normal.GetNormalized();
 
-	Vector2 direction = two.mTransform.Position - one.mTransform.Position;
+	Vector2 direction = two.GetEntityTransform().Position - one.GetEntityTransform().Position;
 
 	if (direction.Dot(manifold->Normal) < 0.0f)
 	{
@@ -256,9 +258,9 @@ bool Collision::SeperatingAxisTheory_PolygonCircle(const int polygonVertexCount,
 		}
 		///
 		//Circle Projection
-		Vector2 directionScaled = axisProj * circleCollider.Radius;
-		Vector2 p1 = circleCollider.mTransform.Position + directionScaled;
-		Vector2 p2 = circleCollider.mTransform.Position - directionScaled;
+		const Vector2 directionScaled = axisProj * circleCollider.Radius;
+		const Vector2 p1 = circleCollider.GetEntityTransform().Position + directionScaled;
+		const Vector2 p2 = circleCollider.GetEntityTransform().Position - directionScaled;
 		//get the min and max of the projection extents
 		min_r1 = p1.Dot(axisProj);
 		max_r1 = p2.Dot(axisProj);
@@ -291,7 +293,7 @@ bool Collision::SeperatingAxisTheory_PolygonCircle(const int polygonVertexCount,
 	}
 
 	Vector2 closestPoint = FindClosestPointOnPolygon(circleCollider, polygonCollider, polygonVertexCount);
-	axisProj = closestPoint - circleCollider.mTransform.Position;
+	axisProj = closestPoint - circleCollider.GetEntityTransform().Position;
 	axisProj = axisProj.GetNormalized();
 
 	///Projection bit
@@ -308,8 +310,8 @@ bool Collision::SeperatingAxisTheory_PolygonCircle(const int polygonVertexCount,
 	///
 	//Circle Projection
 	Vector2 directionScaled = axisProj * circleCollider.Radius;
-	Vector2 p1 = circleCollider.mTransform.Position + directionScaled;
-	Vector2 p2 = circleCollider.mTransform.Position - directionScaled;
+	Vector2 p1 = circleCollider.GetEntityTransform().Position + directionScaled;
+	Vector2 p2 = circleCollider.GetEntityTransform().Position - directionScaled;
 	//get the min and max of the projection extents
 	min_r1 = p1.Dot(axisProj);
 	max_r1 = p2.Dot(axisProj);
@@ -343,7 +345,7 @@ bool Collision::SeperatingAxisTheory_PolygonCircle(const int polygonVertexCount,
 	manifold->Depth /= manifold->Normal.GetMagnitude();
 	manifold->Normal = manifold->Normal.GetNormalized();
 
-	Vector2 direction = polygonCollider.mTransform.Position - circleCollider.mTransform.Position;
+	Vector2 direction = polygonCollider.GetEntityTransform().Position - circleCollider.GetEntityTransform().Position;
 
 	if (direction.Dot(manifold->Normal) < 0.0f)
 	{
@@ -480,7 +482,7 @@ bool Collision::SeperatingAxisTheory_Depreciated(const int shapeOnePointCount, c
 	manifold->Depth /= manifold->Normal.GetMagnitude();
 	manifold->Normal = manifold->Normal.GetNormalized();
 
-	Vector2 direction = two.mTransform.Position - one.mTransform.Position;
+	Vector2 direction = two.GetEntityTransform().Position - one.GetEntityTransform().Position;
 
 	if (direction.Dot(manifold->Normal) < 0.0f)
 	{
@@ -498,12 +500,12 @@ bool Collision::SeperatingAxisTheory_Depreciated(const int shapeOnePointCount, c
 
 bool Collision::CheckCollision_POLYGONvsPOLYGON(const BoundingPolygon& one, const BoundingPolygon& two, CollisionManifold* const manifold)
 {
-	return SeperatingAxisTheory_PolygonPolygon(one.PointCount, one, two.PointCount, two, manifold);
+	return SeperatingAxisTheory_PolygonPolygon(one.GetPointCount(), one, two.GetPointCount(), two, manifold);
 }
 
 bool Collision::CheckCollision_POLYGONvsOBB(const BoundingPolygon& one, const OrientedBoundingBox& two, CollisionManifold* const manifold)
 {
-	return SeperatingAxisTheory_PolygonPolygon(one.PointCount, one, 4, two, manifold);
+	return SeperatingAxisTheory_PolygonPolygon(one.GetPointCount(), one, 4, two, manifold);
 }
 
 //You have to pass in a created collision manifold else itll just return false.
@@ -517,32 +519,35 @@ bool Collision::CheckCollision(const Collider& one, const Collider& two, Collisi
 	manifold->Normal = Vector2();
 	manifold->ObjA = nullptr;
 	manifold->ObjB = nullptr;
+
+	COLLIDER_TYPE colliderOneType = one.GetType();
+	COLLIDER_TYPE colliderTwoType = two.GetType();
 	
-	if (one.mType == COLLIDER_TYPE::COLLIDER_AABB && two.mType == COLLIDER_TYPE::COLLIDER_AABB)
+	if (colliderOneType == COLLIDER_TYPE::COLLIDER_AABB && colliderTwoType == COLLIDER_TYPE::COLLIDER_AABB)
 		return CheckCollision_AABBvsAABB(dynamic_cast<const BoundingBox&>(one), dynamic_cast<const BoundingBox&>(two), manifold);
-	if (one.mType == COLLIDER_TYPE::COLLIDER_SPHERE && two.mType == COLLIDER_TYPE::COLLIDER_SPHERE)
+	if (colliderOneType == COLLIDER_TYPE::COLLIDER_SPHERE && colliderTwoType == COLLIDER_TYPE::COLLIDER_SPHERE)
 		return CheckCollision_SPHEREvsSPHERE(dynamic_cast<const BoundingSphere&>(one), dynamic_cast<const BoundingSphere&>(two), manifold);
-	if (one.mType == COLLIDER_TYPE::COLLIDER_AABB && two.mType == COLLIDER_TYPE::COLLIDER_SPHERE)
+	if (colliderOneType == COLLIDER_TYPE::COLLIDER_AABB && colliderTwoType == COLLIDER_TYPE::COLLIDER_SPHERE)
 		return CheckCollision_AABBvsSPHERE(dynamic_cast<const BoundingBox&>(one), dynamic_cast<const BoundingSphere&>(two), manifold);
-	if (one.mType == COLLIDER_TYPE::COLLIDER_SPHERE && two.mType == COLLIDER_TYPE::COLLIDER_AABB)
+	if (colliderOneType == COLLIDER_TYPE::COLLIDER_SPHERE && colliderTwoType == COLLIDER_TYPE::COLLIDER_AABB)
 		return CheckCollision_AABBvsSPHERE(dynamic_cast<const BoundingBox&>(two), dynamic_cast<const BoundingSphere&>(one), manifold);
-	if (one.mType == COLLIDER_TYPE::COLLIDER_OBB && two.mType == COLLIDER_TYPE::COLLIDER_SPHERE)
+	if (colliderOneType == COLLIDER_TYPE::COLLIDER_OBB && colliderTwoType == COLLIDER_TYPE::COLLIDER_SPHERE)
 		return CheckCollision_OBBvsSPHERE(dynamic_cast<const OrientedBoundingBox&>(one), dynamic_cast<const BoundingSphere&>(two), manifold);
-	if (one.mType == COLLIDER_TYPE::COLLIDER_SPHERE && two.mType == COLLIDER_TYPE::COLLIDER_OBB)
+	if (colliderOneType == COLLIDER_TYPE::COLLIDER_SPHERE && colliderTwoType == COLLIDER_TYPE::COLLIDER_OBB)
 		return CheckCollision_OBBvsSPHERE(dynamic_cast<const OrientedBoundingBox&>(two), dynamic_cast<const BoundingSphere&>(one), manifold);
-	if (one.mType == COLLIDER_TYPE::COLLIDER_AABB && two.mType == COLLIDER_TYPE::COLLIDER_OBB)
+	if (colliderOneType == COLLIDER_TYPE::COLLIDER_AABB && colliderTwoType == COLLIDER_TYPE::COLLIDER_OBB)
 		return CheckCollision_AABBvsOBB(dynamic_cast<const BoundingBox&>(one), dynamic_cast<const OrientedBoundingBox&>(two), manifold);
-	if (one.mType == COLLIDER_TYPE::COLLIDER_OBB && two.mType == COLLIDER_TYPE::COLLIDER_AABB)
+	if (colliderOneType == COLLIDER_TYPE::COLLIDER_OBB && colliderTwoType == COLLIDER_TYPE::COLLIDER_AABB)
 		return CheckCollision_AABBvsOBB(dynamic_cast<const BoundingBox&>(two), dynamic_cast<const OrientedBoundingBox&>(one), manifold);
-	if (one.mType == COLLIDER_TYPE::COLLIDER_OBB && two.mType == COLLIDER_TYPE::COLLIDER_OBB)
+	if (colliderOneType == COLLIDER_TYPE::COLLIDER_OBB && colliderTwoType == COLLIDER_TYPE::COLLIDER_OBB)
 		return CheckCollision_OBBvsOBB(dynamic_cast<const OrientedBoundingBox&>(one), dynamic_cast<const OrientedBoundingBox&>(two), manifold);
 
 
-	if (one.mType == COLLIDER_TYPE::COLLIDER_POLYGON && two.mType == COLLIDER_TYPE::COLLIDER_POLYGON)
+	if (colliderOneType == COLLIDER_TYPE::COLLIDER_POLYGON && colliderTwoType == COLLIDER_TYPE::COLLIDER_POLYGON)
 		return CheckCollision_POLYGONvsPOLYGON(dynamic_cast<const BoundingPolygon&>(one), dynamic_cast<const BoundingPolygon&>(two), manifold);
-	if (one.mType == COLLIDER_TYPE::COLLIDER_POLYGON && two.mType == COLLIDER_TYPE::COLLIDER_OBB)
+	if (colliderOneType == COLLIDER_TYPE::COLLIDER_POLYGON && colliderTwoType == COLLIDER_TYPE::COLLIDER_OBB)
 		return CheckCollision_POLYGONvsOBB(dynamic_cast<const BoundingPolygon&>(one), dynamic_cast<const OrientedBoundingBox&>(two), manifold);
-	if (one.mType == COLLIDER_TYPE::COLLIDER_OBB && two.mType == COLLIDER_TYPE::COLLIDER_POLYGON)
+	if (colliderOneType == COLLIDER_TYPE::COLLIDER_OBB && colliderTwoType == COLLIDER_TYPE::COLLIDER_POLYGON)
 		return CheckCollision_POLYGONvsOBB(dynamic_cast<const BoundingPolygon&>(two), dynamic_cast<const OrientedBoundingBox&>(one), manifold);
 
 
@@ -612,13 +617,28 @@ void Collision::ResolveCollision(RigidbodyComponent& one, RigidbodyComponent& tw
 
 void Collider::RenderProperties()
 {
-	ImGui::Checkbox("Is Overlap?", &IsOverlap);
+	ImGui::Checkbox("Is Overlap?", &m_IsOverlap);
+}
+
+const Transform& Collider::GetEntityTransform() const
+{
+	return m_EntityTransform;
+}
+
+const COLLIDER_TYPE Collider::GetType() const
+{
+	return m_Type;
+}
+
+const bool Collider::IsOverlap() const
+{
+	return m_IsOverlap;
 }
 
 void Collider::Serialize(Serializer& writer) const
 {
 	writer.String("Is Overlap");
-	writer.Bool(IsOverlap);
+	writer.Bool(m_IsOverlap);
 }
 
 void Collider::Deserialize(SerializedValue& value)
@@ -633,7 +653,7 @@ void Collider::Deserialize(SerializedValue& value)
 
 		if (overlapMember->value.IsBool())
 		{
-			IsOverlap = overlapMember->value.GetBool();
+			m_IsOverlap = overlapMember->value.GetBool();
 		}
 	}
 }

@@ -20,9 +20,9 @@ class HTECH_FUNCTION_EXPORT Text;
 class HTECH_FUNCTION_EXPORT World
 {
 private:
-	static World*								mInstance;
+	static World*								m_Instance;
 	std::unordered_map<std::string, Entity*>	m_EntityMap;
-	SpatialHash*								mWorldHashMap;
+	SpatialHash*								m_WorldHashMap;
 
 	Entity*					CreateEntity_Impl(std::string Name = "unnamed", Transform SpawnTransform = Transform(), Entity* Parent = nullptr);
 	void					DestroyEntity_Impl(Entity* entity);

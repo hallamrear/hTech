@@ -7,12 +7,12 @@
 #include "Console.h"
 #include "UI.h"
 
-Log* Log::mInstance = nullptr;
+Log* Log::m_Instance = nullptr;
 
 Log::Log()
 {
 	mMessages = std::vector<std::pair<LogLevel, std::string>>();
-	mTextElements = std::vector<Text*>();
+	m_TextElements = std::vector<Text*>();
 	mMessageQueue = std::deque<std::pair<LogLevel, std::string>>();
 }
 
@@ -20,8 +20,8 @@ Log::~Log()
 {
 	mMessages.clear();
 
-	delete mInstance;
-	mInstance = nullptr;
+	delete m_Instance;
+	m_Instance = nullptr;
 }
 
 void Log::LogMessage(LogLevel indicator, const char* str)
@@ -45,10 +45,10 @@ void Log::LogMessage_Impl(LogLevel indicator, std::string str)
 
 Log* Log::Get()
 {
-	if (!mInstance)
-		mInstance = new Log();
+	if (!m_Instance)
+		m_Instance = new Log();
 
-	return mInstance;
+	return m_Instance;
 }
 
 void Log::Render_Impl(SDL_Renderer& renderer)
@@ -59,9 +59,9 @@ void Log::Render_Impl(SDL_Renderer& renderer)
 
 	int count = Console::Query("MaxLogMessages") - 1;
 
-	if (mTextElements.size() < count)
+	if (m_TextElements.size() < count)
 	{
-		count = mTextElements.size();
+		count = m_TextElements.size();
 	}
 
 	if (count != 0)
@@ -110,36 +110,36 @@ void Log::Update_Impl(float DeltaTime)
 {
 	//todo : reorder how it updates the list
 
-	for (auto& itr : mTextElements)
+	for (auto& itr : m_TextElements)
 		itr->SetString("");
 
 	int loopCount = Console::Query("MaxLogMessages") -1;
 
-	if (mTextElements.size() < loopCount)
+	if (m_TextElements.size() < loopCount)
 	{
-		loopCount = mTextElements.size();
+		loopCount = m_TextElements.size();
 	}
 
 	if (loopCount != 0)
 	{
 		for (int i = loopCount; i >= 0; i--)
 		{
-			if (mTextElements[i] != nullptr)
+			if (m_TextElements[i] != nullptr)
 			{
-				mTextElements[i]->SetString(mMessageQueue[i].second);
+				m_TextElements[i]->SetString(mMessageQueue[i].second);
 
 				switch (mMessageQueue[i].first)
 				{
 				case LogLevel::LOG_MESSAGE:
-					mTextElements[i]->SetColour(Colour(0, 0, 255, 255));
+					m_TextElements[i]->SetColour(Colour(0, 0, 255, 255));
 					break;
 
 				case LogLevel::LOG_ERROR:
-					mTextElements[i]->SetColour(Colour(255, 0, 0, 255));
+					m_TextElements[i]->SetColour(Colour(255, 0, 0, 255));
 					break;
 
 				case LogLevel::LOG_WARNING:
-					mTextElements[i]->SetColour(Colour(255, 255, 0, 255));
+					m_TextElements[i]->SetColour(Colour(255, 255, 0, 255));
 					break;
 
 				default:
@@ -149,7 +149,7 @@ void Log::Update_Impl(float DeltaTime)
 		}
 	}
 
-	for (auto& itr : mTextElements)
+	for (auto& itr : m_TextElements)
 		itr->Update(DeltaTime);
 }
 

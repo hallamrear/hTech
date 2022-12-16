@@ -16,12 +16,12 @@
 Entity::Entity(Transform SpawnTransform, std::string Name, Entity* Parent)
 {
 	IsEnabled = true;
-	mComponents = std::vector<Component*>();
+	m_Components = std::vector<Component*>();
 	AddComponent<TransformComponent>();
 	GetTransform() = SpawnTransform;
-	mIsWaitingToBeDestroyed = false;
-	mName = Name;
-	mIsAlive = true;
+	m_IsWaitingToBeDestroyed = false;
+	m_Name = Name;
+	m_IsAlive = true;
 
 	if (Parent != nullptr)
 	{
@@ -31,22 +31,22 @@ Entity::Entity(Transform SpawnTransform, std::string Name, Entity* Parent)
 
 Entity::~Entity()
 {
-	for (size_t i = 0; i < mComponents.size(); i++)
+	for (size_t i = 0; i < m_Components.size(); i++)
 	{
-		delete mComponents[i];
-		mComponents[i] = nullptr;
+		delete m_Components[i];
+		m_Components[i] = nullptr;
 	}
 
-	mComponents.clear();
+	m_Components.clear();
 }
 
 void Entity::Update(float DeltaTime)
 {
-	for (int i = 0; i != mComponents.size(); i++)
+	for (int i = 0; i != m_Components.size(); i++)
 	{
-		if (mComponents[i]->GetIsEnabled() == true)
+		if (m_Components[i]->GetIsEnabled() == true)
 		{
-			mComponents[i]->Update(DeltaTime);
+			m_Components[i]->Update(DeltaTime);
 		}
 	}
 }
@@ -55,11 +55,11 @@ void Entity::Render()
 {
 	SDL_Renderer& renderer = *Game::Renderer;
 
-	for (int i = 0; i != mComponents.size(); i++)
+	for (int i = 0; i != m_Components.size(); i++)
 	{
-		if (mComponents[i]->GetIsEnabled() == true)
+		if (m_Components[i]->GetIsEnabled() == true)
 		{
-			mComponents[i]->Render(renderer);
+			m_Components[i]->Render(renderer);
 		}
 	}
 
@@ -78,10 +78,10 @@ void Entity::RenderProperties()
 {
 	//This is called from editor window and so you can call imgui items directly.
 	ImGui::Checkbox("Enabled", &IsEnabled);
-	ImGui::InputText("Name: ", &mName);	
-	ImGui::Text("Component Count: %i", mComponents.size());
-	ImGui::Text("Alive: %i", mIsAlive);
-	ImGui::Text("Being Destroyed?: %i", mIsWaitingToBeDestroyed);
+	ImGui::InputText("Name: ", &m_Name);	
+	ImGui::Text("Component Count: %i", m_Components.size());
+	ImGui::Text("Alive: %i", m_IsAlive);
+	ImGui::Text("Being Destroyed?: %i", m_IsWaitingToBeDestroyed);
 	ImGui::Separator();
 	if (ImGui::CollapsingHeader("Components", ImGuiTreeNodeFlags_None))
 	{
@@ -124,15 +124,15 @@ void Entity::RenderProperties()
 
 		if (ImGui::BeginPopupContextItem("RemoveComponentPopup"))
 		{
-			for (size_t i = 1; i < mComponents.size(); i++)
+			for (size_t i = 1; i < m_Components.size(); i++)
 			{
 				ImGui::SetNextItemWidth(-FLT_MIN);
-				if (ImGui::Selectable(mComponents[i]->GetComponentName().c_str()))
+				if (ImGui::Selectable(m_Components[i]->GetComponentName().c_str()))
 				{
-					if (dynamic_cast<SpriteComponent*>(mComponents[i]))    { RemoveComponent<SpriteComponent>();	continue; }
-					if (dynamic_cast<AnimationComponent*>(mComponents[i])) { RemoveComponent<AnimationComponent>();	continue; }
-					if (dynamic_cast<ScriptComponent*>(mComponents[i]))    { RemoveComponent<ScriptComponent>();	continue; }
-					if (dynamic_cast<RigidbodyComponent*>(mComponents[i])) { RemoveComponent<RigidbodyComponent>(); continue; }
+					if (dynamic_cast<SpriteComponent*>(m_Components[i]))    { RemoveComponent<SpriteComponent>();	continue; }
+					if (dynamic_cast<AnimationComponent*>(m_Components[i])) { RemoveComponent<AnimationComponent>();	continue; }
+					if (dynamic_cast<ScriptComponent*>(m_Components[i]))    { RemoveComponent<ScriptComponent>();	continue; }
+					if (dynamic_cast<RigidbodyComponent*>(m_Components[i])) { RemoveComponent<RigidbodyComponent>(); continue; }
 					
 				}
 			}
@@ -153,20 +153,20 @@ void Entity::RenderProperties()
 
 		bool isComponentEnabled = false;
 		std::string label = "";
-		for (size_t i = 0; i < mComponents.size(); i++)
+		for (size_t i = 0; i < m_Components.size(); i++)
 		{
-			if (mComponents[i]->GetComponentName() != "Transform Component")
+			if (m_Components[i]->GetComponentName() != "Transform Component")
 			{
-				label = "##" + mComponents[i]->GetComponentName() + "componentEnabledCheckbox";
-				bool isComponentEnabled = mComponents[i]->GetIsEnabled();
+				label = "##" + m_Components[i]->GetComponentName() + "componentEnabledCheckbox";
+				bool isComponentEnabled = m_Components[i]->GetIsEnabled();
 				ImGui::Checkbox(label.c_str(), &isComponentEnabled);
-				mComponents[i]->SetIsEnabled(isComponentEnabled);
+				m_Components[i]->SetIsEnabled(isComponentEnabled);
 				ImGui::SameLine();
 			}
 
-			if (ImGui::CollapsingHeader(mComponents[i]->GetComponentName().c_str(), ImGuiTreeNodeFlags_None))
+			if (ImGui::CollapsingHeader(m_Components[i]->GetComponentName().c_str(), ImGuiTreeNodeFlags_None))
 			{
-				mComponents[i]->RenderProperties();
+				m_Components[i]->RenderProperties();
 			}
 		}
 	}
@@ -186,12 +186,12 @@ void Entity::SetParent(Entity* entity)
 
 bool Entity::GetIsBeingDestroyed() const
 {
-	return mIsWaitingToBeDestroyed;
+	return m_IsWaitingToBeDestroyed;
 }
 
 void Entity::Destroy()
 {
-	mIsWaitingToBeDestroyed = true;
+	m_IsWaitingToBeDestroyed = true;
 }
 
 Transform& Entity::GetTransform()
@@ -206,23 +206,23 @@ void Entity::ClampRotation()
 
 const std::string& Entity::GetName() const
 {
-	return mName;
+	return m_Name;
 }
 
 void Entity::Serialize(Serializer& writer) const
 {
 	writer.StartObject();
 
-	writer.String("Name");	  writer.String(mName.c_str());
-	writer.String("IsAlive"); writer.Bool(mIsAlive);
+	writer.String("Name");	  writer.String(m_Name.c_str());
+	writer.String("IsAlive"); writer.Bool(m_IsAlive);
 	writer.String("IsEnabled"); writer.Bool(IsEnabled);
 
 	writer.String("Components");
 	writer.StartArray();
-	for (size_t i = 0; i < mComponents.size(); i++)
+	for (size_t i = 0; i < m_Components.size(); i++)
 	{
 		writer.StartObject();
-		mComponents[i]->Serialize(writer);
+		m_Components[i]->Serialize(writer);
 		writer.EndObject();
 	}
 	writer.EndArray();
@@ -234,7 +234,7 @@ void Entity::Deserialize(SerializedValue& serializedEntity)
 {
 	if (serializedEntity["IsAlive"].IsBool())
 	{
-		mIsAlive = serializedEntity["IsAlive"].GetBool();
+		m_IsAlive = serializedEntity["IsAlive"].GetBool();
 	}
 
 	if (serializedEntity["IsEnabled"].IsBool())

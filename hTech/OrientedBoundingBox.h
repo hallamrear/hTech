@@ -9,12 +9,12 @@ class HTECH_FUNCTION_EXPORT OrientedBoundingBox : public BoundingBox
 {
 protected:
 	void CalculateRotations();
+	Vector2 m_TopRight;
+	Vector2 m_BottomLeft;
 
 public:
-	Vector2 TopRight;
-	Vector2 BottomLeft;
 
-	OrientedBoundingBox(Transform& transform, float size_x, float size_y);
+	OrientedBoundingBox(const Transform& transform, float size_x, float size_y);
 	~OrientedBoundingBox();
 
 	virtual void Update(float DeltaTime);

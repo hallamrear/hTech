@@ -1,8 +1,6 @@
 #pragma once
  #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
-
-
 class HTECH_FUNCTION_EXPORT PhysicsProperties
 {
 public:
@@ -34,6 +32,4 @@ public:
 	{
 
 	};
-
 };
-

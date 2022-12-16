@@ -4,17 +4,17 @@
 #include "Transform.h"
 #include "Game.h"
 
-TTF_Font* Text::mFont = nullptr;
+TTF_Font* Text::m_Font = nullptr;
 
 bool Text::CreateTTFFontAsset(const int& fontSize, const std::string& fontLocation)
 {
-	if (mFont)
+	if (m_Font)
 	{
 		DestroyTTFFontAsset();
 	}
 
-	mFont = TTF_OpenFont(fontLocation.c_str(), (int)fontSize);
-	if (!mFont)
+	m_Font = TTF_OpenFont(fontLocation.c_str(), (int)fontSize);
+	if (!m_Font)
 	{		
 		std::string str = TTF_GetError();
 		Log::LogMessage(LogLevel::LOG_ERROR, "FAILED TO LOAD FONT");
@@ -29,9 +29,9 @@ bool Text::CreateTTFFontAsset(const int& fontSize, const std::string& fontLocati
 
 bool Text::DestroyTTFFontAsset()
 {
-	if (mFont != nullptr)
+	if (m_Font != nullptr)
 	{
-		TTF_CloseFont(mFont);
+		TTF_CloseFont(m_Font);
 		Log::LogMessage(LogLevel::LOG_MESSAGE, "Font destroyed.");
 		return true;
 	}
@@ -41,9 +41,9 @@ bool Text::DestroyTTFFontAsset()
 
 void Text::CreateTextTexture()
 {
-	if (mIsDirty)
+	if (m_IsDirty)
 	{
-		if (mData == "")
+		if (m_Data == "")
 			return;
 
 		if (mTextTexture != nullptr)
@@ -53,9 +53,9 @@ void Text::CreateTextTexture()
 
 		SDL_Renderer& renderer = const_cast<SDL_Renderer&>(*Game::Renderer);
 		SDL_Surface* textSurface = nullptr;
-		SDL_Color color = { mColour.R, mColour.G, mColour.B, mColour.A };
+		SDL_Color color = { m_Colour.R, m_Colour.G, m_Colour.B, m_Colour.A };
 
-		textSurface = TTF_RenderUTF8_Blended_Wrapped(mFont, mData.c_str(), color, mWrapWidth);
+		textSurface = TTF_RenderUTF8_Blended_Wrapped(m_Font, m_Data.c_str(), color, m_WrapWidth);
 
 		if (!textSurface)
 		{
@@ -65,7 +65,7 @@ void Text::CreateTextTexture()
 		}
 
 		mTextTexture = SDL_CreateTextureFromSurface(&renderer, textSurface);
-		SDL_QueryTexture(mTextTexture, NULL, NULL, &mTextWidth, &mTextHeight);
+		SDL_QueryTexture(mTextTexture, NULL, NULL, &m_Width, &m_Height);
 
 		SDL_FreeSurface(textSurface);
 		textSurface = nullptr;
@@ -77,13 +77,13 @@ void Text::DestroyTextTexture()
 	SDL_DestroyTexture(mTextTexture);
 }
 
-Text::Text(Vector2 position, std::string text, Colour colour)
+Text::Text(Vector2 Position, std::string text, Colour colour)
 {
-	mIsDirty = true;
-	mColour = colour;
-	mData = text;
+	m_IsDirty = true;
+	m_Colour = colour;
+	m_Data = text;
 
-	if (mFont == nullptr)
+	if (m_Font == nullptr)
 	{
 		CreateTTFFontAsset();
 	}
@@ -92,7 +92,7 @@ Text::Text(Vector2 position, std::string text, Colour colour)
 
 Text::~Text()
 {
-	if (mFont != nullptr)
+	if (m_Font != nullptr)
 	{
 		DestroyTTFFontAsset();
 	}
@@ -101,13 +101,13 @@ Text::~Text()
 
 void Text::Update(float DeltaTime)
 {
-	if (mIsDirty)
+	if (m_IsDirty)
 	{
 		CreateTextTexture();
 
 		if (mTextTexture)
 		{
-			mIsDirty = false;
+			m_IsDirty = false;
 		}
 	}
 }
@@ -117,34 +117,34 @@ void Text::Render(SDL_Renderer& renderer)
 	if (mTextTexture)
 	{
 		SDL_Rect destRect{};
-		destRect.x = (int)mPosition.X;
-		destRect.y = (int)mPosition.Y;
-		destRect.w = mTextWidth;
-		destRect.h = mTextHeight;
+		destRect.x = (int)m_Position.X;
+		destRect.y = (int)m_Position.Y;
+		destRect.w = m_Width;
+		destRect.h = m_Height;
 		SDL_RenderCopy(&renderer, mTextTexture, NULL, &destRect);
 	}
 }
 
 void Text::SetWrapWidthInPixels(int width)
 {
-	mWrapWidth = width;
+	m_WrapWidth = width;
 }
 
 void Text::SetPosition(const Vector2& screenSpacePosition)
 {
-	mPosition = screenSpacePosition;
+	m_Position = screenSpacePosition;
 }
 
 void Text::SetString(const std::string& str)
 {
-	mData = str;
-	mIsDirty = true;
+	m_Data = str;
+	m_IsDirty = true;
 }
 
 void Text::SetColour(const Colour& colour)
 {
-	mColour = colour;
-	mIsDirty = true;
+	m_Colour = colour;
+	m_IsDirty = true;
 }
 
 void Text::SetString(const char* str)
@@ -154,5 +154,5 @@ void Text::SetString(const char* str)
 
 const Vector2 Text::GetTextureSize() const
 {
-	return Vector2((float)mTextWidth, (float)mTextHeight);
+	return Vector2((float)m_Width, (float)m_Height);
 }

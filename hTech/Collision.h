@@ -6,6 +6,7 @@
 #include "Vector2.h"
 #include "Helper.h"
 #include "Console.h"
+#include "Transform.h"
 #include <list>
 #include <array>
 #include <vector>
@@ -16,7 +17,6 @@ class HTECH_FUNCTION_EXPORT RigidbodyComponent;
 class HTECH_FUNCTION_EXPORT OrientedBoundingBox;
 class HTECH_FUNCTION_EXPORT BoundingPolygon;
 class HTECH_FUNCTION_EXPORT Entity;
-class HTECH_FUNCTION_EXPORT Transform;
 struct SDL_Renderer;
 
 class HTECH_FUNCTION_EXPORT CollisionManifold
@@ -30,7 +30,12 @@ public:
 	RigidbodyComponent* ObjB = nullptr;
 };
 
-enum COLLIDER_TYPE
+
+
+//OBB  - Red outline
+//AABB - Green outline
+//BS   - Blue outline
+enum class COLLIDER_TYPE : int
 {
 	COLLIDER_UNKNOWN = -1,
 	COLLIDER_AABB = 0,
@@ -39,21 +44,19 @@ enum COLLIDER_TYPE
 	COLLIDER_POLYGON
 };
 
-//OBB  - Red outline
-//AABB - Green outline
-//BS   - Blue outline
-
-
 class HTECH_FUNCTION_EXPORT Collider
 {
+	
+
 protected:
+	const Transform& m_EntityTransform;
 
+	COLLIDER_TYPE m_Type;
+
+	bool m_IsOverlap;
 public:
-	Transform& mTransform;
-	COLLIDER_TYPE mType;
-	bool IsOverlap;
 
-	Collider(Transform& transform);
+	Collider(const Transform& transform);
 
 	virtual void Update(float DeltaTime) = 0;
 	virtual void Render(SDL_Renderer& renderer) = 0;
@@ -64,6 +67,10 @@ public:
 	virtual void Serialize(Serializer& writer) const;
 	virtual void Deserialize(SerializedValue& value);
 	virtual void RenderProperties();
+
+	const Transform& GetEntityTransform() const;
+	const COLLIDER_TYPE GetType() const;
+	const bool IsOverlap() const;
 };
  
 class HTECH_FUNCTION_EXPORT Collision

@@ -15,13 +15,13 @@ void SpriteComponent::RenderProperties()
 		mUINewSpriteString = "";
 	}
 	ImGui::Dummy(ImVec2(0.0f, 20.0f));
-	if (mTexture != nullptr)
+	if (m_SDLTexture != nullptr)
 	{
-		ImGui::Text("Texture Location: %s", mTexture->GetLocation().c_str());
-		ImGui::Text("Texture Name: %s", mTexture->GetName().c_str());
-		ImGui::Text("Height: %i", mTexture->Height);
-		ImGui::Text("Width: %i", mTexture->Width);
-		ImGui::Checkbox("Flip texture", &mIsFlipped);
+		ImGui::Text("Texture Location: %s", m_SDLTexture->GetLocation().c_str());
+		ImGui::Text("Texture Name: %s", m_SDLTexture->GetName().c_str());
+		ImGui::Text("Height: %i", m_SDLTexture->Height);
+		ImGui::Text("Width: %i", m_SDLTexture->Width);
+		ImGui::Checkbox("Flip texture", &m_IsFlipped);
 	}
 	else
 	{
@@ -32,35 +32,35 @@ void SpriteComponent::RenderProperties()
 
 SpriteComponent::SpriteComponent(Entity& entity) : Component("Sprite Component", entity)
 {
-	mTexture = nullptr;
-	mIsFlipped = false;
+	m_SDLTexture = nullptr;
+	m_IsFlipped = false;
 }
 
 SpriteComponent::~SpriteComponent()
 {
-	mTexture = nullptr;
+	m_SDLTexture = nullptr;
 }
 
 void SpriteComponent::SetIsFlipped(bool state)
 {
-	mIsFlipped = state;
+	m_IsFlipped = state;
 }
 
 bool SpriteComponent::IsFlipped()
 {
-	return mIsFlipped;
+	return m_IsFlipped;
 }
 
 void SpriteComponent::LoadTexture(std::string texture_path)
 {
-	mTexture = TextureCache::GetTexture(texture_path);
+	m_SDLTexture = TextureCache::GetTexture(texture_path);
 }
 
 void SpriteComponent::UnloadTexture()
 {
-	if (mTexture)
+	if (m_SDLTexture)
 	{
-		mTexture = nullptr;
+		m_SDLTexture = nullptr;
 	}
 }
 
@@ -71,9 +71,9 @@ void SpriteComponent::Update(float DeltaTime)
 
 void SpriteComponent::Render(SDL_Renderer& renderer)
 {
-	if (mTexture)
+	if (m_SDLTexture)
 	{
-		mTexture->Render(renderer, Parent.GetTransform().Position, Parent.GetTransform().Rotation, mIsFlipped);
+		m_SDLTexture->Render(renderer, m_ParentEntity.GetTransform().Position, m_ParentEntity.GetTransform().Rotation, m_IsFlipped);
 	}
 }
 
@@ -82,16 +82,16 @@ void SpriteComponent::Serialize(Serializer& writer) const
 	Component::Serialize(writer);
 
 	writer.String("Texture");  
-	if (mTexture != nullptr)
+	if (m_SDLTexture != nullptr)
 	{
-		writer.String(mTexture->GetName().c_str());
+		writer.String(m_SDLTexture->GetName().c_str());
 	}
 	else
 	{
 		writer.Null();
 	}
 
-	writer.String("IsFlipped"); writer.Bool(mIsFlipped);
+	writer.String("IsFlipped"); writer.Bool(m_IsFlipped);
 }
 
 void SpriteComponent::Deserialize(SerializedValue& value)
@@ -105,11 +105,11 @@ void SpriteComponent::Deserialize(SerializedValue& value)
 	}
 	else
 	{
-		mTexture = nullptr;
+		m_SDLTexture = nullptr;
 	}
 
 	if (value["IsFlipped"].IsBool())
 	{
-		mIsFlipped = value["IsFlipped"].GetBool();
+		m_IsFlipped = value["IsFlipped"].GetBool();
 	}
 }
