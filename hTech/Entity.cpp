@@ -71,7 +71,7 @@ void Entity::Render()
 		a = 100;
 
 	SDL_SetRenderDrawColor(&renderer, 0, 255, 0, a);
-	SDL_RenderDrawRect(&renderer, &rect);
+	SDL_RenderFillRect(&renderer, &rect);
 }
 
 void Entity::RenderProperties()
