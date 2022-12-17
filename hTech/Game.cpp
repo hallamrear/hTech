@@ -580,7 +580,13 @@ void Game::Render()
 				Log::LogMessage(LogLevel::LOG_MESSAGE, "Paused to save project...");
 				ProjectLoader::SaveProject();
 			}
-			
+
+			if (ImGui::MenuItem("Close Project Without Saving"))
+			{
+				ProjectLoader::UnloadProject(false);
+				SetPlayState(GAME_STATE::Paused);
+			}
+
 			if (ImGui::MenuItem("Close Project"))
 			{
 				ProjectLoader::UnloadProject();
