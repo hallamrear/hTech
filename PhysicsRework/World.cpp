@@ -39,6 +39,8 @@ void World::Update(float dt)
 
 		m_Bodies[i]->Vel += (World::Gravity + m_Bodies[i]->Force * m_Bodies[i]->InvMass) * dt;
 		m_Bodies[i]->AngularVel += m_Bodies[i]->Torque * m_Bodies[i]->InvInertia * dt;
+
+		m_Bodies[i]->CalculateRotatedCorners();
 	}
 }
 
