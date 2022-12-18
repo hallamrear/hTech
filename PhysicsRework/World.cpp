@@ -3,6 +3,7 @@
 #include <SDL_rect.h>
 
 std::vector<SDL_Point> World::DebugPointsToRenderThisFrame = std::vector<SDL_Point>();
+Vector2 World::Gravity = Vector2(0.0f, -9.81f);
 
 void World::Setup()
 {
@@ -15,13 +16,30 @@ void World::Setup()
 
 void World::Update(float dt)
 {
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+	///Integrate Forces
 	for (size_t i = 0; i < m_Bodies.size(); i++)
 	{
-		m_Bodies[i]->Update(dt);
+		if (m_Bodies[i]->InvMass == 0.0f)
+			continue;
+
+		m_Bodies[i]->Vel += (World::Gravity + m_Bodies[i]->Force * m_Bodies[i]->InvMass) * dt;
+		m_Bodies[i]->AngularVel += m_Bodies[i]->Torque * m_Bodies[i]->InvInertia * dt;
 	}
-
-
-
 }
 
 void World::Render(SDL_Renderer* renderer)

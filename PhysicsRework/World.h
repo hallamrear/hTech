@@ -11,7 +11,7 @@ private:
 
 public:
 	static std::vector<SDL_Point> DebugPointsToRenderThisFrame;
-
+	static Vector2 Gravity;
 
 	void Setup();
 	void Render(SDL_Renderer* renderer);
