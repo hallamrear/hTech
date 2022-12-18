@@ -15,6 +15,8 @@ Body::Body(int x, int y, int size, float mass)
 	Torque = 0.0f;
 	Friction = 0.0f;
 
+	Mass = mass;
+
 	if (mass < FLT_MAX)
 	{
 		InvMass = 1.0f / Mass;
@@ -38,7 +40,7 @@ Body::~Body()
 void Body::CalculateRotatedCorners()
 {
 	//Calculate new point rotations;
-	if (Rot != 0.0f || Rot != 360.0f)
+	if (Rot > 0.0f && Rot < 360.0f)
 	{
 		float rotation = 360.0f - Rot;
 		TL = MathsUtils::RotatePointAroundOriginDegrees(Vector2(Pos.X - (Size / 2), Pos.Y + (Size / 2)), rotation, Pos);
