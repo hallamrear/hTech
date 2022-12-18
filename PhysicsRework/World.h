@@ -4,11 +4,14 @@
 
 struct SDL_Renderer;
 
-struct World
+class World
 {
+private:
+	std::vector<Body*> m_Bodies;
+
+public:
 	static std::vector<SDL_Point> DebugPointsToRenderThisFrame;
 
-	std::vector<Body*> m_Bodies;
 
 	void Setup();
 	void Render(SDL_Renderer* renderer);

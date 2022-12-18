@@ -40,7 +40,17 @@ void World::Render(SDL_Renderer* renderer)
 
 	if (DebugPointsToRenderThisFrame.size() > 0)
 	{
-		SDL_RenderDrawPoints(renderer, DebugPointsToRenderThisFrame.data(), DebugPointsToRenderThisFrame.size());
+		SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+		SDL_Rect rect;
+		rect.w = 4;
+		rect.h = 4;
+		for (auto itr : DebugPointsToRenderThisFrame)
+		{
+			rect.x = itr.x - 2;
+			rect.y = itr.y - 2;
+			SDL_RenderFillRect(renderer, &rect);
+		}
+	
 		DebugPointsToRenderThisFrame.clear();
 	}
 

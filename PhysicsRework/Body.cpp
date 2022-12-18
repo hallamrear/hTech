@@ -50,9 +50,5 @@ void Body::CalculateRotatedCorners()
 
 void Body::Update(float dt)
 {
-
-
-
-
 	CalculateRotatedCorners();
 }
