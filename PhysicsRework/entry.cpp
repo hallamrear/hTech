@@ -8,7 +8,10 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	SDL_Renderer* renderer = nullptr;
 	SDL_Window* window = nullptr;
 
-	SDL_CreateWindowAndRenderer(800, 600, 0, &window, &renderer);
+	if (SDL_CreateWindowAndRenderer(800, 600, 0, &window, &renderer) != 0)
+	{
+		std::string str = SDL_GetError();
+	}
 
 	World* world = new World();
 	world->Setup();
