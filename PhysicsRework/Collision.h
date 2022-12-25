@@ -2,25 +2,51 @@
 #include "Manifold.h"
 #include "Body.h"
 #include "Vector2.h"
+#include "MathsUtils.h"
 #include "World.h"
 
-class Body;
-class Manifold;
+struct Manifold;
+
+struct CollisionTest
+{
+	//Largest distance of seperation between plane and polygon vertex.
+	float SeperationDistance = FLT_MIN;
+
+	/*
+	//index of the face used in the calculation of the seperation distance.
+	//	  |		S
+	//P   |-------------->
+	//	  |
+	*/
+	int PlaneIndex = -1;
+
+	CollisionTest()
+	{
+
+	}
+
+	CollisionTest(float seperationDistance = FLT_MIN, int index = -1)
+	{
+		SeperationDistance = seperationDistance;
+		PlaneIndex = index;
+	}
+};
 
 struct Collision
 {
+	/*
 	static bool SeperatingAxisTheory_Original(const Body& bodyA, const Body& bodyB, Manifold* manifold)
 	{
 		Vector2* shapeOnePoints = new Vector2[4];
-		shapeOnePoints[0] = bodyA.TL;
-		shapeOnePoints[1] = bodyA.TR;
-		shapeOnePoints[2] = bodyA.BR;
-		shapeOnePoints[3] = bodyA.BL;
+		shapeOnePoints[0] = *bodyA.TL;
+		shapeOnePoints[1] = *bodyA.TR;
+		shapeOnePoints[2] = *bodyA.BR;
+		shapeOnePoints[3] = *bodyA.BL;
 		Vector2* shapeTwoPoints = new Vector2[4];
-		shapeTwoPoints[0] = bodyB.TL;
-		shapeTwoPoints[1] = bodyB.TR;
-		shapeTwoPoints[2] = bodyB.BR;
-		shapeTwoPoints[3] = bodyB.BL;
+		shapeTwoPoints[0] = *bodyB.TL;
+		shapeTwoPoints[1] = *bodyB.TR;
+		shapeTwoPoints[2] = *bodyB.BR;
+		shapeTwoPoints[3] = *bodyB.BL;
 
 		manifold->Normal = Vector2(FLT_MAX, FLT_MAX);
 		manifold->Depth = FLT_MAX;
@@ -136,9 +162,6 @@ struct Collision
 			manifold->Normal = manifold->Normal * -1;
 		}
 
-		World::DebugPointsToRenderThisFrame.push_back(bodyA.Pos);
-		World::DebugPointsToRenderThisFrame.push_back(bodyB.Pos);
-
 		delete[] shapeOnePoints;
 		shapeOnePoints = nullptr;
 		delete[] shapeTwoPoints;
@@ -147,14 +170,59 @@ struct Collision
 		manifold->HasCollided = true;
 		return manifold->HasCollided;
 	};
+	*/
 
-	static bool SeperatingAxisTheory(const Body& bodyA, const Body& bodyB, Manifold* manifold)
+	static CollisionTest SeperatingAxisTheory(const Body& bodyA, const Body& bodyB, Manifold* manifold)
 	{
+		float highestSeperationDistance = -INFINITY;
+		int   highestSeperationEdge    = -1;
 
-	}
+		for (size_t i = 0; i < bodyA.EdgeCount; i++)
+		{
+			Edge edge = bodyA.GetEdge(i);
+			Point vertexB = bodyB.GetSupportVertex(edge.GetNormal() * -1);
+			
+			float distance = MathsUtils::PointDistanceToLineSigned(vertexB, edge.GetLine());
+
+			if (distance > highestSeperationDistance)
+			{
+				highestSeperationDistance = distance;
+				highestSeperationEdge = i;
+			}
+		}
+
+		return CollisionTest(highestSeperationDistance, highestSeperationEdge);
+	};
 
 	static bool HasCollided(const Body& bodyA, const Body& bodyB, Manifold* manifold)
 	{
+		//Test the face normals of every face in body A.
+		CollisionTest testA = SeperatingAxisTheory(bodyA, bodyB, manifold);
+		if (testA.SeperationDistance > 0.0f) //Early passout check.
+		{
+			return manifold->HasCollided;
+		}
 
-	}
+		//Test the face normals of every face in body B.
+		CollisionTest testB = SeperatingAxisTheory(bodyB, bodyA, manifold);
+		if (testB.SeperationDistance > 0.0f)
+		{
+			return manifold->HasCollided;
+		}
+
+		//No seperation and so the polygons overlap.
+		manifold->BodyA = &bodyA;
+		manifold->BodyAEdgeIndex = testA.PlaneIndex;
+		manifold->BodyB = &bodyB;
+		manifold->BodyBEdgeIndex = testB.PlaneIndex;
+		manifold->Depth = testA.SeperationDistance;
+		manifold->HasCollided = true;
+
+		Line sideA = bodyA.GetEdge(manifold->BodyAEdgeIndex).GetLine();
+		Line sideB = bodyB.GetEdge(manifold->BodyBEdgeIndex).GetLine();
+		manifold->ContactPoints.push_back(MathsUtils::CalculateIntersectionPointOfTwoLines(sideA, sideB));
+		World::DebugPointsToRenderThisFrame.push_back(manifold->ContactPoints.back());
+
+		return manifold->HasCollided;
+	};
 };

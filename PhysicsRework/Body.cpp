@@ -1,6 +1,7 @@
 #include "Body.h"
 #include "MathsUtils.h"
 #include "World.h"
+#include "Collision.h"
 
 Body::Body(int x, int y, int size, float mass)
 {
@@ -30,35 +31,114 @@ Body::Body(int x, int y, int size, float mass)
 		Inertia = FLT_MAX;
 		InvMass = 0.0f;
 	}
+	m_Vertices = std::vector<Vector2>();
+	m_Vertices.push_back(Vector2());
+	m_Vertices.push_back(Vector2());
+	m_Vertices.push_back(Vector2());
+	m_Vertices.push_back(Vector2());
+	CalculateOrientedPositions();
 
-	CalculateRotatedCorners();
+	TL = &m_Vertices[0];
+	BL = &m_Vertices[1];
+	TR = &m_Vertices[2];
+	BR = &m_Vertices[3];
+
+	m_Edges = std::vector<Edge*>();
+	m_Edges.push_back(new Edge(*TL, *TR));
+	m_Edges.push_back(new Edge(*TR, *BR));
+	m_Edges.push_back(new Edge(*BR, *BL));
+	m_Edges.push_back(new Edge(*BL, *TL));
+
 }
 
 Body::~Body()
 {
 }
 
-void Body::CalculateRotatedCorners()
+const Edge& Body::GetEdge(int index) const
+{
+	return *m_Edges[index];
+}
+
+void Body::CalculateOrientedPositions()
 {
 	//Calculate new point rotations;
 	//if (Rot > 0.0f && Rot < 360.0f)
 	{
 		float rotation = 360.0f - Rot;
-		TL = MathsUtils::RotatePointAroundOriginDegrees(Vector2(Pos.X - (Size / 2), Pos.Y + (Size / 2)), Rot, Pos);
-		BL = MathsUtils::RotatePointAroundOriginDegrees(Vector2(Pos.X - (Size / 2), Pos.Y - (Size / 2)), Rot, Pos);
-		TR = MathsUtils::RotatePointAroundOriginDegrees(Vector2(Pos.X + (Size / 2), Pos.Y + (Size / 2)), Rot, Pos);
-		BR = MathsUtils::RotatePointAroundOriginDegrees(Vector2(Pos.X + (Size / 2), Pos.Y - (Size / 2)), Rot, Pos);
-
-		World::DebugPointsToRenderThisFrame.push_back(TL);
-		World::DebugPointsToRenderThisFrame.push_back(BL);
-		World::DebugPointsToRenderThisFrame.push_back(TR);
-		World::DebugPointsToRenderThisFrame.push_back(BR);
+		m_Vertices[0] = MathsUtils::RotatePointAroundOriginDegrees(Vector2(Pos.X - (Size / 2), Pos.Y + (Size / 2)), Rot, Pos);
+		m_Vertices[1] = MathsUtils::RotatePointAroundOriginDegrees(Vector2(Pos.X - (Size / 2), Pos.Y - (Size / 2)), Rot, Pos);
+		m_Vertices[2] = MathsUtils::RotatePointAroundOriginDegrees(Vector2(Pos.X + (Size / 2), Pos.Y + (Size / 2)), Rot, Pos);
+		m_Vertices[3] = MathsUtils::RotatePointAroundOriginDegrees(Vector2(Pos.X + (Size / 2), Pos.Y - (Size / 2)), Rot, Pos);
 	}
 }
 
 void Body::Update(float dt)
 {
 	srand(NULL);
-	Rot += (rand() % 100) * dt * 5;
-	CalculateRotatedCorners();
+	//Rot += (rand() % 100) * dt * 5;
+	CalculateOrientedPositions();
+
+	for (int i = 0; i < EdgeCount; i++)
+	{
+		Edge* edge = m_Edges[i];
+		Line line = Line(*edge->A, *edge->B);
+		Vector2 normal = line.GetNormal();
+		line.colour.r = 0;
+		line.colour.g = 255;
+		line.colour.b = 0;
+		line.A = Vector2((line.A.X + line.B.X) / 2.0f, (line.A.Y + line.B.Y) / 2.0f);
+		line.B = line.A + (normal * 15);
+		line.colour.r = 0; line.colour.g = 0; line.colour.b = 0;
+
+		switch (i)
+		{
+		case 0:
+		{
+			line.colour.r = 255;
+		}
+		break;
+		case 1:
+		{
+			line.colour.g = 255;
+		}
+		break;
+		case 2:
+		{
+			line.colour.b = 255;
+		}
+		break;
+		case 3:
+		{
+			line.colour.r = 255;
+			line.colour.g = 255;
+		}
+		break;
+		}
+
+		World::DebugLinesToRenderThisFrame.push_back(line);
+	}
+	World::DebugPointsToRenderThisFrame.push_back(Pos);
+}
+
+const Vector2& Body::GetSupportVertex(const Vector2& direction) const
+{
+	float furthestDistance = -100000000.0f;
+	int furthestVertexIndex = -1;
+	float projectedDistance = -100000000.0f;
+
+	for (size_t i = 0; i < VertexCount; i++)
+	{
+		Vector2 vertex = m_Vertices[i];
+
+		projectedDistance = MathsUtils::Dot(vertex, direction);
+
+		if (projectedDistance > furthestDistance)
+		{
+			furthestDistance = projectedDistance;
+			furthestVertexIndex = i;
+		}
+	}
+
+	return m_Vertices[furthestVertexIndex];
 }

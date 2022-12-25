@@ -27,4 +27,13 @@ namespace MathsUtils
 	////Returns -1 if val < 0, 1 if val > 0, 0 if val == 0
 	int Sign(int val);
 	float Dot(Vector2 a, Vector2 b);
+
+	float GetAngleBetweenTwoVectorsDegrees(const Vector2& a, const Vector2& b);
+	float GetAngleBetweenTwoVectors(const Vector2& a, const Vector2& b);
+
+	float PointDistanceToLine(Point point, Line line);
+	float PointDistanceToLineSigned(Point point, Line line);
+	bool  IsPointAboveLine(const Point& point, const Line& line);
+
+	Vector2 CalculateIntersectionPointOfTwoLines(const Line& lineA, const Line& lineB);
 }

@@ -1,4 +1,5 @@
 #include "MathsUtils.h"
+#include "Collision.h"
 
 //Works equally each direction from 0
 //e.g. GetRandomIntExcludingCentre(256, 128)
@@ -62,4 +63,56 @@ int MathsUtils::Sign(int val)
 float MathsUtils::Dot(Vector2 a, Vector2 b)
 {
 	return (a.X * b.X) + (a.Y * b.Y);
+}
+
+float MathsUtils::GetAngleBetweenTwoVectorsDegrees(const Vector2& a, const Vector2& b)
+{
+	return ConvertToDegrees(GetAngleBetweenTwoVectors(a, b));
+}
+
+float MathsUtils::GetAngleBetweenTwoVectors(const Vector2& a, const Vector2& b)
+{
+	float dot = MathsUtils::Dot(a, b);
+	float magnitudeSum = a.GetMagnitude() * b.GetMagnitude();
+	float result = acos((dot / magnitudeSum));
+	return result;
+}
+
+float MathsUtils::PointDistanceToLine(Point point, Line line)
+{
+	Vector2 AP = point - line.A;
+	Vector2 AB = line.B - line.A;
+	float angle = GetAngleBetweenTwoVectors(AB, AP);
+
+	float distance = AP.GetMagnitude() * sin(angle);
+	return distance;
+}
+
+float MathsUtils::PointDistanceToLineSigned(Point point, Line line)
+{
+	Vector2 AP = point - line.A;
+	Vector2 AB = line.B - line.A;
+	float angle = GetAngleBetweenTwoVectors(AB, AP);
+	float distance = AP.GetMagnitude() * sin(angle);
+
+	if (IsPointAboveLine(point, line) == false)
+	{
+		distance *= -1;
+	}
+
+	return distance;
+}
+
+bool MathsUtils::IsPointAboveLine(const Point& point, const Line& line)
+{
+	return ((line.B.X - line.A.X) * (point.Y - line.A.Y) - (line.B.Y - line.A.Y) * (point.X - line.A.X)) > 0;
+}
+
+Vector2 MathsUtils::CalculateIntersectionPointOfTwoLines(const Line& lineA, const Line& lineB)
+{
+	LineEquation equationA = lineA.GetEquation();
+	LineEquation equationB = lineB.GetEquation();
+	float intersectX = (equationB.C - equationA.C) / (equationA.M - equationB.M);
+	float intersectY = equationA.M * intersectX + equationA.C;
+	return Vector2(intersectX, intersectY);
 }

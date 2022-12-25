@@ -2,6 +2,8 @@
 #include <math.h>
 #include <string>
 
+#include "SDL.h"
+
 class Vector2
 {
 public:
@@ -24,6 +26,7 @@ public:
 	const std::string ToString() const;
 
 	//Operators
+	Vector2 operator-();
 	Vector2& operator= (const Vector2& other);
 	Vector2 operator+(const Vector2& rhs);
 	Vector2 operator-(const Vector2& rhs);
@@ -45,3 +48,52 @@ public:
 	static const Vector2 Zero;
 };
 
+typedef Vector2 Point;
+class Edge;
+
+struct LineEquation
+{
+	float M = 0;
+	float C = 0;
+
+	LineEquation(float m, float c) : M(m), C(c) {};
+};
+
+struct Line
+{
+	SDL_Color colour;
+
+	Point A;
+	Point B;
+
+	Line() {};
+	Line(const Point& a, const Point& b) : A(a), B(b)
+	{ 
+		colour.r = 255;
+		colour.g = 255;
+		colour.b = 0;
+		colour.a = 255;
+	};
+	Line(const Point& a, const Point& b, SDL_Color color) : A(a), B(b), colour(color) {};
+
+	Line& operator=(const Line& edge)
+	{
+		A = edge.A;
+		B = edge.B;
+		return *this;
+	};
+
+	Vector2 GetNormal() const
+	{
+		float dx = B.X - A.X;
+		float dy = B.Y - A.Y;
+		return Vector2(-dy, dx).GetNormalized();
+	}
+
+	LineEquation GetEquation() const
+	{
+		float m = (B.Y - A.Y) / (B.X - A.X);
+		float c = A.Y - (m * A.X);
+		return LineEquation(m, c);
+	}
+};

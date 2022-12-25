@@ -35,12 +35,35 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 		SDL_Event event;
 		while (SDL_PollEvent(&event))
 		{
-			
+			switch (event.type)
+			{
+			case SDL_KEYDOWN:
+			{
+				//event.key.keysym.scancode
+				switch (event.key.keysym.sym)
+				{
+				case SDLK_w: world->Bodies.front()->Pos.Y += 50 * 0.016f; break;
+				case SDLK_s: world->Bodies.front()->Pos.Y -= 50 * 0.016f; break;
+				case SDLK_d: world->Bodies.front()->Pos.X += 50 * 0.016f; break;
+				case SDLK_a: world->Bodies.front()->Pos.X -= 50 * 0.016f; break;
+				case SDLK_q: world->Bodies.front()->Rot += 50 * 0.016f;   break;
+				case SDLK_e: world->Bodies.front()->Rot -= 50 * 0.016f;   break;
+
+				default:
+					break;
+				}
+			}
+			break;
+
+			default:
+				break;
+			}
 		}
 
 		if (deltaTimeMilliseconds != 0)
 		{
-			world->Update(DeltaTimeInSeconds);
+			//world->Update(DeltaTimeInSeconds);
+			world->Update(0.016f);
 			world->Render(renderer);
 		}
 

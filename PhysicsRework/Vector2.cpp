@@ -56,6 +56,11 @@ Vector2 Vector2::GetVectorRotatedByAngle(float angleDegrees)
 	return vec;
 }
 
+Vector2 Vector2::operator-()
+{
+	return Vector2(-X, -Y);
+}
+
 //Operators
 Vector2& Vector2::operator= (const Vector2& other)
 {

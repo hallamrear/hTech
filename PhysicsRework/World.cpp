@@ -16,38 +16,47 @@ Vector2 WorldToScreen(Vector2 worldPosition)
 void World::Setup()
 {
 	m_Manifolds = std::vector<Manifold*>();
-	m_Bodies = std::vector<Body*>();
+	Bodies = std::vector<Body*>();
 
-	m_Bodies.push_back(new Body(400, 500, 64.0f, 1000.0f));
-	m_Bodies.push_back(new Body(400, 300, 128.0f, FLT_MAX)); //Floor
+	Bodies.push_back(new Body(400, 490, 64.0f, 1000.0f));
+	Bodies.back()->Rot = 45.0f;
+	Bodies.push_back(new Body(400, 300, 128.0f, FLT_MAX)); //Floor
 }
+
+Point p1 = Point(50.0f, 50.0f);
+Point p2 = Point(250.0f, 350.0f);
+Point p3 = Point(550.0f, 50.0f);
+Point p4 = Point(50.0f, 300.0f);
 
 void World::DetermineCollisions()
 {
-	for (int i = 0; i < (int)m_Bodies.size(); ++i)
+	for (int i = 0; i < (int)Bodies.size(); ++i)
 	{
-		Body* bodyA = m_Bodies[i];
+		Body* bodyA = Bodies[i];
 
-		for (int j = i + 1; j < (int)m_Bodies.size(); ++j)
+		for (int j = i + 1; j < (int)Bodies.size(); ++j)
 		{
-			Body* bodyB = m_Bodies[j];
+			Body* bodyB = Bodies[j];
 
 			Manifold manifold;
 
-			if (Collision::SeperatingAxisTheory_Original(*bodyA, *bodyB, &manifold))
+			if (Collision::HasCollided(*bodyA, *bodyB, &manifold))
 			{
 				Manifold* manifoldptr = new Manifold(manifold);
 				m_Manifolds.push_back(manifoldptr);
 			}
 		}
 	}
-
-	return;
-
 }
 
 void World::Update(float dt)
 {
+	Line l1 = Line(p1, p2);
+	Line l2 = Line(p3, p4);
+	World::DebugLinesToRenderThisFrame.push_back(l1);
+	World::DebugLinesToRenderThisFrame.push_back(l2);
+	World::DebugPointsToRenderThisFrame.push_back(MathsUtils::CalculateIntersectionPointOfTwoLines(l1, l2));
+
 	///Clear Existing Manifolds
 	for (size_t i = 0; i < m_Manifolds.size(); i++)
 	{
@@ -60,15 +69,15 @@ void World::Update(float dt)
 	DetermineCollisions();
 
 	///Integrate Forces
-	for (auto& body : m_Bodies)
+	for (auto& body : Bodies)
 	{
+		body->Update(dt);
+
 		if (body->InvMass == 0.0f)
 			continue;
 
-		body->Vel += (World::Gravity + body->Force * body->InvMass) * dt;
+		//body->Vel += (World::Gravity + body->Force * body->InvMass) * dt;
 		body->AngularVel += body->Torque * body->InvInertia * dt;
-
-		body->Update(dt);
 	}
 
 	///Perform Physics Pre-step calculations
@@ -87,7 +96,7 @@ void World::Update(float dt)
 	}
 
 	///Integrate Velocities.	
-	for (auto& body : m_Bodies)
+	for (auto& body : Bodies)
 	{
 		body->Pos += body->Vel * dt;
 		body->Rot += body->AngularVel * dt;
@@ -102,28 +111,25 @@ void World::Render(SDL_Renderer* renderer)
 	SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 	SDL_RenderClear(renderer);
 
-	for (auto itr : m_Bodies)
+	Vector2 p1, p2;
+	SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
+	for (auto itr : Bodies)
 	{
-		Vector2 tl, tr, br, bl;
-		tl = WorldToScreen(itr->TL);
-		tr = WorldToScreen(itr->TR);
-		br = WorldToScreen(itr->BR);
-		bl = WorldToScreen(itr->BL);
-
-		SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-		SDL_RenderDrawLine(renderer, (int)tl.X, (int)tl.Y, (int)tr.X, (int)tr.Y);
-		SDL_RenderDrawLine(renderer, (int)tr.X, (int)tr.Y, (int)br.X, (int)br.Y);
-		SDL_RenderDrawLine(renderer, (int)br.X, (int)br.Y, (int)bl.X, (int)bl.Y);
-		SDL_RenderDrawLine(renderer, (int)bl.X, (int)bl.Y, (int)tl.X, (int)tl.Y);
+		for (size_t i = 0; i < itr->EdgeCount; i++)
+		{
+			Edge edge = itr->GetEdge(i);
+			p1 = WorldToScreen(*edge.A);
+			p2 = WorldToScreen(*edge.B);
+			SDL_RenderDrawLine(renderer, (int)p1.X, (int)p1.Y, (int)p2.X, (int)p2.Y);
+		}
 	}
-
 
 	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 	SDL_Rect rect;
 	rect.w = 4;
 	rect.h = 4;
 	Vector2 pt;
-	for (auto itr : DebugPointsToRenderThisFrame)
+	for (auto& itr : DebugPointsToRenderThisFrame)
 	{
 		pt = WorldToScreen(itr);
 		rect.x = pt.X - 2;
@@ -133,15 +139,23 @@ void World::Render(SDL_Renderer* renderer)
 	DebugPointsToRenderThisFrame.clear();
 
 	SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
-	Vector2 p1, p2;
-	for (auto itr : DebugLinesToRenderThisFrame)
+	for (auto& itr : DebugLinesToRenderThisFrame)
 	{
-		p1 = WorldToScreen(itr.P1);
-		p2 = WorldToScreen(itr.P2);
+		SDL_SetRenderDrawColor(renderer, itr.colour.r, itr.colour.g, itr.colour.b, 255);
+		p1 = WorldToScreen(itr.A);
+		p2 = WorldToScreen(itr.B);
 		SDL_RenderDrawLine(renderer, p1.X, p1.Y, p2.X, p2.Y );
 	}
 	DebugLinesToRenderThisFrame.clear();
 
+	for (auto& manifold : m_Manifolds)
+	{
+		Edge edgeA = manifold->BodyA->GetEdge(manifold->BodyAEdgeIndex);
+		Edge edgeB = manifold->BodyB->GetEdge(manifold->BodyBEdgeIndex);
+
+		DebugLinesToRenderThisFrame.push_back(Line(edgeA.GetCentrePoint(), edgeA.GetCentrePoint() + (edgeB.GetNormal().GetNormalized() * -manifold->Depth)));
+		DebugLinesToRenderThisFrame.push_back(Line(edgeB.GetCentrePoint(), edgeB.GetCentrePoint() + (edgeA.GetNormal().GetNormalized() * -manifold->Depth)));
+	}
 
 	SDL_RenderPresent(renderer);
 }
