@@ -79,14 +79,11 @@ void Body::Update(float dt)
 	//Rot += (rand() % 100) * dt * 5;
 	CalculateOrientedPositions();
 
-	for (int i = 0; i < EdgeCount; i++)
+	for (int i = 0; i < m_Edges.size(); i++)
 	{
 		Edge* edge = m_Edges[i];
 		Line line = Line(*edge->A, *edge->B);
 		Vector2 normal = line.GetNormal();
-		line.colour.r = 0;
-		line.colour.g = 255;
-		line.colour.b = 0;
 		line.A = Vector2((line.A.X + line.B.X) / 2.0f, (line.A.Y + line.B.Y) / 2.0f);
 		line.B = line.A + (normal * 15);
 		line.colour.r = 0; line.colour.g = 0; line.colour.b = 0;
@@ -111,7 +108,7 @@ void Body::Update(float dt)
 		case 3:
 		{
 			line.colour.r = 255;
-			line.colour.g = 255;
+			line.colour.b = 255;
 		}
 		break;
 		}
@@ -127,7 +124,7 @@ const Vector2& Body::GetSupportVertex(const Vector2& direction) const
 	int furthestVertexIndex = -1;
 	float projectedDistance = -100000000.0f;
 
-	for (size_t i = 0; i < VertexCount; i++)
+	for (size_t i = 0; i < m_Vertices.size(); i++)
 	{
 		Vector2 vertex = m_Vertices[i];
 

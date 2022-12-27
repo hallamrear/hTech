@@ -34,195 +34,192 @@ struct CollisionTest
 
 struct Collision
 {
-	/*
-	static bool SeperatingAxisTheory_Original(const Body& bodyA, const Body& bodyB, Manifold* manifold)
+	struct SATHitData
 	{
-		Vector2* shapeOnePoints = new Vector2[4];
-		shapeOnePoints[0] = *bodyA.TL;
-		shapeOnePoints[1] = *bodyA.TR;
-		shapeOnePoints[2] = *bodyA.BR;
-		shapeOnePoints[3] = *bodyA.BL;
-		Vector2* shapeTwoPoints = new Vector2[4];
-		shapeTwoPoints[0] = *bodyB.TL;
-		shapeTwoPoints[1] = *bodyB.TR;
-		shapeTwoPoints[2] = *bodyB.BR;
-		shapeTwoPoints[3] = *bodyB.BL;
+		Body* EdgeOwner;
+		int EdgeID;
+		float Depth;
+		Vector2 AxisDirection;
 
-		manifold->Normal = Vector2(FLT_MAX, FLT_MAX);
-		manifold->Depth = FLT_MAX;
-
-		//Check shape one in each direction
-		for (int a = 0; a < 4; a++)
+		SATHitData(Body* edgeOwner, int edgeid, float depth, Vector2 axisDir)
 		{
-			//wraparound
-			int b = (a + 1) % 4;
+			EdgeOwner = edgeOwner;
+			EdgeID = edgeid;
+			Depth = depth;
+			AxisDirection = axisDir;
+		}
+	};
 
-			Vector2 axisProj = Vector2(-(shapeOnePoints[b].Y - shapeOnePoints[a].Y), (shapeOnePoints[b].X - shapeOnePoints[a].X));
-			axisProj = axisProj.GetNormalized();
+	struct SATResult
+	{
+		bool HasCollided = false;
+		std::vector<SATHitData> hitData = std::vector<SATHitData>();
 
-			float min_r1 = INFINITY, max_r1 = -INFINITY, min_r2 = INFINITY, max_r2 = -INFINITY;
-			for (int P = 0; P < 4; P++)
+		SATResult()
+		{
+
+		};
+
+		void Clear()
+		{
+			HasCollided = false;
+			hitData.clear();
+		}
+	};
+
+	static bool PrimVsPrim(Body* bodyA, Body* bodyB, Manifold* manifold)
+	{
+		std::vector<Vector2>& bodyAVertices = bodyA->m_Vertices;
+		std::vector<Vector2>& bodyBVertices = bodyB->m_Vertices;
+		std::vector<Edge*>& bodyAEdges = bodyA->m_Edges;
+		std::vector<Edge*>& bodyBEdges = bodyB->m_Edges;
+
+		//Test every side of bodyA for a collision.
+		for (size_t e = 0; e < bodyAEdges.size(); e++)
+		{
+			float bodyA_MinimumProjection = INFINITY;
+			float bodyA_MaximumProjection = -INFINITY;
+			float bodyB_MinimumProjection = INFINITY;
+			float bodyB_MaximumProjection = -INFINITY;
+
+			//Construct line from the two points on the bodies edge.
+			const Edge& edge = bodyA->GetEdge(e);
+			Vector2 axisToProjectOnto = Vector2(*edge.B - *edge.A);
+			axisToProjectOnto = edge.GetNormal();
+			axisToProjectOnto = axisToProjectOnto.GetNormalized();
+
+			//Project each point of bodyA onto the axis to get the min and max values.
+			for (size_t i = 0; i < bodyAVertices.size(); i++)
 			{
-				//project each point onto line 
-				float q_one = shapeOnePoints[P].Dot(axisProj);
-
-				//get the min and max of the projection extents
-				min_r1 = std::min(min_r1, q_one);
-				max_r1 = std::max(max_r1, q_one);
+				Vector2 vertexToProject = bodyAVertices[i];
+				float projectedDistanceIntoAxis = MathsUtils::Dot(axisToProjectOnto, vertexToProject);
+				bodyA_MinimumProjection = std::min(bodyA_MinimumProjection, projectedDistanceIntoAxis);
+				bodyA_MaximumProjection = std::max(bodyA_MaximumProjection, projectedDistanceIntoAxis);
 			}
 
-			for (int P = 0; P < 4; P++)
+			//Project each point of bodyB onto the axis to get the min and max values.
+			for (size_t i = 0; i < bodyBVertices.size(); i++)
 			{
-				//project each point onto line 
-				float q_two = shapeTwoPoints[P].Dot(axisProj);
-
-				//get the min and max of the projection extents
-				min_r2 = std::min(min_r2, q_two);
-				max_r2 = std::max(max_r2, q_two);
+				Vector2 vertexToProject = bodyBVertices[i];
+				float projectedDistanceIntoAxis = MathsUtils::Dot(axisToProjectOnto, vertexToProject);
+				bodyB_MinimumProjection = std::min(bodyB_MinimumProjection, projectedDistanceIntoAxis);
+				bodyB_MaximumProjection = std::max(bodyB_MaximumProjection, projectedDistanceIntoAxis);
 			}
 
-			//if they overlap, continue else if they dont, theyre not colliding so can return
-			if (!(max_r2 >= min_r1) && (max_r1 >= min_r2))
+			//
+			//	-----|---------------------|-----|--------------|-----------------------------------
+			//		a_min				b_min   a_max         b_max
+			//
+			//	if a_max is greater than b_min, theres an overlap
+			//
+			//	-----|---------------------|-----|--------------|-----------------------------------
+			//		b_min				a_min   b_max         a_max
+			//
+			//	if b_max is greater than a_min, theres an overlap
+			//	We check if this is false to see if we can detect a separating axis early
+			//  and avoid the rest of the test!
+			if (((bodyB_MaximumProjection >= bodyA_MinimumProjection) && (bodyA_MaximumProjection >= bodyB_MinimumProjection)) == false)
 			{
-				delete[] shapeOnePoints;
-				shapeOnePoints = nullptr;
-				delete[] shapeTwoPoints;
-				shapeTwoPoints = nullptr;
-
-				manifold->HasCollided = false;
-				return manifold->HasCollided;
+				return false;
 			}
-
-			float axisDepth = std::min(max_r2 - min_r1, max_r1 - min_r2);
-
-			if (axisDepth < manifold->Depth)
+			else
 			{
-				manifold->Depth = axisDepth;
-				manifold->Normal = axisProj;
+				float depth = std::min(bodyB_MaximumProjection - bodyA_MinimumProjection, bodyA_MaximumProjection - bodyB_MinimumProjection);
+
+				if (depth < manifold->Depth)
+				{
+					manifold->Depth = depth;
+					manifold->Normal = axisToProjectOnto;
+				}
 			}
 		}
 
-		for (int a = 0; a < 4; a++)
+		// // // // // // // // // // // // //
+		// // // // // // // // // // // // //
+		// // // // // // // // // // // // //
+
+		//Test every side of bodyB for a collision.
+		for (size_t e = 0; e < bodyBEdges.size(); e++)
 		{
-			//wraparound
-			int b = (a + 1) % 4;
+			float bodyA_MinimumProjection = INFINITY;
+			float bodyA_MaximumProjection = -INFINITY;
+			float bodyB_MinimumProjection = INFINITY;
+			float bodyB_MaximumProjection = -INFINITY;
 
-			Vector2 axisProj = Vector2(-(shapeTwoPoints[b].Y - shapeTwoPoints[a].Y), (shapeTwoPoints[b].X - shapeTwoPoints[a].X));
-			axisProj = axisProj.GetNormalized();
+			//Construct line from the two points on the bodies edge.
+			const Edge& edge = bodyB->GetEdge(e);
+			Vector2 axisToProjectOnto = Vector2(*edge.B - *edge.A);
+			axisToProjectOnto = edge.GetNormal();
+			axisToProjectOnto = axisToProjectOnto.GetNormalized();
 
-			float min_r1 = INFINITY, max_r1 = -INFINITY, min_r2 = INFINITY, max_r2 = -INFINITY;
-			for (int P = 0; P < 4; P++)
+			//Project each point of bodyA onto the axis to get the min and max values.
+			for (size_t i = 0; i < bodyAVertices.size(); i++)
 			{
-				//project each point onto line 
-				float q_one = shapeOnePoints[P].Dot(axisProj);
-
-				//get the min and max of the projection extents
-				min_r1 = std::min(min_r1, q_one);
-				max_r1 = std::max(max_r1, q_one);
+				Vector2 vertexToProject = bodyAVertices[i];
+				float projectedDistanceIntoAxis = MathsUtils::Dot(axisToProjectOnto, vertexToProject);
+				bodyA_MinimumProjection = std::min(bodyA_MinimumProjection, projectedDistanceIntoAxis);
+				bodyA_MaximumProjection = std::max(bodyA_MaximumProjection, projectedDistanceIntoAxis);
 			}
 
-			for (int P = 0; P < 4; P++)
+			//Project each point of bodyB onto the axis to get the min and max values.
+			for (size_t i = 0; i < bodyBVertices.size(); i++)
 			{
-				//project each point onto line 
-				float q_two = shapeTwoPoints[P].Dot(axisProj);
-
-				//get the min and max of the projection extents
-				min_r2 = std::min(min_r2, q_two);
-				max_r2 = std::max(max_r2, q_two);
+				Vector2 vertexToProject = bodyBVertices[i];
+				float projectedDistanceIntoAxis = MathsUtils::Dot(axisToProjectOnto, vertexToProject);
+				bodyB_MinimumProjection = std::min(bodyB_MinimumProjection, projectedDistanceIntoAxis);
+				bodyB_MaximumProjection = std::max(bodyB_MaximumProjection, projectedDistanceIntoAxis);
 			}
 
-			//if they overlap, continue else if they dont, theyre not colliding so can return
-			if (!(max_r2 >= min_r1) && (max_r1 >= min_r2))
+			//
+			//	-----|---------------------|-----|--------------|-----------------------------------
+			//		a_min				b_min   a_max         b_max
+			//
+			//	if a_max is greater than b_min, theres an overlap
+			//
+			//	-----|---------------------|-----|--------------|-----------------------------------
+			//		b_min				a_min   b_max         a_max
+			//
+			//	if b_max is greater than a_min, theres an overlap
+			//	We check if this is false to see if we can detect a separating axis early
+			//  and avoid the rest of the test!
+			if (((bodyB_MaximumProjection >= bodyA_MinimumProjection) && (bodyA_MaximumProjection >= bodyB_MinimumProjection)) == false)
 			{
-				delete[] shapeOnePoints;
-				shapeOnePoints = nullptr;
-				delete[] shapeTwoPoints;
-				shapeTwoPoints = nullptr;
-
-				manifold->HasCollided = false;
-				return manifold->HasCollided;
+				return false;
 			}
-
-			float axisDepth = std::min(max_r2 - min_r1, max_r1 - min_r2);
-
-			if (axisDepth < manifold->Depth)
+			else
 			{
-				manifold->Depth = axisDepth;
-				manifold->Normal = axisProj;
+				float depth = std::min(bodyB_MaximumProjection - bodyA_MinimumProjection, bodyA_MaximumProjection - bodyB_MinimumProjection);
+
+				if (depth < manifold->Depth)
+				{
+					manifold->Depth = depth;
+					manifold->Normal = axisToProjectOnto;
+				}
 			}
 		}
 
-		manifold->Depth /= manifold->Normal.GetMagnitude();
-		manifold->Normal = manifold->Normal.GetNormalized();
+		manifold->HasCollided = true;
+		manifold->BodyA_Reference = bodyA;
+		manifold->BodyB_Incident = bodyB;
 
-		Vector2 direction = bodyB.Pos - bodyA.Pos;
+		//If this direction check is not here then an object with fly through half the sides to the other.
+		//								  Without the check, the first body with move into side D
+		//          ________A_______	  through the second body and out side B.
+		//         |                |
+		//         |                |
+		//         |                |
+		//    D    |                |  B
+		//         |                |
+		//         |                |
+		//         |________________|
+		//					C
 
-		if (direction.Dot(manifold->Normal) < 0.0f)
+		Vector2 direction = manifold->BodyB_Incident->Pos - manifold->BodyA_Reference->Pos;
+		if (direction.Dot(manifold->Normal) > 0.0f)
 		{
 			manifold->Normal = manifold->Normal * -1;
 		}
 
-		delete[] shapeOnePoints;
-		shapeOnePoints = nullptr;
-		delete[] shapeTwoPoints;
-		shapeTwoPoints = nullptr;
-
-		manifold->HasCollided = true;
-		return manifold->HasCollided;
-	};
-	*/
-
-	static CollisionTest SeperatingAxisTheory(const Body& bodyA, const Body& bodyB, Manifold* manifold)
-	{
-		float highestSeperationDistance = -INFINITY;
-		int   highestSeperationEdge    = -1;
-
-		for (size_t i = 0; i < bodyA.EdgeCount; i++)
-		{
-			Edge edge = bodyA.GetEdge(i);
-			Point vertexB = bodyB.GetSupportVertex(edge.GetNormal() * -1);
-			
-			float distance = MathsUtils::PointDistanceToLineSigned(vertexB, edge.GetLine());
-
-			if (distance > highestSeperationDistance)
-			{
-				highestSeperationDistance = distance;
-				highestSeperationEdge = i;
-			}
-		}
-
-		return CollisionTest(highestSeperationDistance, highestSeperationEdge);
-	};
-
-	static bool HasCollided(const Body& bodyA, const Body& bodyB, Manifold* manifold)
-	{
-		//Test the face normals of every face in body A.
-		CollisionTest testA = SeperatingAxisTheory(bodyA, bodyB, manifold);
-		if (testA.SeperationDistance > 0.0f) //Early passout check.
-		{
-			return manifold->HasCollided;
-		}
-
-		//Test the face normals of every face in body B.
-		CollisionTest testB = SeperatingAxisTheory(bodyB, bodyA, manifold);
-		if (testB.SeperationDistance > 0.0f)
-		{
-			return manifold->HasCollided;
-		}
-
-		//No seperation and so the polygons overlap.
-		manifold->BodyA = &bodyA;
-		manifold->BodyAEdgeIndex = testA.PlaneIndex;
-		manifold->BodyB = &bodyB;
-		manifold->BodyBEdgeIndex = testB.PlaneIndex;
-		manifold->Depth = testA.SeperationDistance;
-		manifold->HasCollided = true;
-
-		Line sideA = bodyA.GetEdge(manifold->BodyAEdgeIndex).GetLine();
-		Line sideB = bodyB.GetEdge(manifold->BodyBEdgeIndex).GetLine();
-		manifold->ContactPoints.push_back(MathsUtils::CalculateIntersectionPointOfTwoLines(sideA, sideB));
-		World::DebugPointsToRenderThisFrame.push_back(manifold->ContactPoints.back());
-
-		return manifold->HasCollided;
-	};
+		return true;
+	}
 };

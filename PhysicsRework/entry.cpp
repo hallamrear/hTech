@@ -42,12 +42,12 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 				//event.key.keysym.scancode
 				switch (event.key.keysym.sym)
 				{
-				case SDLK_w: world->Bodies.front()->Pos.Y += 50 * 0.016f; break;
-				case SDLK_s: world->Bodies.front()->Pos.Y -= 50 * 0.016f; break;
-				case SDLK_d: world->Bodies.front()->Pos.X += 50 * 0.016f; break;
-				case SDLK_a: world->Bodies.front()->Pos.X -= 50 * 0.016f; break;
-				case SDLK_q: world->Bodies.front()->Rot += 50 * 0.016f;   break;
-				case SDLK_e: world->Bodies.front()->Rot -= 50 * 0.016f;   break;
+				case SDLK_w: world->Bodies.front()->Pos.Y += 200 * 0.016f; break;
+				case SDLK_s: world->Bodies.front()->Pos.Y -= 200 * 0.016f; break;
+				case SDLK_d: world->Bodies.front()->Pos.X += 200 * 0.016f; break;
+				case SDLK_a: world->Bodies.front()->Pos.X -= 200 * 0.016f; break;
+				case SDLK_q:   world->Bodies.front()->Rot += 200 * 0.016f;   break;
+				case SDLK_e:   world->Bodies.front()->Rot -= 200 * 0.016f;   break;
 
 				default:
 					break;

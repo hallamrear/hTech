@@ -9,9 +9,11 @@ struct Manifold
 	std::vector<Vector2> ContactPoints = std::vector<Vector2>();
 	bool HasCollided = false;
 	float Depth = INFINITY;
-	const Body* BodyA = nullptr;
+	Vector2 Normal;
+
+	Body* BodyA_Reference = nullptr;
 	int   BodyAEdgeIndex = -1;
-	const Body* BodyB = nullptr;
+	Body* BodyB_Incident = nullptr;
 	int   BodyBEdgeIndex = -1;
 
 	Manifold() {};

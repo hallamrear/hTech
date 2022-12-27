@@ -92,7 +92,15 @@ struct Line
 
 	LineEquation GetEquation() const
 	{
-		float m = (B.Y - A.Y) / (B.X - A.X);
+		float dY = (B.Y - A.Y);
+		float dX = (B.X - A.X);
+		float m = 0.0f;
+
+		if (dY != 0.0f && dX != 0.0f)
+		{
+			m = (B.Y - A.Y) / (B.X - A.X);
+		}
+
 		float c = A.Y - (m * A.X);
 		return LineEquation(m, c);
 	}

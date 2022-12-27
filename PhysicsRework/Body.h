@@ -40,11 +40,10 @@ struct Edge
 
 struct Body
 {
-private:
+public:
 	std::vector<Edge*> m_Edges;
 	std::vector<Vector2> m_Vertices;
 
-public:
 	Vector2 Pos;
 	float	Rot;
 	Vector2 Vel;
@@ -58,8 +57,6 @@ public:
 	float	Inertia;
 	float	InvInertia;
 
-	const int EdgeCount = 4;
-	const int VertexCount = 4;
 	Vector2* TL;
 	Vector2* BL;
 	Vector2* TR;
@@ -73,8 +70,6 @@ public:
 	const Vector2& GetSupportVertex(const Vector2& direction) const;
 
 	void CalculateOrientedPositions();
-
 	void Update(float dt);
-
 };
 
