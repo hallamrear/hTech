@@ -36,4 +36,28 @@ namespace MathsUtils
 	bool  IsPointAboveLine(const Point& point, const Line& line);
 
 	Vector2 CalculateIntersectionPointOfTwoLines(const Line& lineA, const Line& lineB);
+	Vector2 CalculateIntersectionPointOfTwoLines(const Vector2& lineA, const Vector2& lineB);
+
+	struct ClosestPointDistanceResult
+	{
+		Vector2 ClosestPoint;
+		float DistanceSquared;
+	};
+
+	ClosestPointDistanceResult FindClosestPointOnLine(const Vector2& point, const Vector2& A, const Vector2& B);
+	ClosestPointDistanceResult FindClosestPointOnLine(const Vector2& point, const Line& AB);
+
+	float DistanceSquared(const Vector2& a, const Vector2& b);
+	float Distance(const Vector2& a, const Vector2& b);
+
+	/// <summary>
+	/// Due to floating point inprefections, you can have two values be extremely close to eachother without actually being equal.
+	/// This function checks if they are within an amount of each other.
+	/// </summary>
+	/// <param name="A"></param>
+	/// <param name="B"></param>
+	/// <param name="tolerence">The allowed gap between A and B for the check to pass.</param>
+	/// <returns></returns>
+	bool AreFloatingPointsWithinTolerence(const float& A, const float& B, const float& tolerance);
+	bool AreTwoPointsWithinTolerence(const Vector2& A, const Vector2& B, const float& tolerance);
 }

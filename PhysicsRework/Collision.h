@@ -4,78 +4,37 @@
 #include "Vector2.h"
 #include "MathsUtils.h"
 #include "World.h"
+#include <iostream>
+
+#define COLLISION_SKIN_DISTANCE 0.0005f
 
 struct Manifold;
 
-struct CollisionTest
-{
-	//Largest distance of seperation between plane and polygon vertex.
-	float SeperationDistance = FLT_MIN;
-
-	/*
-	//index of the face used in the calculation of the seperation distance.
-	//	  |		S
-	//P   |-------------->
-	//	  |
-	*/
-	int PlaneIndex = -1;
-
-	CollisionTest()
-	{
-
-	}
-
-	CollisionTest(float seperationDistance = FLT_MIN, int index = -1)
-	{
-		SeperationDistance = seperationDistance;
-		PlaneIndex = index;
-	}
-};
+//static Vector2 bodyA_minimumProjectedVertex = Vector2(0.0f, 0.0f);
+//static Vector2 bodyA_maximumProjectedVertex = Vector2(0.0f, 0.0f);
+//static Vector2 bodyB_minimumProjectedVertex = Vector2(0.0f, 0.0f);
+//static Vector2 bodyB_maximumProjectedVertex = Vector2(0.0f, 0.0f);
 
 struct Collision
 {
-	struct SATHitData
+private:
+	struct ProjectionResult
 	{
-		Body* EdgeOwner;
-		int EdgeID;
+		Vector2 Normal;
 		float Depth;
-		Vector2 AxisDirection;
 
-		SATHitData(Body* edgeOwner, int edgeid, float depth, Vector2 axisDir)
+		ProjectionResult()
 		{
-			EdgeOwner = edgeOwner;
-			EdgeID = edgeid;
-			Depth = depth;
-			AxisDirection = axisDir;
+			Normal = Vector2(0.0f, 0.0f);
+			Depth = INFINITY;
 		}
 	};
 
-	struct SATResult
+	static bool GetMinAndMaxProjectionValues(ProjectionResult& result, const Body& bodyToTest, const Body& bodyA, const Body& bodyB)
 	{
-		bool HasCollided = false;
-		std::vector<SATHitData> hitData = std::vector<SATHitData>();
+		size_t testBodyEdgeCount = bodyToTest.m_Edges.size();
 
-		SATResult()
-		{
-
-		};
-
-		void Clear()
-		{
-			HasCollided = false;
-			hitData.clear();
-		}
-	};
-
-	static bool PrimVsPrim(Body* bodyA, Body* bodyB, Manifold* manifold)
-	{
-		std::vector<Vector2>& bodyAVertices = bodyA->m_Vertices;
-		std::vector<Vector2>& bodyBVertices = bodyB->m_Vertices;
-		std::vector<Edge*>& bodyAEdges = bodyA->m_Edges;
-		std::vector<Edge*>& bodyBEdges = bodyB->m_Edges;
-
-		//Test every side of bodyA for a collision.
-		for (size_t e = 0; e < bodyAEdges.size(); e++)
+		for (size_t i = 0; i < testBodyEdgeCount; i++)
 		{
 			float bodyA_MinimumProjection = INFINITY;
 			float bodyA_MaximumProjection = -INFINITY;
@@ -83,24 +42,24 @@ struct Collision
 			float bodyB_MaximumProjection = -INFINITY;
 
 			//Construct line from the two points on the bodies edge.
-			const Edge& edge = bodyA->GetEdge(e);
-			Vector2 axisToProjectOnto = Vector2(*edge.B - *edge.A);
-			axisToProjectOnto = edge.GetNormal();
-			axisToProjectOnto = axisToProjectOnto.GetNormalized();
+			const Edge& edge = bodyToTest.GetEdge(i);
+			Vector2 axisToProjectOnto = edge.GetNormal().GetNormalized();
 
+			size_t bodyAVertexCount = bodyA.m_Vertices.size();
 			//Project each point of bodyA onto the axis to get the min and max values.
-			for (size_t i = 0; i < bodyAVertices.size(); i++)
+			for (size_t a = 0; a < bodyAVertexCount; a++)
 			{
-				Vector2 vertexToProject = bodyAVertices[i];
+				Vector2 vertexToProject = bodyA.m_Vertices[a];
 				float projectedDistanceIntoAxis = MathsUtils::Dot(axisToProjectOnto, vertexToProject);
 				bodyA_MinimumProjection = std::min(bodyA_MinimumProjection, projectedDistanceIntoAxis);
 				bodyA_MaximumProjection = std::max(bodyA_MaximumProjection, projectedDistanceIntoAxis);
 			}
 
+			size_t bodyBVertexCount = bodyB.m_Vertices.size();
 			//Project each point of bodyB onto the axis to get the min and max values.
-			for (size_t i = 0; i < bodyBVertices.size(); i++)
+			for (size_t b = 0; b < bodyBVertexCount; b++)
 			{
-				Vector2 vertexToProject = bodyBVertices[i];
+				Vector2 vertexToProject = bodyB.m_Vertices[b];
 				float projectedDistanceIntoAxis = MathsUtils::Dot(axisToProjectOnto, vertexToProject);
 				bodyB_MinimumProjection = std::min(bodyB_MinimumProjection, projectedDistanceIntoAxis);
 				bodyB_MaximumProjection = std::max(bodyB_MaximumProjection, projectedDistanceIntoAxis);
@@ -118,89 +77,43 @@ struct Collision
 			//	if b_max is greater than a_min, theres an overlap
 			//	We check if this is false to see if we can detect a separating axis early
 			//  and avoid the rest of the test!
-			if (((bodyB_MaximumProjection >= bodyA_MinimumProjection) && (bodyA_MaximumProjection >= bodyB_MinimumProjection)) == false)
+			if ((bodyA_MinimumProjection >= bodyB_MaximumProjection) || (bodyB_MinimumProjection >= bodyA_MaximumProjection))
 			{
 				return false;
 			}
 			else
 			{
 				float depth = std::min(bodyB_MaximumProjection - bodyA_MinimumProjection, bodyA_MaximumProjection - bodyB_MinimumProjection);
+				float dOne = bodyB_MaximumProjection - bodyA_MinimumProjection;
+				float dTwo = bodyA_MaximumProjection - bodyB_MinimumProjection;
 
-				if (depth < manifold->Depth)
+				if (depth < result.Depth)
 				{
-					manifold->Depth = depth;
-					manifold->Normal = axisToProjectOnto;
+					result.Depth = depth;
+					result.Normal = axisToProjectOnto;
 				}
 			}
 		}
 
-		// // // // // // // // // // // // //
-		// // // // // // // // // // // // //
-		// // // // // // // // // // // // //
+		return true;
+	}
 
-		//Test every side of bodyB for a collision.
-		for (size_t e = 0; e < bodyBEdges.size(); e++)
-		{
-			float bodyA_MinimumProjection = INFINITY;
-			float bodyA_MaximumProjection = -INFINITY;
-			float bodyB_MinimumProjection = INFINITY;
-			float bodyB_MaximumProjection = -INFINITY;
+public:
+	static bool PolygonVsPolygon(const Body& bodyA, const Body& bodyB, Manifold& manifold)
+	{
+		ProjectionResult result;
+		if (GetMinAndMaxProjectionValues(result, bodyA, bodyA, bodyB) == false)
+			return false;
 
-			//Construct line from the two points on the bodies edge.
-			const Edge& edge = bodyB->GetEdge(e);
-			Vector2 axisToProjectOnto = Vector2(*edge.B - *edge.A);
-			axisToProjectOnto = edge.GetNormal();
-			axisToProjectOnto = axisToProjectOnto.GetNormalized();
+		if (GetMinAndMaxProjectionValues(result, bodyB, bodyA, bodyB) == false)
+			return false;
 
-			//Project each point of bodyA onto the axis to get the min and max values.
-			for (size_t i = 0; i < bodyAVertices.size(); i++)
-			{
-				Vector2 vertexToProject = bodyAVertices[i];
-				float projectedDistanceIntoAxis = MathsUtils::Dot(axisToProjectOnto, vertexToProject);
-				bodyA_MinimumProjection = std::min(bodyA_MinimumProjection, projectedDistanceIntoAxis);
-				bodyA_MaximumProjection = std::max(bodyA_MaximumProjection, projectedDistanceIntoAxis);
-			}
+		manifold.HasCollided = true;
+		manifold.BodyA = &bodyA;
+		manifold.BodyB = &bodyB;
 
-			//Project each point of bodyB onto the axis to get the min and max values.
-			for (size_t i = 0; i < bodyBVertices.size(); i++)
-			{
-				Vector2 vertexToProject = bodyBVertices[i];
-				float projectedDistanceIntoAxis = MathsUtils::Dot(axisToProjectOnto, vertexToProject);
-				bodyB_MinimumProjection = std::min(bodyB_MinimumProjection, projectedDistanceIntoAxis);
-				bodyB_MaximumProjection = std::max(bodyB_MaximumProjection, projectedDistanceIntoAxis);
-			}
-
-			//
-			//	-----|---------------------|-----|--------------|-----------------------------------
-			//		a_min				b_min   a_max         b_max
-			//
-			//	if a_max is greater than b_min, theres an overlap
-			//
-			//	-----|---------------------|-----|--------------|-----------------------------------
-			//		b_min				a_min   b_max         a_max
-			//
-			//	if b_max is greater than a_min, theres an overlap
-			//	We check if this is false to see if we can detect a separating axis early
-			//  and avoid the rest of the test!
-			if (((bodyB_MaximumProjection >= bodyA_MinimumProjection) && (bodyA_MaximumProjection >= bodyB_MinimumProjection)) == false)
-			{
-				return false;
-			}
-			else
-			{
-				float depth = std::min(bodyB_MaximumProjection - bodyA_MinimumProjection, bodyA_MaximumProjection - bodyB_MinimumProjection);
-
-				if (depth < manifold->Depth)
-				{
-					manifold->Depth = depth;
-					manifold->Normal = axisToProjectOnto;
-				}
-			}
-		}
-
-		manifold->HasCollided = true;
-		manifold->BodyA_Reference = bodyA;
-		manifold->BodyB_Incident = bodyB;
+		manifold.Normal = result.Normal;
+		manifold.Depth = result.Depth;
 
 		//If this direction check is not here then an object with fly through half the sides to the other.
 		//								  Without the check, the first body with move into side D
@@ -214,12 +127,81 @@ struct Collision
 		//         |________________|
 		//					C
 
-		Vector2 direction = manifold->BodyB_Incident->Pos - manifold->BodyA_Reference->Pos;
-		if (direction.Dot(manifold->Normal) > 0.0f)
+		Vector2 direction = manifold.BodyB->Pos - manifold.BodyA->Pos;
+		if (direction.Dot(manifold.Normal) > 0.0f)
 		{
-			manifold->Normal = manifold->Normal * -1;
+			manifold.Normal = manifold.Normal * -1;
 		}
 
+		FindPolygonContactPoints(manifold, bodyA.m_Vertices, bodyB.m_Vertices);
+
+		manifold.Depth += 1.0f + (COLLISION_SKIN_DISTANCE);
+
 		return true;
+	};
+
+	static void FindPolygonContactPoints(Manifold& manifold,
+		const std::vector<Vector2>& verticesA, const std::vector<Vector2>& verticesB)
+	{
+		const float penTestDistance = 0.0005f;
+
+		manifold.ContactPoints.clear();
+		manifold.ContactPoints.push_back(Vector2(INFINITY, INFINITY));
+		manifold.ContactPoints.push_back(Vector2(INFINITY, INFINITY));
+
+		float minDistanceSquared = INFINITY;
+
+		for (int i = 0; i < verticesA.size(); i++)
+		{
+			Vector2 p = verticesA[i];
+
+			for (int j = 0; j < verticesB.size(); j++)
+			{
+				Vector2 va = verticesB[j];
+				Vector2 vb = verticesB[(j + 1) % verticesB.size()];
+
+				MathsUtils::ClosestPointDistanceResult result = MathsUtils::FindClosestPointOnLine(p, va, vb);
+
+				if (MathsUtils::AreFloatingPointsWithinTolerence(result.DistanceSquared, minDistanceSquared, penTestDistance))
+				{
+					if (!MathsUtils::AreTwoPointsWithinTolerence(result.ClosestPoint, manifold.ContactPoints[0], penTestDistance))
+					{
+						manifold.ContactPoints[1] = result.ClosestPoint;
+					}
+				}
+				else if (result.DistanceSquared < minDistanceSquared)
+				{
+					minDistanceSquared = result.DistanceSquared;
+					manifold.ContactPoints[0] = result.ClosestPoint;
+				}
+			}
+		}
+
+		for (int i = 0; i < verticesB.size(); i++)
+		{
+			Vector2 p = verticesB[i];
+
+			for (int j = 0; j < verticesA.size(); j++)
+			{
+				Vector2 va = verticesA[j];
+				Vector2 vb = verticesA[(j + 1) % verticesA.size()];
+
+				MathsUtils::ClosestPointDistanceResult result = MathsUtils::FindClosestPointOnLine(p, va, vb);
+
+				if (MathsUtils::AreFloatingPointsWithinTolerence(result.DistanceSquared, minDistanceSquared, penTestDistance))
+				{
+					if (!MathsUtils::AreTwoPointsWithinTolerence(result.ClosestPoint, manifold.ContactPoints[0], penTestDistance))
+					{
+						manifold.ContactPoints[1] = result.ClosestPoint;
+					}
+				}
+				else if (result.DistanceSquared < minDistanceSquared)
+				{
+					minDistanceSquared = result.DistanceSquared;
+					manifold.ContactPoints[0] = result.ClosestPoint;
+				}
+			}
+		}
+
 	}
 };

@@ -116,3 +116,60 @@ Vector2 MathsUtils::CalculateIntersectionPointOfTwoLines(const Line& lineA, cons
 	float intersectY = equationA.M * intersectX + equationA.C;
 	return Vector2(intersectX, intersectY);
 }
+
+MathsUtils::ClosestPointDistanceResult MathsUtils::FindClosestPointOnLine(const Vector2& point, const Vector2& A, const Vector2& B)
+{
+	MathsUtils::ClosestPointDistanceResult result;
+	Vector2 AB = B - A;
+	Vector2 AP = point - A;
+
+	float projection = MathsUtils::Dot(AP, AB);
+	float ABmagSquared = AB.GetMagnitudeSquared();
+	float distance = projection / ABmagSquared;
+
+	if (distance <= 0.0f)
+	{
+		result.ClosestPoint = A;
+	}
+	else if (distance >= 1.0f)
+	{
+		result.ClosestPoint = B;
+	}
+	else
+	{
+		result.ClosestPoint = A + AB * distance;
+	}
+
+	result.DistanceSquared = MathsUtils::DistanceSquared(point, result.ClosestPoint);
+
+	return result;
+}
+
+MathsUtils::ClosestPointDistanceResult MathsUtils::FindClosestPointOnLine(const Vector2& point, const Line& AB)
+{
+	return MathsUtils::FindClosestPointOnLine(point, AB.A, AB.B);
+}
+
+bool MathsUtils::AreFloatingPointsWithinTolerence(const float& A, const float& B, const float& tolerence)
+{
+	return (abs(A - B) < tolerence);
+}
+
+bool MathsUtils::AreTwoPointsWithinTolerence(const Vector2& A, const Vector2& B, const float& tolerance)
+{
+	return (A - B).GetMagnitudeSquared() < (tolerance * tolerance);
+}
+
+float MathsUtils::DistanceSquared(const Vector2& a, const Vector2& b)
+{
+	float dx = a.X - b.X;
+	float dy = a.Y - b.Y;
+	return dx * dx + dy * dy;
+};
+
+float MathsUtils::Distance(const Vector2& a, const Vector2& b)
+{
+	float dx = a.X - b.X;
+	float dy = a.Y - b.Y;
+	return sqrtf(dx * dx + dy * dy);
+};

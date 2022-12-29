@@ -90,6 +90,11 @@ struct Line
 		return Vector2(-dy, dx).GetNormalized();
 	}
 
+	Vector2 GetCentrePoint() const
+	{
+		return Vector2((A.X + B.X) / 2.0f, (A.Y + B.Y) / 2.0f);
+	}
+
 	LineEquation GetEquation() const
 	{
 		float dY = (B.Y - A.Y);

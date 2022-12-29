@@ -40,8 +40,8 @@ Body::Body(int x, int y, int size, float mass)
 
 	TL = &m_Vertices[0];
 	BL = &m_Vertices[1];
-	TR = &m_Vertices[2];
-	BR = &m_Vertices[3];
+	BR = &m_Vertices[2];
+	TR = &m_Vertices[3];
 
 	m_Edges = std::vector<Edge*>();
 	m_Edges.push_back(new Edge(*TL, *TR));
@@ -68,8 +68,10 @@ void Body::CalculateOrientedPositions()
 		float rotation = 360.0f - Rot;
 		m_Vertices[0] = MathsUtils::RotatePointAroundOriginDegrees(Vector2(Pos.X - (Size / 2), Pos.Y + (Size / 2)), Rot, Pos);
 		m_Vertices[1] = MathsUtils::RotatePointAroundOriginDegrees(Vector2(Pos.X - (Size / 2), Pos.Y - (Size / 2)), Rot, Pos);
-		m_Vertices[2] = MathsUtils::RotatePointAroundOriginDegrees(Vector2(Pos.X + (Size / 2), Pos.Y + (Size / 2)), Rot, Pos);
-		m_Vertices[3] = MathsUtils::RotatePointAroundOriginDegrees(Vector2(Pos.X + (Size / 2), Pos.Y - (Size / 2)), Rot, Pos);
+		m_Vertices[2] = MathsUtils::RotatePointAroundOriginDegrees(Vector2(Pos.X + (Size / 2), Pos.Y - (Size / 2)), Rot, Pos);
+		m_Vertices[3] = MathsUtils::RotatePointAroundOriginDegrees(Vector2(Pos.X + (Size / 2), Pos.Y + (Size / 2)), Rot, Pos);
+
+		//m_transformedVertices[i] = MathsUtils::RotatePointAroundOriginDegrees(m_Vertices[i], Rot, Pos);
 	}
 }
 

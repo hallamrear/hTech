@@ -10,7 +10,7 @@ class World
 {
 private:
 	std::vector<Manifold*> m_Manifolds;
-	std::vector<Arbiter*> m_Arbiters;
+	std::vector<Arbiter*>  m_Arbiters;
 	void DetermineCollisions();
 
 public:

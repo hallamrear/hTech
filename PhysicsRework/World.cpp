@@ -13,6 +13,14 @@ Vector2 WorldToScreen(Vector2 worldPosition)
 	return Vector2(worldPosition.X, 600 - worldPosition.Y);
 }
 
+void DrawLineToScreen(SDL_Renderer* renderer, Point pointA, Point pointB)
+{
+	Vector2 p1 = pointA, p2 = pointB;
+	p1 = WorldToScreen(p1);
+	p2 = WorldToScreen(p2);
+	SDL_RenderDrawLine(renderer, p1.X, p1.Y, p2.X, p2.Y);
+}
+
 void World::Setup()
 {
 	m_Manifolds = std::vector<Manifold*>();
@@ -20,8 +28,7 @@ void World::Setup()
 
 	Bodies.push_back(new Body(400, 490, 64.0f, 1000.0f));
 	Bodies.back()->Rot = 45.0f;
-	Bodies.back()->Rot = 0.0f;
-	Bodies.push_back(new Body(400, 300, 128.0f, FLT_MAX)); //Floor
+-	Bodies.push_back(new Body(400, 300, 128.0f, FLT_MAX)); //Floor
 }
 
 void World::DetermineCollisions()
@@ -35,7 +42,7 @@ void World::DetermineCollisions()
 			Body* bodyB = Bodies[j];
 
 			Manifold* manifold = new Manifold();
-			if (Collision::PrimVsPrim(bodyA, bodyB, manifold))
+			if (Collision::PolygonVsPolygon(*bodyA, *bodyB, *manifold))
 			{
 				SDL_Color green;
 				green.r = 0;
@@ -45,9 +52,6 @@ void World::DetermineCollisions()
 				World::DebugLinesToRenderThisFrame.push_back(Line(Point(50.0f, 50.0f), Point(250.0f, 250.0f), green));
 
 				m_Manifolds.push_back(manifold);
-				//Vector2 centre = manifold.BodyA_Reference->GetEdge(manifold.BodyAEdgeIndex).GetCentrePoint();
-				//World::DebugLinesToRenderThisFrame.push_back(Line(centre, centre + (manifold.Normal * manifold.Depth)));
-
 			}
 			else
 			{
@@ -65,13 +69,22 @@ void World::DetermineCollisions()
 	}
 }
 
+static int mX;
+static int mY;
+static Vector2 mPos;
+
 void World::Update(float dt)
 {
+	SDL_GetMouseState(&mX, &mY);
+	mPos = Vector2(mX, 600 + mY);
+	World::DebugPointsToRenderThisFrame.push_back(mPos);
 
+	Body* b;
 	///Clear Existing Manifolds
 	for (size_t i = 0; i < m_Manifolds.size(); i++)
 	{
-		m_Manifolds[i]->BodyA_Reference->Pos += Vector2(m_Manifolds[i]->Normal * m_Manifolds[i]->Depth);
+		b = const_cast<Body*>(m_Manifolds[i]->BodyA);
+		b->Pos += Vector2(m_Manifolds[i]->Normal * m_Manifolds[i]->Depth);
 
 		delete m_Manifolds[i];
 		m_Manifolds[i] = nullptr;
@@ -89,7 +102,7 @@ void World::Update(float dt)
 		if (body->InvMass == 0.0f)
 			continue;
 
-		//body->Vel += (World::Gravity + body->Force * body->InvMass) * dt;
+		body->Vel += (World::Gravity + body->Force * body->InvMass) * dt;
 		body->AngularVel += body->Torque * body->InvInertia * dt;
 	}
 
@@ -126,15 +139,33 @@ void World::Render(SDL_Renderer* renderer)
 	SDL_RenderClear(renderer);
 
 	Vector2 p1, p2;
+	Vector2 pt;
 	SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
 	for (auto itr : Bodies)
 	{
 		for (size_t i = 0; i < itr->m_Edges.size(); i++)
 		{
-			Edge edge = itr->GetEdge(i);
-			p1 = WorldToScreen(*edge.A);
-			p2 = WorldToScreen(*edge.B);
-			SDL_RenderDrawLine(renderer, (int)p1.X, (int)p1.Y, (int)p2.X, (int)p2.Y);
+			DebugLinesToRenderThisFrame.push_back(itr->m_Edges[i]->GetLine());
+		}
+	}
+
+
+	//Line test = Line(Vector2(50.0f, 50.0f), Vector2(250.0f, 250.0f));
+	//DebugLinesToRenderThisFrame.push_back(test);
+	//auto r = MathsUtils::FindClosestPointOnLine(WorldToScreen(Vector2(mX, mY)), test.A, test.B);
+	//Vector2 point = r.ClosestPoint;
+	//DebugPointsToRenderThisFrame.push_back(point);
+
+
+	for (auto& manifold : m_Manifolds)
+	{
+		for (size_t i = 0; i < manifold->ContactPoints.size(); i++)
+		{
+			SDL_Color color;
+			color.r = 255; color.g = 255; color.b = 255; color.a = 255;
+			Line line = Line(manifold->ContactPoints[i], manifold->ContactPoints[i] + (manifold->Normal * manifold->Depth), color);
+			DebugLinesToRenderThisFrame.push_back(line);
+			DebugPointsToRenderThisFrame.push_back(manifold->ContactPoints[i]);
 		}
 	}
 
@@ -142,7 +173,6 @@ void World::Render(SDL_Renderer* renderer)
 	SDL_Rect rect;
 	rect.w = 4;
 	rect.h = 4;
-	Vector2 pt;
 	for (auto& itr : DebugPointsToRenderThisFrame)
 	{
 		pt = WorldToScreen(itr);
@@ -156,17 +186,9 @@ void World::Render(SDL_Renderer* renderer)
 	for (auto& itr : DebugLinesToRenderThisFrame)
 	{
 		SDL_SetRenderDrawColor(renderer, itr.colour.r, itr.colour.g, itr.colour.b, 255);
-		p1 = WorldToScreen(itr.A);
-		p2 = WorldToScreen(itr.B);
-		SDL_RenderDrawLine(renderer, p1.X, p1.Y, p2.X, p2.Y );
+		DrawLineToScreen(renderer, itr.A, itr.B);
 	}
 	DebugLinesToRenderThisFrame.clear();
-
-	//for (auto& manifold : m_Manifolds)
-	//{
-	//	Edge edgeA = manifold->BodyA_Reference->GetEdge(manifold->BodyAEdgeIndex);
-	//	Edge edgeB = manifold->BodyB_Incident->GetEdge(manifold->BodyBEdgeIndex);
-	//}
 
 	SDL_RenderPresent(renderer);
 }
