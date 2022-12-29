@@ -28,7 +28,7 @@ void World::Setup()
 
 	Bodies.push_back(new Body(400, 490, 64.0f, 1000.0f));
 	Bodies.back()->Rot = 45.0f;
--	Bodies.push_back(new Body(400, 300, 128.0f, FLT_MAX)); //Floor
+	Bodies.push_back(new Body(400, 300, 128.0f, FLT_MAX)); //Floor
 }
 
 void World::DetermineCollisions()
