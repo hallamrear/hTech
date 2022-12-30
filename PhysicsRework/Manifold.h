@@ -10,8 +10,8 @@ struct Manifold
 	bool HasCollided = false;
 	float Depth = INFINITY;
 	Vector2 Normal;
-	const Body* BodyA = nullptr;
-	const Body* BodyB = nullptr;
+	Body* BodyA = nullptr;
+	Body* BodyB = nullptr;
 
 	Manifold() {};
 };

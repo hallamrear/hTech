@@ -2,6 +2,7 @@
 #include "MathsUtils.h"
 
 const Vector2 Vector2::Zero = Vector2(0.0f, 0.0f);
+const Vector2 Vector2::Infinity = Vector2(INFINITY, INFINITY);
 
 Vector2::Vector2()
 {

@@ -4,13 +4,13 @@
 
 struct SDL_Renderer;
 struct Manifold;
-struct Arbiter;
+struct CollisionSolver;
 
 class World
 {
 private:
 	std::vector<Manifold*> m_Manifolds;
-	std::vector<Arbiter*>  m_Arbiters;
+	std::vector<CollisionSolver*>  m_Collisions;
 	void DetermineCollisions();
 
 public:

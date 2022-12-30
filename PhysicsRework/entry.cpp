@@ -1,6 +1,7 @@
 #include "World.h"
 #include "SDL.h"
 #include <Windows.h>
+#include "MathsUtils.h"
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 {
@@ -43,19 +44,19 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 				//event.key.keysym.scancode
 				switch (event.key.keysym.sym)
 				{
-				case SDLK_w: world->Bodies.front()->Pos.Y += 200 * 0.016f; break;
-				case SDLK_s: world->Bodies.front()->Pos.Y -= 200 * 0.016f; break;
-				case SDLK_d: world->Bodies.front()->Pos.X += 200 * 0.016f; break;
-				case SDLK_a: world->Bodies.front()->Pos.X -= 200 * 0.016f; break;
-				case SDLK_q:   world->Bodies.front()->Rot += 200 * 0.016f; break;
-				case SDLK_e:   world->Bodies.front()->Rot -= 200 * 0.016f; break;
+				case SDLK_w: world->Bodies.front()->Vel.Y += 200 * 0.016f; break;
+				case SDLK_s: world->Bodies.front()->Vel.Y -= 200 * 0.016f; break;
+				case SDLK_d: world->Bodies.front()->Vel.X += 200 * 0.016f; break;
+				case SDLK_a: world->Bodies.front()->Vel.X -= 200 * 0.016f; break;
+				case SDLK_q:   world->Bodies.front()->AngularVel += MathsUtils::ConvertToRadians(200 * 0.016f); break;
+				case SDLK_e:   world->Bodies.front()->AngularVel -= MathsUtils::ConvertToRadians(200 * 0.016f); break;
 				
-				case SDLK_i: world->Bodies.back()->Pos.Y += 200 * 0.016f; break;
-				case SDLK_k: world->Bodies.back()->Pos.Y -= 200 * 0.016f; break;
-				case SDLK_l: world->Bodies.back()->Pos.X += 200 * 0.016f; break;
-				case SDLK_j: world->Bodies.back()->Pos.X -= 200 * 0.016f; break;
-				case SDLK_u: world->Bodies.back()->Rot += 200 * 0.016f; break;
-				case SDLK_o: world->Bodies.back()->Rot -= 200 * 0.016f; break;  
+				case SDLK_i: world->Bodies.back()->Vel.Y += 200 * 0.016f; break;
+				case SDLK_k: world->Bodies.back()->Vel.Y -= 200 * 0.016f; break;
+				case SDLK_l: world->Bodies.back()->Vel.X += 200 * 0.016f; break;
+				case SDLK_j: world->Bodies.back()->Vel.X -= 200 * 0.016f; break;
+				case SDLK_u: world->Bodies.back()->AngularVel += MathsUtils::ConvertToRadians(200 * 0.016f); break;
+				case SDLK_o: world->Bodies.back()->AngularVel -= MathsUtils::ConvertToRadians(200 * 0.016f); break;
 
 				default:
 					break; 

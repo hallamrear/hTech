@@ -360,6 +360,7 @@
   <ItemGroup>
     <ClCompile Include="Body.cpp" />
     <ClCompile Include="Collision.cpp" />
+    <ClCompile Include="CollisionSolver.cpp" />
     <ClCompile Include="entry.cpp" />
     <ClCompile Include="Manifold.cpp" />
     <ClCompile Include="MathsUtils.cpp" />
@@ -369,6 +370,7 @@
   <ItemGroup>
     <ClInclude Include="Body.h" />
     <ClInclude Include="Collision.h" />
+    <ClInclude Include="CollisionSolver.h" />
     <ClInclude Include="Manifold.h" />
     <ClInclude Include="MathsUtils.h" />
     <ClInclude Include="Vector2.h" />

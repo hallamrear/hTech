@@ -28,6 +28,11 @@ namespace MathsUtils
 	int Sign(int val);
 	float Dot(Vector2 a, Vector2 b);
 
+	float	CrossMagnitude(const Vector2& a, const Vector2& b);
+	Vector2 Cross(const Vector2& a, const Vector2& b);
+	Vector2 Cross(const Vector2& a, float s);
+	Vector2 Cross(float s, const Vector2& a);
+
 	float GetAngleBetweenTwoVectorsDegrees(const Vector2& a, const Vector2& b);
 	float GetAngleBetweenTwoVectors(const Vector2& a, const Vector2& b);
 

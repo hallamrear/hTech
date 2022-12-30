@@ -3,17 +3,8 @@
 #include "Body.h"
 #include "Vector2.h"
 #include "MathsUtils.h"
-#include "World.h"
-#include <iostream>
 
-#define COLLISION_SKIN_DISTANCE 0.0005f
-
-struct Manifold;
-
-//static Vector2 bodyA_minimumProjectedVertex = Vector2(0.0f, 0.0f);
-//static Vector2 bodyA_maximumProjectedVertex = Vector2(0.0f, 0.0f);
-//static Vector2 bodyB_minimumProjectedVertex = Vector2(0.0f, 0.0f);
-//static Vector2 bodyB_maximumProjectedVertex = Vector2(0.0f, 0.0f);
+#define COLLISION_SKIN_DISTANCE 0.05f
 
 struct Collision
 {
@@ -99,18 +90,18 @@ private:
 	}
 
 public:
-	static bool PolygonVsPolygon(const Body& bodyA, const Body& bodyB, Manifold& manifold)
+	static bool PolygonVsPolygon(Body* bodyA, Body* bodyB, Manifold& manifold)
 	{
 		ProjectionResult result;
-		if (GetMinAndMaxProjectionValues(result, bodyA, bodyA, bodyB) == false)
+		if (GetMinAndMaxProjectionValues(result, *bodyA, *bodyA, *bodyB) == false)
 			return false;
 
-		if (GetMinAndMaxProjectionValues(result, bodyB, bodyA, bodyB) == false)
+		if (GetMinAndMaxProjectionValues(result, *bodyB, *bodyA, *bodyB) == false)
 			return false;
 
 		manifold.HasCollided = true;
-		manifold.BodyA = &bodyA;
-		manifold.BodyB = &bodyB;
+		manifold.BodyA = bodyA;
+		manifold.BodyB = bodyB;
 
 		manifold.Normal = result.Normal;
 		manifold.Depth = result.Depth;
@@ -128,14 +119,14 @@ public:
 		//					C
 
 		Vector2 direction = manifold.BodyB->Pos - manifold.BodyA->Pos;
-		if (direction.Dot(manifold.Normal) > 0.0f)
+		if (direction.Dot(manifold.Normal) < 0.0f)
 		{
 			manifold.Normal = manifold.Normal * -1;
 		}
 
-		FindPolygonContactPoints(manifold, bodyA.m_Vertices, bodyB.m_Vertices);
+		FindPolygonContactPoints(manifold, bodyA->m_Vertices, bodyB->m_Vertices);
 
-		manifold.Depth += 1.0f + (COLLISION_SKIN_DISTANCE);
+		//manifold.Depth += 1.0f + (COLLISION_SKIN_DISTANCE);
 
 		return true;
 	};
@@ -150,6 +141,7 @@ public:
 		manifold.ContactPoints.push_back(Vector2(INFINITY, INFINITY));
 
 		float minDistanceSquared = INFINITY;
+		int pointCount = 0;
 
 		for (int i = 0; i < verticesA.size(); i++)
 		{
@@ -167,12 +159,14 @@ public:
 					if (!MathsUtils::AreTwoPointsWithinTolerence(result.ClosestPoint, manifold.ContactPoints[0], penTestDistance))
 					{
 						manifold.ContactPoints[1] = result.ClosestPoint;
+						pointCount = 2;
 					}
 				}
 				else if (result.DistanceSquared < minDistanceSquared)
 				{
 					minDistanceSquared = result.DistanceSquared;
 					manifold.ContactPoints[0] = result.ClosestPoint;
+					pointCount = 1;
 				}
 			}
 		}
@@ -193,15 +187,21 @@ public:
 					if (!MathsUtils::AreTwoPointsWithinTolerence(result.ClosestPoint, manifold.ContactPoints[0], penTestDistance))
 					{
 						manifold.ContactPoints[1] = result.ClosestPoint;
+						pointCount = 2;
 					}
 				}
 				else if (result.DistanceSquared < minDistanceSquared)
 				{
 					minDistanceSquared = result.DistanceSquared;
 					manifold.ContactPoints[0] = result.ClosestPoint;
+					pointCount = 1;
 				}
 			}
 		}
 
+		if (pointCount == 1)
+		{
+			manifold.ContactPoints.erase(manifold.ContactPoints.begin() + 1);
+		}
 	}
 };

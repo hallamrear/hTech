@@ -46,6 +46,7 @@ public:
 	void RotatePointAroundOriginDegrees(float rotationDeg, Vector2 origin);
 
 	static const Vector2 Zero;
+	static const Vector2 Infinity;
 };
 
 typedef Vector2 Point;

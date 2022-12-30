@@ -64,6 +64,26 @@ float MathsUtils::Dot(Vector2 a, Vector2 b)
 {
 	return (a.X * b.X) + (a.Y * b.Y);
 }
+/// <summary>
+/// Returns the magnitude of the vector that would result from a regular 3D cross product of the input vectors, taking their Z values implicitly as 0.
+/// </summary>
+/// <param name="a"></param>
+/// <param name="b"></param>
+/// <returns>Returns the magnitude of the vector that would result from the regular 3D cross product of A and B.</returns>
+float MathsUtils::CrossMagnitude(const Vector2& a, const Vector2& b)
+{
+	return a.X * b.Y - a.Y * b.X;
+}
+
+Vector2 MathsUtils::Cross(const Vector2& a, float s)
+{
+	return Vector2(s * a.Y, -s * a.X);
+}
+
+Vector2 MathsUtils::Cross(float s, const Vector2& a)
+{
+	return Vector2(-s * a.Y, s * a.X);
+}
 
 float MathsUtils::GetAngleBetweenTwoVectorsDegrees(const Vector2& a, const Vector2& b)
 {

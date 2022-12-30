@@ -15,13 +15,13 @@ Body::Body(int x, int y, int size, float mass)
 	AngularVel = 0.0f;
 	Force = Vector2::Zero;
 	Torque = 0.0f;
-	Friction = 0.0f;
+	Friction = 5.0f;
 
 	Mass = mass;
 
 	if (mass < FLT_MAX)
 	{
-		InvMass = 1.0f / Mass;
+		InvMass = 1.0f / (float)Mass;
 		Inertia = Mass * (Size * Size + Size * Size) / 12.0f;
 		InvInertia = 1.0f / Inertia;
 	}
