@@ -1,5 +1,6 @@
 #include "World.h"
 #include "SDL.h"
+#include "Collision.h"
 #include <Windows.h>
 #include "MathsUtils.h"
 
@@ -44,12 +45,16 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 				//event.key.keysym.scancode
 				switch (event.key.keysym.sym)
 				{
+				case SDLK_1: CollisionBreak = true; break;
+				case SDLK_SPACE: world->TestMode = !world->TestMode; break;
+				case SDLK_p: world->CreateBody(); break;
+
 				case SDLK_w: world->Bodies.front()->Vel.Y += 200 * 0.016f; break;
 				case SDLK_s: world->Bodies.front()->Vel.Y -= 200 * 0.016f; break;
 				case SDLK_d: world->Bodies.front()->Vel.X += 200 * 0.016f; break;
 				case SDLK_a: world->Bodies.front()->Vel.X -= 200 * 0.016f; break;
-				case SDLK_q:   world->Bodies.front()->AngularVel += MathsUtils::ConvertToRadians(200 * 0.016f); break;
-				case SDLK_e:   world->Bodies.front()->AngularVel -= MathsUtils::ConvertToRadians(200 * 0.016f); break;
+				case SDLK_q: world->Bodies.front()->AngularVel += MathsUtils::ConvertToRadians(200 * 0.016f); break;
+				case SDLK_e: world->Bodies.front()->AngularVel -= MathsUtils::ConvertToRadians(200 * 0.016f); break;
 				
 				case SDLK_i: world->Bodies.back()->Vel.Y += 200 * 0.016f; break;
 				case SDLK_k: world->Bodies.back()->Vel.Y -= 200 * 0.016f; break;

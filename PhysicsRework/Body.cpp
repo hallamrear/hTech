@@ -3,7 +3,7 @@
 #include "World.h"
 #include "Collision.h"
 
-Body::Body(int x, int y, int size, float mass)
+Body::Body(int x, int y, float size, float mass)
 {
 	srand(NULL);
 	Size = size;
@@ -19,18 +19,21 @@ Body::Body(int x, int y, int size, float mass)
 
 	Mass = mass;
 
-	if (mass < FLT_MAX)
+	if (mass < FLT_MAX && mass > 0)
 	{
+		m_IsStatic = false;
 		InvMass = 1.0f / (float)Mass;
 		Inertia = Mass * (Size * Size + Size * Size) / 12.0f;
 		InvInertia = 1.0f / Inertia;
 	}
 	else
 	{
+		m_IsStatic = true;
 		InvMass = 0.0f;
 		Inertia = FLT_MAX;
 		InvMass = 0.0f;
 	}
+
 	m_Vertices = std::vector<Vector2>();
 	m_Vertices.push_back(Vector2());
 	m_Vertices.push_back(Vector2());
@@ -48,7 +51,6 @@ Body::Body(int x, int y, int size, float mass)
 	m_Edges.push_back(new Edge(*TR, *BR));
 	m_Edges.push_back(new Edge(*BR, *BL));
 	m_Edges.push_back(new Edge(*BL, *TL));
-
 }
 
 Body::~Body()
@@ -66,10 +68,10 @@ void Body::CalculateOrientedPositions()
 	//if (Rot > 0.0f && Rot < 360.0f)
 	{
 		float rotation = 360.0f - Rot;
-		m_Vertices[0] = MathsUtils::RotatePointAroundOriginDegrees(Vector2(Pos.X - (Size / 2), Pos.Y + (Size / 2)), Rot, Pos);
-		m_Vertices[1] = MathsUtils::RotatePointAroundOriginDegrees(Vector2(Pos.X - (Size / 2), Pos.Y - (Size / 2)), Rot, Pos);
-		m_Vertices[2] = MathsUtils::RotatePointAroundOriginDegrees(Vector2(Pos.X + (Size / 2), Pos.Y - (Size / 2)), Rot, Pos);
-		m_Vertices[3] = MathsUtils::RotatePointAroundOriginDegrees(Vector2(Pos.X + (Size / 2), Pos.Y + (Size / 2)), Rot, Pos);
+		m_Vertices[0] = MathsUtils::RotatePointAroundOriginDegrees(Vector2(Pos.X - (Size / 2.0f), Pos.Y + (Size / 2.0f)), Rot, Pos);
+		m_Vertices[1] = MathsUtils::RotatePointAroundOriginDegrees(Vector2(Pos.X - (Size / 2.0f), Pos.Y - (Size / 2.0f)), Rot, Pos);
+		m_Vertices[2] = MathsUtils::RotatePointAroundOriginDegrees(Vector2(Pos.X + (Size / 2.0f), Pos.Y - (Size / 2.0f)), Rot, Pos);
+		m_Vertices[3] = MathsUtils::RotatePointAroundOriginDegrees(Vector2(Pos.X + (Size / 2.0f), Pos.Y + (Size / 2.0f)), Rot, Pos);
 
 		//m_transformedVertices[i] = MathsUtils::RotatePointAroundOriginDegrees(m_Vertices[i], Rot, Pos);
 	}
@@ -85,9 +87,9 @@ void Body::Update(float dt)
 	{
 		Edge* edge = m_Edges[i];
 		Line line = Line(*edge->A, *edge->B);
-		Vector2 normal = line.GetNormal();
+		Vector2 Normal = line.GetNormal();
 		line.A = Vector2((line.A.X + line.B.X) / 2.0f, (line.A.Y + line.B.Y) / 2.0f);
-		line.B = line.A + (normal * 15);
+		line.B = line.A + (Normal * 15);
 		line.colour.r = 0; line.colour.g = 0; line.colour.b = 0;
 
 		switch (i)

@@ -4,7 +4,9 @@
 #include "Vector2.h"
 #include "MathsUtils.h"
 
-#define COLLISION_SKIN_DISTANCE 0.05f
+#define COLLISION_SKIN_DISTANCE 0.1f
+
+static bool CollisionBreak = false;
 
 struct Collision
 {
@@ -92,6 +94,11 @@ private:
 public:
 	static bool PolygonVsPolygon(Body* bodyA, Body* bodyB, Manifold& manifold)
 	{
+		if (CollisionBreak)
+		{
+			CollisionBreak = false;
+		}
+
 		ProjectionResult result;
 		if (GetMinAndMaxProjectionValues(result, *bodyA, *bodyA, *bodyB) == false)
 			return false;
@@ -123,10 +130,14 @@ public:
 		{
 			manifold.Normal = manifold.Normal * -1;
 		}
-
-		FindPolygonContactPoints(manifold, bodyA->m_Vertices, bodyB->m_Vertices);
-
+			
 		//manifold.Depth += 1.0f + (COLLISION_SKIN_DISTANCE);
+
+		//We do not need to find any collision points if both bodies are static. 
+		//However we should never get to this point but it's still nice to check.
+		if(!(bodyA->IsStatic() && bodyB->IsStatic()))
+			FindPolygonContactPoints(manifold, bodyA->m_Vertices, bodyB->m_Vertices);
+
 
 		return true;
 	};

@@ -2,7 +2,7 @@
 #include <vector>
 #include "Vector2.h"
 
-class Body;
+struct Body;
 
 struct Manifold
 {

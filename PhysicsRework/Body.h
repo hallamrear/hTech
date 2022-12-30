@@ -40,6 +40,9 @@ struct Edge
 
 struct Body
 {
+private:
+	bool m_IsStatic = false;
+
 public:
 	std::vector<Edge*> m_Edges;
 	std::vector<Vector2> m_Vertices;
@@ -61,9 +64,9 @@ public:
 	Vector2* BL;
 	Vector2* TR;
 	Vector2* BR;
-	int Size;
+	float Size;
 
-	Body(int x, int y, int size, float mass);
+	Body(int x, int y, float size, float mass);
 	~Body();
 
 	const Edge& GetEdge(int index) const;
@@ -71,5 +74,10 @@ public:
 
 	void CalculateOrientedPositions();
 	void Update(float dt);
+
+	inline bool IsStatic() const
+	{
+		return m_IsStatic;
+	};
 };
 
