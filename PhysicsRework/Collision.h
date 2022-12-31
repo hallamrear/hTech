@@ -6,9 +6,8 @@
 
 #define COLLISION_SKIN_DISTANCE 0.1f
 
-static bool CollisionBreak = false;
 
-struct Collision
+class Collision
 {
 private:
 	struct ProjectionResult
@@ -92,11 +91,13 @@ private:
 	}
 
 public:
+	static bool CollisionBreak;
+
 	static bool PolygonVsPolygon(Body* bodyA, Body* bodyB, Manifold& manifold)
 	{
-		if (CollisionBreak)
+		if (Collision::CollisionBreak)
 		{
-			CollisionBreak = false;
+			Collision::CollisionBreak = false;
 		}
 
 		ProjectionResult result;

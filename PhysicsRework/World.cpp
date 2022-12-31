@@ -8,7 +8,7 @@
 std::vector<Vector2> World::DebugPointsToRenderThisFrame = std::vector<Vector2>();
 std::vector<Line> World::DebugLinesToRenderThisFrame = std::vector<Line>();
 Vector2 World::Gravity = Vector2(0.0f, 0.0f - 9.81f);
-bool World::TestMode = false;
+bool World::TestMode = true;
 
 Vector2 WorldToScreen(Vector2 worldPosition)
 {
@@ -25,15 +25,34 @@ void DrawLineToScreen(SDL_Renderer* renderer, Point pointA, Point pointB)
 
 void World::Setup()
 {
+	//TL->TR->BR->BL
+	SquareVertices	 = std::vector<Vector2>(); 
+	SquareVertices.push_back(Vector2(-32.0f,  32.0f));
+	SquareVertices.push_back(Vector2( 32.0f,  32.0f));
+	SquareVertices.push_back(Vector2( 32.0f, -32.0f));
+	SquareVertices.push_back(Vector2(-32.0f, -32.0f));
+
+	TriangleVertices = std::vector<Vector2>(); 
+
+	PentagonVertices = std::vector<Vector2>();
+	PentagonVertices.push_back(Vector2(0.0f, -100.0f));
+	PentagonVertices.push_back(Vector2(-95.0f, -31.0f));
+	PentagonVertices.push_back(Vector2(-59.0f, 81.0f));
+	PentagonVertices.push_back(Vector2(59.0f, 81.0f));
+	PentagonVertices.push_back(Vector2(95.0f, -31.0f));
+
+
 	m_Collisions = std::vector<CollisionSolver*>();
 	m_Manifolds = std::vector<Manifold>();
 	Bodies = std::vector<Body*>();
 
-	Bodies.push_back(new Body(400, 490, 64, 100.0f));
+	Bodies.push_back(new Body(400, 490, INERTIA_MOMENT::Square, 100.0f, SquareVertices));
 	Bodies.back()->Friction = 50.0f;
-	Bodies.push_back(new Body(400, -320, 700, FLT_MAX)); //Floor
+	Bodies.push_back(new Body(400, -320, INERTIA_MOMENT::Square, FLT_MAX, SquareVertices)); //Floor
 	Bodies.back()->Friction = 50.0f;
-	Bodies.push_back(new Body(400, 430, 64, 100.0f));
+
+
+	Bodies.push_back(new Body(400, -320, INERTIA_MOMENT::Square, FLT_MAX, PentagonVertices)); //Floor
 	Bodies.back()->Friction = 50.0f;
 }
 
@@ -92,7 +111,7 @@ void World::Update(float dt)
 		{
 			if (body->IsStatic() == false)
 			{
-				body->Vel += Gravity + Vector2(body->Force * body->InvMass) * dt;
+				body->Vel += Gravity + (Vector2(body->Force * body->InvMass)) * dt;
 				body->AngularVel += body->Torque * body->InvInertia * dt;
 			}
 			else
@@ -138,7 +157,7 @@ void World::Update(float dt)
 
 void World::CreateBody()
 {
-	Bodies.push_back(new Body(Bodies.back()->Pos.X, Bodies.back()->Pos.Y + Bodies.back()->Size + 10.0f, 64, 1.0f));
+	//Bodies.push_back(new Body(Bodies.back()->Pos.X, Bodies.back()->Pos.Y + Bodies.back()->Size + 10.0f, 64, 1.0f));
 }
 
 void World::Render(SDL_Renderer* renderer)
@@ -148,30 +167,10 @@ void World::Render(SDL_Renderer* renderer)
 
 	Vector2 p1, p2;
 	Vector2 pt;
-	SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-	for (auto itr : Bodies)
+
+	for (auto& body : Bodies)
 	{
-		DebugLinesToRenderThisFrame.push_back(Line(itr->Pos, itr->Pos + itr->Vel));
-		DebugLinesToRenderThisFrame.push_back(Line(itr->Pos + Vector2(45.0f, 0.0f), itr->Pos + Vector2(45.0f, 0.0f) + Vector2(0.0f, MathsUtils::ConvertToDegrees(itr->AngularVel))));
-
-		SDL_Color color{};
-		for (size_t i = 0; i < itr->m_Edges.size(); i++)
-		{
-			if(itr->IsStatic())
-			{
-				color.r = 255;
-				color.b = 0;
-			}
-			else
-			{
-				color.b = 255;
-				color.r = 0;
-			}
-
-			Line l = Line(itr->m_Edges[i]->GetLine());
-			l.colour = color;
-			DebugLinesToRenderThisFrame.push_back(l);
-		}
+		body->Render();
 	}
 
 	for (auto& manifold : m_Manifolds)

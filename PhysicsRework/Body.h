@@ -38,14 +38,23 @@ struct Edge
 	};
 };
 
+enum class INERTIA_MOMENT
+{
+	Square = 0,
+	UniformDistributedWeight,
+};
+
 struct Body
 {
 private:
 	bool m_IsStatic = false;
+	void CreateEdges();
+	float GetInertiaTensor(INERTIA_MOMENT inertiaMoment);
 
 public:
-	std::vector<Edge*> m_Edges;
+	std::vector<Edge> m_Edges;
 	std::vector<Vector2> m_Vertices;
+	std::vector<Vector2> m_TransformedVertices;
 
 	Vector2 Pos;
 	float	Rot;
@@ -60,13 +69,7 @@ public:
 	float	Inertia;
 	float	InvInertia;
 
-	Vector2* TL;
-	Vector2* BL;
-	Vector2* TR;
-	Vector2* BR;
-	float Size;
-
-	Body(int x, int y, float size, float mass);
+	Body(int x, int y, INERTIA_MOMENT inertiaMoment, float mass, std::vector<Vector2> vertices);
 	~Body();
 
 	const Edge& GetEdge(int index) const;
@@ -74,6 +77,7 @@ public:
 
 	void CalculateOrientedPositions();
 	void Update(float dt);
+	void Render();
 
 	inline bool IsStatic() const
 	{

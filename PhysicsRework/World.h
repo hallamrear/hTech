@@ -9,6 +9,12 @@ struct CollisionSolver;
 class World
 {
 private:
+	std::vector<Vector2> SquareVertices;
+	std::vector<Vector2> TriangleVertices;
+	std::vector<Vector2> PentagonVertices;
+
+
+
 	std::vector<Manifold> m_Manifolds;
 	std::vector<CollisionSolver*>  m_Collisions;
 	void DetermineCollisions();

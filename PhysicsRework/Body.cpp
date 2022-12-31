@@ -3,10 +3,11 @@
 #include "World.h"
 #include "Collision.h"
 
-Body::Body(int x, int y, float size, float mass)
+
+Body::Body(int x, int y, INERTIA_MOMENT inertiaMoment, float mass, std::vector<Vector2> vertices)
 {
+
 	srand(NULL);
-	Size = size;
 	Pos.X = x;
 	Pos.Y = y;
 
@@ -23,7 +24,7 @@ Body::Body(int x, int y, float size, float mass)
 	{
 		m_IsStatic = false;
 		InvMass = 1.0f / (float)Mass;
-		Inertia = Mass * (Size * Size + Size * Size) / 12.0f;
+		Inertia = GetInertiaTensor(inertiaMoment);
 		InvInertia = 1.0f / Inertia;
 	}
 	else
@@ -34,46 +35,58 @@ Body::Body(int x, int y, float size, float mass)
 		InvMass = 0.0f;
 	}
 
-	m_Vertices = std::vector<Vector2>();
-	m_Vertices.push_back(Vector2());
-	m_Vertices.push_back(Vector2());
-	m_Vertices.push_back(Vector2());
-	m_Vertices.push_back(Vector2());
+	m_Vertices = vertices;
+	m_TransformedVertices = vertices;
+	m_Edges = std::vector<Edge>();
+	CreateEdges();
 	CalculateOrientedPositions();
+}
 
-	TL = &m_Vertices[0];
-	BL = &m_Vertices[1];
-	BR = &m_Vertices[2];
-	TR = &m_Vertices[3];
+float Body::GetInertiaTensor(INERTIA_MOMENT intertiaMoment)
+{
+	switch (intertiaMoment)
+	{
+	case INERTIA_MOMENT::Square:
+		break;
+	case INERTIA_MOMENT::UniformDistributedWeight:
+		break;
+	default:
+		break;
+	}
 
-	m_Edges = std::vector<Edge*>();
-	m_Edges.push_back(new Edge(*TL, *TR));
-	m_Edges.push_back(new Edge(*TR, *BR));
-	m_Edges.push_back(new Edge(*BR, *BL));
-	m_Edges.push_back(new Edge(*BL, *TL));
+	return 1.0f;
 }
 
 Body::~Body()
 {
 }
 
+void Body::CreateEdges()
+{
+	Vector2* v1;
+	Vector2* v2;
+
+	int vertexCount = m_Vertices.size();
+	for (int i = 0; i < vertexCount - 1; i++)
+	{ 
+		v1 = &m_TransformedVertices[i];
+		v2 = &m_TransformedVertices[(i + 1) % vertexCount];
+
+		m_Edges.push_back(Edge(*v1, *v2));
+	}
+}
+
 const Edge& Body::GetEdge(int index) const
 {
-	return *m_Edges[index];
+	return m_Edges[index];
 }
 
 void Body::CalculateOrientedPositions()
 {
 	//Calculate new point rotations;
-	//if (Rot > 0.0f && Rot < 360.0f)
+	for (size_t i = 0; i < m_Vertices.size() - 1; i++)
 	{
-		float rotation = 360.0f - Rot;
-		m_Vertices[0] = MathsUtils::RotatePointAroundOriginDegrees(Vector2(Pos.X - (Size / 2.0f), Pos.Y + (Size / 2.0f)), Rot, Pos);
-		m_Vertices[1] = MathsUtils::RotatePointAroundOriginDegrees(Vector2(Pos.X - (Size / 2.0f), Pos.Y - (Size / 2.0f)), Rot, Pos);
-		m_Vertices[2] = MathsUtils::RotatePointAroundOriginDegrees(Vector2(Pos.X + (Size / 2.0f), Pos.Y - (Size / 2.0f)), Rot, Pos);
-		m_Vertices[3] = MathsUtils::RotatePointAroundOriginDegrees(Vector2(Pos.X + (Size / 2.0f), Pos.Y + (Size / 2.0f)), Rot, Pos);
-
-		//m_transformedVertices[i] = MathsUtils::RotatePointAroundOriginDegrees(m_Vertices[i], Rot, Pos);
+		m_TransformedVertices[i] = MathsUtils::RotatePointAroundOriginDegrees(Pos + m_Vertices[i], Rot, Pos);
 	}
 }
 
@@ -82,44 +95,47 @@ void Body::Update(float dt)
 	srand(NULL);
 	//Rot += (rand() % 100) * dt * 5;
 	CalculateOrientedPositions();
+}
 
+void Body::Render()
+{
+	//Draw position
+	World::DebugPointsToRenderThisFrame.push_back(Pos);
+
+	//Draw velocity and rotational velocity.
+	World::DebugLinesToRenderThisFrame.push_back(Line(Pos, Pos + Vel));
+	World::DebugLinesToRenderThisFrame.push_back(Line(Pos + Vector2(45.0f, 0.0f), Pos + Vector2(45.0f, 0.0f) + Vector2(0.0f, MathsUtils::ConvertToDegrees(AngularVel))));
+
+	//Set drawing colour if static or not
+	SDL_Color color{};
+	if (m_IsStatic)
+	{
+		color.r = 255;
+		color.g = 0;
+		color.b = 0;
+		color.a = 255;
+	}
+	else
+	{
+		color.r = 0;
+		color.g = 255;
+		color.b = 0;
+		color.a = 255;
+	}
+
+
+	//Draw shape edges.
 	for (int i = 0; i < m_Edges.size(); i++)
 	{
-		Edge* edge = m_Edges[i];
-		Line line = Line(*edge->A, *edge->B);
+		Edge& edge = m_Edges[i];
+		Line line = Line(*edge.A, *edge.B);
+		World::DebugLinesToRenderThisFrame.push_back(line);
 		Vector2 Normal = line.GetNormal();
 		line.A = Vector2((line.A.X + line.B.X) / 2.0f, (line.A.Y + line.B.Y) / 2.0f);
 		line.B = line.A + (Normal * 15);
-		line.colour.r = 0; line.colour.g = 0; line.colour.b = 0;
-
-		switch (i)
-		{
-		case 0:
-		{
-			line.colour.r = 255;
-		}
-		break;
-		case 1:
-		{
-			line.colour.g = 255;
-		}
-		break;
-		case 2:
-		{
-			line.colour.b = 255;
-		}
-		break;
-		case 3:
-		{
-			line.colour.r = 255;
-			line.colour.b = 255;
-		}
-		break;
-		}
-
+		line.colour.r = 255; line.colour.g = 0; line.colour.b = 0;
 		World::DebugLinesToRenderThisFrame.push_back(line);
 	}
-	World::DebugPointsToRenderThisFrame.push_back(Pos);
 }
 
 const Vector2& Body::GetSupportVertex(const Vector2& direction) const
