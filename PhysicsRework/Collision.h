@@ -37,21 +37,21 @@ private:
 			const Edge& edge = bodyToTest.GetEdge(i);
 			Vector2 axisToProjectOnto = edge.GetNormal().GetNormalized();
 
-			size_t bodyAVertexCount = bodyA.m_Vertices.size();
+			size_t bodyAVertexCount = bodyA.m_TransformedVertices.size();
 			//Project each point of bodyA onto the axis to get the min and max values.
 			for (size_t a = 0; a < bodyAVertexCount; a++)
 			{
-				Vector2 vertexToProject = bodyA.m_Vertices[a];
+				Vector2 vertexToProject = bodyA.m_TransformedVertices[a];
 				float projectedDistanceIntoAxis = MathsUtils::Dot(axisToProjectOnto, vertexToProject);
 				bodyA_MinimumProjection = std::min(bodyA_MinimumProjection, projectedDistanceIntoAxis);
 				bodyA_MaximumProjection = std::max(bodyA_MaximumProjection, projectedDistanceIntoAxis);
 			}
 
-			size_t bodyBVertexCount = bodyB.m_Vertices.size();
+			size_t bodyBVertexCount = bodyB.m_TransformedVertices.size();
 			//Project each point of bodyB onto the axis to get the min and max values.
 			for (size_t b = 0; b < bodyBVertexCount; b++)
 			{
-				Vector2 vertexToProject = bodyB.m_Vertices[b];
+				Vector2 vertexToProject = bodyB.m_TransformedVertices[b];
 				float projectedDistanceIntoAxis = MathsUtils::Dot(axisToProjectOnto, vertexToProject);
 				bodyB_MinimumProjection = std::min(bodyB_MinimumProjection, projectedDistanceIntoAxis);
 				bodyB_MaximumProjection = std::max(bodyB_MaximumProjection, projectedDistanceIntoAxis);
@@ -137,8 +137,7 @@ public:
 		//We do not need to find any collision points if both bodies are static. 
 		//However we should never get to this point but it's still nice to check.
 		if(!(bodyA->IsStatic() && bodyB->IsStatic()))
-			FindPolygonContactPoints(manifold, bodyA->m_Vertices, bodyB->m_Vertices);
-
+			FindPolygonContactPoints(manifold, bodyA->m_TransformedVertices, bodyB->m_TransformedVertices);
 
 		return true;
 	};

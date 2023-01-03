@@ -8,7 +8,7 @@
 std::vector<Vector2> World::DebugPointsToRenderThisFrame = std::vector<Vector2>();
 std::vector<Line> World::DebugLinesToRenderThisFrame = std::vector<Line>();
 Vector2 World::Gravity = Vector2(0.0f, 0.0f - 9.81f);
-bool World::TestMode = true;
+bool World::TestMode = false;
 
 Vector2 WorldToScreen(Vector2 worldPosition)
 {
@@ -25,6 +25,12 @@ void DrawLineToScreen(SDL_Renderer* renderer, Point pointA, Point pointB)
 
 void World::Setup()
 {
+	FloorVertices = std::vector<Vector2>();
+	FloorVertices.push_back(Vector2(-500.0f, 32.0f));
+	FloorVertices.push_back(Vector2( 500.0f, 32.0f));
+	FloorVertices.push_back(Vector2( 500.0f, -32.0f));
+	FloorVertices.push_back(Vector2(-500.0f, -32.0f));
+
 	//TL->TR->BR->BL
 	SquareVertices	 = std::vector<Vector2>(); 
 	SquareVertices.push_back(Vector2(-32.0f,  32.0f));
@@ -32,7 +38,10 @@ void World::Setup()
 	SquareVertices.push_back(Vector2( 32.0f, -32.0f));
 	SquareVertices.push_back(Vector2(-32.0f, -32.0f));
 
-	TriangleVertices = std::vector<Vector2>(); 
+	TriangleVertices = std::vector<Vector2>();
+	TriangleVertices.push_back(Vector2(-64.0f, -32.0f));
+	TriangleVertices.push_back(Vector2(0.0f, 32.0f));
+	TriangleVertices.push_back(Vector2(64.0f, -32.0f));
 
 	PentagonVertices = std::vector<Vector2>();
 	PentagonVertices.push_back(Vector2(0.0f, -100.0f));
@@ -41,19 +50,21 @@ void World::Setup()
 	PentagonVertices.push_back(Vector2(59.0f, 81.0f));
 	PentagonVertices.push_back(Vector2(95.0f, -31.0f));
 
-
 	m_Collisions = std::vector<CollisionSolver*>();
 	m_Manifolds = std::vector<Manifold>();
 	Bodies = std::vector<Body*>();
 
-	Bodies.push_back(new Body(400, 490, INERTIA_MOMENT::Square, 100.0f, SquareVertices));
-	Bodies.back()->Friction = 50.0f;
-	Bodies.push_back(new Body(400, -320, INERTIA_MOMENT::Square, FLT_MAX, SquareVertices)); //Floor
-	Bodies.back()->Friction = 50.0f;
+	Bodies.push_back(new Body(600, 490, INERTIA_MOMENT::Square, 100.0f, SquareVertices, Material(1.2f, 0.05f)));
 
+	Bodies.push_back(new Body(0, 300, INERTIA_MOMENT::Square, FLT_MAX, FloorVertices, Material(0.0f, 0.4f)));
+	Bodies.back()->Rot = 90.0f;
+	Bodies.push_back(new Body(800, 300, INERTIA_MOMENT::Square, FLT_MAX, FloorVertices, Material(0.0f, 0.4f)));
+	Bodies.back()->Rot = 90.0f;
+	Bodies.push_back(new Body(400, 0, INERTIA_MOMENT::Square, FLT_MAX, FloorVertices, Material(0.0f, 0.4f)));
+	Bodies.push_back(new Body(400, 600, INERTIA_MOMENT::Square, FLT_MAX, FloorVertices, Material(0.0f, 0.4f)));
 
-	Bodies.push_back(new Body(400, -320, INERTIA_MOMENT::Square, FLT_MAX, PentagonVertices)); //Floor
-	Bodies.back()->Friction = 50.0f;
+	Bodies.push_back(new Body(200, 10, INERTIA_MOMENT::Square, 10.0f, PentagonVertices, Material(0.3f, 0.95f)));
+	Bodies.push_back(new Body(400, 90, INERTIA_MOMENT::Square, 100.0f, TriangleVertices, Material(0.3f, 0.95f)));
 }
 
 void World::DetermineCollisions()
@@ -74,14 +85,17 @@ void World::DetermineCollisions()
 			if (Collision::PolygonVsPolygon(bodyA, bodyB, manifold))
 			{
 				m_Manifolds.push_back(manifold);
-				if (bodyA->IsStatic() || bodyB->IsStatic())
-				{
-					m_Collisions.push_back(new StaticVsDynamicCollisionSolver(manifold));
-				}
-				else
-				{
-					m_Collisions.push_back(new DynamicVsDynamicCollisionSolver(manifold));
-				}
+
+				m_Collisions.push_back(new AlternateCollisionSolver(manifold));
+
+				//if (bodyA->IsStatic() || bodyB->IsStatic())
+				//{
+				//	m_Collisions.push_back(new StaticVsDynamicCollisionSolver(manifold));
+				//}
+				//else
+				//{
+				//	m_Collisions.push_back(new DynamicVsDynamicCollisionSolver(manifold));
+				//}
 			}
 		}
 	}
@@ -111,7 +125,8 @@ void World::Update(float dt)
 		{
 			if (body->IsStatic() == false)
 			{
-				body->Vel += Gravity + (Vector2(body->Force * body->InvMass)) * dt;
+				//body->Vel += Gravity + (Vector2(body->Force * body->InvMass)) * dt;
+				body->Vel += (Vector2(body->Force * body->InvMass)) * dt;
 				body->AngularVel += body->Torque * body->InvInertia * dt;
 			}
 			else
@@ -130,7 +145,7 @@ void World::Update(float dt)
 		///Perform Physics Pre-step calculations
 		for (size_t i = 0; i < m_Collisions.size(); i++)
 		{
-			m_Collisions[i]->CalculateImpulses(inverseDeltaTime);
+			m_Collisions[i]->Prestep(inverseDeltaTime);
 		}
 
 		///Perform Physics Iterations
@@ -138,7 +153,7 @@ void World::Update(float dt)
 		{
 			for (size_t i = 0; i < m_Collisions.size(); i++)
 			{
-				m_Collisions[i]->ApplyImpulses();
+				m_Collisions[i]->PhysicsStep();
 			}
 		}
 	}
@@ -146,8 +161,10 @@ void World::Update(float dt)
 	///Integrate Velocities.	
 	for (auto& body : Bodies)
 	{
-		Vector2 velSum = (body->Vel * dt);
-		body->Pos += velSum;
+		if (body->IsStatic())
+			continue;
+
+		body->Pos += (body->Vel * dt);
 		body->Rot += MathsUtils::ConvertToDegrees(body->AngularVel) * dt;
 
 		body->Force = Vector2::Zero;
@@ -157,7 +174,7 @@ void World::Update(float dt)
 
 void World::CreateBody()
 {
-	//Bodies.push_back(new Body(Bodies.back()->Pos.X, Bodies.back()->Pos.Y + Bodies.back()->Size + 10.0f, 64, 1.0f));
+	Bodies.push_back(new Body(600, 490, INERTIA_MOMENT::Square, 100.0f, SquareVertices, Material(0.3f, 0.8f)));
 }
 
 void World::Render(SDL_Renderer* renderer)
@@ -198,7 +215,6 @@ void World::Render(SDL_Renderer* renderer)
 	}
 	DebugPointsToRenderThisFrame.clear();
 
-	SDL_SetRenderDrawColor(renderer, 255, 255, 0, 255);
 	for (auto& itr : DebugLinesToRenderThisFrame)
 	{
 		SDL_SetRenderDrawColor(renderer, itr.colour.r, itr.colour.g, itr.colour.b, 255);

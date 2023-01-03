@@ -1,11 +1,10 @@
 #include "Body.h"
-#include "MathsUtils.h"
 #include "World.h"
 #include "Collision.h"
 
-
-Body::Body(int x, int y, INERTIA_MOMENT inertiaMoment, float mass, std::vector<Vector2> vertices)
+Body::Body(int x, int y, INERTIA_MOMENT inertiaMoment, float mass, std::vector<Vector2> vertices, Material mat)
 {
+	material = mat;
 
 	srand(NULL);
 	Pos.X = x;
@@ -67,7 +66,7 @@ void Body::CreateEdges()
 	Vector2* v2;
 
 	int vertexCount = m_Vertices.size();
-	for (int i = 0; i < vertexCount - 1; i++)
+	for (int i = 0; i < vertexCount; i++)
 	{ 
 		v1 = &m_TransformedVertices[i];
 		v2 = &m_TransformedVertices[(i + 1) % vertexCount];
@@ -84,7 +83,7 @@ const Edge& Body::GetEdge(int index) const
 void Body::CalculateOrientedPositions()
 {
 	//Calculate new point rotations;
-	for (size_t i = 0; i < m_Vertices.size() - 1; i++)
+	for (size_t i = 0; i < m_Vertices.size(); i++)
 	{
 		m_TransformedVertices[i] = MathsUtils::RotatePointAroundOriginDegrees(Pos + m_Vertices[i], Rot, Pos);
 	}
@@ -103,8 +102,11 @@ void Body::Render()
 	World::DebugPointsToRenderThisFrame.push_back(Pos);
 
 	//Draw velocity and rotational velocity.
-	World::DebugLinesToRenderThisFrame.push_back(Line(Pos, Pos + Vel));
-	World::DebugLinesToRenderThisFrame.push_back(Line(Pos + Vector2(45.0f, 0.0f), Pos + Vector2(45.0f, 0.0f) + Vector2(0.0f, MathsUtils::ConvertToDegrees(AngularVel))));
+	if (!m_IsStatic)
+	{
+		World::DebugLinesToRenderThisFrame.push_back(Line(Pos, Pos + Vel));
+		World::DebugLinesToRenderThisFrame.push_back(Line(Pos + Vector2(45.0f, 0.0f), Pos + Vector2(45.0f, 0.0f) + Vector2(0.0f, MathsUtils::ConvertToDegrees(AngularVel))));
+	}
 
 	//Set drawing colour if static or not
 	SDL_Color color{};
@@ -128,12 +130,11 @@ void Body::Render()
 	for (int i = 0; i < m_Edges.size(); i++)
 	{
 		Edge& edge = m_Edges[i];
-		Line line = Line(*edge.A, *edge.B);
+		Line line = Line(*edge.A, *edge.B, color);
 		World::DebugLinesToRenderThisFrame.push_back(line);
 		Vector2 Normal = line.GetNormal();
 		line.A = Vector2((line.A.X + line.B.X) / 2.0f, (line.A.Y + line.B.Y) / 2.0f);
 		line.B = line.A + (Normal * 15);
-		line.colour.r = 255; line.colour.g = 0; line.colour.b = 0;
 		World::DebugLinesToRenderThisFrame.push_back(line);
 	}
 }
@@ -144,9 +145,9 @@ const Vector2& Body::GetSupportVertex(const Vector2& direction) const
 	int furthestVertexIndex = -1;
 	float projectedDistance = -100000000.0f;
 
-	for (size_t i = 0; i < m_Vertices.size(); i++)
+	for (size_t i = 0; i < m_TransformedVertices.size(); i++)
 	{
-		Vector2 vertex = m_Vertices[i];
+		Vector2 vertex = m_TransformedVertices[i];
 
 		projectedDistance = MathsUtils::Dot(vertex, direction);
 
@@ -157,5 +158,5 @@ const Vector2& Body::GetSupportVertex(const Vector2& direction) const
 		}
 	}
 
-	return m_Vertices[furthestVertexIndex];
+	return m_TransformedVertices[furthestVertexIndex];
 }

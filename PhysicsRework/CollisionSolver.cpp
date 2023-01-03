@@ -30,8 +30,7 @@ void CollisionSolver::ConstuctContactPointsFromManifold(const Manifold& manifold
 	}
 }
 
-
-void DynamicVsDynamicCollisionSolver::CalculateImpulses(const float& inverseDeltaTime)
+void DynamicVsDynamicCollisionSolver::Prestep(const float& inverseDeltaTime)
 {
 	size_t count = m_ContactPoints.size();
 	float positionCorrection = 0.2f;
@@ -81,7 +80,7 @@ void DynamicVsDynamicCollisionSolver::CalculateImpulses(const float& inverseDelt
 	}
 }
 
-void DynamicVsDynamicCollisionSolver::ApplyImpulses()
+void DynamicVsDynamicCollisionSolver::PhysicsStep()
 {
 	size_t count = m_ContactPoints.size();
 
@@ -143,11 +142,7 @@ void DynamicVsDynamicCollisionSolver::ApplyImpulses()
 
 }
 
-
-
-
-
-void StaticVsDynamicCollisionSolver::CalculateImpulses(const float& inverseDeltaTime)
+void StaticVsDynamicCollisionSolver::Prestep(const float& inverseDeltaTime)
 {
 	size_t count = m_ContactPoints.size();
 	float positionCorrection = 0.2f;
@@ -202,7 +197,7 @@ void StaticVsDynamicCollisionSolver::CalculateImpulses(const float& inverseDelta
 	}
 }
 
-void StaticVsDynamicCollisionSolver::ApplyImpulses()
+void StaticVsDynamicCollisionSolver::PhysicsStep()
 {
 	size_t count = m_ContactPoints.size();
 
@@ -274,5 +269,17 @@ void StaticVsDynamicCollisionSolver::ApplyImpulses()
 			contact.BodyB->AngularVel += CrossMagnitude(contact.BC, contactImpulse) * contact.BodyB->InvInertia;
 		}
 	}
+
+}
+
+
+
+void AlternateCollisionSolver::Prestep(const float& inverseDeltaTime)
+{
+
+}
+
+void AlternateCollisionSolver::PhysicsStep()
+{
 
 }

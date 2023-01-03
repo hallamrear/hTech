@@ -2,6 +2,8 @@
 #include "Vector2.h"
 #include <SDL_rect.h>
 #include <vector>
+#include "Material.h"
+#include "MathsUtils.h"
 
 struct Edge
 {
@@ -44,6 +46,8 @@ enum class INERTIA_MOMENT
 	UniformDistributedWeight,
 };
 
+class Material;
+
 struct Body
 {
 private:
@@ -56,6 +60,8 @@ public:
 	std::vector<Vector2> m_Vertices;
 	std::vector<Vector2> m_TransformedVertices;
 
+
+	Material material;
 	Vector2 Pos;
 	float	Rot;
 	Vector2 Vel;
@@ -69,7 +75,7 @@ public:
 	float	Inertia;
 	float	InvInertia;
 
-	Body(int x, int y, INERTIA_MOMENT inertiaMoment, float mass, std::vector<Vector2> vertices);
+	Body(int x, int y, INERTIA_MOMENT inertiaMoment, float mass, std::vector<Vector2> vertices, Material material);
 	~Body();
 
 	const Edge& GetEdge(int index) const;
