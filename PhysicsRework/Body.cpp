@@ -110,7 +110,7 @@ void Body::Render()
 
 	//Set drawing colour if static or not
 	SDL_Color color{};
-	if (m_IsStatic)
+	if (m_IsStatic || COLLIDE)
 	{
 		color.r = 255;
 		color.g = 0;
@@ -137,6 +137,8 @@ void Body::Render()
 		line.B = line.A + (Normal * 15);
 		World::DebugLinesToRenderThisFrame.push_back(line);
 	}
+
+	COLLIDE = false;
 }
 
 const Vector2& Body::GetSupportVertex(const Vector2& direction) const

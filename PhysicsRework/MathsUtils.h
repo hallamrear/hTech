@@ -1,6 +1,7 @@
 #pragma once
 #include <random>
 #include "Vector2.h"
+#include "Vector3.h"
 
 #ifndef M_PI
 #define M_PI 3.14159265358979323846
@@ -29,7 +30,6 @@ namespace MathsUtils
 	float Dot(Vector2 a, Vector2 b);
 
 	float	CrossMagnitude(const Vector2& a, const Vector2& b);
-	Vector2 Cross(const Vector2& a, const Vector2& b);
 	Vector2 Cross(const Vector2& a, float s);
 	Vector2 Cross(float s, const Vector2& a);
 
@@ -65,4 +65,6 @@ namespace MathsUtils
 	/// <returns></returns>
 	bool AreFloatingPointsWithinTolerence(const float& A, const float& B, const float& tolerance);
 	bool AreTwoPointsWithinTolerence(const Vector2& A, const Vector2& B, const float& tolerance);
-}
+
+	Vector2 TripleProduct(const Vector2& a, const Vector2& b, const Vector2& c);
+};

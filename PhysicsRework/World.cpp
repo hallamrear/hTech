@@ -56,15 +56,15 @@ void World::Setup()
 
 	Bodies.push_back(new Body(600, 490, INERTIA_MOMENT::Square, 100.0f, SquareVertices, Material(1.2f, 0.05f)));
 
-	Bodies.push_back(new Body(0, 300, INERTIA_MOMENT::Square, FLT_MAX, FloorVertices, Material(0.0f, 0.4f)));
-	Bodies.back()->Rot = 90.0f;
-	Bodies.push_back(new Body(800, 300, INERTIA_MOMENT::Square, FLT_MAX, FloorVertices, Material(0.0f, 0.4f)));
-	Bodies.back()->Rot = 90.0f;
-	Bodies.push_back(new Body(400, 0, INERTIA_MOMENT::Square, FLT_MAX, FloorVertices, Material(0.0f, 0.4f)));
-	Bodies.push_back(new Body(400, 600, INERTIA_MOMENT::Square, FLT_MAX, FloorVertices, Material(0.0f, 0.4f)));
+	//Bodies.push_back(new Body(0, 300, INERTIA_MOMENT::Square, FLT_MAX, FloorVertices, Material(0.0f, 0.4f)));
+	//Bodies.back()->Rot = 90.0f;
+	//Bodies.push_back(new Body(800, 300, INERTIA_MOMENT::Square, FLT_MAX, FloorVertices, Material(0.0f, 0.4f)));
+	//Bodies.back()->Rot = 90.0f;
+	//Bodies.push_back(new Body(400, 0, INERTIA_MOMENT::Square, FLT_MAX, FloorVertices, Material(0.0f, 0.4f)));
+	//Bodies.push_back(new Body(400, 600, INERTIA_MOMENT::Square, FLT_MAX, FloorVertices, Material(0.0f, 0.4f)));
 
 	Bodies.push_back(new Body(200, 10, INERTIA_MOMENT::Square, 10.0f, PentagonVertices, Material(0.3f, 0.95f)));
-	Bodies.push_back(new Body(400, 90, INERTIA_MOMENT::Square, 100.0f, TriangleVertices, Material(0.3f, 0.95f)));
+	//Bodies.push_back(new Body(400, 90, INERTIA_MOMENT::Square, 100.0f, TriangleVertices, Material(0.3f, 0.95f)));
 }
 
 void World::DetermineCollisions()
@@ -80,22 +80,15 @@ void World::DetermineCollisions()
 			if (bodyA->IsStatic() && bodyB->IsStatic())
 				continue;
 
-			Manifold manifold;			
+			Manifold manifold;
 
 			if (Collision::PolygonVsPolygon(bodyA, bodyB, manifold))
 			{
+				bodyA->COLLIDE = true;
+				bodyB->COLLIDE = true;
+
 				m_Manifolds.push_back(manifold);
-
-				m_Collisions.push_back(new AlternateCollisionSolver(manifold));
-
-				//if (bodyA->IsStatic() || bodyB->IsStatic())
-				//{
-				//	m_Collisions.push_back(new StaticVsDynamicCollisionSolver(manifold));
-				//}
-				//else
-				//{
-				//	m_Collisions.push_back(new DynamicVsDynamicCollisionSolver(manifold));
-				//}
+				m_Collisions.push_back(new GJKCollisionSolver(manifold));
 			}
 		}
 	}

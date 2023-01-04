@@ -39,33 +39,13 @@ public:
 	virtual void PhysicsStep() = 0;
 };
 
-class DynamicVsDynamicCollisionSolver : public CollisionSolver
-{
-public:
-	DynamicVsDynamicCollisionSolver(const Manifold& manifold) : CollisionSolver(manifold) {};
-	~DynamicVsDynamicCollisionSolver() {};
-
-	void Prestep(const float& inverseDeltaTime);
-	void PhysicsStep();
-};
-
-class StaticVsDynamicCollisionSolver : public CollisionSolver
-{
-public:	
-	StaticVsDynamicCollisionSolver(const Manifold& manifold) : CollisionSolver(manifold) {};
-	~StaticVsDynamicCollisionSolver() {};
-
-	void Prestep(const float& inverseDeltaTime);
-	void PhysicsStep();
-};
-
-class AlternateCollisionSolver : public CollisionSolver
+class GJKCollisionSolver : public CollisionSolver
 {
 private:
 
 public:
-	AlternateCollisionSolver(const Manifold& manifold) : CollisionSolver(manifold) { };
-	~AlternateCollisionSolver() {};
+	GJKCollisionSolver(const Manifold& manifold) : CollisionSolver(manifold) { };
+	~GJKCollisionSolver() {};
 
 	void Prestep(const float& inverseDeltaTime);
 	void PhysicsStep();

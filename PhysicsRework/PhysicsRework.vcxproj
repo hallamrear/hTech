@@ -366,6 +366,7 @@
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MathsUtils.cpp" />
     <ClCompile Include="Vector2.cpp" />
+    <ClCompile Include="Vector3.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -376,6 +377,7 @@
     <ClInclude Include="Material.h" />
     <ClInclude Include="MathsUtils.h" />
     <ClInclude Include="Vector2.h" />
+    <ClInclude Include="Vector3.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

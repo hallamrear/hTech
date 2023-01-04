@@ -193,3 +193,15 @@ float MathsUtils::Distance(const Vector2& a, const Vector2& b)
 	float dy = a.Y - b.Y;
 	return sqrtf(dx * dx + dy * dy);
 };
+
+Vector2 MathsUtils::TripleProduct(const Vector2& a, const Vector2& b, const Vector2& c)
+{
+	Vector3 A = Vector3(a.X, a.Y, 0);
+	Vector3 B = Vector3(b.X, b.Y, 0);
+	Vector3 C = Vector3(c.X, c.Y, 0);
+
+	Vector3 first = Vector3::Cross(A, B);
+	Vector3 second = Vector3::Cross(first, C);
+
+	return Vector2(second.X, second.Y);
+};

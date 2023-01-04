@@ -60,6 +60,7 @@ public:
 	std::vector<Vector2> m_Vertices;
 	std::vector<Vector2> m_TransformedVertices;
 
+	bool COLLIDE = false;
 
 	Material material;
 	Vector2 Pos;

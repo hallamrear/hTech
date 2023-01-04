@@ -91,6 +91,20 @@ Vector2 Vector2::operator/(const float& scalar)
 	return Vector2(this->X / scalar, this->Y / scalar);
 }
 
+Vector2& Vector2::operator*=(const float& rhs)
+{
+	this->X *= rhs;
+	this->Y *= rhs;
+	return *this;
+}
+
+Vector2& Vector2::operator*=(const Vector2& rhs)
+{
+	this->X *= rhs.X;
+	this->Y *= rhs.Y;
+	return *this;
+}
+
 Vector2& Vector2::operator+=(const Vector2& rhs)
 {
 	this->X += rhs.X;

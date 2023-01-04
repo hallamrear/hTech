@@ -3,216 +3,172 @@
 #include "Body.h"
 #include "Vector2.h"
 #include "MathsUtils.h"
+#include <stdexcept>
 
-#define COLLISION_SKIN_DISTANCE 0.1f
-
-
-class Collision
+namespace Collision
 {
-private:
-	struct ProjectionResult
+	//Implementation of the GJK algorithm for collision detection.
+	class GJK
 	{
-		Vector2 Normal;
-		float Depth;
+	private:
+		Vector2 m_SupportDirection = Vector2();
+		std::vector<Vector2> m_Vertices = std::vector<Vector2>();
 
-		ProjectionResult()
+		bool GJK_AddSupportToTriangle(const Vector2& direction, const Body& bodyA, const Body& bodyB)
 		{
-			Normal = Vector2(0.0f, 0.0f);
-			Depth = INFINITY;
+			Vector2 vertex = bodyA.GetSupportVertex(direction) - bodyB.GetSupportVertex(direction * -1);
+			if(MathsUtils::Dot(direction, vertex) > 0)
+			{
+				m_Vertices.push_back(vertex);
+				return true;
+			}
+
+			return false;
 		}
-	};
 
-	static bool GetMinAndMaxProjectionValues(ProjectionResult& result, const Body& bodyToTest, const Body& bodyA, const Body& bodyB)
-	{
-		size_t testBodyEdgeCount = bodyToTest.m_Edges.size();
-
-		for (size_t i = 0; i < testBodyEdgeCount; i++)
+	public:
+		enum class SimplexEvolution
 		{
-			float bodyA_MinimumProjection = INFINITY;
-			float bodyA_MaximumProjection = -INFINITY;
-			float bodyB_MinimumProjection = INFINITY;
-			float bodyB_MaximumProjection = -INFINITY;
+			NoIntersection,
+			StillEvolving,
+			FoundIntersection
+		};
 
-			//Construct line from the two points on the bodies edge.
-			const Edge& edge = bodyToTest.GetEdge(i);
-			Vector2 axisToProjectOnto = edge.GetNormal().GetNormalized();
-
-			size_t bodyAVertexCount = bodyA.m_TransformedVertices.size();
-			//Project each point of bodyA onto the axis to get the min and max values.
-			for (size_t a = 0; a < bodyAVertexCount; a++)
+		GJK::SimplexEvolution EvolveSimplex(const Body& bodyA, const Body& bodyB)
+		{
+			switch (m_Vertices.size())
 			{
-				Vector2 vertexToProject = bodyA.m_TransformedVertices[a];
-				float projectedDistanceIntoAxis = MathsUtils::Dot(axisToProjectOnto, vertexToProject);
-				bodyA_MinimumProjection = std::min(bodyA_MinimumProjection, projectedDistanceIntoAxis);
-				bodyA_MaximumProjection = std::max(bodyA_MaximumProjection, projectedDistanceIntoAxis);
+			case 0:
+			{
+				//Get the first triangle point from the direction of action.
+				m_SupportDirection = bodyB.Pos - bodyA.Pos;
+				m_SupportDirection = m_SupportDirection.GetNormalized();
+			}
+			break;
+
+			case 1:
+			{
+				//Get our second sample triangle point from the furthest in the
+				//opposite direction to maximise polygon coverage.
+				m_SupportDirection *= -1;
+			}
+			break;
+
+			case 2:
+			{
+				//Get the edge of the triangle.
+				Vector2 b = m_Vertices[1];
+				Vector2 c = m_Vertices[0];
+
+				//Line between the first two vertices to make the edge.
+				Vector2 cb = b - c;
+				//Line from the first vertex to the origin.
+				Vector2 c0 = c *= -1;
+
+				//Use the triple cross product to calculate a direction
+				//perpendicular to the line cb in the direction of origin
+				//to get the final triangle point in this direction.
+				m_SupportDirection = MathsUtils::TripleProduct(cb.GetNormalized(), c0.GetNormalized(), cb.GetNormalized());
+			}
+			break;
+
+			case 3:
+			{
+				// calculate if the simplex contains the origin
+				Vector2 a = m_Vertices[2];
+				Vector2 b = m_Vertices[1];
+				Vector2 c = m_Vertices[0];
+				
+				Vector2 a0 = (a * -1).GetNormalized(); // v2 to the origin
+				Vector2 ab = (b - a ).GetNormalized(); // v2 to v1
+				Vector2 ac = (c - a ).GetNormalized(); // v2 to v0
+				
+				Vector2 abPerp = MathsUtils::TripleProduct(ac, ab, ab);
+				Vector2 acPerp = MathsUtils::TripleProduct(ab, ac, ac);
+
+				if (abPerp.Dot(a0) > 0) 
+				{
+					// the origin is outside line ab
+					// get rid of c and add a new support 
+					// in the direction of abPerp
+				
+					auto itr = std::find(m_Vertices.begin(), m_Vertices.end(), c);
+					
+					if(itr != m_Vertices.end())
+					{
+						m_Vertices.erase(itr);
+						m_SupportDirection = abPerp;
+					}
+					else
+					{
+						throw std::runtime_error("You could not find c in the vector.");
+					}
+
+				}
+				else if (acPerp.Dot(a0) > 0)
+				{
+					// the origin is outside line ac
+					// get rid of b and add a new support 
+					// in the direction of acPerp
+					auto itr = std::find(m_Vertices.begin(), m_Vertices.end(), b);
+
+					if (itr != m_Vertices.end())
+					{
+						m_Vertices.erase(itr);
+						m_SupportDirection = acPerp;
+					}
+					else
+					{
+						throw std::runtime_error("You could not find b in the vector.");
+					}
+					m_SupportDirection = acPerp;
+				}
+				else {
+					// the origin is inside both ab and ac,
+					// so it must be inside the triangle!
+					return GJK::SimplexEvolution::FoundIntersection;
+				}
+			}
+			break;
+
+			default:
+				throw std::range_error("Cannot have a simplex triangle with more than 3 vertices.");
+				break;
 			}
 
-			size_t bodyBVertexCount = bodyB.m_TransformedVertices.size();
-			//Project each point of bodyB onto the axis to get the min and max values.
-			for (size_t b = 0; b < bodyBVertexCount; b++)
+			if (GJK_AddSupportToTriangle(m_SupportDirection, bodyA, bodyB))
 			{
-				Vector2 vertexToProject = bodyB.m_TransformedVertices[b];
-				float projectedDistanceIntoAxis = MathsUtils::Dot(axisToProjectOnto, vertexToProject);
-				bodyB_MinimumProjection = std::min(bodyB_MinimumProjection, projectedDistanceIntoAxis);
-				bodyB_MaximumProjection = std::max(bodyB_MaximumProjection, projectedDistanceIntoAxis);
-			}
-
-			//
-			//	-----|---------------------|-----|--------------|-----------------------------------
-			//		a_min				b_min   a_max         b_max
-			//
-			//	if a_max is greater than b_min, theres an overlap
-			//
-			//	-----|---------------------|-----|--------------|-----------------------------------
-			//		b_min				a_min   b_max         a_max
-			//
-			//	if b_max is greater than a_min, theres an overlap
-			//	We check if this is false to see if we can detect a separating axis early
-			//  and avoid the rest of the test!
-			if ((bodyA_MinimumProjection >= bodyB_MaximumProjection) || (bodyB_MinimumProjection >= bodyA_MaximumProjection))
-			{
-				return false;
+				return GJK::SimplexEvolution::StillEvolving;
 			}
 			else
 			{
-				float depth = std::min(bodyB_MaximumProjection - bodyA_MinimumProjection, bodyA_MaximumProjection - bodyB_MinimumProjection);
-				float dOne = bodyB_MaximumProjection - bodyA_MinimumProjection;
-				float dTwo = bodyA_MaximumProjection - bodyB_MinimumProjection;
-
-				if (depth < result.Depth)
-				{
-					result.Depth = depth;
-					result.Normal = axisToProjectOnto;
-				}
+				return GJK::SimplexEvolution::NoIntersection;
 			}
+
 		}
 
-		return true;
-	}
+		void BuildManifold(Manifold& manifold)
+		{
 
-public:
-	static bool CollisionBreak;
+		}
+	};
 
 	static bool PolygonVsPolygon(Body* bodyA, Body* bodyB, Manifold& manifold)
 	{
-		if (Collision::CollisionBreak)
+		GJK gjk;
+
+		GJK::SimplexEvolution result = GJK::SimplexEvolution::StillEvolving;
+		while (result == GJK::SimplexEvolution::StillEvolving)
 		{
-			Collision::CollisionBreak = false;
+			result = gjk.EvolveSimplex(*bodyA, *bodyB);
 		}
 
-		ProjectionResult result;
-		if (GetMinAndMaxProjectionValues(result, *bodyA, *bodyA, *bodyB) == false)
-			return false;
-
-		if (GetMinAndMaxProjectionValues(result, *bodyB, *bodyA, *bodyB) == false)
-			return false;
-
-		manifold.HasCollided = true;
-		manifold.BodyA = bodyA;
-		manifold.BodyB = bodyB;
-
-		manifold.Normal = result.Normal;
-		manifold.Depth = result.Depth;
-
-		//If this direction check is not here then an object with fly through half the sides to the other.
-		//								  Without the check, the first body with move into side D
-		//          ________A_______	  through the second body and out side B.
-		//         |                |
-		//         |                |
-		//         |                |
-		//    D    |                |  B
-		//         |                |
-		//         |                |
-		//         |________________|
-		//					C
-
-		Vector2 direction = manifold.BodyB->Pos - manifold.BodyA->Pos;
-		if (direction.Dot(manifold.Normal) < 0.0f)
+		if (result == GJK::SimplexEvolution::FoundIntersection)
 		{
-			manifold.Normal = manifold.Normal * -1;
+			gjk.BuildManifold(manifold);
+			return true;
 		}
-			
-		//manifold.Depth += 1.0f + (COLLISION_SKIN_DISTANCE);
 
-		//We do not need to find any collision points if both bodies are static. 
-		//However we should never get to this point but it's still nice to check.
-		if(!(bodyA->IsStatic() && bodyB->IsStatic()))
-			FindPolygonContactPoints(manifold, bodyA->m_TransformedVertices, bodyB->m_TransformedVertices);
-
-		return true;
+		return false;
 	};
-
-	static void FindPolygonContactPoints(Manifold& manifold,
-		const std::vector<Vector2>& verticesA, const std::vector<Vector2>& verticesB)
-	{
-		const float penTestDistance = 0.0005f;
-
-		manifold.ContactPoints.clear();
-		manifold.ContactPoints.push_back(Vector2(INFINITY, INFINITY));
-		manifold.ContactPoints.push_back(Vector2(INFINITY, INFINITY));
-
-		float minDistanceSquared = INFINITY;
-		int pointCount = 0;
-
-		for (int i = 0; i < verticesA.size(); i++)
-		{
-			Vector2 p = verticesA[i];
-
-			for (int j = 0; j < verticesB.size(); j++)
-			{
-				Vector2 va = verticesB[j];
-				Vector2 vb = verticesB[(j + 1) % verticesB.size()];
-
-				MathsUtils::ClosestPointDistanceResult result = MathsUtils::FindClosestPointOnLine(p, va, vb);
-
-				if (MathsUtils::AreFloatingPointsWithinTolerence(result.DistanceSquared, minDistanceSquared, penTestDistance))
-				{
-					if (!MathsUtils::AreTwoPointsWithinTolerence(result.ClosestPoint, manifold.ContactPoints[0], penTestDistance))
-					{
-						manifold.ContactPoints[1] = result.ClosestPoint;
-						pointCount = 2;
-					}
-				}
-				else if (result.DistanceSquared < minDistanceSquared)
-				{
-					minDistanceSquared = result.DistanceSquared;
-					manifold.ContactPoints[0] = result.ClosestPoint;
-					pointCount = 1;
-				}
-			}
-		}
-
-		for (int i = 0; i < verticesB.size(); i++)
-		{
-			Vector2 p = verticesB[i];
-
-			for (int j = 0; j < verticesA.size(); j++)
-			{
-				Vector2 va = verticesA[j];
-				Vector2 vb = verticesA[(j + 1) % verticesA.size()];
-
-				MathsUtils::ClosestPointDistanceResult result = MathsUtils::FindClosestPointOnLine(p, va, vb);
-
-				if (MathsUtils::AreFloatingPointsWithinTolerence(result.DistanceSquared, minDistanceSquared, penTestDistance))
-				{
-					if (!MathsUtils::AreTwoPointsWithinTolerence(result.ClosestPoint, manifold.ContactPoints[0], penTestDistance))
-					{
-						manifold.ContactPoints[1] = result.ClosestPoint;
-						pointCount = 2;
-					}
-				}
-				else if (result.DistanceSquared < minDistanceSquared)
-				{
-					minDistanceSquared = result.DistanceSquared;
-					manifold.ContactPoints[0] = result.ClosestPoint;
-					pointCount = 1;
-				}
-			}
-		}
-
-		if (pointCount == 1)
-		{
-			manifold.ContactPoints.erase(manifold.ContactPoints.begin() + 1);
-		}
-	}
 };

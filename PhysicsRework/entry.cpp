@@ -45,7 +45,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 				//event.key.keysym.scancode
 				switch (event.key.keysym.sym)
 				{
-				case SDLK_1: Collision::CollisionBreak = true; break;
 				case SDLK_SPACE: world->TestMode = !world->TestMode; break;
 				case SDLK_p: world->CreateBody(); break;
 
