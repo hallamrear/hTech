@@ -4,171 +4,135 @@
 #include "Vector2.h"
 #include "MathsUtils.h"
 #include <stdexcept>
+#include "World.h"
 
 namespace Collision
 {
-	//Implementation of the GJK algorithm for collision detection.
+	/// <summary>
+	/// -- GJK --
+	/// GJK works by trying to find a triangle which fits within the
+	/// minkowski difference of two bodies and encapsulates the origin.
+	/// If the tri contains the orgin and the fits inside the mink diff then
+	/// the minkdiff also must contain the origin.
+	///
+	/// -- EPA --
+	/// The Expanding Polytope Algorithm works well with Minkowski differences as
+	/// they both require support functions and simplexes and so can be built off
+	/// each other.
+	/// Whereas GJK uses support functions to find the simplex containing the origin, EPA uses them
+	/// to find the boundary of the minkdiff that is closest to the origin.a
+	/// 
+	/// We are assuming our vertices are always in clockwise winding order.
+	/// </summary>
 	class GJK
 	{
 	private:
-		Vector2 m_SupportDirection = Vector2();
-		std::vector<Vector2> m_Vertices = std::vector<Vector2>();
-
-		bool GJK_AddSupportToTriangle(const Vector2& direction, const Body& bodyA, const Body& bodyB)
+		struct ClosestEdgeDetails
 		{
-			Vector2 vertex = bodyA.GetSupportVertex(direction) - bodyB.GetSupportVertex(direction * -1);
-			if(MathsUtils::Dot(direction, vertex) > 0)
-			{
-				m_Vertices.push_back(vertex);
-				return true;
-			}
-
-			return false;
-		}
-
-	public:
-		enum class SimplexEvolution
-		{
-			NoIntersection,
-			StillEvolving,
-			FoundIntersection
+			int EdgeID;
+			float Distance;
+			Vector2 Normal;
 		};
 
-		GJK::SimplexEvolution EvolveSimplex(const Body& bodyA, const Body& bodyB)
-		{
-			switch (m_Vertices.size())
-			{
-			case 0:
-			{
-				//Get the first triangle point from the direction of action.
-				m_SupportDirection = bodyB.Pos - bodyA.Pos;
-				m_SupportDirection = m_SupportDirection.GetNormalized();
-			}
-			break;
+		std::vector<Vector2> m_SimplexPoints = std::vector<Vector2>();
 
-			case 1:
-			{
-				//Get our second sample triangle point from the furthest in the
-				//opposite direction to maximise polygon coverage.
-				m_SupportDirection *= -1;
-			}
-			break;
+		/// <summary>
+		/// Checks if the dot product is greater than 0 to determine whether of not the two vectors are in the same direction.
+		/// </summary>
+		/// <param name="A"></param>
+		/// <param name="B"></param>
+		/// <returns></returns>
+		bool AreVectorsInSameDirection(const Vector2& A, const Vector2& B);
 
-			case 2:
-			{
-				//Get the edge of the triangle.
-				Vector2 b = m_Vertices[1];
-				Vector2 c = m_Vertices[0];
+		/// <summary>
+		/// Finds the MTV (minimum translation vector) of the two objects.
+		/// </summary>
+		/// <param name="bodyA"></param>
+		/// <param name="bodyB"></param>
+		/// <returns>A vector representing the shortest distance to dislodge the two objects.</returns>
+		Vector2 EPA(Body* bodyA, Body* bodyB);
 
-				//Line between the first two vertices to make the edge.
-				Vector2 cb = b - c;
-				//Line from the first vertex to the origin.
-				Vector2 c0 = c *= -1;
+		/// <summary>
+		/// This function fills the manifold with the appropriate collision data using the EPA method.
+		/// </summary>
+		/// <param name="bodyA"></param>
+		/// <param name="bodyB"></param>
+		/// <param name="manifold"></param>
+		void GetCollisionDetails(Body* bodyA, Body* bodyB, Manifold* manifold);
 
-				//Use the triple cross product to calculate a direction
-				//perpendicular to the line cb in the direction of origin
-				//to get the final triangle point in this direction.
-				m_SupportDirection = MathsUtils::TripleProduct(cb.GetNormalized(), c0.GetNormalized(), cb.GetNormalized());
-			}
-			break;
+		/// <summary>
+		/// This function runs the GJK algorithm to determine whether of not a collision has taken place.
+		/// </summary>
+		/// <param name="bodyA"></param>
+		/// <param name="bodyB"></param>
+		/// <returns></returns>
+		bool DetermineCollisionUsingSimplex(Body* bodyA, Body* bodyB);
+		
+		/// <summary>
+		/// This function determines our next simplex point based on the current size of the simplex.
+		/// It also performs checks for the origin to determine collision.
+		/// </summary>
+		/// <param name="searchDirection"></param>
+		/// <returns></returns>
+		bool CalculateNextSimplexPoint(Vector2& searchDirection);
 
-			case 3:
-			{
-				// calculate if the simplex contains the origin
-				Vector2 a = m_Vertices[2];
-				Vector2 b = m_Vertices[1];
-				Vector2 c = m_Vertices[0];
-				
-				Vector2 a0 = (a * -1).GetNormalized(); // v2 to the origin
-				Vector2 ab = (b - a ).GetNormalized(); // v2 to v1
-				Vector2 ac = (c - a ).GetNormalized(); // v2 to v0
-				
-				Vector2 abPerp = MathsUtils::TripleProduct(ac, ab, ab);
-				Vector2 acPerp = MathsUtils::TripleProduct(ab, ac, ac);
+		/// <summary>
+		/// This function determines our next simplex point based on the current size of the simplex.
+		/// It also performs checks for the origin to determine collision.
+		/// </summary>
+		/// <param name="searchDirection"></param>
+		/// <returns></returns>
+		bool CalculateSimplexPointFromTriangle(Vector2& searchDirection);
 
-				if (abPerp.Dot(a0) > 0) 
-				{
-					// the origin is outside line ab
-					// get rid of c and add a new support 
-					// in the direction of abPerp
-				
-					auto itr = std::find(m_Vertices.begin(), m_Vertices.end(), c);
-					
-					if(itr != m_Vertices.end())
-					{
-						m_Vertices.erase(itr);
-						m_SupportDirection = abPerp;
-					}
-					else
-					{
-						throw std::runtime_error("You could not find c in the vector.");
-					}
+		/// <summary>
+		/// This function determines our next simplex point based on the current size of the simplex.
+		/// It also performs checks for the origin to determine collision.
+		/// </summary>
+		/// <param name="searchDirection"></param>
+		/// <returns></returns>
+		bool CalculateSimplexPointFromLine(Vector2& searchDirection);
 
-				}
-				else if (acPerp.Dot(a0) > 0)
-				{
-					// the origin is outside line ac
-					// get rid of b and add a new support 
-					// in the direction of acPerp
-					auto itr = std::find(m_Vertices.begin(), m_Vertices.end(), b);
+		/// <summary>
+		/// Gets the point representing the minkwoski difference between the furthest point
+		///  in the direction on A and the furthest point the negative direction on B.
+		/// 
+		/// A.GetSupport(dir) - B.GetSupport(-dir)
+		/// 
+		/// </summary>
+		/// <param name="direction"></param>
+		/// <param name="bodyA"></param>
+		/// <param name="bodyB"></param>
+		/// <returns></returns>
+		Vector2 GetMinkowskiDifferenceSupportVertex(const Vector2& direction, Body* bodyA, Body* bodyB);
 
-					if (itr != m_Vertices.end())
-					{
-						m_Vertices.erase(itr);
-						m_SupportDirection = acPerp;
-					}
-					else
-					{
-						throw std::runtime_error("You could not find b in the vector.");
-					}
-					m_SupportDirection = acPerp;
-				}
-				else {
-					// the origin is inside both ab and ac,
-					// so it must be inside the triangle!
-					return GJK::SimplexEvolution::FoundIntersection;
-				}
-			}
-			break;
+		/// <summary>
+		/// Returns the furthest point in a given direction in the Simplex.
+		/// </summary>
+		/// <param name="direction"></param>
+		/// <returns></returns>
+		Vector2 GetSupportVertexOfSimplex(const Vector2& direction);
 
-			default:
-				throw std::range_error("Cannot have a simplex triangle with more than 3 vertices.");
-				break;
-			}
-
-			if (GJK_AddSupportToTriangle(m_SupportDirection, bodyA, bodyB))
-			{
-				return GJK::SimplexEvolution::StillEvolving;
-			}
-			else
-			{
-				return GJK::SimplexEvolution::NoIntersection;
-			}
-
-		}
-
-		void BuildManifold(Manifold& manifold)
-		{
-
-		}
+	public:
+		
+		/// <summary>
+		/// Returns whether body A and body B are colliding. This will also fill out the manifold if the manifold passed in is not nullptr.
+		/// </summary>
+		/// <param name="bodyA"></param>
+		/// <param name="bodyB"></param>
+		/// <param name="manifold"></param>
+		/// <returns></returns>
+		bool IsOverlapping(Body* bodyA, Body* bodyB, Manifold* manifold);
 	};
+
+	static bool PolygonVsPolygon(Body* bodyA, Body* bodyB)
+	{
+		GJK gjk;
+		return gjk.IsOverlapping(bodyA, bodyB, nullptr);
+	}
 
 	static bool PolygonVsPolygon(Body* bodyA, Body* bodyB, Manifold& manifold)
 	{
 		GJK gjk;
-
-		GJK::SimplexEvolution result = GJK::SimplexEvolution::StillEvolving;
-		while (result == GJK::SimplexEvolution::StillEvolving)
-		{
-			result = gjk.EvolveSimplex(*bodyA, *bodyB);
-		}
-
-		if (result == GJK::SimplexEvolution::FoundIntersection)
-		{
-			gjk.BuildManifold(manifold);
-			return true;
-		}
-
-		return false;
+		return gjk.IsOverlapping(bodyA, bodyB, &manifold);
 	};
 };

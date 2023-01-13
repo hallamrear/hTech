@@ -4,79 +4,38 @@
 #include <vector>
 #include "Material.h"
 #include "MathsUtils.h"
+#include "RenderLine.h"
 
-struct Edge
-{
-	Point* A;
-	Point* B;
+class PhysicsMaterial;
 
-	Edge(Point& a, Point& b) : A(&a), B(&b)
-	{
-
-	};
-
-	Vector2 GetNormal() const
-	{
-		float dx = B->X - A->X;
-		float dy = B->Y - A->Y;
-		return Vector2(-dy, dx).GetNormalized();
-	}
-
-	Vector2 GetCentrePoint() const
-	{
-		return Vector2((A->X + B->X) / 2.0f, (A->Y + B->Y) / 2.0f);
-	}
-
-	Line GetLine() const
-	{
-		return Line(*A, *B);
-	}
-
-	Edge& operator=(const Edge& edge)
-	{
-		A = edge.A;
-		B = edge.B;
-		return *this;
-	};
-};
-
-enum class INERTIA_MOMENT
-{
-	Square = 0,
-	UniformDistributedWeight,
-};
-
-class Material;
-
-struct Body
+class Body
 {
 private:
 	bool m_IsStatic = false;
+	float GetInertiaTensor();
 	void CreateEdges();
-	float GetInertiaTensor(INERTIA_MOMENT inertiaMoment);
-
-public:
 	std::vector<Edge> m_Edges;
+	void CalculateCentreOfMass();
 	std::vector<Vector2> m_Vertices;
 	std::vector<Vector2> m_TransformedVertices;
 
-	bool COLLIDE = false;
+public:
 
-	Material material;
+	PhysicsMaterial Material;
 	Vector2 Pos;
+	Vector2 CentreOfMass;
 	float	Rot;
 	Vector2 Vel;
 	float	AngularVel;
 	Vector2 Force;
 	float	Torque;
-	float	Friction;
 
 	float	Mass;
 	float	InvMass;
 	float	Inertia;
 	float	InvInertia;
 
-	Body(int x, int y, INERTIA_MOMENT inertiaMoment, float mass, std::vector<Vector2> vertices, Material material);
+	Body(int x, int y, float mass, std::vector<Vector2> vertices, PhysicsMaterial material);
 	~Body();
 
 	const Edge& GetEdge(int index) const;

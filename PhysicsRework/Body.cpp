@@ -2,9 +2,9 @@
 #include "World.h"
 #include "Collision.h"
 
-Body::Body(int x, int y, INERTIA_MOMENT inertiaMoment, float mass, std::vector<Vector2> vertices, Material mat)
+Body::Body(int x, int y, float mass, std::vector<Vector2> vertices, PhysicsMaterial material)
 {
-	material = mat;
+	Material = material;
 
 	srand(NULL);
 	Pos.X = x;
@@ -15,7 +15,6 @@ Body::Body(int x, int y, INERTIA_MOMENT inertiaMoment, float mass, std::vector<V
 	AngularVel = 0.0f;
 	Force = Vector2::Zero;
 	Torque = 0.0f;
-	Friction = 5.0f;
 
 	Mass = mass;
 
@@ -23,7 +22,7 @@ Body::Body(int x, int y, INERTIA_MOMENT inertiaMoment, float mass, std::vector<V
 	{
 		m_IsStatic = false;
 		InvMass = 1.0f / (float)Mass;
-		Inertia = GetInertiaTensor(inertiaMoment);
+		Inertia = GetInertiaTensor();
 		InvInertia = 1.0f / Inertia;
 	}
 	else
@@ -39,29 +38,37 @@ Body::Body(int x, int y, INERTIA_MOMENT inertiaMoment, float mass, std::vector<V
 	m_Edges = std::vector<Edge>();
 	CreateEdges();
 	CalculateOrientedPositions();
+	CalculateCentreOfMass();
 }
 
-float Body::GetInertiaTensor(INERTIA_MOMENT intertiaMoment)
+void Body::CalculateCentreOfMass()
 {
-	switch (intertiaMoment)
+	CentreOfMass = Vector2::Zero;
+
+	for (size_t i = 0; i < m_Vertices.size(); i++)
 	{
-	case INERTIA_MOMENT::Square:
-		break;
-	case INERTIA_MOMENT::UniformDistributedWeight:
-		break;
-	default:
-		break;
+		CentreOfMass += m_Vertices[i];
 	}
 
-	return 1.0f;
+	CentreOfMass = CentreOfMass / (float)m_Vertices.size();
+}
+
+float Body::GetInertiaTensor()
+{
+	float w = 5.0f;
+	float h = 5.0f;
+	return (1.0f / 12.0f) * Mass* (powf(w, 2.0f) + powf(h, 2.0f));
 }
 
 Body::~Body()
 {
+
 }
 
 void Body::CreateEdges()
 {
+	m_Edges.clear();
+
 	Vector2* v1;
 	Vector2* v2;
 
@@ -108,52 +115,36 @@ void Body::Render()
 		World::DebugLinesToRenderThisFrame.push_back(Line(Pos + Vector2(45.0f, 0.0f), Pos + Vector2(45.0f, 0.0f) + Vector2(0.0f, MathsUtils::ConvertToDegrees(AngularVel))));
 	}
 
-	//Set drawing colour if static or not
-	SDL_Color color{};
-	if (m_IsStatic || COLLIDE)
-	{
-		color.r = 255;
-		color.g = 0;
-		color.b = 0;
-		color.a = 255;
-	}
-	else
-	{
-		color.r = 0;
-		color.g = 255;
-		color.b = 0;
-		color.a = 255;
-	}
-
-
 	//Draw shape edges.
 	for (int i = 0; i < m_Edges.size(); i++)
 	{
 		Edge& edge = m_Edges[i];
-		Line line = Line(*edge.A, *edge.B, color);
-		World::DebugLinesToRenderThisFrame.push_back(line);
-		Vector2 Normal = line.GetNormal();
-		line.A = Vector2((line.A.X + line.B.X) / 2.0f, (line.A.Y + line.B.Y) / 2.0f);
-		line.B = line.A + (Normal * 15);
-		World::DebugLinesToRenderThisFrame.push_back(line);
-	}
 
-	COLLIDE = false;
+		SDL_SetRenderDrawColor(World::Renderer, 0, 255, 0, 255);
+
+		DrawLineToScreen(World::Renderer, edge.A, edge.B);
+		Vector2 Normal = edge.GetNormal();
+
+		Vector2 A = Vector2((edge.A.X + edge.B.X) / 2.0f, (edge.A.Y + edge.B.Y) / 2.0f);
+		Vector2 B = A + (Normal * 15);
+		DrawLineToScreen(World::Renderer, A, B);
+	}
 }
 
 const Vector2& Body::GetSupportVertex(const Vector2& direction) const
 {
-	float furthestDistance = -100000000.0f;
-	int furthestVertexIndex = -1;
-	float projectedDistance = -100000000.0f;
+	Vector2 vertex = m_TransformedVertices[0];
+	float furthestDistance = MathsUtils::Dot(vertex, direction);
+	int furthestVertexIndex = 0;
+	float projectedDistance = -10000.0f;
 
 	for (size_t i = 0; i < m_TransformedVertices.size(); i++)
 	{
-		Vector2 vertex = m_TransformedVertices[i];
+		vertex = m_TransformedVertices[i];
 
 		projectedDistance = MathsUtils::Dot(vertex, direction);
 
-		if (projectedDistance > furthestDistance)
+		if (projectedDistance >= furthestDistance)
 		{
 			furthestDistance = projectedDistance;
 			furthestVertexIndex = i;

@@ -365,6 +365,7 @@
     <ClCompile Include="Manifold.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="MathsUtils.cpp" />
+    <ClCompile Include="RenderLine.cpp" />
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="Vector3.cpp" />
     <ClCompile Include="World.cpp" />
@@ -376,6 +377,7 @@
     <ClInclude Include="Manifold.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="MathsUtils.h" />
+    <ClInclude Include="RenderLine.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="World.h" />

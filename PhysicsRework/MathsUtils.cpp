@@ -94,6 +94,10 @@ float MathsUtils::GetAngleBetweenTwoVectors(const Vector2& a, const Vector2& b)
 {
 	float dot = MathsUtils::Dot(a, b);
 	float magnitudeSum = a.GetMagnitude() * b.GetMagnitude();
+
+	if (dot == 0 || magnitudeSum == 0)
+		return 0.0f;
+
 	float result = acos((dot / magnitudeSum));
 	return result;
 }
@@ -126,15 +130,6 @@ float MathsUtils::PointDistanceToLineSigned(Point point, Line line)
 bool MathsUtils::IsPointAboveLine(const Point& point, const Line& line)
 {
 	return ((line.B.X - line.A.X) * (point.Y - line.A.Y) - (line.B.Y - line.A.Y) * (point.X - line.A.X)) > 0;
-}
-
-Vector2 MathsUtils::CalculateIntersectionPointOfTwoLines(const Line& lineA, const Line& lineB)
-{
-	LineEquation equationA = lineA.GetEquation();
-	LineEquation equationB = lineB.GetEquation();
-	float intersectX = (equationB.C - equationA.C) / (equationA.M - equationB.M);
-	float intersectY = equationA.M * intersectX + equationA.C;
-	return Vector2(intersectX, intersectY);
 }
 
 MathsUtils::ClosestPointDistanceResult MathsUtils::FindClosestPointOnLine(const Vector2& point, const Vector2& A, const Vector2& B)
@@ -196,12 +191,13 @@ float MathsUtils::Distance(const Vector2& a, const Vector2& b)
 
 Vector2 MathsUtils::TripleProduct(const Vector2& a, const Vector2& b, const Vector2& c)
 {
-	Vector3 A = Vector3(a.X, a.Y, 0);
-	Vector3 B = Vector3(b.X, b.Y, 0);
-	Vector3 C = Vector3(c.X, c.Y, 0);
+	Vector2 r;
 
-	Vector3 first = Vector3::Cross(A, B);
-	Vector3 second = Vector3::Cross(first, C);
+	float ac = a.X * c.X + a.Y * c.Y; // (a)dot(c)
+	float bc = b.X * c.X + b.Y * c.Y; // (a)dot(c)
 
-	return Vector2(second.X, second.Y);
+	//b * (a)dot(c) - a * (b)dot(c)
+	r.X = b.X * ac - a.X * bc;
+	r.Y = b.Y * ac - a.Y * bc;
+	return r;
 };

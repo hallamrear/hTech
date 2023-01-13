@@ -19,17 +19,15 @@ private:
 	void DetermineCollisions();
 
 public:
-	static bool TestMode;
+	static SDL_Renderer* Renderer;
 	std::vector<Body*> Bodies;
 	static std::vector<Vector2> DebugPointsToRenderThisFrame;
 	static std::vector<Line>	DebugLinesToRenderThisFrame;
 	static Vector2 Gravity;
-	int Iterations = 16;
+	int Iterations = 32;
 
 	void Setup();
 	void Render(SDL_Renderer* renderer);
 	void Update(float dt);
-
-	void CreateBody();
 };
 

@@ -17,6 +17,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
 	World* world = new World();
 	world->Setup();
+	world->Renderer = renderer;
 
 	const int FPS = 60;
 	const int frameDelay = 1000 / FPS;
@@ -40,27 +41,43 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 			switch (event.type)
 			{
 
+			case SDL_MOUSEBUTTONDOWN:
+			{
+				switch (event.button.button)
+				{
+				case SDL_BUTTON_LEFT:
+				{
+
+				}
+				break;
+
+				default:
+					break;
+				}
+			}
+			break;
+
 			case SDL_KEYDOWN:
 			{
 				//event.key.keysym.scancode
 				switch (event.key.keysym.sym)
 				{
-				case SDLK_SPACE: world->TestMode = !world->TestMode; break;
-				case SDLK_p: world->CreateBody(); break;
+				case SDLK_EQUALS: break;
+				case SDLK_MINUS:  break;
 
-				case SDLK_w: world->Bodies.front()->Vel.Y += 200 * 0.016f; break;
-				case SDLK_s: world->Bodies.front()->Vel.Y -= 200 * 0.016f; break;
-				case SDLK_d: world->Bodies.front()->Vel.X += 200 * 0.016f; break;
-				case SDLK_a: world->Bodies.front()->Vel.X -= 200 * 0.016f; break;
-				case SDLK_q: world->Bodies.front()->AngularVel += MathsUtils::ConvertToRadians(200 * 0.016f); break;
-				case SDLK_e: world->Bodies.front()->AngularVel -= MathsUtils::ConvertToRadians(200 * 0.016f); break;
+				case SDLK_w: world->Bodies.back()->Vel += Vector2(0.0f, 50.0f); break;
+				case SDLK_s: world->Bodies.back()->Vel -= Vector2(0.0f, 50.0f); break;
+				case SDLK_d: world->Bodies.back()->Vel += Vector2(50.0f, 0.0f); break;
+				case SDLK_a: world->Bodies.back()->Vel -= Vector2(50.0f, 0.0f); break;
+				case SDLK_q: world->Bodies.back()->AngularVel += MathsUtils::ConvertToRadians(200 * 0.016f); break;
+				case SDLK_e: world->Bodies.back()->AngularVel -= MathsUtils::ConvertToRadians(200 * 0.016f); break;
 				
-				case SDLK_i: world->Bodies.back()->Vel.Y += 200 * 0.016f; break;
-				case SDLK_k: world->Bodies.back()->Vel.Y -= 200 * 0.016f; break;
-				case SDLK_l: world->Bodies.back()->Vel.X += 200 * 0.016f; break;
-				case SDLK_j: world->Bodies.back()->Vel.X -= 200 * 0.016f; break;
-				case SDLK_u: world->Bodies.back()->AngularVel += MathsUtils::ConvertToRadians(200 * 0.016f); break;
-				case SDLK_o: world->Bodies.back()->AngularVel -= MathsUtils::ConvertToRadians(200 * 0.016f); break;
+				case SDLK_i: world->Bodies.front()->Vel += Vector2(0.0f, 50.0f); break;
+				case SDLK_k: world->Bodies.front()->Vel -= Vector2(0.0f, 50.0f); break;
+				case SDLK_l: world->Bodies.front()->Vel += Vector2(50.0f, 0.0f); break;
+				case SDLK_j: world->Bodies.front()->Vel -= Vector2(50.0f, 0.0f); break;
+				case SDLK_u: world->Bodies.front()->AngularVel += MathsUtils::ConvertToRadians(200 * 0.016f); break;
+				case SDLK_o: world->Bodies.front()->AngularVel -= MathsUtils::ConvertToRadians(200 * 0.016f); break;
 
 				default:
 					break; 
