@@ -6,6 +6,7 @@
 #include "Text.h"
 #include "Camera.h"
 #include "Transform.h"
+#include "Editor.h"
 
 #include "UI.h"
 
@@ -103,7 +104,10 @@ void World::Render_Impl(SDL_Renderer& renderer)
     {
         if (itr.second != nullptr)
         {
-            ImGui::Text(itr.second->GetName().c_str());
+            if (ImGui::Selectable(itr.second->GetName().c_str()))
+            {
+                Editor::SetSelectedEntity(itr.second);
+            }
             itr.second->Render();
         }
     }
@@ -152,17 +156,6 @@ World::World()
     int halfSizeY = WORLD_TILE_COUNT_Y / 2;
 
     m_WorldHashMap = new SpatialHash(sizeX, sizeY);
-
-    InputManager::Bind(
-        IM_KEY_CODE::IM_KEY_A,
-        IM_KEY_STATE::IM_KEY_PRESSED,
-        [this]()
-        {
-            Entity* entity = CreateEntity_Impl("Test" + std::to_string(rand() % 100), Transform(InputManager::Get()->GetMouseWorldPosition()));
-            entity->AddComponent<SpriteComponent>();
-            entity->GetComponent<SpriteComponent>()->LoadTexture("test.png");
-            entity->AddComponent<ScriptComponent>();
-        });   
 }
 
 World::~World()
