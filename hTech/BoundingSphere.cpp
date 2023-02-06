@@ -48,22 +48,21 @@ void BoundingSphere::Render(SDL_Renderer& renderer)
 		SDL_SetRenderDrawColor(&renderer, 0, 255, 255, 255);
 		Vector2 centre = Camera::WorldToScreen(m_EntityTransform.Position);
 		SDL_RenderDrawPoint(&renderer, (int)centre.X, (int)centre.Y);
+		float angle = 0.0f;
 		Vector2 point;
+		point.X = m_EntityTransform.Position.X + (Radius * (float)sin(angle));
+		point.Y = m_EntityTransform.Position.Y + (Radius * (float)cos(angle));
+		point = Camera::WorldToScreen(point);
+		Vector2 lastPoint = Vector2();
 
-		for (int i = 0; i < m_PointCount; i++)
+		for (int i = 1; i < m_PointCount + 1; i++)
 		{
-			float t = (float)i / m_PointCount;
-			float angle1 = acos(1 - 2 * t);
-			float angle2 = angleIncrement * i;
-
-			//float x = sin(angle1) * cos(angle2);
-			//float y = sin(angle1) * sin(angle2);
-			//float z = cos(angle1);
-
-			point.X = m_EntityTransform.Position.X + Radius * (float)cos(angle1);
-			point.Y = m_EntityTransform.Position.Y + Radius * (float)sin(angle2);
+			lastPoint = point;
+			angle = Utils::Maths::ConvertToRadians((360.0f / m_PointCount) * i);
+			point.X = m_EntityTransform.Position.X + (Radius * (float)sin(angle));
+			point.Y = m_EntityTransform.Position.Y + (Radius * (float)cos(angle));
 			point = Camera::WorldToScreen(point);
-			SDL_RenderDrawPoint(&renderer, (int)point.X, (int)point.Y);
+			SDL_RenderDrawLine(&renderer, (int)lastPoint.X, (int)lastPoint.Y, (int)point.X, (int)point.Y);
 		}
 	}
 }
