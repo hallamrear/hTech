@@ -7,7 +7,7 @@
 #include "BoundingSphere.h"
 #include "BoundingPolygon.h"
 #include "OrientedBoundingBox.h"
-#include "Game.h"
+#include "Log.h"
 
 RigidbodyComponent::RigidbodyComponent(Entity& entity) : Component("Rigidbody Component", entity)
 {
@@ -18,6 +18,8 @@ RigidbodyComponent::RigidbodyComponent(Entity& entity) : Component("Rigidbody Co
 	m_DragCoefficient = 0.47f;
 	m_SpeedCap = 1000.0f;
 	m_Restitution = 0.5f;
+	m_StaticFriction = 0.4f;
+	m_DynamicFriction = 0.2f;
 	m_Collider = nullptr;
 
 	CalculateInverseMass();
@@ -50,6 +52,11 @@ RigidbodyComponent::~RigidbodyComponent()
 void RigidbodyComponent::PhysicsUpdate(float DeltaTime)
 {
 	CalculateInverseMass();
+
+	if (isnan(abs(m_ParentEntity.GetTransform().Position.X)))
+	{
+		assert(0);
+	}
 
 	if (m_IsStatic)
 		return;
@@ -85,23 +92,25 @@ void RigidbodyComponent::PhysicsUpdate(float DeltaTime)
 	m_NetForce += m_ExternalForce;
 
 	///Acceleration
-	m_Acceleration = m_NetForce / m_Mass;
+	m_Acceleration = m_NetForce * m_InverseMass;
 
 	///Update Position
-	m_Velocity += m_Acceleration * static_cast<float>(DeltaTime);
+	Vector2 velSum = m_Acceleration * (DeltaTime);
+	m_Velocity += velSum;
 	m_ParentEntity.GetTransform().Position += m_Velocity;
 
 	///Speed Cap
 	//Capping - X
-	if (m_Velocity.X > m_SpeedCap)
-		m_Velocity.X = m_SpeedCap;
-	else if (m_Velocity.X < -m_SpeedCap)
-		m_Velocity.X = -m_SpeedCap;
+	m_Velocity.X > m_SpeedCap ? m_Velocity.X = m_SpeedCap : m_Velocity.X;
+	m_Velocity.X < -m_SpeedCap ? m_Velocity.X = -m_SpeedCap : m_Velocity.X;
+
 	//Capping - Y
-	if (m_Velocity.Y > m_SpeedCap)
-		m_Velocity.Y = m_SpeedCap;
-	else if (m_Velocity.Y < -m_SpeedCap)
-		m_Velocity.Y = -m_SpeedCap;
+	m_Velocity.Y > m_SpeedCap  ? m_Velocity.Y = m_SpeedCap  : m_Velocity.Y;
+	m_Velocity.Y < -m_SpeedCap ? m_Velocity.Y = -m_SpeedCap : m_Velocity.Y;
+
+	float mag = m_Velocity.GetMagnitude();
+	if (mag < 0.001f)
+		m_Velocity = Vector2(0.0f, 0.0f);
 
 	m_NetForce = Vector2();
 	m_ExternalForce = Vector2();
@@ -172,7 +181,9 @@ void RigidbodyComponent::AddForce(float X, float Y)
 
 void RigidbodyComponent::RenderProperties()
 {
-	ImGui::Checkbox("Static", &m_IsStatic);
+	bool isStatic = GetIsStatic();
+	ImGui::Checkbox("Static", &isStatic);
+	SetIsStatic(isStatic);
 	ImGui::Checkbox("Gravity Enabled", &m_GravityEnabled);
 	ImGui::Checkbox("Drag Enabled", &m_DragEnabled);
 	
@@ -294,6 +305,8 @@ void RigidbodyComponent::Serialize(Serializer& writer) const
 	writer.String("Drag Coefficient");	writer.Double(m_DragCoefficient);
 	writer.String("Speed cap");			writer.Double(m_SpeedCap);
 	writer.String("Restitution");		writer.Double(m_Restitution);
+	writer.String("Static Friction");		writer.Double(m_StaticFriction);
+	writer.String("Dynamic Friction");		writer.Double(m_DynamicFriction);
 
 	//writer.String("Velocity"); 
 	//writer.StartObject();
@@ -379,6 +392,16 @@ void RigidbodyComponent::Deserialize(SerializedValue& value)
 		auto restMember = properties.FindMember("Restitution");
 		if (restMember->value.IsDouble())
 			m_Restitution = (float)restMember->value.GetDouble();
+
+
+		auto sFrictionMember = properties.FindMember("Static Friction");
+		if (sFrictionMember->value.IsDouble())
+			m_StaticFriction = (float)sFrictionMember->value.GetDouble();
+
+
+		auto dFrictionMember = properties.FindMember("Dynamic Friction");
+		if (dFrictionMember->value.IsDouble())
+			m_DynamicFriction = (float)dFrictionMember->value.GetDouble();
 
 		//auto externalForceMember = properties.FindMember("External Force");
 		//if (externalForceMember->value.IsObject())

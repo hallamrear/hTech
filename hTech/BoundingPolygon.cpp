@@ -33,7 +33,7 @@ void BoundingPolygon::Update(float DeltaTime)
 
 	for (size_t i = 0; i < m_TransformedPoints.size(); i++)
 	{
-		m_TransformedPoints[i] = MathsHelp::RotatePointAroundOriginDegrees(m_EntityTransform.Position + m_OriginalPoints[i], m_Rotation, m_EntityTransform.Position);
+		m_TransformedPoints[i] = Utils::Maths::RotatePointAroundOriginDegrees(m_EntityTransform.Position + m_OriginalPoints[i], m_Rotation, m_EntityTransform.Position);
 	}
 }
 
@@ -185,9 +185,12 @@ void BoundingPolygon::RenderProperties()
 	ImGui::SameLine();
 	if (ImGui::Button("Remove selected point"))
 	{
-		m_OriginalPoints.erase(m_OriginalPoints.begin() + selectedPointIndex);
-		m_TransformedPoints.erase(m_TransformedPoints.begin() + selectedPointIndex);
-		m_PointCount--;
+		if (selectedPointIndex != -1)
+		{
+			m_OriginalPoints.erase(m_OriginalPoints.begin() + selectedPointIndex);
+			m_TransformedPoints.erase(m_TransformedPoints.begin() + selectedPointIndex);
+			m_PointCount--;
+		}
 	}
 	ImGui::Separator();
 }

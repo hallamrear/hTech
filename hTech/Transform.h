@@ -1,8 +1,7 @@
 #pragma once
  #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
-
-#include "Helper.h"
+#include "Utility.h"
 
 class HTECH_FUNCTION_EXPORT Transform
 {

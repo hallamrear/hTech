@@ -16,7 +16,7 @@ Vector2::Vector2(float x, float y)
 //0deg == Vector(1.0, 0.0)
 float Vector2::GetAngleDegrees() const
 {
-	return MathsHelp::ConvertToDegrees(GetAngleRadians());
+	return Utils::Maths::ConvertToDegrees(GetAngleRadians());
 }
 
 //0r == Vector(1.0, 0.0)
@@ -44,7 +44,7 @@ Vector2 Vector2::GetNormalized() const
 
 Vector2 Vector2::GetVectorRotatedByAngle(float angleDegrees)
 {
-	float theta = MathsHelp::ConvertToRadians(angleDegrees);
+	float theta = Utils::Maths::ConvertToRadians(angleDegrees);
 	float cs = cos(theta);
 	float sn = sin(theta);
 
@@ -151,7 +151,7 @@ void Vector2::RotatePointAroundOriginRadians(float rotationRad, Vector2 origin)
 
 void Vector2::RotatePointAroundOriginDegrees(float rotationDeg, Vector2 origin)
 {
-	float rotationRad = MathsHelp::ConvertToRadians(rotationDeg);
+	float rotationRad = Utils::Maths::ConvertToRadians(rotationDeg);
 	float s = sin(rotationRad);
 	float c = cos(rotationRad);
 
@@ -187,4 +187,23 @@ const Vector2 Vector2::operator*(const float& scalar) const
 const Vector2 Vector2::operator/(const float& scalar) const
 {
 	return Vector2(this->X / scalar, this->Y / scalar);
+}
+
+Vector2 Vector2::operator-()
+{
+	return Vector2(-X, -Y);
+}
+
+Vector2& Vector2::operator*=(const float& rhs)
+{
+	this->X *= rhs;
+	this->Y *= rhs;
+	return *this;
+}
+
+Vector2& Vector2::operator*=(const Vector2& rhs)
+{
+	this->X *= rhs.X;
+	this->Y *= rhs.Y;
+	return *this;
 }

@@ -2,10 +2,11 @@
  #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
 #include "Component.h"
+#include "CollisionManifold.h"
 
 enum class COLLIDER_TYPE : int;
 
-class HTECH_FUNCTION_EXPORT CollisionManifold;
+class CollisionManifold;
 class HTECH_FUNCTION_EXPORT Collider;
 
 class HTECH_FUNCTION_EXPORT RigidbodyComponent :
@@ -22,6 +23,8 @@ protected:
 	float					m_DragCoefficient;
 	float					m_SpeedCap; //Speed cap (u/s)
 	float					m_Restitution;
+	float					m_StaticFriction;
+	float					m_DynamicFriction;
 	Vector2					m_Velocity;
 	Vector2					m_Acceleration;
 	Vector2					m_NetForce;
@@ -43,6 +46,13 @@ public:
 
 	void DestroyCollider();
 
+	//Setters
+	void		    SetCollider(COLLIDER_TYPE type);
+	void			SetVelocity(const Vector2& velocity) { m_Velocity = velocity; };
+	virtual void	SetIsStatic(const bool state) { m_IsStatic = state; }
+	virtual void	SetGravityEnabled(const bool state) { m_GravityEnabled = state; }
+	virtual void	SetDragEnabled(const bool state) { m_DragEnabled = state; }
+	//Getters
 	Vector2 const	GetVelocity()		const { return m_Velocity; }
 	Vector2 const	GetAcceleration()	const { return m_Acceleration; }
 	bool	const	GetGravityEnabled() const { return m_GravityEnabled; }
@@ -50,19 +60,16 @@ public:
 	float	const	GetMass()			const { return m_Mass; };
 	float	const	GetInverseMass()	const { return m_InverseMass; };
 	float	const	GetRestitution()	const { return m_Restitution; };
+	float	const	GetStaticFriction()	const { return m_StaticFriction; };
+	float	const	GetDynamicFriction()const { return m_DynamicFriction; };
 	bool	const	GetIsStatic()		const { return m_IsStatic; };
-	bool	const	HasCollider()		const { return (m_Collider != nullptr); }
-
-	void		    SetCollider(COLLIDER_TYPE type);
 	Collider* const GetCollider();
-
-	//Setters
-	virtual void	SetIsStatic(const bool state) { m_IsStatic = state; }
-	virtual void	SetGravityEnabled(const bool state) { m_GravityEnabled = state; }
-	virtual void	SetDragEnabled(const bool state) { m_DragEnabled = state; }
 	//Adjusters
 	virtual void	AddVelocity(const Vector2 velocity) { m_Velocity += velocity; };
 	virtual void	AddExternalForce(const Vector2 force) { m_ExternalForce += force; };
+	//Checkers
+	bool	const	HasCollider()		const { return (m_Collider != nullptr); }
+
 
 	virtual void	OnCollision(const CollisionManifold& manifold, RigidbodyComponent& other);
 	virtual void	OnOverlap(const CollisionManifold& manifold, RigidbodyComponent& other);

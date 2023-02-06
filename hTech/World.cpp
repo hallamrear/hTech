@@ -7,6 +7,7 @@
 #include "Camera.h"
 #include "Transform.h"
 #include "Editor.h"
+#include "Console.h"
 
 #include "UI.h"
 
@@ -15,10 +16,30 @@
 
 World* World::m_Instance = nullptr;
 
+void World::UpdateHashmapNames_Impl()
+{
+    std::vector<std::string> toErase = std::vector<std::string>();
+    size_t size = m_EntityMap.size();
+    for (auto& itr : m_EntityMap)
+    {
+        if (itr.first != itr.second->GetName())
+        {
+            Entity* entity = itr.second;
+            m_EntityMap.insert(std::make_pair(itr.second->GetName().c_str(), itr.second));
+            toErase.push_back(itr.first);
+        }
+    }
+
+    for (size_t i = 0; i < toErase.size(); i++)
+    {
+        m_EntityMap.erase(toErase[i]);
+    }
+}
+
 Entity* World::CreateEntity_Impl(std::string Name, Transform SpawnTransform, Entity* Parent)
 {
     Entity* entity = new Entity(SpawnTransform, Name, Parent);
-    m_EntityMap.insert(std::make_pair(Name, entity));
+    m_EntityMap.insert(std::make_pair(entity->GetName(), entity));
     
     if (m_WorldHashMap)
     {
@@ -38,6 +59,7 @@ void World::DestroyEntity_Impl(Entity* entity)
     if (itr != m_EntityMap.end())
     {
         itr->second->Destroy();
+        m_EntityMap.erase(itr);
     }
 }
 
@@ -104,10 +126,18 @@ void World::Render_Impl(SDL_Renderer& renderer)
     {
         if (itr.second != nullptr)
         {
-            if (ImGui::Selectable(itr.second->GetName().c_str()))
+            std::string str = itr.second->GetName();
+
+            if (str == "")
+            {
+                str += "unnamed###" + itr.second->GetIsAlive() + std::to_string(itr.second->GetTransform().Position.X) + "/" + std::to_string(itr.second->GetTransform().Position.Y);
+            }
+
+            if (ImGui::Selectable(str.c_str()))
             {
                 Editor::SetSelectedEntity(itr.second);
             }
+            
             itr.second->Render();
         }
     }
@@ -257,6 +287,11 @@ void World::ClearAllEntities()
     }*/
 
     m_EntityMap.clear();
+}
+
+void World::UpdateHashmapNames()
+{
+    return Get()->UpdateHashmapNames_Impl();
 }
 
 Entity* World::FindNearestEntityToPosition(Vector2 WorldPosition)

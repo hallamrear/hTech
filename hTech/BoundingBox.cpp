@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "imgui.h"
 #include "rapidjson/rapidjson.h"
+#include "Console.h"
 
 BoundingBox::BoundingBox(const Transform& transform, float size_x, float size_y)
 	: Collider(transform)
@@ -19,17 +20,17 @@ BoundingBox::BoundingBox(const Transform& transform, float size_x, float size_y)
 
 const Vector2 BoundingBox::GetTopLeft() const
 {
-	return Vector2();
+	return m_TopLeft;
 }
 
 const Vector2 BoundingBox::GetBottomRight() const
 {
-	return Vector2();
+	return m_BottomRight;
 }
 
 const Vector2 BoundingBox::GetSize() const
 {
-	return Vector2();
+	return Vector2(m_BottomRight.X - m_TopLeft.X, m_TopLeft.Y - m_BottomRight.Y);
 }
 
 BoundingBox::~BoundingBox()

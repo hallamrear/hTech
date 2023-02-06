@@ -40,7 +40,7 @@ typedef rapidjson::PrettyWriter<rapidjson::StringBuffer> Serializer;
 typedef rapidjson::Document Deserializer;
 typedef rapidjson::Value SerializedValue;
 
-#include "Helper.h"
+#include "Utility.h"
 
 static unsigned short UI_TILE_SIZE = 16;
 

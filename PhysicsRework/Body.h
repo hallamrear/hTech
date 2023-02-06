@@ -20,7 +20,6 @@ private:
 	std::vector<Vector2> m_TransformedVertices;
 
 public:
-
 	PhysicsMaterial Material;
 	Vector2 Pos;
 	Vector2 CentreOfMass;

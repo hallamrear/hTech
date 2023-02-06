@@ -1,21 +1,20 @@
 #pragma once
  #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
-
-
 #include "Collision.h"
 
 #define FIXED_TIME_STEP (1.0f / 60.0f)
 #define IMPULSE_ITERATION_COUNT 1
 
 class HTECH_FUNCTION_EXPORT RigidbodyComponent;
+class HTECH_FUNCTION_EXPORT CollisionSolver;
 
 class HTECH_FUNCTION_EXPORT Physics
 {
 	static Physics* m_Instance;
 	float mFixedTimestep;
 	std::vector<RigidbodyComponent*> m_RigidbodyVector;
-	std::vector<CollisionManifold> m_ManifoldVector;
+	std::vector<CollisionSolver*> m_PhysicsSolvers;
 
 	Physics(float fixedTimeStep);
 	~Physics();
