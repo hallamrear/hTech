@@ -40,7 +40,7 @@ void OrientedBoundingBox::Render(SDL_Renderer& renderer)
 {
 	if (Console::Query("DrawColliders") != 0)
 	{
-		SDL_SetRenderDrawColor(&renderer, 0, 255, 255, 255);
+		SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
 
 		const Vector2 TopLeft_ScreenSpace = Camera::WorldToScreen(m_TopLeft);
 		const Vector2 TopRight_ScreenSpace = Camera::WorldToScreen(m_TopRight);

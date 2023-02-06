@@ -55,7 +55,7 @@ void BoundingBox::Render(SDL_Renderer& renderer)
 		r.w = (int)(m_Size.X);
 		r.h = (int)(m_Size.Y);
 
-		SDL_SetRenderDrawColor(&renderer, 0, 255, 255, 255);
+		SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
 		SDL_RenderDrawRect(&renderer, &r);
 	}
 }

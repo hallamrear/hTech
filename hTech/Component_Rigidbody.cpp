@@ -234,6 +234,12 @@ void RigidbodyComponent::RenderProperties()
 	ImGui::Text("  Acceleration -> X: %f, Y: %f", m_Acceleration.X, m_Acceleration.Y);
 	ImGui::Text("     Net Force -> X: %f, Y: %f", m_NetForce.X, m_NetForce.Y);
 	ImGui::Text("External Force -> X: %f, Y: %f", m_ExternalForce.X, m_ExternalForce.Y);
+
+	if (ImGui::Button("Zero velocity and acceleration"))
+	{
+		m_Velocity = Vector2(0.0f, 0.0f);
+		m_Acceleration = Vector2(0.0f, 0.0f);
+	}
 }
 
 void RigidbodyComponent::CalculateInverseMass()

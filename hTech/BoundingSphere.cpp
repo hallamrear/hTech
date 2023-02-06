@@ -74,7 +74,7 @@ Vector2 BoundingSphere::FindFurthestPoint(Vector2 direction) const
 
 void BoundingSphere::GetColliderAsPoints(Vector2 points[]) const
 {
-	//todo : implement
+	return;
 }
 
 void BoundingSphere::Serialize(Serializer& writer) const
