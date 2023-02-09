@@ -10,21 +10,58 @@ void ScriptComponent::Destroy()
 	if (m_ScriptObject)
 	{
 		//IMPLEMENT Proper destruction of script object.
-		//m_ScriptObject->Destroy();
-		//m_ScriptObject = nullptr;
+		m_ScriptObject->Destroy();
+		m_ScriptObject = nullptr;
 	}
 }
 
 void ScriptComponent::RenderProperties()
 {
-	ImGui::Text("Script Components run out of .h files under the same name as the object, compiled via the engine.");
-	ImGui::Text("There's really not much to write here that isn't adding a code editor and that feels abit much.");
+	if (ImGui::Button("Reload DLL"))
+	{
+		ScriptLoader::Reload();
+		m_ScriptObject = nullptr;
+		m_ScriptObject = ScriptLoader::GetScriptObject(&m_ParentEntity, m_ScriptReferenceName);
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Unload DLL"))
+	{
+		ScriptLoader::UnloadLibrary();
+		m_ScriptObject = nullptr;
+		m_ScriptObject = ScriptLoader::GetScriptObject(&m_ParentEntity, m_ScriptReferenceName);
+	}
+	ImGui::SameLine();
 
-	//IMPLEMENT In-Engine code editor.
+	std::string str = m_ScriptReferenceName;
+	ImGui::InputText("Class Name: ", &str);
+	if (str != m_ScriptReferenceName)
+	{
+		m_ScriptReferenceName = str;
+
+		if (m_ScriptObject)
+		{
+			m_ScriptObject->Destroy();
+			m_ScriptObject = nullptr;
+		}
+		else
+		{
+			m_ScriptObject = ScriptLoader::GetScriptObject(&m_ParentEntity, m_ScriptReferenceName);
+		}
+	}
 }
 
 void ScriptComponent::Update(float deltaTime)
 {
+	if (!ScriptLoader::IsLibraryLoaded())
+	{
+		if (m_ScriptObject)
+		{
+			m_ScriptObject->Destroy();
+			delete m_ScriptObject;
+			m_ScriptObject = nullptr;
+		}
+	}
+
 	if (m_ScriptObject)
 	{
 		m_ScriptObject->Update(deltaTime);
@@ -33,8 +70,8 @@ void ScriptComponent::Update(float deltaTime)
 
 ScriptComponent::ScriptComponent(Entity& entity) : Component("Script Component", entity)
 {
-	std::string expectedName = entity.GetName();
-	m_ScriptObject = ScriptLoader::GetScriptObject(expectedName);
+	//std::string expectedName = entity.GetName();
+	//m_ScriptObject = ScriptLoader::GetScriptObject(expectedName);
 }
 
 ScriptComponent::~ScriptComponent()

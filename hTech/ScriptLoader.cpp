@@ -3,23 +3,44 @@
 #include "ScriptObject.h"
 #include "Log.h"
 #include <unordered_map>
+#include <filesystem>
+#include "ProjectLoader.h"
 
-static HINSTANCE m_LoadedLibraryInstance;
+std::vector<ScriptObject*> ScriptLoader::m_LoadedScriptObjects = std::vector<ScriptObject*>();
 HINSTANCE ScriptLoader::m_LoadedLibraryInstance = nullptr;
-std::unordered_map<std::string, ScriptObject*> ScriptLoader::m_LoadedScriptMap = std::unordered_map<std::string, ScriptObject*>();
-
-typedef ScriptObject* (__stdcall* scriptPtr)();
+bool ScriptLoader::m_IsLibraryLoaded = false;
+std::unordered_map<std::string, scriptPtr> ScriptLoader::m_ScriptCreationFunctionMap = std::unordered_map<std::string, scriptPtr>();
 
 ScriptLoader::~ScriptLoader()
 {
 	UnloadLibrary();
+
+}
+
+bool ScriptLoader::IsLibraryLoaded()
+{
+	return m_IsLibraryLoaded;
 }
 
 void ScriptLoader::UnloadLibrary()
 {
 	if (m_LoadedLibraryInstance)
 	{
+		for (size_t i = 0; i < m_LoadedScriptObjects.size(); i++)
+		{
+			if (m_LoadedScriptObjects[i])
+			{
+				m_LoadedScriptObjects[i]->Destroy();
+				m_LoadedScriptObjects[i] = nullptr;
+			}
+		}
+
+		m_LoadedScriptObjects.clear();
+
+		m_ScriptCreationFunctionMap.clear();
+
 		FreeLibrary(m_LoadedLibraryInstance);
+		m_IsLibraryLoaded = false;
 	}
 }
 
@@ -40,19 +61,21 @@ void ScriptLoader::LoadCustomScriptDLL(std::string libraryLocation)
 	if (!m_LoadedLibraryInstance)
 	{
 		Log::LogMessage(LogLevel::LOG_ERROR, "Could not load library");
+		m_IsLibraryLoaded = false;
 	}
 	else
 	{
 		Log::LogMessage(LogLevel::LOG_MESSAGE, "Loaded custom script DLL successfully.");
+		m_IsLibraryLoaded = true;
 	}
 }
 
-ScriptObject* ScriptLoader::GetFunctionPtrFromLibrary(std::string externalClassName)
+scriptPtr ScriptLoader::GetScriptObjectCreationFunctionFromLibrary(std::string scriptName)
 {
 	if (m_LoadedLibraryInstance)
 	{
 		//GetPRocAddress returns the ptr to the function we are trying to find within the DLL instance.
-		std::string functionName = "Create_" + externalClassName;
+		std::string functionName = "Create_" + scriptName;
 		scriptPtr DLLFunction = (scriptPtr)GetProcAddress(m_LoadedLibraryInstance, functionName.c_str());
 
 		if (!DLLFunction)
@@ -61,24 +84,31 @@ ScriptObject* ScriptLoader::GetFunctionPtrFromLibrary(std::string externalClassN
 			return nullptr;
 		}
 
-		//resolve function address
-		ScriptObject* function = DLLFunction();
-		return function;
+		//return function address
+		return DLLFunction;
 	}
 }
 
-bool ScriptLoader::LoadScriptObjectToMap(std::string externalClassName)
+bool ScriptLoader::LoadScriptObjectToMap(std::string functionName)
 {
-    //HARDCODED : DLL Location from built project
-    std::string dllLocation = "C://Users//ryem_//source//repos//hTech//Scripting//Project//test//Debug//test.dll";
-	LoadCustomScriptDLL(dllLocation);
+	if (!ProjectLoader::HasProjectLoaded())
+		return false;
+
+	std::string projectName = ProjectLoader::GetLoadedProjectName();
+
+	std::string scriptsLocation;
+	ProjectLoader::GetEngineProjectsLocation(scriptsLocation);
+	scriptsLocation += projectName + "\\" + projectName + "\\" + projectName + ".dll";
+
+	if(!m_LoadedLibraryInstance)
+		LoadCustomScriptDLL(scriptsLocation);
 
 	if (m_LoadedLibraryInstance)
 	{
-		ScriptObject* scriptObject = GetFunctionPtrFromLibrary(externalClassName);
-		if (scriptObject != nullptr)
+		scriptPtr scriptBuildingFunction = GetScriptObjectCreationFunctionFromLibrary(functionName);
+		if (scriptBuildingFunction != nullptr)
 		{
-			m_LoadedScriptMap.insert(std::make_pair(externalClassName, scriptObject));
+			m_ScriptCreationFunctionMap.insert(std::make_pair(functionName, scriptBuildingFunction));
 			return true;
 		}
 	}
@@ -86,17 +116,43 @@ bool ScriptLoader::LoadScriptObjectToMap(std::string externalClassName)
     return false;
 }
 
-ScriptObject* ScriptLoader::GetScriptObject(std::string externalClassName)
+void ScriptLoader::Reload()
 {
-    if (m_LoadedScriptMap.find(externalClassName) == m_LoadedScriptMap.end())
-    {
-        if (LoadScriptObjectToMap(externalClassName) == false)
-        {
-			std::string str = "Script Object not found: " + externalClassName;
+	UnloadLibrary();
+
+	std::string projectLocation;
+	ProjectLoader::GetEngineProjectsLocation(projectLocation);
+	std::string projectName = ProjectLoader::GetLoadedProjectName();
+	projectLocation += "\\" + projectName + "\\" + projectName;
+	std::string scriptsLocation = projectLocation;
+	projectLocation += ".sln";
+	std::string buildCommand = "msbuild.exe " + projectLocation;
+	system(buildCommand.c_str());
+	system("pause");
+	scriptsLocation += "\\" + projectName + ".dll";
+
+	LoadCustomScriptDLL(scriptsLocation);
+}
+
+ScriptObject* ScriptLoader::GetScriptObject(Entity* entityFromComponent, std::string scriptDLLName)
+{
+	if (m_ScriptCreationFunctionMap.find(scriptDLLName) == m_ScriptCreationFunctionMap.end())
+	{
+		if (LoadScriptObjectToMap(scriptDLLName) == false)
+		{
+			std::string str = "Cannot find function to create script object : " + scriptDLLName;
 			Log::LogMessage(LogLevel::LOG_ERROR, str);
 			return nullptr;
-        }
-    }
+		}
+	}
 
-	return m_LoadedScriptMap.find(externalClassName)->second;
+	ScriptObject* script = m_ScriptCreationFunctionMap.find(scriptDLLName)->second(entityFromComponent);
+
+	if (script)
+	{
+		m_LoadedScriptObjects.push_back(script);
+		return m_LoadedScriptObjects.back();
+	}
+
+	return nullptr;
 }

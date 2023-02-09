@@ -154,7 +154,7 @@ World::World()
     m_WorldHashMap = new SpatialHash(sizeX, sizeY);
 
     InputManager::Bind(
-        IM_KEY_CODE::IM_KEY_A,
+        IM_KEY_CODE::IM_KEY_Z,
         IM_KEY_STATE::IM_KEY_PRESSED,
         [this]()
         {

@@ -171,6 +171,9 @@
     <ClInclude Include="ProjectLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="JSON.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -318,6 +321,9 @@
       <Filter>DearIMGUI</Filter>
     </ClCompile>
     <ClCompile Include="ProjectLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="JSON.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

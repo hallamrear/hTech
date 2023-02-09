@@ -12,6 +12,7 @@ class HTECH_FUNCTION_EXPORT ScriptComponent :
     public Component
 {
 private:
+	std::string m_ScriptReferenceName;
     ScriptObject* m_ScriptObject; 
     
 protected:

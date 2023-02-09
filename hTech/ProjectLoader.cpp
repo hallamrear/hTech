@@ -12,6 +12,7 @@
 #include <document.h>
 #include "Console.h"
 #include "Editor.h"
+#include "ScriptLoader.h"
 
 bool ProjectLoader::m_HasProjectLoaded = false;
 std::string ProjectLoader::m_ProjectName = "No Project Loaded";
@@ -85,6 +86,8 @@ void ProjectLoader::UnloadProject(bool save)
 {
 	if (m_HasProjectLoaded)
 	{
+		ScriptLoader::UnloadLibrary();
+
 		if (save)
 		{
 			SaveProject();
@@ -203,7 +206,7 @@ void ProjectLoader::CreateEmptyProjectHierarchy(const std::string& projectName, 
 	}
 }
 
-void ProjectLoader::ReplaceExampleReferencesInFile(const std::filesystem::path& filePath, const std::string& projectName)
+void ProjectLoader::ReplaceStringInFile(const std::filesystem::path& filePath, const std::string& wordBeingReplaced, const std::string& wordToReplaceWith)
 {
 	std::ifstream stream(filePath.c_str());
 	std::filesystem::path tempPath = filePath;
@@ -213,8 +216,7 @@ void ProjectLoader::ReplaceExampleReferencesInFile(const std::filesystem::path& 
 	{
 		if (stream.good())
 		{
-			std::string wordToReplace = "HTECH_SCRIPT";
-			size_t len = wordToReplace.length();
+			size_t len = wordBeingReplaced.length();
 			std::ofstream tempFile(tempPath.string());
 
 			if (tempFile)
@@ -225,9 +227,9 @@ void ProjectLoader::ReplaceExampleReferencesInFile(const std::filesystem::path& 
 					while (std::getline(stream, line))
 					{
 						size_t pos = 1000000000000;
-						while (pos = line.find(wordToReplace), pos != std::string::npos)
+						while (pos = line.find(wordBeingReplaced), pos != std::string::npos)
 						{
-							line.replace(pos, len, projectName);
+							line.replace(pos, len, wordToReplaceWith);
 						}
 
 						line += '\n';
@@ -253,13 +255,22 @@ void ProjectLoader::ReplaceExampleReferencesInFile(const std::filesystem::path& 
 	}
 }
 
+
 void ProjectLoader::CreateScriptSolution(const std::filesystem::path& projectFolderRoot, const std::string& projectName)
 {
+	char buffer[260];
+	std::filesystem::path exePath;
+	GetModuleFileName(NULL, buffer, MAX_PATH);
+	exePath = buffer;
+	exePath = exePath.parent_path();
+	std::filesystem::path includesPath = exePath.string() + ENGINE_INCLUDE_FOLDER_PATH_FROM_EXE_FOLDER;
+
 	//Copies and unzips the source folder.
-	std::filesystem::path sourceLocation = "Assets/HTECH_SCRIPT.zip";
+	std::filesystem::path sourceLocation = "Assets\\HTECH_SCRIPT.zip";
 	std::filesystem::path destinationLocation = projectFolderRoot;
 	std::string command = "PowerShell -Command \"Expand-Archive -Path " + sourceLocation.string() + " -DestinationPath " + destinationLocation.string() + " -Force \"";
 	system(command.c_str());
+	system("pause");
 	//This section renames all the folders and directories to match the project name.
 	std::vector<std::string> mFilePaths;
 	std::vector<std::string> mAlteredFilePaths;
@@ -297,7 +308,11 @@ void ProjectLoader::CreateScriptSolution(const std::filesystem::path& projectFol
 			std::filesystem::path to = mAlteredFilePaths[i];
 			std::filesystem::rename(from, to);
 
-			ReplaceExampleReferencesInFile(mAlteredFilePaths[i], projectName);
+			ReplaceStringInFile(mAlteredFilePaths[i], toReplace, projectName);
+			ReplaceStringInFile(mAlteredFilePaths[i], "HTECH_INCLUDE_LOCATION",		 includesPath.string() + "Core");
+			ReplaceStringInFile(mAlteredFilePaths[i], "HTECH_SDL_INCLUDE_LOCATION",  includesPath.string() + "SDL\\");
+			ReplaceStringInFile(mAlteredFilePaths[i], "HTECH_JSON_INCLUDE_LOCATION", includesPath.string() + "rapidjson\\");
+			ReplaceStringInFile(mAlteredFilePaths[i], "HTECH_LIB_LOCATION", exePath.string());
 		}
 		catch (std::filesystem::filesystem_error const& error)  // catch the errors(if any)!
 		{
