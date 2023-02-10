@@ -81,11 +81,7 @@ ScriptLoader* ScriptLoader::Get()
 
 ScriptLoader::ScriptLoader() : ObserverSubject()
 {
-	AllocConsole();
-	AttachConsole(GetCurrentProcessId());
-	HWND Handle = GetConsoleWindow();
-	FILE* dummy;
-	freopen_s(&dummy, "CON", "w", stdout);
+
 }
 
 void ScriptLoader::LoadCustomScriptDLL(std::string libraryLocation)

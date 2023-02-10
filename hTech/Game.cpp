@@ -528,7 +528,7 @@ void Game::Render()
 
 	SDL_RenderClear(Renderer);
 	SDL_SetRenderTarget(Renderer, m_RenderToTextureTarget);
-	SDL_SetRenderDrawColor(Renderer, 207, 235, 236, 255);
+	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
 	SDL_RenderClear(Renderer);
 
 	World::Render(*Renderer);
