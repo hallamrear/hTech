@@ -187,7 +187,7 @@ void RigidbodyComponent::RenderProperties()
 	ImGui::Checkbox("Gravity Enabled", &m_GravityEnabled);
 	ImGui::Checkbox("Drag Enabled", &m_DragEnabled);
 	
-	static const std::string colldierStrs[5] = { "None", "AABB", "Sphere", "OBB", "Polygon" };
+	static const std::string colldierStrs[5] = { "None", "AABB", "BROKEN - Sphere", "OBB", "Polygon" };
 	static std::string currentItem;
 
 	if (m_Collider)
