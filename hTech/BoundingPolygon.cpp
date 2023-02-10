@@ -33,7 +33,7 @@ void BoundingPolygon::Update(float DeltaTime)
 
 	for (size_t i = 0; i < m_TransformedPoints.size(); i++)
 	{
-		m_TransformedPoints[i] = MathsHelp::RotatePointAroundOriginDegrees(m_EntityTransform.Position + m_OriginalPoints[i], m_Rotation, m_EntityTransform.Position);
+		m_TransformedPoints[i] = Utils::Maths::RotatePointAroundOriginDegrees(m_EntityTransform.Position + m_OriginalPoints[i], m_Rotation, m_EntityTransform.Position);
 	}
 }
 
@@ -41,7 +41,7 @@ void BoundingPolygon::Render(SDL_Renderer& renderer)
 {
 	if (Console::Query("DrawColliders") != 0)
 	{
-		SDL_SetRenderDrawColor(&renderer, 0, 255, 255, 255);
+		SDL_SetRenderDrawColor(&renderer, 0, 0, 255, 255);
 
 		switch (m_PointCount)
 		{
@@ -71,7 +71,36 @@ void BoundingPolygon::Render(SDL_Renderer& renderer)
 
 Vector2 BoundingPolygon::FindFurthestPoint(Vector2 direction) const
 {
-	return Vector2();
+	if (m_PointCount <= 0)
+	{
+		return Vector2();
+	}
+
+	Vector2 directionNorm = direction.GetNormalized();
+
+	float furthestDistance = -100000.0f;
+	int furthestVertexIndex = -1;
+	float projectedDistance = -100000.0f;
+
+	for (size_t i = 0; i < m_PointCount; i++)
+	{
+		Vector2 vertex = m_TransformedPoints[i];
+
+		projectedDistance = Utils::Maths::Dot(vertex, directionNorm);
+
+		if (projectedDistance >= furthestDistance)
+		{
+			furthestDistance = projectedDistance;
+			furthestVertexIndex = i;
+		}
+	}
+
+	if (furthestVertexIndex == -1)
+	{
+		throw std::out_of_range("Furthest Index is -1. Calculation error somewhere here.");
+	}
+
+	return m_TransformedPoints[furthestVertexIndex];
 }
 
 void BoundingPolygon::GetColliderAsPoints(Vector2 points[]) const
@@ -185,9 +214,12 @@ void BoundingPolygon::RenderProperties()
 	ImGui::SameLine();
 	if (ImGui::Button("Remove selected point"))
 	{
-		m_OriginalPoints.erase(m_OriginalPoints.begin() + selectedPointIndex);
-		m_TransformedPoints.erase(m_TransformedPoints.begin() + selectedPointIndex);
-		m_PointCount--;
+		if (selectedPointIndex != -1)
+		{
+			m_OriginalPoints.erase(m_OriginalPoints.begin() + selectedPointIndex);
+			m_TransformedPoints.erase(m_TransformedPoints.begin() + selectedPointIndex);
+			m_PointCount--;
+		}
 	}
 	ImGui::Separator();
 }

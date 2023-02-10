@@ -27,6 +27,7 @@ protected:
 
 public:
 	const std::string& GetName() const;
+	void SetName(const std::string& name);
 	bool IsEnabled;
 
 	Entity(Transform SpawnTransform = Transform(), std::string Name = "unnamed", Entity* Parent = nullptr);

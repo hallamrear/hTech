@@ -1,7 +1,7 @@
 #pragma once
  #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
-#include "Collision.h"
+#include "Collider.h"
 #include <vector>
 
 class HTECH_FUNCTION_EXPORT BoundingPolygon :

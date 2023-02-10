@@ -31,8 +31,11 @@ public:
 	Vector2 operator/(const float& scalar);
 	Vector2& operator+=(const Vector2& rhs);
 	Vector2& operator-=(const Vector2& rhs);
+	Vector2& operator*=(const float& rhs);
+	Vector2& operator*=(const Vector2& rhs);
 	bool operator!=(const Vector2& rhs);
 	bool operator==(const Vector2& rhs) const;
+	Vector2 operator-();
 
 
 	const Vector2 operator+(const Vector2& rhs) const;
@@ -43,3 +46,5 @@ public:
 	void RotatePointAroundOriginRadians(float rotationRad, Vector2 origin);
 	void RotatePointAroundOriginDegrees(float rotationDeg, Vector2 origin);
 };
+
+typedef Vector2 Point;

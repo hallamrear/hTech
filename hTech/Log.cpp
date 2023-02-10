@@ -59,10 +59,10 @@ void Log::Render_Impl(SDL_Renderer& renderer)
 
 	int count = Console::Query("MaxLogMessages") - 1;
 
-	if (m_TextElements.size() < count)
-	{
-		count = m_TextElements.size();
-	}
+	//if (m_TextElements.size() < count)
+	//{
+	//	count = m_TextElements.size();
+	//}
 
 	if (count != 0)
 	{

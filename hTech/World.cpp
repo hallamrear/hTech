@@ -6,6 +6,8 @@
 #include "Text.h"
 #include "Camera.h"
 #include "Transform.h"
+#include "Editor.h"
+#include "Console.h"
 
 #include "UI.h"
 
@@ -14,10 +16,30 @@
 
 World* World::m_Instance = nullptr;
 
+void World::UpdateHashmapNames_Impl()
+{
+    std::vector<std::string> toErase = std::vector<std::string>();
+    size_t size = m_EntityMap.size();
+    for (auto& itr : m_EntityMap)
+    {
+        if (itr.first != itr.second->GetName())
+        {
+            Entity* entity = itr.second;
+            m_EntityMap.insert(std::make_pair(itr.second->GetName().c_str(), itr.second));
+            toErase.push_back(itr.first);
+        }
+    }
+
+    for (size_t i = 0; i < toErase.size(); i++)
+    {
+        m_EntityMap.erase(toErase[i]);
+    }
+}
+
 Entity* World::CreateEntity_Impl(std::string Name, Transform SpawnTransform, Entity* Parent)
 {
     Entity* entity = new Entity(SpawnTransform, Name, Parent);
-    m_EntityMap.insert(std::make_pair(Name, entity));
+    m_EntityMap.insert(std::make_pair(entity->GetName(), entity));
     
     if (m_WorldHashMap)
     {
@@ -37,6 +59,7 @@ void World::DestroyEntity_Impl(Entity* entity)
     if (itr != m_EntityMap.end())
     {
         itr->second->Destroy();
+        m_EntityMap.erase(itr);
     }
 }
 
@@ -103,7 +126,18 @@ void World::Render_Impl(SDL_Renderer& renderer)
     {
         if (itr.second != nullptr)
         {
-            ImGui::Text(itr.second->GetName().c_str());
+            std::string str = itr.second->GetName();
+
+            if (str == "")
+            {
+                str += "unnamed###" + itr.second->GetIsAlive() + std::to_string(itr.second->GetTransform().Position.X) + "/" + std::to_string(itr.second->GetTransform().Position.Y);
+            }
+
+            if (ImGui::Selectable(str.c_str()))
+            {
+                Editor::SetSelectedEntity(itr.second);
+            }
+            
             itr.second->Render();
         }
     }
@@ -152,17 +186,6 @@ World::World()
     int halfSizeY = WORLD_TILE_COUNT_Y / 2;
 
     m_WorldHashMap = new SpatialHash(sizeX, sizeY);
-
-    InputManager::Bind(
-        IM_KEY_CODE::IM_KEY_Z,
-        IM_KEY_STATE::IM_KEY_PRESSED,
-        [this]()
-        {
-            Entity* entity = CreateEntity_Impl("Test" + std::to_string(rand() % 100), Transform(InputManager::Get()->GetMouseWorldPosition()));
-            entity->AddComponent<SpriteComponent>();
-            entity->GetComponent<SpriteComponent>()->LoadTexture("test.png");
-            entity->AddComponent<ScriptComponent>();
-        });   
 }
 
 World::~World()
@@ -264,6 +287,11 @@ void World::ClearAllEntities()
     }*/
 
     m_EntityMap.clear();
+}
+
+void World::UpdateHashmapNames()
+{
+    return Get()->UpdateHashmapNames_Impl();
 }
 
 Entity* World::FindNearestEntityToPosition(Vector2 WorldPosition)

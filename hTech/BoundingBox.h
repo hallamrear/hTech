@@ -1,9 +1,7 @@
 #pragma once
  #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
-
-
-#include "Collision.h"
+#include "Collider.h"
 
 /// <summary>
 /// A Bounding box class HTECH_FUNCTION_EXPORT used by rigidbodies for collision detection. None of the collision detection is done using this class.

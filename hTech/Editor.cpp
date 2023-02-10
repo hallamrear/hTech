@@ -324,4 +324,15 @@ void Editor::SetCursorStateToSelectMode()
     selected = nullptr;
 }
 
+void Editor::SetSelectedEntity_Impl(Entity* entity)
+{
+    ClearSelected_Impl();
+    selected = entity;
+}
+
+void Editor::SetSelectedEntity(Entity* entity)
+{
+    Get()->SetSelectedEntity_Impl(entity);
+}
+
 #endif

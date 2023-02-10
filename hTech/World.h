@@ -24,6 +24,7 @@ private:
 	std::unordered_map<std::string, Entity*>	m_EntityMap;
 	SpatialHash*								m_WorldHashMap;
 
+	void					UpdateHashmapNames_Impl();
 	Entity*					CreateEntity_Impl(std::string Name = "unnamed", Transform SpawnTransform = Transform(), Entity* Parent = nullptr);
 	void					DestroyEntity_Impl(Entity* entity);
 	void					ClearupDeadEntities();
@@ -44,6 +45,7 @@ protected:
 	static World*			Get();
 
 public:
+	static void 			UpdateHashmapNames();
 	static Entity*			FindNearestEntityToPosition(Vector2 WorldPosition);
 	static void				QuerySpaceForEntities(WorldRectangle rect, std::vector<Entity*>& entities);
 	static Entity*			CreateEntity(std::string Name = "unnamed", Transform SpawnTransform = Transform(), Entity* Parent = nullptr);

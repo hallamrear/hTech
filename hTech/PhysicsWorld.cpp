@@ -1,6 +1,9 @@
 #include "pch.h"
 #include "PhysicsWorld.h"
+#include "GJKCollisionSolver.h"
+#include "CollisionManifold.h"
 #include "Component_Rigidbody.h"
+#include "Collider.h"
 
 Physics* Physics::m_Instance = nullptr;
 
@@ -11,19 +14,24 @@ Physics::Physics(float fixedTimeStep)
 
 Physics::~Physics()
 {
+	for (size_t i = 0; i < m_PhysicsSolvers.size(); i++)
+	{
+		delete m_PhysicsSolvers[i];
+		m_PhysicsSolvers[i] = nullptr;
+	}
+	m_PhysicsSolvers.clear();
+
 	m_RigidbodyVector.clear();
 }
 
 void Physics::FixedUpdate()
 {
-	m_ManifoldVector.clear();
-
 	size_t rbCount = m_RigidbodyVector.size();
 
 	//Find our collisions
 	for (size_t i = 0; i < rbCount; i++)
 	{
-		for (size_t j = i; j < rbCount; j++)
+		for (size_t j = i + 1; j < rbCount; j++)
 		{
 			if (i == j)
 				continue;
@@ -32,41 +40,55 @@ void Physics::FixedUpdate()
 
 			if (m_RigidbodyVector[i]->HasCollider() && m_RigidbodyVector[j]->HasCollider() && m_RigidbodyVector[i]->GetIsEnabled() && m_RigidbodyVector[j]->GetIsEnabled())
 			{
-				if (Collision::CheckCollision(*m_RigidbodyVector[i]->GetCollider(), *m_RigidbodyVector[j]->GetCollider(), &manifold))
+				if (Collision::CheckCollision(*m_RigidbodyVector[i], *m_RigidbodyVector[j], &manifold))
 				{
-					manifold.ObjA = m_RigidbodyVector[i];
-					manifold.ObjB = m_RigidbodyVector[j];
-					m_ManifoldVector.push_back(manifold);
-
 					if (m_RigidbodyVector[i]->GetCollider()->IsOverlap())
-						m_RigidbodyVector[i]->OnOverlap(manifold, *m_RigidbodyVector[j]);
+					{
+						if (m_RigidbodyVector[i]->GetCollider()->IsOverlap())
+							m_RigidbodyVector[i]->OnOverlap(manifold, *m_RigidbodyVector[j]);
+					}
+					else if (m_RigidbodyVector[j]->GetCollider()->IsOverlap())
+					{
+						if (m_RigidbodyVector[j]->GetCollider()->IsOverlap())
+							m_RigidbodyVector[j]->OnOverlap(manifold, *m_RigidbodyVector[i]);
+					}
 					else
-						m_RigidbodyVector[i]->OnCollision(manifold, *m_RigidbodyVector[j]);
-
-					if (m_RigidbodyVector[j]->GetCollider()->IsOverlap())
-						m_RigidbodyVector[j]->OnOverlap(manifold, *m_RigidbodyVector[i]);
-					else
-						m_RigidbodyVector[j]->OnCollision(manifold, *m_RigidbodyVector[i]);
+					{
+						if ((m_RigidbodyVector[i]->GetIsStatic() && m_RigidbodyVector[j]->GetIsStatic()) == false)
+						{
+							manifold.BodyA = m_RigidbodyVector[i];
+							manifold.BodyB = m_RigidbodyVector[j];
+							m_PhysicsSolvers.push_back(new GJKCollisionSolver(manifold));
+							m_RigidbodyVector[i]->OnCollision(manifold, *m_RigidbodyVector[j]);
+							m_RigidbodyVector[j]->OnCollision(manifold, *m_RigidbodyVector[i]);
+						}
+					}
 				}
 			}
 		}
 	}
 
 	//Resolve our collisions via iterative impulse resolution
-	size_t manifoldCount = m_ManifoldVector.size();
-	CollisionManifold* currentManifold = nullptr;
-
-	for (size_t i = 0; i < manifoldCount; i++)
+	size_t solverCount = m_PhysicsSolvers.size();
+	///Perform Physics Pre-step calculations
+	for (size_t i = 0; i < solverCount; i++)
 	{
-		currentManifold = &m_ManifoldVector[i];
+		m_PhysicsSolvers[i]->Prestep();
+	}
 
-		for (int k = 0; k < IMPULSE_ITERATION_COUNT; k++)
+	///Perform Physics Iterations
+	for (int k = 0; k < IMPULSE_ITERATION_COUNT; k++)
+	{
+		for (size_t i = 0; i < solverCount; i++)
 		{
-			//todo : add should resolve to rigidbody to allow for triggers.
-			if(!(currentManifold->ObjA->GetCollider()->IsOverlap() || currentManifold->ObjB->GetCollider()->IsOverlap()))
-				Collision::ResolveCollision(*currentManifold->ObjA, *currentManifold->ObjB, currentManifold);
+			m_PhysicsSolvers[i]->PhysicsStep();
+
+			delete m_PhysicsSolvers[i];
+			m_PhysicsSolvers[i] = nullptr;
 		}
 	}
+
+	m_PhysicsSolvers.clear();
 	
 	//Physics update
 	for (auto& itr : m_RigidbodyVector)

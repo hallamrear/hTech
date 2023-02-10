@@ -125,6 +125,7 @@ void SpatialHash::Insert(Entity* entity)
 	Vector2 index = GetIDFromEntity(entity);
 
 	std::unordered_map<Vector2, HashBucket>::iterator foundItem = m_HashBucketMap.find(index);
+
 	if(foundItem != m_HashBucketMap.end())
 	{
 		foundItem->second.Insert(entity);

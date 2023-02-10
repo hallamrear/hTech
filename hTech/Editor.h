@@ -48,6 +48,8 @@ private:
 	void SetCursorStateToNoMode();
 	void SetCursorStateToSelectMode();
 
+	void SetSelectedEntity_Impl(Entity* entity);
+
 	void MousePress();
 	void MouseRelease();
 	void MouseHold();
@@ -63,6 +65,7 @@ public:
 	static void Update(float deltaTime);
 	static void Render(SDL_Renderer&);
 	static void SetEditorCursorState(EDITOR_STATE state);
+	static void SetSelectedEntity(Entity* entity);
 	static EDITOR_STATE GetEditorCursorState();
 	static void ClearSelected();
 };

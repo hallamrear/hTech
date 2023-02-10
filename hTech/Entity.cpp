@@ -12,6 +12,7 @@
 #include "Component_Script.h"
 #include "Component_Rigidbody.h"
 #include "rapidjson/rapidjson.h"
+#include "World.h"
 
 Entity::Entity(Transform SpawnTransform, std::string Name, Entity* Parent)
 {
@@ -78,7 +79,12 @@ void Entity::RenderProperties()
 {
 	//This is called from editor window and so you can call imgui items directly.
 	ImGui::Checkbox("Enabled", &IsEnabled);
-	ImGui::InputText("Name: ", &m_Name);	
+	std::string str = m_Name;
+	ImGui::InputText("Name: ", &str);	
+	if (str != m_Name)
+	{
+		SetName(str);
+	}
 	ImGui::Text("Component Count: %i", m_Components.size());
 	ImGui::Text("Alive: %i", m_IsAlive);
 	ImGui::Text("Being Destroyed?: %i", m_IsWaitingToBeDestroyed);
@@ -207,6 +213,15 @@ void Entity::ClampRotation()
 const std::string& Entity::GetName() const
 {
 	return m_Name;
+}
+
+void Entity::SetName(const std::string& name)
+{
+	if (name != m_Name)
+	{
+		m_Name = name;
+		World::UpdateHashmapNames();
+	}
 }
 
 void Entity::Serialize(Serializer& writer) const

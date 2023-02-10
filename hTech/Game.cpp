@@ -638,6 +638,11 @@ void Game::Render()
 
 	ImGui::BeginMenuBar();
 	{
+		if (ImGui::Button("Create Empty entity"))
+		{
+			World::CreateEntity();
+		}
+
 		bool queryHash = (bool)Console::Query("DrawHashMap");
 		if (ImGui::MenuItem("Spatial Hash"))
 		{
