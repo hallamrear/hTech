@@ -241,6 +241,7 @@ void ProjectLoader::ReplaceStringInFile(const std::filesystem::path& filePath, c
 
 			tempFile.close();
 		}
+
 	}
 
 	stream.close();
@@ -270,7 +271,6 @@ void ProjectLoader::CreateScriptSolution(const std::filesystem::path& projectFol
 	std::filesystem::path destinationLocation = projectFolderRoot;
 	std::string command = "PowerShell -Command \"Expand-Archive -Path " + sourceLocation.string() + " -DestinationPath " + destinationLocation.string() + " -Force \"";
 	system(command.c_str());
-	system("pause");
 	//This section renames all the folders and directories to match the project name.
 	std::vector<std::string> mFilePaths;
 	std::vector<std::string> mAlteredFilePaths;

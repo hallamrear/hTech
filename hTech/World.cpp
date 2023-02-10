@@ -113,11 +113,11 @@ void World::Render_Impl(SDL_Renderer& renderer)
 #else
 void World::Render_Impl(SDL_Renderer& renderer)
 {
-    for (size_t i = 0; i < m_EntityMap.size(); i++)
+    for (auto& entity : m_EntityMap)
     {
-        if (m_EntityMap[i] != nullptr)
+        if (entity.second != nullptr)
         {
-            m_EntityMap[i]->Render();
+            entity.second->Render();
         }
     }
 }

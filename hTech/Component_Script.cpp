@@ -9,7 +9,6 @@ void ScriptComponent::Destroy()
 {
 	if (m_ScriptObject)
 	{
-		//IMPLEMENT Proper destruction of script object.
 		m_ScriptObject->Destroy();
 		m_ScriptObject = nullptr;
 	}
@@ -20,15 +19,6 @@ void ScriptComponent::RenderProperties()
 	if (ImGui::Button("Reload DLL"))
 	{
 		ScriptLoader::Reload();
-		m_ScriptObject = nullptr;
-		m_ScriptObject = ScriptLoader::GetScriptObject(&m_ParentEntity, m_ScriptReferenceName);
-	}
-	ImGui::SameLine();
-	if (ImGui::Button("Unload DLL"))
-	{
-		ScriptLoader::UnloadLibrary();
-		m_ScriptObject = nullptr;
-		m_ScriptObject = ScriptLoader::GetScriptObject(&m_ParentEntity, m_ScriptReferenceName);
 	}
 	ImGui::SameLine();
 
@@ -68,15 +58,16 @@ void ScriptComponent::Update(float deltaTime)
 	}
 }
 
-ScriptComponent::ScriptComponent(Entity& entity) : Component("Script Component", entity)
+ScriptComponent::ScriptComponent(Entity& entity) : Component("Script Component", entity), Observer()
 {
-	//std::string expectedName = entity.GetName();
-	//m_ScriptObject = ScriptLoader::GetScriptObject(expectedName);
+	m_ScriptObject = nullptr;
+	ScriptLoader::AddScriptToReloadTracking(this);
 }
 
 ScriptComponent::~ScriptComponent()
 {
 	Destroy();
+	ScriptLoader::RemoveScriptFromReloadTracking(this);
 }
 
 void ScriptComponent::Start()
@@ -130,13 +121,26 @@ ScriptObject const * ScriptComponent::GetScriptObject()
 void ScriptComponent::Serialize(Serializer& writer) const
 {
 	Component::Serialize(writer);
-	//I don't think I need to initialise this because 
-	//all of the script values will be in the script object
-	//when it's created.
+	writer.String("ClassName"); writer.String(m_ScriptReferenceName.c_str());
 }
 
 void ScriptComponent::Deserialize(SerializedValue& value)
 {
 	Component::Deserialize(value);
-	//See serialize function
+	if (value["ClassName"].IsString())
+	{
+		m_ScriptReferenceName = value["ClassName"].GetString();
+		m_ScriptObject = ScriptLoader::GetScriptObject(&m_ParentEntity, m_ScriptReferenceName);
+	}
+}
+
+void ScriptComponent::OnNotify()
+{
+	if (m_ScriptObject)
+	{
+		delete m_ScriptObject;
+		m_ScriptObject = nullptr;
+	}
+
+	m_ScriptObject = ScriptLoader::GetScriptObject(&m_ParentEntity, m_ScriptReferenceName);
 }

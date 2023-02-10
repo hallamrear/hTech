@@ -276,7 +276,9 @@ xcopy /Y /H /E /I "$(ProjectDir)rapidjson\*.h" "$(OutputPath)Engine_Includes\rap
     <ClInclude Include="imstb_truetype.h" />
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="JSON.h" />
+    <ClInclude Include="ObserverSubject.h" />
     <ClInclude Include="Log.h" />
+    <ClInclude Include="Observer.h" />
     <ClInclude Include="ProjectLoader.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="ScriptLoader.h" />
@@ -329,7 +331,9 @@ xcopy /Y /H /E /I "$(ProjectDir)rapidjson\*.h" "$(OutputPath)Engine_Includes\rap
     <ClCompile Include="imgui_widgets.cpp" />
     <ClCompile Include="InputManager.cpp" />
     <ClCompile Include="JSON.cpp" />
+    <ClCompile Include="ObserverSubject.cpp" />
     <ClCompile Include="Log.cpp" />
+    <ClCompile Include="Observer.cpp" />
     <ClCompile Include="ProjectLoader.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="ScriptLoader.cpp" />

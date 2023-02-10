@@ -5,27 +5,54 @@
 #include <unordered_map>
 #include <filesystem>
 #include "ProjectLoader.h"
+#include "Component_Script.h"
 
-std::vector<ScriptObject*> ScriptLoader::m_LoadedScriptObjects = std::vector<ScriptObject*>();
-HINSTANCE ScriptLoader::m_LoadedLibraryInstance = nullptr;
-bool ScriptLoader::m_IsLibraryLoaded = false;
-std::unordered_map<std::string, scriptPtr> ScriptLoader::m_ScriptCreationFunctionMap = std::unordered_map<std::string, scriptPtr>();
+ScriptLoader* ScriptLoader::m_Instance = nullptr;
 
 ScriptLoader::~ScriptLoader()
 {
 	UnloadLibrary();
-
 }
 
 bool ScriptLoader::IsLibraryLoaded()
+{
+	return Get()->IsLibraryLoaded_Impl();
+}
+
+void ScriptLoader::Reload()
+{
+	return Get()->Reload_Impl();
+}
+
+ScriptObject* ScriptLoader::GetScriptObject(Entity* entityFromComponent, std::string externalClassName)
+{
+	return Get()->GetScriptObject_Impl(entityFromComponent, externalClassName);
+}
+
+void ScriptLoader::AddScriptToReloadTracking(ScriptComponent* component)
+{
+	return Get()->AddObserver((Observer*)component);
+}
+
+void ScriptLoader::RemoveScriptFromReloadTracking(ScriptComponent* component)
+{
+	return Get()->RemoveObserver((Observer*)component);
+}
+
+bool ScriptLoader::IsLibraryLoaded_Impl()
 {
 	return m_IsLibraryLoaded;
 }
 
 void ScriptLoader::UnloadLibrary()
 {
+	return Get()->UnloadLibrary_Impl();
+}
+
+void ScriptLoader::UnloadLibrary_Impl()
+{
 	if (m_LoadedLibraryInstance)
-	{
+	{/*
 		for (size_t i = 0; i < m_LoadedScriptObjects.size(); i++)
 		{
 			if (m_LoadedScriptObjects[i])
@@ -35,13 +62,30 @@ void ScriptLoader::UnloadLibrary()
 			}
 		}
 
-		m_LoadedScriptObjects.clear();
+		m_LoadedScriptObjects.clear();*/
 
 		m_ScriptCreationFunctionMap.clear();
 
 		FreeLibrary(m_LoadedLibraryInstance);
 		m_IsLibraryLoaded = false;
 	}
+}
+
+ScriptLoader* ScriptLoader::Get()
+{
+	if (m_Instance == nullptr)
+		m_Instance = new ScriptLoader();
+
+	return m_Instance;
+}
+
+ScriptLoader::ScriptLoader() : ObserverSubject()
+{
+	AllocConsole();
+	AttachConsole(GetCurrentProcessId());
+	HWND Handle = GetConsoleWindow();
+	FILE* dummy;
+	freopen_s(&dummy, "CON", "w", stdout);
 }
 
 void ScriptLoader::LoadCustomScriptDLL(std::string libraryLocation)
@@ -55,7 +99,7 @@ void ScriptLoader::LoadCustomScriptDLL(std::string libraryLocation)
 
 	//Load libary into handle instance
 	//loadA loads out DLL into memory for the program
-	m_LoadedLibraryInstance = LoadLibraryEx(tempPath.c_str(), NULL, 0);
+	m_LoadedLibraryInstance = LoadLibrary(tempPath.c_str());
 
 	//validate
 	if (!m_LoadedLibraryInstance)
@@ -116,25 +160,28 @@ bool ScriptLoader::LoadScriptObjectToMap(std::string functionName)
     return false;
 }
 
-void ScriptLoader::Reload()
+void ScriptLoader::Reload_Impl()
 {
 	UnloadLibrary();
 
 	std::string projectLocation;
 	ProjectLoader::GetEngineProjectsLocation(projectLocation);
 	std::string projectName = ProjectLoader::GetLoadedProjectName();
-	projectLocation += "\\" + projectName + "\\" + projectName;
+	projectLocation += projectName + "\\" + projectName;
 	std::string scriptsLocation = projectLocation;
 	projectLocation += ".sln";
-	std::string buildCommand = "msbuild.exe " + projectLocation;
+	
+
+	std::string buildCommand = "msbuild.exe " + projectLocation + " /t:Clean;Rebuild /property:Configuration=Release";
 	system(buildCommand.c_str());
-	system("pause");
 	scriptsLocation += "\\" + projectName + ".dll";
 
 	LoadCustomScriptDLL(scriptsLocation);
+
+	NotifyAll();
 }
 
-ScriptObject* ScriptLoader::GetScriptObject(Entity* entityFromComponent, std::string scriptDLLName)
+ScriptObject* ScriptLoader::GetScriptObject_Impl(Entity* entityFromComponent, std::string scriptDLLName)
 {
 	if (m_ScriptCreationFunctionMap.find(scriptDLLName) == m_ScriptCreationFunctionMap.end())
 	{
