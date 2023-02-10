@@ -60,7 +60,7 @@ void GJKCollisionSolver::PhysicsStep()
 		if (bodyB) bodyBInvMass = bodyB->GetInverseMass();
 
 		// Impluse
-		if (normalVelocity >= 0)
+		if (normalVelocity > 0)
 			return;
 
 		float restA = 1.0f;
@@ -97,7 +97,6 @@ void GJKCollisionSolver::PhysicsStep()
 		}
 
 		// Friction
-
 		relativeVelocity = bodyBVelocity - bodyAVelocity;
 		normalVelocity = Dot(relativeVelocity, point.Normal);
 

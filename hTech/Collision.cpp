@@ -123,6 +123,11 @@ Vector2 Collision::GJK::EPA(Collider* bodyA, Collider* bodyB)
 		return Vector2();
 	}
 
+	if (abs(minNormal.X) <= 0.01f)
+		minNormal.X = 0.0f;
+	if (abs(minNormal.Y) <= 0.01f)
+		minNormal.Y = 0.0f;
+
 	MTV = minNormal * (minDistance);
 
 	return MTV;
