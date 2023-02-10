@@ -32,14 +32,6 @@
 #include <algorithm>
 #include <cassert>
 
-//rapidjson
-#include <stringbuffer.h>
-#include <prettywriter.h>
-#include <document.h>
-typedef rapidjson::PrettyWriter<rapidjson::StringBuffer> Serializer;
-typedef rapidjson::Document Deserializer;
-typedef rapidjson::Value SerializedValue;
-
 #include "Utility.h"
 
 static unsigned short UI_TILE_SIZE = 16;

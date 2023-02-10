@@ -20,6 +20,7 @@ public:
 
 	Transform& GetTransform();
 
+	void Update(float deltaTime) override;
 	void Serialize(Serializer& writer) const override;
 	void Deserialize(SerializedValue& value) override;
 };

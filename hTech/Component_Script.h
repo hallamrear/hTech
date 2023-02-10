@@ -3,15 +3,17 @@
 
 #include "Component.h"
 #include "ScriptLoader.h"
+#include "Observer.h"
 
 class ScriptObject;
 class CollisionManifold;
 class RigidbodyComponent;
 
 class HTECH_FUNCTION_EXPORT ScriptComponent :
-    public Component
+    public Component, public Observer
 {
 private:
+	std::string m_ScriptReferenceName;
     ScriptObject* m_ScriptObject; 
     
 protected:
@@ -62,5 +64,7 @@ public:
 
 	void Serialize(Serializer& writer) const override;
 	void Deserialize(SerializedValue& value) override;
+
+	void OnNotify() override;
 };
 

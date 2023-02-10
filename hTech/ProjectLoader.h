@@ -2,6 +2,7 @@
 #include <filesystem>
 
 #define PROJECT_DIRECTORY_PATH_COUNT 4
+#define ENGINE_INCLUDE_FOLDER_PATH_FROM_EXE_FOLDER "\\Engine_Includes\\"
 
 class Project;
 
@@ -20,7 +21,7 @@ class ProjectLoader
 
 	static void CreateScriptSolution(const std::filesystem::path& projectFolderRoot, const std::string& projectName);
 	static void CreateEmptyProjectHierarchy(const std::string& projectName, const std::string& folderRoot);
-	static void ReplaceExampleReferencesInFile(const std::filesystem::path& filePath, const std::string& projectName);
+	static void ReplaceStringInFile(const std::filesystem::path& filePath, const std::string& wordBeingReplaced, const std::string& wordToReplaceWith);
 
 public:
 	/// <summary>

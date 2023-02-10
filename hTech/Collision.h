@@ -2,6 +2,7 @@
  #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
 #include "pch.h"
+#include "JSON.h"
 #include "Vector2.h"
 
 class Collider;
