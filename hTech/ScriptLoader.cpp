@@ -19,9 +19,9 @@ bool ScriptLoader::IsLibraryLoaded()
 	return Get()->IsLibraryLoaded_Impl();
 }
 
-void ScriptLoader::Reload()
+void ScriptLoader::Reload(bool rebuildDLL)
 {
-	return Get()->Reload_Impl();
+	return Get()->Reload_Impl(rebuildDLL);
 }
 
 ScriptObject* ScriptLoader::GetScriptObject(Entity* entityFromComponent, std::string externalClassName)
@@ -160,7 +160,7 @@ bool ScriptLoader::LoadScriptObjectToMap(std::string functionName)
     return false;
 }
 
-void ScriptLoader::Reload_Impl()
+void ScriptLoader::Reload_Impl(bool rebuildDLL)
 {
 	UnloadLibrary();
 
@@ -169,13 +169,15 @@ void ScriptLoader::Reload_Impl()
 	std::string projectName = ProjectLoader::GetLoadedProjectName();
 	projectLocation += projectName + "\\" + projectName;
 	std::string scriptsLocation = projectLocation;
-	projectLocation += ".sln";
 	
+	if (rebuildDLL)
+	{
+		projectLocation += ".sln";
+		std::string buildCommand = "msbuild.exe " + projectLocation + " /t:Clean;Rebuild /property:Configuration=Release";
+		system(buildCommand.c_str());
+	}
 
-	std::string buildCommand = "msbuild.exe " + projectLocation + " /t:Clean;Rebuild /property:Configuration=Release";
-	system(buildCommand.c_str());
 	scriptsLocation += "\\" + projectName + ".dll";
-
 	LoadCustomScriptDLL(scriptsLocation);
 
 	NotifyAll();

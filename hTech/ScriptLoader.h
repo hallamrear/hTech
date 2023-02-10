@@ -28,7 +28,7 @@ private:
 	scriptPtr GetScriptObjectCreationFunctionFromLibrary(std::string scriptClassName);
 	bool LoadScriptObjectToMap(std::string externalClassName);
 	bool IsLibraryLoaded_Impl();
-	void Reload_Impl();
+	void Reload_Impl(bool rebuildDLL);
 	ScriptObject* GetScriptObject_Impl(Entity* entityFromComponent, std::string externalClassName);
 	void UnloadLibrary_Impl();
 
@@ -42,7 +42,7 @@ public:
 	~ScriptLoader();
 	static void UnloadLibrary();
 	static bool IsLibraryLoaded();
-	static void Reload();
+	static void Reload(bool rebuildDLL);
 	static ScriptObject* GetScriptObject(Entity* entityFromComponent, std::string externalClassName);
 	static void AddScriptToReloadTracking(ScriptComponent* observer);
 	static void RemoveScriptFromReloadTracking(ScriptComponent* observer);

@@ -16,12 +16,16 @@ void ScriptComponent::Destroy()
 
 void ScriptComponent::RenderProperties()
 {
-	if (ImGui::Button("Reload DLL"))
+	if (ImGui::Button("Rebuild DLL"))
 	{
-		ScriptLoader::Reload();
+		ScriptLoader::Reload(true);
 	}
 	ImGui::SameLine();
-
+	if (ImGui::Button("Reload DLL"))
+	{
+		ScriptLoader::Reload(false);
+	}
+	ImGui::Separator();
 	std::string str = m_ScriptReferenceName;
 	ImGui::InputText("Class Name: ", &str);
 	if (str != m_ScriptReferenceName)
