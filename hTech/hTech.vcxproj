@@ -117,8 +117,11 @@
     <PostBuildEvent>
       <Command>xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2.dll" "$(OutputPath)"
 xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutputPath)"
-xcopy /Y /E /H /C /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
-</Command>
+xcopy /Y /E /H /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
+xcopy /Y /H /I "$(ProjectDir)*.h" "$(OutputPath)Engine_Includes\Core\"
+xcopy /Y /H /I "$(ProjectDir)SDL\include\*.h" "$(OutputPath)Engine_Includes\SDL\"
+xcopy /Y /H /E /I "$(ProjectDir)rapidjson\*.h" "$(OutputPath)Engine_Includes\rapidjson\"
+			</Command>
     </PostBuildEvent>
     <Lib>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_gfx.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -154,8 +157,11 @@ xcopy /Y /E /H /C /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
     <PostBuildEvent>
       <Command>xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2.dll" "$(OutputPath)"
 xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutputPath)"
-xcopy /Y /E /H /C /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
-</Command>
+xcopy /Y /E /H /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
+xcopy /Y /H /I "$(ProjectDir)*.h" "$(OutputPath)Engine_Includes\Core\"
+xcopy /Y /H /I "$(ProjectDir)SDL\include\*.h" "$(OutputPath)Engine_Includes\SDL\"
+xcopy /Y /H /E /I "$(ProjectDir)rapidjson\*.h" "$(OutputPath)Engine_Includes\rapidjson\"
+			</Command>
     </PostBuildEvent>
     <Lib>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_gfx.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -187,8 +193,11 @@ xcopy /Y /E /H /C /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
     <PostBuildEvent>
       <Command>xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2.dll" "$(OutputPath)"
 xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutputPath)"
-xcopy /Y /E /H /C /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
-</Command>
+xcopy /Y /E /H /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
+xcopy /Y /H /I "$(ProjectDir)*.h" "$(OutputPath)Engine_Includes\Core\"
+xcopy /Y /H /I "$(ProjectDir)SDL\include\*.h" "$(OutputPath)Engine_Includes\SDL\"
+xcopy /Y /H /E /I "$(ProjectDir)rapidjson\*.h" "$(OutputPath)Engine_Includes\rapidjson\"
+			</Command>
     </PostBuildEvent>
     <Lib>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_gfx.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -224,8 +233,11 @@ xcopy /Y /E /H /C /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
     <PostBuildEvent>
       <Command>xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2.dll" "$(OutputPath)"
 xcopy /Y "$(ProjectDir)SDL\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutputPath)"
-xcopy /Y /E /H /C /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
-</Command>
+xcopy /Y /E /H /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
+xcopy /Y /H /I "$(ProjectDir)*.h" "$(OutputPath)Engine_Includes\Core\"
+xcopy /Y /H /I "$(ProjectDir)SDL\include\*.h" "$(OutputPath)Engine_Includes\SDL\"
+xcopy /Y /H /E /I "$(ProjectDir)rapidjson\*.h" "$(OutputPath)Engine_Includes\rapidjson\"
+			</Command>
     </PostBuildEvent>
     <Lib>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_gfx.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -263,7 +275,10 @@ xcopy /Y /E /H /C /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
     <ClInclude Include="imstb_textedit.h" />
     <ClInclude Include="imstb_truetype.h" />
     <ClInclude Include="InputManager.h" />
+    <ClInclude Include="JSON.h" />
+    <ClInclude Include="ObserverSubject.h" />
     <ClInclude Include="Log.h" />
+    <ClInclude Include="Observer.h" />
     <ClInclude Include="ProjectLoader.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="ScriptLoader.h" />
@@ -315,7 +330,10 @@ xcopy /Y /E /H /C /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
     <ClCompile Include="imgui_tables.cpp" />
     <ClCompile Include="imgui_widgets.cpp" />
     <ClCompile Include="InputManager.cpp" />
+    <ClCompile Include="JSON.cpp" />
+    <ClCompile Include="ObserverSubject.cpp" />
     <ClCompile Include="Log.cpp" />
+    <ClCompile Include="Observer.cpp" />
     <ClCompile Include="ProjectLoader.cpp" />
     <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="ScriptLoader.cpp" />

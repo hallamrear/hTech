@@ -25,6 +25,11 @@ Transform& TransformComponent::GetTransform()
 	return m_Transform;
 }
 
+void TransformComponent::Update(float deltaTime)
+{
+	m_Transform.Rotation = fmod(m_Transform.Rotation, 360.0f);
+}
+
 void TransformComponent::Serialize(Serializer& writer) const
 {
 	Component::Serialize(writer);

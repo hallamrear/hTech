@@ -1,6 +1,6 @@
 #pragma once
-#include <stringbuffer.h>
-#include <prettywriter.h>
+#include "JSON.h"
+#include <string>
 
 #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 

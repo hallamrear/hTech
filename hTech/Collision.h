@@ -3,6 +3,7 @@
 
 #include "pch.h"
 
+#include "JSON.h"
 #include "Vector2.h"
 #include "Helper.h"
 #include "Console.h"
