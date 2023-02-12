@@ -3,7 +3,6 @@
 #include "Console.h"
 #include "Camera.h"
 #include "Transform.h"
-#include "rapidjson/rapidjson.h"
 #include "imgui.h"
 
 BoundingSphere::BoundingSphere(const Transform& transform, float radius, int pointCount)

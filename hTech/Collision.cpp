@@ -161,10 +161,10 @@ bool Collision::GJK::DetermineCollisionUsingSimplex(Collider* bodyA, Collider* b
 {
 	//Set out initial search direciton in the direciton of the second body.
 	Vector2 searchDirection = Vector2(bodyB->GetEntityTransform().Position - bodyA->GetEntityTransform().Position);
-	if(searchDirection.GetMagnitude() > 0.0001)
+	if(searchDirection.GetMagnitude() > 0.001)
 		searchDirection = searchDirection.GetNormalized();
 	else
-		searchDirection = Vector2(0.0f, 1.0f);
+		searchDirection = Vector2(1.0f, 1.0f).GetNormalized();
 
 	///Get the initial point of the simplex.
 	Vector2 supportVertex = GetMinkowskiDifferenceSupportVertex(searchDirection, bodyA, bodyB);

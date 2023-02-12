@@ -3,9 +3,7 @@
 #include "Transform.h"
 #include "Camera.h"
 #include "Console.h"
-#include "rapidjson/rapidjson.h"
 #include "imgui.h"
-
 
 BoundingPolygon::BoundingPolygon(const Transform& origin) : Collider(origin), m_Rotation(origin.Rotation)
 {

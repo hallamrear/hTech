@@ -3,7 +3,6 @@
 #include "Transform.h"
 #include "Camera.h"
 #include "imgui.h"
-#include "rapidjson/rapidjson.h"
 #include "Console.h"
 
 BoundingBox::BoundingBox(const Transform& transform, float size_x, float size_y)
