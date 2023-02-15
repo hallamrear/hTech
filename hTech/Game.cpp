@@ -17,6 +17,7 @@
 #include "Camera.h"
 
 SDL_Renderer* Game::Renderer = nullptr;
+GAME_STATE Game::m_GameState = GAME_STATE::STOPPED;
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 {
@@ -25,6 +26,17 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
 int main(int argc, char* argv[])
 {
+#ifdef _DEBUG
+
+	AllocConsole();
+	AttachConsole(GetCurrentProcessId());
+	FILE* dummy;
+	freopen_s(&dummy, "CON", "w", stdout);
+
+#endif
+
+
+
 	WindowDetails details;
 	details.Dimensions = Vector2(1280.0f, 720.0f);
 	details.Title = "hTech";
@@ -96,6 +108,11 @@ void Game::Start()
 			}
 		}
 	}
+}
+
+const GAME_STATE Game::GetGameState()
+{
+	return Game::m_GameState;
 }
 
 /// <summary>
@@ -506,8 +523,12 @@ void Game::HandleEvents()
 void Game::Update(float DeltaTime)
 {
 	InputManager::Update();
-	Physics::Update(DeltaTime);
+	
+	if(m_GameState == GAME_STATE::RUNNING)
+		Physics::Update(DeltaTime);
+
 	World::Update(DeltaTime);
+
 	UI::Update(DeltaTime);
 
 	if(Console::Query("DrawLog") != 0)
@@ -666,64 +687,104 @@ void Game::Render()
 
 	ImGui::BeginMenuBar();
 	{
-		if (ImGui::Button("Create Empty entity"))
+		switch (m_GameState)
 		{
-			World::CreateEntity();
+		case RUNNING:
+		{
+			ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 0, 0, 255));
+			if (ImGui::Button("Stop"))
+			{
+				m_GameState = GAME_STATE::STOPPED;
+				World::ResetWorldEntities();
+			}
+			ImGui::PopStyleColor();
 		}
+		break;
 
-		//IMPLEMENT Editor tools window
-		std::string modeStr = "";
-		EDITOR_STATE state = Editor::GetEditorCursorState();
-	
-		float buttonSize = 16;
-
-		if (ImGui::Button("M##Move", Vector2(buttonSize, buttonSize)))
+		case PAUSED:
 		{
-			Editor::SetEditorCursorState(EDITOR_STATE::MOVE);
+
 		}
+		break;
 
-		ImGui::SameLine();
-
-		if (ImGui::Button("R##Rotate", Vector2(buttonSize, buttonSize)))
+		case STOPPED:
 		{
-			Editor::SetEditorCursorState(EDITOR_STATE::ROTATE);
+			ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
+			if (ImGui::Button("Start"))
+			{
+				m_GameState = GAME_STATE::RUNNING;
+				World::ResetWorldEntities();
+				World::CallStartFunctionOnAllEntites();
+			}
+			ImGui::PopStyleColor();
+
+			if (ImGui::Button("Create Empty entity"))
+			{
+				World::CreateEntity();
+			}
+
+			ImGui::SameLine();
+
+			//IMPLEMENT Editor tools window
+			std::string modeStr = "";
+			EDITOR_STATE state = Editor::GetEditorCursorState();
+
+			float buttonSize = 16;
+
+			if (ImGui::Button("M##Move", Vector2(buttonSize, buttonSize)))
+			{
+				Editor::SetEditorCursorState(EDITOR_STATE::MOVE);
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("R##Rotate", Vector2(buttonSize, buttonSize)))
+			{
+				Editor::SetEditorCursorState(EDITOR_STATE::ROTATE);
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("I##Inspect", Vector2(buttonSize, buttonSize)))
+			{
+				Editor::SetEditorCursorState(EDITOR_STATE::INSPECT);
+			}
+
+			ImGui::SameLine();
+
+			if (ImGui::Button("S##Select", Vector2(buttonSize, buttonSize)))
+			{
+				Editor::SetEditorCursorState(EDITOR_STATE::SELECT);
+			}
+
+			switch (state)
+			{
+			case EDITOR_STATE::SELECT:
+				modeStr = "Selection";
+				break;
+			case EDITOR_STATE::MOVE:
+				modeStr = "Move";
+				break;
+			case EDITOR_STATE::INSPECT:
+				modeStr = "Inspect";
+				break;
+			case EDITOR_STATE::ROTATE:
+				modeStr = "Rotate";
+				break;
+			case EDITOR_STATE::NONE:
+			default:
+				modeStr = "No mode";
+				break;
+			}
+			ImGui::SameLine(0.0f, buttonSize);
+			ImGui::Text("Current mode: %s", modeStr.c_str());
+
 		}
+		break;
 
-		ImGui::SameLine();
-
-		if (ImGui::Button("I##Inspect", Vector2(buttonSize, buttonSize)))
-		{
-			Editor::SetEditorCursorState(EDITOR_STATE::INSPECT);
-		}
-
-		ImGui::SameLine();
-
-		if (ImGui::Button("S##Select", Vector2(buttonSize, buttonSize)))
-		{
-			Editor::SetEditorCursorState(EDITOR_STATE::SELECT);
-		}
-
-		switch (state)
-		{
-		case EDITOR_STATE::SELECT:
-			modeStr = "Selection";
-			break;
-		case EDITOR_STATE::MOVE:
-			modeStr = "Move";
-			break;
-		case EDITOR_STATE::INSPECT:
-			modeStr = "Inspect";
-			break;
-		case EDITOR_STATE::ROTATE:
-			modeStr = "Rotate";
-			break;
-		case EDITOR_STATE::NONE:
 		default:
-			modeStr = "No mode";
 			break;
 		}
-		ImGui::SameLine(0.0f, buttonSize);
-		ImGui::Text("Current mode: %s", modeStr.c_str());
 	}
 
 	ImGui::EndMenuBar();

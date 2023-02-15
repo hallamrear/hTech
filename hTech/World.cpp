@@ -100,7 +100,7 @@ void World::Update_Impl(float DeltaTime)
     {
         if (itr.second != nullptr)
         {
-            if (itr.second->IsEnabled)
+            if (itr.second->GetIsEnabled())
             {
                 itr.second->Update(DeltaTime);
             }
@@ -242,6 +242,16 @@ void World::Render(SDL_Renderer& renderer)
     Get()->Render_Impl(renderer);
 }
 
+void World::ResetWorldEntities()
+{
+    return Get()->ResetWorldEntities_Impl();
+}
+
+void World::CallStartFunctionOnAllEntites()
+{
+    return Get()->CallStartFunctionOnAllEntites_Impl();
+}
+
 void World::UnloadAll()
 {
     return Get()->ClearAllEntities();
@@ -326,6 +336,32 @@ void World::Deserialize_Impl(Deserializer& reader)
     }
 
     entity = nullptr;
+}
+
+void World::ResetWorldEntities_Impl()
+{
+    for (auto& itr : m_EntityMap)
+    {
+        ScriptComponent* script = itr.second->GetComponent<ScriptComponent>();
+
+        if (script != nullptr)
+        {
+            script->Reset();
+        }
+    }
+}
+
+void World::CallStartFunctionOnAllEntites_Impl()
+{
+    for (auto& itr : m_EntityMap)
+    {
+        ScriptComponent* script = itr.second->GetComponent<ScriptComponent>();
+
+        if (script != nullptr)
+        {
+            script->Start();
+        }
+    }
 }
 
 void World::Serialize(Serializer& writer)

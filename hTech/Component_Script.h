@@ -32,6 +32,13 @@ public:
 
 	/// <summary>
 	/// CALLS THE FUNCTION IN THE EXTERNAL SCRIPT!
+	/// Called every time the stop button is pressed to reset the entity.
+	/// This should be used to set any starting parameters for the entity.
+	/// </summary>
+	void Reset();
+
+	/// <summary>
+	/// CALLS THE FUNCTION IN THE EXTERNAL SCRIPT!
 	/// Runs once when the object is enabled.
 	/// </summary>
 	void OnEnable();

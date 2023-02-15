@@ -37,6 +37,8 @@ private:
 
 	void Serialize_Impl(Serializer& writer) const;
 	void Deserialize_Impl(Deserializer& reader);
+	void ResetWorldEntities_Impl();
+	void CallStartFunctionOnAllEntites_Impl();
 	void ClearAllEntities();
 
 protected:
@@ -57,6 +59,9 @@ public:
 
 	static void				Update(float DeltaTime);
 	static void				Render(SDL_Renderer&);
+
+	static void				ResetWorldEntities();
+	static void				CallStartFunctionOnAllEntites();
 
 	static void				UnloadAll();
 };

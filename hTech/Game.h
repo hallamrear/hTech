@@ -19,9 +19,17 @@ public:
 	Vector2 Dimensions = Vector2(600.0f, 300.0f);
 };
 
+enum GAME_STATE : int
+{
+	STOPPED = 0,
+	PAUSED = 1,
+	RUNNING = 2
+};
+
 class HTECH_FUNCTION_EXPORT Game
 {
 private:
+	static GAME_STATE			m_GameState;
 	bool						m_IsInitialised;
 	bool						m_IsRunning;
 	struct SDL_Window*			m_Window;
@@ -52,6 +60,7 @@ public:
 	void		Initialise(int argc, char* argv[], WindowDetails details);
 	void		Start();
 
+	static const GAME_STATE  GetGameState();
 	void		SetFullscreen(SCREEN_STATE state);
 	void	    SetIsRunning(bool state) { m_IsRunning = state; };
 	const bool  GetIsRunning() const { return m_IsRunning; };

@@ -32,9 +32,15 @@ public:
 	~ScriptObject();
 
 	/// <summary>
-	/// Runs at the when the play button is pressed.
+	/// Runs once before the first update tick after the start button is pressed.
 	/// </summary>
 	virtual void Start() = 0;
+
+	/// <summary>
+	/// Called whenever the stop button is pressed to reset the entity.
+	/// This function should be used to set initial positions and parameters that are not set in the script.
+	/// </summary>
+	virtual void Reset() = 0;
 
 	/// <summary>
 	/// Runs once when the object is enabled.

@@ -21,6 +21,7 @@ protected:
 	std::string m_Name;
 	std::vector<Component*> m_Components;
 
+	bool m_IsEnabled;
 	bool m_IsWaitingToBeDestroyed;
 	bool m_IsAlive;
 	void ClampRotation();
@@ -28,7 +29,6 @@ protected:
 public:
 	const std::string& GetName() const;
 	void SetName(const std::string& name);
-	bool IsEnabled;
 
 	Entity(Transform SpawnTransform = Transform(), std::string Name = "unnamed", Entity* Parent = nullptr);
 	virtual ~Entity();
@@ -38,7 +38,9 @@ public:
 
 	void RenderProperties();
 
-	bool const GetIsAlive()		 const { return m_IsAlive; }
+	const bool GetIsEnabled() const { return m_IsEnabled; }
+	void SetEnabled(const bool state);
+	bool const GetIsAlive() const { return m_IsAlive; }
 	virtual void SetAlive(const bool state) { m_IsAlive = state; }
 
 	Entity* GetParent();

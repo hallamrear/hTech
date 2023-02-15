@@ -4,6 +4,7 @@
 #include "Entity.h"
 #include "ScriptLoader.h"
 #include "ScriptObject.h"
+#include "Game.h"
 
 void ScriptComponent::Destroy()
 {
@@ -46,6 +47,9 @@ void ScriptComponent::RenderProperties()
 
 void ScriptComponent::Update(float deltaTime)
 {
+	if (Game::GetGameState() != GAME_STATE::RUNNING)
+		return;
+
 	if (!ScriptLoader::IsLibraryLoaded())
 	{
 		if (m_ScriptObject)
@@ -79,6 +83,14 @@ void ScriptComponent::Start()
 	if (m_ScriptObject)
 	{
 		m_ScriptObject->Start();
+	}
+}
+
+void ScriptComponent::Reset()
+{
+	if (m_ScriptObject)
+	{
+		m_ScriptObject->Reset();
 	}
 }
 

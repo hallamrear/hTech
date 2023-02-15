@@ -21,6 +21,11 @@ void ScriptObject::Start()
 
 }
 
+void ScriptObject::Reset()
+{
+
+}
+
 void ScriptObject::OnEnable()
 {
 

@@ -16,7 +16,7 @@
 
 Entity::Entity(Transform SpawnTransform, std::string Name, Entity* Parent)
 {
-	IsEnabled = true;
+	m_IsEnabled = true;
 	m_Components = std::vector<Component*>();
 	AddComponent<TransformComponent>();
 	GetTransform() = SpawnTransform;
@@ -68,7 +68,7 @@ void Entity::Render()
 	SDL_Rect rect{ (int)pos.X - 2, (int)pos.Y - 2, 4, 4 };
 	float a = 255;
 
-	if (IsEnabled == false)
+	if (m_IsEnabled == false)
 		a = 100;
 
 	SDL_SetRenderDrawColor(&renderer, 0, 255, 0, a);
@@ -78,7 +78,11 @@ void Entity::Render()
 void Entity::RenderProperties()
 {
 	//This is called from editor window and so you can call imgui items directly.
-	ImGui::Checkbox("Enabled", &IsEnabled);
+	static bool enabled;
+	enabled = m_IsEnabled;
+	ImGui::Checkbox("Enabled", &enabled);
+	SetEnabled(enabled);
+
 	std::string str = m_Name;
 	ImGui::InputText("Name: ", &str);	
 	if (str != m_Name)
@@ -179,6 +183,30 @@ void Entity::RenderProperties()
 
 }
 
+void Entity::SetEnabled(const bool state)
+{
+	if (state == m_IsEnabled)
+		return;
+
+	ScriptComponent* script = GetComponent<ScriptComponent>();
+	if (script)
+	{
+		//if now false and was true, we have been disabled.
+		//what kind of disabled?
+		//Leg disabled.
+		if (state == false && m_IsEnabled == true)
+		{
+			script->OnDisable();
+		}
+		else
+		{
+			script->OnEnable();
+		}
+	}
+
+	m_IsEnabled = state;
+}
+
 Entity* Entity::GetParent()
 {
 	//TODO : Implement Parenting
@@ -230,7 +258,7 @@ void Entity::Serialize(Serializer& writer) const
 
 	writer.String("Name");	  writer.String(m_Name.c_str());
 	writer.String("IsAlive"); writer.Bool(m_IsAlive);
-	writer.String("IsEnabled"); writer.Bool(IsEnabled);
+	writer.String("IsEnabled"); writer.Bool(m_IsEnabled);
 
 	writer.String("Components");
 	writer.StartArray();
@@ -254,7 +282,7 @@ void Entity::Deserialize(SerializedValue& serializedEntity)
 
 	if (serializedEntity["IsEnabled"].IsBool())
 	{
-		IsEnabled = serializedEntity["IsEnabled"].GetBool();
+		m_IsEnabled = serializedEntity["IsEnabled"].GetBool();
 	}
 
 	if (serializedEntity.HasMember("Components"))
