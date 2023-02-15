@@ -175,8 +175,6 @@ void Game::Initialise(int argc, char* argv[], WindowDetails details)
 	{
 		Shutdown();
 	}
-
-	Console::Run("DrawHashMap 1");
 }
 
 bool Game::InitialiseWindow(const char* Title, int xpos, int ypos, int width, int height, unsigned int flags, bool isFullscreen)
