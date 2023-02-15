@@ -589,6 +589,36 @@ void Game::Render()
 
 		ImGui::Text(ProjectLoader::GetLoadedProjectName().c_str());
 
+		if (ImGui::BeginMenu("Options"))
+		{
+			bool queryHash = (bool)Console::Query("DrawHashMap");
+			if (ImGui::MenuItem("Spatial Hash"))
+			{
+				if (queryHash)
+				{
+					Console::Run("DrawHashMap 0");
+				}
+				else
+				{
+					Console::Run("DrawHashMap 1");
+				}
+			}
+
+			bool queryC = (bool)Console::Query("DrawColliders");
+			if (ImGui::MenuItem("Collider Outlines"))
+			{
+				if (queryC)
+				{
+					Console::Run("DrawColliders 0");
+				}
+				else
+				{
+					Console::Run("DrawColliders 1");
+				}
+			}
+			ImGui::EndMenu();
+		}
+
 		ImGui::EndMainMenuBar();
 
 		if (showNewProjectModal)
@@ -639,32 +669,6 @@ void Game::Render()
 		if (ImGui::Button("Create Empty entity"))
 		{
 			World::CreateEntity();
-		}
-
-		bool queryHash = (bool)Console::Query("DrawHashMap");
-		if (ImGui::MenuItem("Spatial Hash"))
-		{
-			if (queryHash)
-			{
-				Console::Run("DrawHashMap 0");
-			}
-			else
-			{
-				Console::Run("DrawHashMap 1");
-			}
-		}
-		
-		bool queryC = (bool)Console::Query("DrawColliders");
-		if (ImGui::MenuItem("Collider Outlines"))
-		{
-			if (queryC)
-			{
-				Console::Run("DrawColliders 0");
-			}
-			else
-			{
-				Console::Run("DrawColliders 1");
-			}
 		}
 
 		//IMPLEMENT Editor tools window
