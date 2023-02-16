@@ -1,6 +1,8 @@
 #pragma once
 #include "Vector2.h"
 
+struct SDL_Renderer;
+
 template<class P>
 struct TwoPointLine
 {
@@ -10,29 +12,10 @@ struct TwoPointLine
 	TwoPointLine();
 	TwoPointLine(P a, P b);
 
-	Vector2 GetNormal() const
-	{
-		float dx = B.X - A.X;
-		float dy = B.Y - A.Y;
-		return Vector2(-dy, dx).GetNormalized();
-	}
-
-	Vector2 GetCentrePoint() const
-	{
-		return Vector2((A.X + B.X) / 2.0f, (A.Y + B.Y) / 2.0f);
-	}
-
-	TwoPointLine& operator=(const TwoPointLine& line)
-	{
-		A = line.A;
-		B = line.B;
-		return *this;
-	};
-
-	void Render(SDL_Renderer& renderer)
-	{
-		SDL_RenderDrawLine(&renderer, A.X, A.Y, B.X, B.Y);
-	}
+	Vector2 GetNormal() const;
+	Vector2 GetCentrePoint() const;
+	TwoPointLine& operator=(const TwoPointLine& line);
+	void Render(SDL_Renderer& renderer);
 };
 
 typedef TwoPointLine<Point&> Edge;

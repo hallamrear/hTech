@@ -4,26 +4,18 @@
     <ClCompile Include="Animation.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="Colour.cpp" />
-    <ClCompile Include="Console.cpp" />
     <ClCompile Include="Line.cpp" />
-    <ClCompile Include="Editor.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Utility.cpp" />
-    <ClCompile Include="InputManager.cpp" />
-    <ClCompile Include="JSON.cpp" />
     <ClCompile Include="ObserverSubject.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="Observer.cpp" />
-    <ClCompile Include="ProjectLoader.cpp" />
     <ClCompile Include="Rectangle.cpp" />
-    <ClCompile Include="ScriptLoader.cpp" />
     <ClCompile Include="ScriptObject.cpp" />
     <ClCompile Include="SpatialDivisionMethod.cpp" />
     <ClCompile Include="Time.cpp" />
-    <ClCompile Include="OrientedBoundingBox.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="Texture.cpp" />
-    <ClCompile Include="TextureCache.cpp" />
     <ClCompile Include="Transform.cpp" />
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="Vector2.cpp" />
@@ -118,6 +110,30 @@
     <ClCompile Include="imgui_widgets.cpp">
       <Filter>External</Filter>
     </ClCompile>
+    <ClCompile Include="OrientedBoundingBox.cpp">
+      <Filter>Physics and Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="Console.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="Editor.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="ProjectLoader.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptLoader.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="TextureCache.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="JSON.cpp">
+      <Filter>External</Filter>
+    </ClCompile>
+    <ClCompile Include="InputManager.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imstb_truetype.h">
@@ -189,25 +205,17 @@
     <ClInclude Include="Animation.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Colour.h" />
-    <ClInclude Include="Console.h" />
-    <ClInclude Include="Editor.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="InputManager.h" />
-    <ClInclude Include="JSON.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="ObserverSubject.h" />
-    <ClInclude Include="OrientedBoundingBox.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="ProjectLoader.h" />
     <ClInclude Include="Rectangle.h" />
-    <ClInclude Include="ScriptLoader.h" />
     <ClInclude Include="ScriptObject.h" />
     <ClInclude Include="SpatialDivisionMethod.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Texture.h" />
-    <ClInclude Include="TextureCache.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="Utility.h" />
@@ -243,6 +251,30 @@
     <ClInclude Include="PhysicsProperties.h">
       <Filter>Physics and Collision</Filter>
     </ClInclude>
+    <ClInclude Include="OrientedBoundingBox.h">
+      <Filter>Physics and Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="Console.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="Editor.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="ProjectLoader.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptLoader.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="TextureCache.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="JSON.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="InputManager.h">
+      <Filter>System</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="External">
@@ -259,6 +291,9 @@
     </Filter>
     <Filter Include="Physics and Collision">
       <UniqueIdentifier>{d36de7a5-f933-4efc-86ca-9252c8177a96}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="System">
+      <UniqueIdentifier>{6f04d8a9-0190-44c1-ad78-e8300ce46aff}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
