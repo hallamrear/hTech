@@ -17,6 +17,8 @@ void ScriptComponent::Destroy()
 
 void ScriptComponent::RenderProperties()
 {
+	ImGui::BeginDisabled(Game::GetGameState() == GAME_STATE::RUNNING);
+
 	if (ImGui::Button("Rebuild DLL"))
 	{
 		ScriptLoader::Reload(true);
@@ -43,6 +45,8 @@ void ScriptComponent::RenderProperties()
 			m_ScriptObject = ScriptLoader::GetScriptObject(&m_ParentEntity, m_ScriptReferenceName);
 		}
 	}
+
+	ImGui::EndDisabled();
 }
 
 void ScriptComponent::Update(float deltaTime)
