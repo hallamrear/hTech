@@ -29,6 +29,10 @@ enum GAME_STATE : int
 class HTECH_FUNCTION_EXPORT Game
 {
 private:
+	bool  m_AutosaveEnabled;
+	float m_AutosaveTimer;
+	float m_AutosaveCooldown;
+
 	static GAME_STATE			m_GameState;
 	bool						m_IsInitialised;
 	bool						m_IsRunning;

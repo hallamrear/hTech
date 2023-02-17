@@ -35,8 +35,6 @@ int main(int argc, char* argv[])
 
 #endif
 
-
-
 	WindowDetails details;
 	details.Dimensions = Vector2(1280.0f, 720.0f);
 	details.Title = "hTech";
@@ -59,6 +57,10 @@ Game::Game()
 	m_IsRunning = false;
 	m_Window = nullptr;
 	m_RenderToTextureTarget = nullptr;
+
+	m_AutosaveEnabled = true;
+	m_AutosaveTimer = 0.0f;
+	m_AutosaveCooldown = 15.0f;
 }
 
 Game::~Game()
@@ -522,6 +524,20 @@ void Game::HandleEvents()
 
 void Game::Update(float DeltaTime)
 {
+	if (ProjectLoader::HasProjectLoaded() && m_GameState != GAME_STATE::RUNNING)
+	{
+		if (m_AutosaveEnabled)
+		{
+			m_AutosaveTimer += DeltaTime;
+
+			if (m_AutosaveTimer >= m_AutosaveCooldown)
+			{
+				ProjectLoader::SaveProject();
+				m_AutosaveTimer = 0.0f;
+			}
+		}
+	}
+
 	InputManager::Update();
 	
 	if(m_GameState == GAME_STATE::RUNNING)
@@ -556,6 +572,8 @@ void Game::Render()
 	if (Console::Query("DrawLog") != 0)
 		Log::Render(*Renderer);
 
+	ImGui::ShowDemoWindow();
+
 #ifdef _DEBUG
 	static bool showNewProjectModal = false,
 		showOpenProjectModal = false;
@@ -575,17 +593,20 @@ void Game::Render()
 				if (OpenProject(projectFilePath))
 				{
 					ProjectLoader::LoadProject(projectFilePath);
+					m_AutosaveTimer = 0.0f;
 				}
 			}
 
 			if (ImGui::MenuItem("Save Project"))
 			{
 				ProjectLoader::SaveProject();
+				m_AutosaveTimer = 0.0f;
 			}
 			
 			if (ImGui::MenuItem("Close Project"))
 			{
 				ProjectLoader::UnloadProject();
+				m_AutosaveTimer = 0.0f;
 			}
 
 			if (ImGui::BeginMenu("Exit##Menu"))
@@ -612,6 +633,14 @@ void Game::Render()
 
 		if (ImGui::BeginMenu("Options"))
 		{
+			std::string autosaveStr;
+			m_AutosaveEnabled == true ? autosaveStr = "Autosave Enabled" : autosaveStr = "Autosave Disabled";
+
+			if (ImGui::MenuItem(autosaveStr.c_str()))
+			{
+				m_AutosaveEnabled = !m_AutosaveEnabled;
+			}
+
 			bool queryHash = (bool)Console::Query("DrawHashMap");
 			if (ImGui::MenuItem("Spatial Hash"))
 			{
@@ -640,6 +669,12 @@ void Game::Render()
 			ImGui::EndMenu();
 		}
 
+		if (m_AutosaveEnabled)
+		{
+			std::string timeToSave = "Autosave in: " + std::to_string(m_AutosaveCooldown - m_AutosaveTimer) + " seconds";
+			ImGui::MenuItem(timeToSave.c_str());
+		}
+
 		ImGui::EndMainMenuBar();
 
 		if (showNewProjectModal)
@@ -663,6 +698,7 @@ void Game::Render()
 					ProjectLoader::CreateProject(projectName);
 					projectName = "";
 					showNewProjectModal = false;
+					m_AutosaveTimer = 0.0f;
 					ImGui::CloseCurrentPopup();
 				}
 				ImGui::SetItemDefaultFocus();
@@ -681,7 +717,6 @@ void Game::Render()
 
 	Editor::Render(*Renderer);
 
-	SDL_SetRenderTarget(Renderer, NULL);
 
 	ImGui::Begin("Render Window", 0, ImGuiWindowFlags_::ImGuiWindowFlags_MenuBar);
 
@@ -789,6 +824,7 @@ void Game::Render()
 
 	ImGui::EndMenuBar();
 
+	SDL_SetRenderTarget(Renderer, NULL);
 	Vector2 size;
 	size.X = ImGui::GetWindowWidth();
 	size.Y = ImGui::GetWindowHeight();
