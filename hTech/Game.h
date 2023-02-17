@@ -38,7 +38,7 @@ private:
 	bool						m_IsRunning;
 	struct SDL_Window*			m_Window;
 	struct SDL_Texture*			m_RenderToTextureTarget;
-
+	 
 	bool		InitialiseGraphics();
 	bool		CreateRenderTargetTexture();
 															

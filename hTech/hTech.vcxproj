@@ -129,6 +129,9 @@ xcopy /Y /H /E /I "$(ProjectDir)rapidjson\*.h" "$(OutputPath)Engine_Includes\rap
     <Lib>
       <AdditionalLibraryDirectories>$(ProjectDir)SDL\lib\$(LibrariesArchitecture);$(ProjectDir)SDL\lib\$(LibrariesArchitecture)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
+    <PreBuildEvent>
+      <Command>python "$(ProjectDir)increment_build.py"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -169,6 +172,9 @@ xcopy /Y /H /E /I "$(ProjectDir)rapidjson\*.h" "$(OutputPath)Engine_Includes\rap
     <Lib>
       <AdditionalLibraryDirectories>$(ProjectDir)SDL\lib\$(LibrariesArchitecture);$(ProjectDir)SDL\lib\$(LibrariesArchitecture)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
+    <PreBuildEvent>
+      <Command>python "$(ProjectDir)increment_build.py"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -205,6 +211,9 @@ xcopy /Y /H /E /I "$(ProjectDir)rapidjson\*.h" "$(OutputPath)Engine_Includes\rap
     <Lib>
       <AdditionalLibraryDirectories>$(ProjectDir)SDL\lib\$(LibrariesArchitecture);$(ProjectDir)SDL\lib\$(LibrariesArchitecture)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
+    <PreBuildEvent>
+      <Command>python "$(ProjectDir)increment_build.py"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -245,12 +254,16 @@ xcopy /Y /H /E /I "$(ProjectDir)rapidjson\*.h" "$(OutputPath)Engine_Includes\rap
     <Lib>
       <AdditionalLibraryDirectories>$(ProjectDir)SDL\lib\$(LibrariesArchitecture);$(ProjectDir)SDL\lib\$(LibrariesArchitecture)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
+    <PreBuildEvent>
+      <Command>python "$(ProjectDir)increment_build.py"</Command>
+    </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Animation.h" />
     <ClInclude Include="BoundingBox.h" />
     <ClInclude Include="BoundingPolygon.h" />
     <ClInclude Include="BoundingSphere.h" />
+    <ClInclude Include="BUILD_NUMBER.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="Collider.h" />
     <ClInclude Include="Collision.h" />

@@ -275,6 +275,7 @@
     <ClInclude Include="InputManager.h">
       <Filter>System</Filter>
     </ClInclude>
+    <ClInclude Include="BUILD_NUMBER.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="External">

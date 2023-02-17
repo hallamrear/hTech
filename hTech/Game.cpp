@@ -15,6 +15,7 @@
 #include <SDL_syswm.h>
 #include <SDL.h>
 #include "Camera.h"
+#include "BUILD_NUMBER.h"
 
 SDL_Renderer* Game::Renderer = nullptr;
 GAME_STATE Game::m_GameState = GAME_STATE::STOPPED;
@@ -37,7 +38,7 @@ int main(int argc, char* argv[])
 
 	WindowDetails details;
 	details.Dimensions = Vector2(1280.0f, 720.0f);
-	details.Title = "hTech";
+	details.Title = "hTech | Build Number " + std::to_string(BUILD_NUMBER);
 	details.Position = Vector2(200.0f, 200.0f);
 
 	Game* game = new Game();
@@ -571,8 +572,6 @@ void Game::Render()
 
 	if (Console::Query("DrawLog") != 0)
 		Log::Render(*Renderer);
-
-	ImGui::ShowDemoWindow();
 
 #ifdef _DEBUG
 	static bool showNewProjectModal = false,
