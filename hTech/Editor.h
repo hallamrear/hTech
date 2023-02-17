@@ -18,24 +18,25 @@ class Texture;
 class Editor
 {
 private:
-	std::vector<Entity*> mSelectedEntities;
-	Vector2 mDragStartWS, mDragCurrentWS, mDragEndWS;
-	Vector2 mDragDifferenceThisFrame, mMovementMousePosLastFrame;
-	bool mIsDraggingRect = false;
-	WorldRectangle selectionRect = WorldRectangle(0, 0, 0, 0);
+	std::vector<Entity*> m_SelectedEntities;
+	Vector2 m_DragStartWS, m_DragCurrentWS, m_DragEndWS;
+	Vector2 m_DragDeltaThisFrame;
+	Vector2 m_MousePosPreviousFrame;
+	bool m_IsDraggingRect = false;
+	WorldRectangle m_SelectionRect = WorldRectangle(0, 0, 0, 0);
 
 	/// <summary>
 	/// Store a reference to avoid calling inputmanager 24/7
 	/// </summary>
-	const Vector2& mMouseWorldPosition;
+	const Vector2& m_MouseWorldPositionRef;
 
 	/// <summary>
 	/// Store a reference to avoid calling inputmanager 24/7
 	/// </summary>
-	const Vector2& mMouseScreenPosition;
+	const Vector2& m_MouseScreenPositionRef;
 
-	static Editor* mInstance;
-	EDITOR_STATE mCurrentCursorState;
+	static Editor* m_Instance;
+	EDITOR_STATE m_CurrentCursorState;
 
 	void Update_Impl(float deltaTime);
 	void Render_Impl(SDL_Renderer&);
@@ -46,6 +47,8 @@ private:
 	void SetCursorStateToInspectMode();
 	void SetCursorStateToNoMode();
 	void SetCursorStateToSelectMode();
+
+	void SetSelectedEntity_Impl(Entity* entity);
 
 	void MousePress();
 	void MouseRelease();
@@ -62,6 +65,8 @@ public:
 	static void Update(float deltaTime);
 	static void Render(SDL_Renderer&);
 	static void SetEditorCursorState(EDITOR_STATE state);
+	static void SetSelectedEntity(Entity* entity);
+	static EDITOR_STATE GetEditorCursorState();
 	static void ClearSelected();
 };
 

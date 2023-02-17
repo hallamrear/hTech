@@ -17,22 +17,22 @@ Vector2 SpatialHash::GetIDFromEntity(Entity* entity)
 
 SpatialHash::SpatialHash(int sizeX, int sizeY)
 {
-	mSizeX = sizeX;
-	mSizeY = sizeY;
+	m_SizeX = sizeX;
+	m_SizeY = sizeY;
 
-	mMap = std::unordered_map<Vector2, HashBucket>();
+	m_HashBucketMap = std::unordered_map<Vector2, HashBucket>();
 
-	mText = new Text();
+	m_DebugText = new Text();
 }
 
 SpatialHash::~SpatialHash()
 {
-	mMap.clear();
+	m_HashBucketMap.clear();
 }
 
 void SpatialHash::Clear()
 {
-	for (auto& itr : mMap)
+	for (auto& itr : m_HashBucketMap)
 	{
 		itr.second.Clear();
 	}
@@ -87,8 +87,8 @@ void SpatialHash::Retrieve(class HTECH_FUNCTION_EXPORT WorldRectangle rect, std:
 	{
 		for (auto& ID : IDs)
 		{
-			std::unordered_map<Vector2, HashBucket>::iterator itr = mMap.find(ID);
-			if (itr != mMap.end())
+			std::unordered_map<Vector2, HashBucket>::iterator itr = m_HashBucketMap.find(ID);
+			if (itr != m_HashBucketMap.end())
 			{
 				if (itr->second.Count() > 0)
 				{
@@ -102,9 +102,9 @@ void SpatialHash::Retrieve(class HTECH_FUNCTION_EXPORT WorldRectangle rect, std:
 	size_t count = foundEntities.size();
 	for (size_t i = 0; i < count; i++)
 	{
-		Vector2 position = foundEntities[i]->GetTransform().Position;
+		Vector2 Position = foundEntities[i]->GetTransform().Position;
 
-		if ((position.X > points[0].X && position.X < points[3].X && position.Y > points[3].Y && position.Y < points[0].Y) == false)
+		if ((Position.X > points[0].X && Position.X < points[3].X && Position.Y > points[3].Y && Position.Y < points[0].Y) == false)
 		{
 			foundEntities[i] = nullptr;
 		}
@@ -124,16 +124,17 @@ void SpatialHash::Insert(Entity* entity)
 {
 	Vector2 index = GetIDFromEntity(entity);
 
-	std::unordered_map<Vector2, HashBucket>::iterator foundItem = mMap.find(index);
-	if(foundItem != mMap.end())
+	std::unordered_map<Vector2, HashBucket>::iterator foundItem = m_HashBucketMap.find(index);
+
+	if(foundItem != m_HashBucketMap.end())
 	{
 		foundItem->second.Insert(entity);
 	}
 	else
 	{
-		//mMap.insert(std::make_pair<Vector2, HashBucket>(Vector2(i - (mSizeX / 2), j - (mSizeY / 2)), HashBucket()));
-		mMap.insert(std::pair<Vector2, HashBucket>(index, HashBucket()));
-		mMap.find(index)->second.Insert(entity);
+		//m_HashBucketMap.insert(std::make_pair<Vector2, HashBucket>(Vector2(i - (m_SizeX / 2), j - (m_SizeY / 2)), HashBucket()));
+		m_HashBucketMap.insert(std::pair<Vector2, HashBucket>(index, HashBucket()));
+		m_HashBucketMap.find(index)->second.Insert(entity);
 		//Log::LogMessage(LogLevel::LOG_ERROR, "Error adding an entity to the hash map.");
 		//throw;
 	}
@@ -143,8 +144,8 @@ void SpatialHash::Remove(Entity* entity)
 {
 	Vector2 index = GetIDFromEntity(entity);
 
-	std::unordered_map<Vector2, HashBucket>::iterator foundItem = mMap.find(index);
-	if (foundItem != mMap.end())
+	std::unordered_map<Vector2, HashBucket>::iterator foundItem = m_HashBucketMap.find(index);
+	if (foundItem != m_HashBucketMap.end())
 	{
 		foundItem->second.Remove(entity);
 	}
@@ -157,17 +158,17 @@ void SpatialHash::Remove(Entity* entity)
 
 void SpatialHash::Update(float deltaTime)
 {
-	mCleanupTimeElapsed += deltaTime;
+	m_CleanupTimeElapsed += deltaTime;
 
-	if (mCleanupTimeElapsed > HASH_CLEANUP_COOLDOWN)
+	if (m_CleanupTimeElapsed > HASH_CLEANUP_COOLDOWN)
 	{
-		mCleanupTimeElapsed = 0.0f;
+		m_CleanupTimeElapsed = 0.0f;
 
-		for (auto itr = mMap.begin(); itr != mMap.end();)
+		for (auto itr = m_HashBucketMap.begin(); itr != m_HashBucketMap.end();)
 		{
 			if (itr->second.Count() == 0)
 			{
-				itr = mMap.erase(itr);
+				itr = m_HashBucketMap.erase(itr);
 			}
 			else
 				++itr;
@@ -177,7 +178,7 @@ void SpatialHash::Update(float deltaTime)
 
 void SpatialHash::Render(SDL_Renderer& renderer)
 {
-	for (const auto& itr : mMap)
+	for (const auto& itr : m_HashBucketMap)
 	{
 		SDL_SetRenderDrawColor(&renderer, 0, 0, 255, 255);
 
@@ -193,58 +194,58 @@ void SpatialHash::Render(SDL_Renderer& renderer)
 		if (itr.second.Count() != 0)
 		{
 			Vector2 offset = wPosition + Vector2(WORLD_TILE_SIZE / 2, -WORLD_TILE_SIZE / 2 + (WORLD_TILE_SIZE / 4));
-			mText->SetPosition(Camera::WorldToScreen(offset));
-			mText->SetString(std::to_string(itr.second.Count()));
-			mText->Update(0.0f);
-			mText->Render(renderer);
+			m_DebugText->SetPosition(Camera::WorldToScreen(offset));
+			m_DebugText->SetString(std::to_string(itr.second.Count()));
+			m_DebugText->Update(0.0f);
+			m_DebugText->Render(renderer);
 
 			std::string str = "";
 			offset = wPosition + Vector2(WORLD_TILE_SIZE / 2, -WORLD_TILE_SIZE / 2 - (WORLD_TILE_SIZE / 4));
-			mText->SetPosition(Camera::WorldToScreen(offset));
+			m_DebugText->SetPosition(Camera::WorldToScreen(offset));
 			str = std::to_string((int)itr.first.X) + ", " + std::to_string((int)itr.first.Y);
-			mText->SetString(str);
-			mText->Update(0.0f);
-			mText->Render(renderer);
+			m_DebugText->SetString(str);
+			m_DebugText->Update(0.0f);
+			m_DebugText->Render(renderer);
 		}
 	}
 }
 
 HashBucket::HashBucket()
 {
-	Data = std::vector<Entity*>();
+	m_Data = std::vector<Entity*>();
 }
 
 HashBucket::~HashBucket()
 {
-	Data.clear();
+	m_Data.clear();
 }
 
 std::vector<Entity*>& HashBucket::GetData()
 {
-	return Data;
+	return m_Data;
 }
 
 size_t HashBucket::Count() const
 {
-	return Data.size();
+	return m_Data.size();
 }
 
 void HashBucket::Clear()
 {
-	Data.clear();
+	m_Data.clear();
 }
 
 void HashBucket::Insert(Entity* entity)
 {
-	Data.push_back(entity);
+	m_Data.push_back(entity);
 }
 
 void HashBucket::Remove(Entity* entity)
 {
-	std::vector<Entity*>::iterator found = std::find(Data.begin(), Data.end(), entity);
-	if (found != Data.end())
+	std::vector<Entity*>::iterator found = std::find(m_Data.begin(), m_Data.end(), entity);
+	if (found != m_Data.end())
 	{
-		Data.erase(found);
+		m_Data.erase(found);
 	}
 
 	//if it equals .end then it does not exist in this bucket.

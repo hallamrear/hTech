@@ -16,20 +16,14 @@
 #include "UI_Button.h"
 #include "Time.h"
 
-Editor* Editor::mInstance = nullptr;
+Editor* Editor::m_Instance = nullptr;
 
-Editor::Editor() : mMouseScreenPosition(InputManager::Get()->GetMouseScreenPosition()), mMouseWorldPosition(InputManager::Get()->GetMouseWorldPosition())
+Editor::Editor() : m_MouseScreenPositionRef(InputManager::Get()->GetMouseScreenPosition()), m_MouseWorldPositionRef(InputManager::Get()->GetMouseWorldPosition())
 {
-    mSelectedEntities = std::vector<Entity*>();
+    m_SelectedEntities = std::vector<Entity*>();
 
     //Setting up editor controls!
-    InputManager::Get()->Bind(IM_KEY_CODE::IM_KEY_0, IM_KEY_STATE::IM_KEY_PRESSED, std::bind(&Editor::SetCursorStateToNoMode, this));
-    InputManager::Get()->Bind(IM_KEY_CODE::IM_KEY_1, IM_KEY_STATE::IM_KEY_PRESSED, std::bind(&Editor::SetCursorStateToSelectMode, this));
-    InputManager::Get()->Bind(IM_KEY_CODE::IM_KEY_2, IM_KEY_STATE::IM_KEY_PRESSED, std::bind(&Editor::SetCursorStateToMoveMode, this));
-    InputManager::Get()->Bind(IM_KEY_CODE::IM_KEY_3, IM_KEY_STATE::IM_KEY_PRESSED, std::bind(&Editor::SetCursorStateToRotateMode, this));
-    InputManager::Get()->Bind(IM_KEY_CODE::IM_KEY_4, IM_KEY_STATE::IM_KEY_PRESSED, std::bind(&Editor::SetCursorStateToInspectMode, this));
-
-    mCurrentCursorState = EDITOR_STATE::NONE;
+    m_CurrentCursorState = EDITOR_STATE::NONE;
 
     InputManager::Bind(IM_MOUSE_CODE::IM_MOUSE_LEFT_CLICK, IM_KEY_STATE::IM_KEY_PRESSED,  std::bind(&Editor::MousePress, this));
     InputManager::Bind(IM_MOUSE_CODE::IM_MOUSE_LEFT_CLICK, IM_KEY_STATE::IM_KEY_HELD,     std::bind(&Editor::MouseHold, this));
@@ -40,18 +34,18 @@ Entity* selected = nullptr;
 
 void Editor::MousePress()
 {
-    mDragStartWS = InputManager::Get()->GetMouseWorldPosition();
+    m_DragStartWS = InputManager::Get()->GetMouseWorldPosition();
 
-    switch (mCurrentCursorState)
+    switch (m_CurrentCursorState)
     {
     case EDITOR_STATE::SELECT:
-        mIsDraggingRect = true;
+        m_IsDraggingRect = true;
         break;
     case EDITOR_STATE::MOVE:
     {
-        mMovementMousePosLastFrame = InputManager::Get()->GetMouseWorldPosition();
+        m_MousePosPreviousFrame = InputManager::Get()->GetMouseWorldPosition();
 
-        if (mSelectedEntities.size() <= 0)
+        if (m_SelectedEntities.size() <= 0)
         {
             selected = World::FindNearestEntityToPosition(InputManager::Get()->GetMouseWorldPosition());
         }
@@ -85,25 +79,25 @@ void Editor::MousePress()
 
 void Editor::MouseHold()
 {
-    mDragCurrentWS = InputManager::Get()->GetMouseWorldPosition();
+    m_DragCurrentWS = InputManager::Get()->GetMouseWorldPosition();
 
-    switch (mCurrentCursorState)
+    switch (m_CurrentCursorState)
     {
     case EDITOR_STATE::SELECT:
     {
-        selectionRect = WorldRectangle(mDragStartWS, mDragCurrentWS);
-        mIsDraggingRect = true;
+        m_SelectionRect = WorldRectangle(m_DragStartWS, m_DragCurrentWS);
+        m_IsDraggingRect = true;
     }
         break;
     case EDITOR_STATE::MOVE:
     {
-        mDragDifferenceThisFrame = (mDragCurrentWS - mMovementMousePosLastFrame);
+        m_DragDeltaThisFrame = (m_DragCurrentWS - m_MousePosPreviousFrame);
 
-        if (mSelectedEntities.size() > 0)
+        if (m_SelectedEntities.size() > 0)
         {
-            for (size_t i = 0; i < mSelectedEntities.size(); i++)
+            for (size_t i = 0; i < m_SelectedEntities.size(); i++)
             {
-                mSelectedEntities[i]->GetTransform().Position += mDragDifferenceThisFrame;
+                m_SelectedEntities[i]->GetTransform().Position += m_DragDeltaThisFrame;
             }
         }
         else
@@ -114,7 +108,7 @@ void Editor::MouseHold()
             }
         }
 
-        mMovementMousePosLastFrame = mDragCurrentWS;
+        m_MousePosPreviousFrame = m_DragCurrentWS;
     }
         break;
     case EDITOR_STATE::INSPECT:
@@ -126,7 +120,7 @@ void Editor::MouseHold()
     {
         if (selected)
         {
-            Vector2 diff = (mDragStartWS - mDragCurrentWS);
+            Vector2 diff = (m_DragStartWS - m_DragCurrentWS);
             selected->GetTransform().Rotate(diff.X * Time::DeltaTime());
         }
     }
@@ -143,20 +137,20 @@ void Editor::MouseHold()
 
 void Editor::MouseRelease()
 {
-    mDragEndWS = InputManager::Get()->GetMouseWorldPosition();
+    m_DragEndWS = InputManager::Get()->GetMouseWorldPosition();
 
-    switch (mCurrentCursorState)
+    switch (m_CurrentCursorState)
     {
     case EDITOR_STATE::SELECT:
-        selectionRect = WorldRectangle(mDragStartWS, mDragEndWS);
-        World::QuerySpaceForEntities(selectionRect, mSelectedEntities);
+        m_SelectionRect = WorldRectangle(m_DragStartWS, m_DragEndWS);
+        World::QuerySpaceForEntities(m_SelectionRect, m_SelectedEntities);
         break;
     case EDITOR_STATE::MOVE:
         break;
     case EDITOR_STATE::INSPECT:
         break;
     case EDITOR_STATE::ROTATE:
-        mSelectedEntities.clear();
+        m_SelectedEntities.clear();
         selected = nullptr;
         break;
     case EDITOR_STATE::NONE:
@@ -169,10 +163,10 @@ void Editor::MouseRelease()
 
 Editor* Editor::Get()
 {
-    if (mInstance == nullptr)
-        mInstance = new Editor();
+    if (m_Instance == nullptr)
+        m_Instance = new Editor();
 
-    return mInstance;
+    return m_Instance;
 }
 
 
@@ -188,7 +182,7 @@ void Editor::Update(float deltaTime)
 
 void Editor::Update_Impl(float deltaTime)
 {
-    switch (mCurrentCursorState)
+    switch (m_CurrentCursorState)
     {
     case EDITOR_STATE::MOVE:
         break;
@@ -209,13 +203,9 @@ void Editor::Render(SDL_Renderer& renderer)
 
 void Editor::Render_Impl(SDL_Renderer& renderer)
 {
-    if (ImGui::Begin("Editor Tools"))
-    {
-        //IMPLEMENT Editor tools window
-    }
-    ImGui::End();
+    Camera::RenderProperties();
 
-    if (ImGui::Begin("Properties"))
+    if (ImGui::Begin("Properties", 0, ImGuiWindowFlags_AlwaysAutoResize))
     {
         if (selected)
         {
@@ -224,16 +214,15 @@ void Editor::Render_Impl(SDL_Renderer& renderer)
     }
     ImGui::End();
 
-    if (ImGui::Begin("Assets"))
+    if (ImGui::Begin("Assets", 0, ImGuiWindowFlags_AlwaysAutoResize))
     {
-        //IMPLEMENT Assets Window.
         TextureCache::RenderProperties();
     }
     ImGui::End();
 
-    for (size_t i = 0; i < mSelectedEntities.size(); i++)
+    for (size_t i = 0; i < m_SelectedEntities.size(); i++)
     {
-        Vector2 rectTR = Camera::WorldToScreen(mSelectedEntities[i]->GetTransform().Position + Vector2(-32, 32));
+        Vector2 rectTR = Camera::WorldToScreen(m_SelectedEntities[i]->GetTransform().Position + Vector2(-32, 32));
         SDL_Rect rect{};
         rect.x = (int)rectTR.X;
         rect.y = (int)rectTR.Y;
@@ -242,14 +231,14 @@ void Editor::Render_Impl(SDL_Renderer& renderer)
         SDL_RenderDrawRect(&renderer, &rect);
     }
 
-    if (mIsDraggingRect)
+    if (m_IsDraggingRect)
     {
         Vector2 points[4] =
         {
-            {(float)selectionRect.X,				   (float)selectionRect.Y},
-            {(float)selectionRect.X + selectionRect.W, (float)selectionRect.Y},
-            {(float)selectionRect.X,				   (float)selectionRect.Y - selectionRect.H},
-            {(float)selectionRect.X + selectionRect.W, (float)selectionRect.Y - selectionRect.H}
+            {(float)m_SelectionRect.X,				   (float)m_SelectionRect.Y},
+            {(float)m_SelectionRect.X + m_SelectionRect.W, (float)m_SelectionRect.Y},
+            {(float)m_SelectionRect.X,				   (float)m_SelectionRect.Y - m_SelectionRect.H},
+            {(float)m_SelectionRect.X + m_SelectionRect.W, (float)m_SelectionRect.Y - m_SelectionRect.H}
         };
 
         Vector2 r;
@@ -265,25 +254,32 @@ void Editor::Render_Impl(SDL_Renderer& renderer)
         }
 
         SDL_SetRenderDrawColor(&renderer, 255, 255, 255, 255);
-        selectionRect.Render(renderer);
+        m_SelectionRect.Render(renderer);
     }
 
     if (selected)
     {
         SDL_Rect d{};
-        Vector2 position = Camera::WorldToScreen(selected->GetTransform().Position + Vector2(-32.0f, 32.0f));
-        d.x = (int)position.X;
-        d.y = (int)position.Y;
-        d.w = 64;
-        d.h = 64;
+        d.w = 256;
+        d.h = 256;
+        Vector2 Position = Camera::WorldToScreen(selected->GetTransform().Position + Vector2(0 - (d.w / 2), d.h / 2));
+        d.x = (int)Position.X;
+        d.y = (int)Position.Y;
         SDL_SetRenderDrawColor(&renderer, 255, 255, 0, 255);
         SDL_RenderDrawRect(&renderer, &d);
+        SDL_RenderDrawLine(&renderer, d.x, d.y, d.x + d.w, d.y + d.h);
+        SDL_RenderDrawLine(&renderer, d.x + d.w, d.y, d.x, d.y + d.h);
     }
 }
 
 void Editor::SetEditorCursorState(EDITOR_STATE state)
 {
     Get()->SetEditorCursorState_Impl(state);
+}
+
+EDITOR_STATE Editor::GetEditorCursorState()
+{
+    return Get()->m_CurrentCursorState;
 }
 
 void Editor::ClearSelected()
@@ -294,38 +290,49 @@ void Editor::ClearSelected()
 void Editor::ClearSelected_Impl()
 {
     selected = nullptr;
-    mSelectedEntities.clear();
+    m_SelectedEntities.clear();
 }
 
 void Editor::SetEditorCursorState_Impl(EDITOR_STATE state)
 {
-    mCurrentCursorState = state;
+    m_CurrentCursorState = state;
 }
 
 void Editor::SetCursorStateToMoveMode()
 {
-    mCurrentCursorState = EDITOR_STATE::MOVE;
+    m_CurrentCursorState = EDITOR_STATE::MOVE;
 }
 
 void Editor::SetCursorStateToRotateMode()
 {
-    mCurrentCursorState = EDITOR_STATE::ROTATE;
+    m_CurrentCursorState = EDITOR_STATE::ROTATE;
 }
 
 void Editor::SetCursorStateToInspectMode()
 {
-    mCurrentCursorState = EDITOR_STATE::INSPECT;
+    m_CurrentCursorState = EDITOR_STATE::INSPECT;
 }
 
 void Editor::SetCursorStateToNoMode()
 {
-    mCurrentCursorState = EDITOR_STATE::NONE;
+    m_CurrentCursorState = EDITOR_STATE::NONE;
 }
 
 void Editor::SetCursorStateToSelectMode()
 {
-    mCurrentCursorState = EDITOR_STATE::SELECT;
+    m_CurrentCursorState = EDITOR_STATE::SELECT;
     selected = nullptr;
+}
+
+void Editor::SetSelectedEntity_Impl(Entity* entity)
+{
+    ClearSelected_Impl();
+    selected = entity;
+}
+
+void Editor::SetSelectedEntity(Entity* entity)
+{
+    Get()->SetSelectedEntity_Impl(entity);
 }
 
 #endif

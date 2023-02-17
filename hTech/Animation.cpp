@@ -5,63 +5,68 @@
 
 AnimationController::AnimationController(std::string sheetPath, unsigned int animationCount, unsigned int frameCountPerAnimation, float duration, bool looping)
 {
-	mAnimationSheet = TextureCache::GetTexture(sheetPath);
-	mTimeElapsed = 0.0f;
-	mIsLooping = looping;
-	mDuration = duration;
-	mTotalFrames = frameCountPerAnimation;
-	mTimeBetweenFrames = mDuration / (float)(mTotalFrames);
-	FrameSize = Vector2(mAnimationSheet->Width / (float)mTotalFrames, mAnimationSheet->Height / (float)animationCount);
-	mHasFinished = false;
+	m_AnimationSheet = TextureCache::GetTexture(sheetPath);
+	m_TimeElapsed = 0.0f;
+	m_IsLooping = looping;
+	m_Duration = duration;
+	m_TotalFrames = frameCountPerAnimation;
+	m_TimeBetweenFrames = m_Duration / (float)(m_TotalFrames);
+	m_FrameSize = Vector2(m_AnimationSheet->Width / (float)m_TotalFrames, m_AnimationSheet->Height / (float)animationCount);
+	m_HasFinished = false;
 }
 
 AnimationController::~AnimationController()
 {
-	mAnimationSheet = nullptr;
+	m_AnimationSheet = nullptr;
 }
 
 bool AnimationController::HasFinished()
 {
-	return mHasFinished;
+	return m_HasFinished;
 }
 
 void AnimationController::Start()
 {
-	mHasFinished = false;
-	mCurrentFrame = 0;
-	mTimeElapsed = 0.0f;
+	m_HasFinished = false;
+	m_CurrentFrame = 0;
+	m_TimeElapsed = 0.0f;
 }
 
 void AnimationController::SetAnimation(unsigned int animation)
 {
-	mCurrentAnimation = animation;
+	m_CurrentAnimation = animation;
+}
+
+const Vector2 AnimationController::GetFrameSize() const
+{
+	return m_FrameSize;
 }
 
 void AnimationController::Update(float DeltaTime)
 {
-	if (mAnimationSheet)
+	if (m_AnimationSheet)
 	{
-		if (mHasFinished == false)
+		if (m_HasFinished == false)
 		{
-			mTimeElapsed += DeltaTime;
+			m_TimeElapsed += DeltaTime;
 
-			if (mTimeElapsed > mDuration)
+			if (m_TimeElapsed > m_Duration)
 			{
-				if (mIsLooping)
+				if (m_IsLooping)
 				{
-					mTimeElapsed = 0.0f;
-					mCurrentFrame = 0;
+					m_TimeElapsed = 0.0f;
+					m_CurrentFrame = 0;
 				}
 				else
 				{
-					mTimeElapsed = 0.0f;
-					mCurrentFrame = 0;
-					mHasFinished = true;
+					m_TimeElapsed = 0.0f;
+					m_CurrentFrame = 0;
+					m_HasFinished = true;
 				}
 			}
 			else
 			{
-				mCurrentFrame = (unsigned int)(trunc(mTimeElapsed / mTimeBetweenFrames));
+				m_CurrentFrame = (unsigned int)(trunc(m_TimeElapsed / m_TimeBetweenFrames));
 			}
 		}
 	}
@@ -70,18 +75,18 @@ void AnimationController::Update(float DeltaTime)
 
 void AnimationController::Render(SDL_Renderer& renderer, Transform transform)
 {
-	if (mAnimationSheet)
+	if (m_AnimationSheet)
 	{
-		Vector2 srcPos = Vector2((FrameSize.X * mCurrentFrame) + (FrameSize.X / 2.0f), (FrameSize.Y * mCurrentAnimation) + FrameSize.Y / 2.0f);
-		mAnimationSheet->Render(*Game::Renderer, transform.Position, transform.Rotation, srcPos, FrameSize);
+		Vector2 srcPos = Vector2((m_FrameSize.X * m_CurrentFrame) + (m_FrameSize.X / 2.0f), (m_FrameSize.Y * m_CurrentAnimation) + (m_FrameSize.Y / 2.0f));
+		m_AnimationSheet->Render(*Game::Renderer, transform.Position, transform.Rotation, srcPos, m_FrameSize);
 	}
 }
 
 void AnimationController::Render(SDL_Renderer& renderer, Transform transform, bool flipped)
 {
-	if (mAnimationSheet)
+	if (m_AnimationSheet)
 	{
-		Vector2 srcPos = Vector2((FrameSize.X * mCurrentFrame) + (FrameSize.X / 2.0f), (FrameSize.Y * mCurrentAnimation) + FrameSize.Y / 2.0f);
-		mAnimationSheet->Render(*Game::Renderer, transform.Position, transform.Rotation, srcPos, FrameSize, flipped);
+		Vector2 srcPos = Vector2((m_FrameSize.X * m_CurrentFrame) + (m_FrameSize.X / 2.0f), (m_FrameSize.Y * m_CurrentAnimation) + m_FrameSize.Y / 2.0f);
+		m_AnimationSheet->Render(*Game::Renderer, transform.Position, transform.Rotation, srcPos, m_FrameSize, flipped);
 	}
 }

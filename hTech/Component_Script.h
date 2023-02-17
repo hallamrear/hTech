@@ -3,16 +3,18 @@
 
 #include "Component.h"
 #include "ScriptLoader.h"
+#include "Observer.h"
 
 class ScriptObject;
 class CollisionManifold;
 class RigidbodyComponent;
 
 class HTECH_FUNCTION_EXPORT ScriptComponent :
-    public Component
+    public Component, public Observer
 {
 private:
-    ScriptObject* mScriptObject; 
+	std::string m_ScriptReferenceName;
+    ScriptObject* m_ScriptObject; 
     
 protected:
     virtual void Destroy();
@@ -27,6 +29,13 @@ public:
 	/// Runs at the when the play button is pressed.
 	/// </summary>
 	void Start();
+
+	/// <summary>
+	/// CALLS THE FUNCTION IN THE EXTERNAL SCRIPT!
+	/// Called every time the stop button is pressed to reset the entity.
+	/// This should be used to set any starting parameters for the entity.
+	/// </summary>
+	void Reset();
 
 	/// <summary>
 	/// CALLS THE FUNCTION IN THE EXTERNAL SCRIPT!
@@ -62,5 +71,7 @@ public:
 
 	void Serialize(Serializer& writer) const override;
 	void Deserialize(SerializedValue& value) override;
+
+	void OnNotify() override;
 };
 

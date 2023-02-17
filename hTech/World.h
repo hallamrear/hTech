@@ -20,10 +20,11 @@ class HTECH_FUNCTION_EXPORT Text;
 class HTECH_FUNCTION_EXPORT World
 {
 private:
-	static World*			mInstance;
-	std::vector<Entity*>	mEntityList;
-	SpatialHash*			mWorldHashMap;
+	static World*								m_Instance;
+	std::unordered_map<std::string, Entity*>	m_EntityMap;
+	SpatialHash*								m_WorldHashMap;
 
+	void					UpdateHashmapNames_Impl();
 	Entity*					CreateEntity_Impl(std::string Name = "unnamed", Transform SpawnTransform = Transform(), Entity* Parent = nullptr);
 	void					DestroyEntity_Impl(Entity* entity);
 	void					ClearupDeadEntities();
@@ -36,6 +37,8 @@ private:
 
 	void Serialize_Impl(Serializer& writer) const;
 	void Deserialize_Impl(Deserializer& reader);
+	void ResetWorldEntities_Impl();
+	void CallStartFunctionOnAllEntites_Impl();
 	void ClearAllEntities();
 
 protected:
@@ -44,6 +47,7 @@ protected:
 	static World*			Get();
 
 public:
+	static void 			UpdateHashmapNames();
 	static Entity*			FindNearestEntityToPosition(Vector2 WorldPosition);
 	static void				QuerySpaceForEntities(WorldRectangle rect, std::vector<Entity*>& entities);
 	static Entity*			CreateEntity(std::string Name = "unnamed", Transform SpawnTransform = Transform(), Entity* Parent = nullptr);
@@ -56,17 +60,8 @@ public:
 	static void				Update(float DeltaTime);
 	static void				Render(SDL_Renderer&);
 
+	static void				ResetWorldEntities();
+	static void				CallStartFunctionOnAllEntites();
+
 	static void				UnloadAll();
 };
-
-//void World::Load_Impl(tinyxml2::XMLDocument& saveFile)
-//{
-//    if (mEntityList.size() != 0)
-//    {
-//        ClearAllEntities();
-//    }
-// }
-//}//void World::Load(tinyxml2::XMLDocument& saveFile)
-//{
-//    return Get()->Load_Impl(saveFile);
-//}

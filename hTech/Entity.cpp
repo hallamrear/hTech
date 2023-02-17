@@ -12,16 +12,17 @@
 #include "Component_Script.h"
 #include "Component_Rigidbody.h"
 #include "rapidjson/rapidjson.h"
+#include "World.h"
 
 Entity::Entity(Transform SpawnTransform, std::string Name, Entity* Parent)
 {
-	IsEnabled = true;
-	mComponents = std::vector<Component*>();
+	m_IsEnabled = true;
+	m_Components = std::vector<Component*>();
 	AddComponent<TransformComponent>();
 	GetTransform() = SpawnTransform;
-	mIsWaitingToBeDestroyed = false;
-	mName = Name;
-	mIsAlive = true;
+	m_IsWaitingToBeDestroyed = false;
+	m_Name = Name;
+	m_IsAlive = true;
 
 	if (Parent != nullptr)
 	{
@@ -31,22 +32,22 @@ Entity::Entity(Transform SpawnTransform, std::string Name, Entity* Parent)
 
 Entity::~Entity()
 {
-	for (size_t i = 0; i < mComponents.size(); i++)
+	for (size_t i = 0; i < m_Components.size(); i++)
 	{
-		delete mComponents[i];
-		mComponents[i] = nullptr;
+		delete m_Components[i];
+		m_Components[i] = nullptr;
 	}
 
-	mComponents.clear();
+	m_Components.clear();
 }
 
 void Entity::Update(float DeltaTime)
 {
-	for (int i = 0; i != mComponents.size(); i++)
+	for (int i = 0; i != m_Components.size(); i++)
 	{
-		if (mComponents[i]->GetIsEnabled() == true)
+		if (m_Components[i]->GetIsEnabled() == true)
 		{
-			mComponents[i]->Update(DeltaTime);
+			m_Components[i]->Update(DeltaTime);
 		}
 	}
 }
@@ -55,28 +56,42 @@ void Entity::Render()
 {
 	SDL_Renderer& renderer = *Game::Renderer;
 
-	for (int i = 0; i != mComponents.size(); i++)
+	for (int i = 0; i != m_Components.size(); i++)
 	{
-		if (mComponents[i]->GetIsEnabled() == true)
+		if (m_Components[i]->GetIsEnabled() == true)
 		{
-			mComponents[i]->Render(renderer);
+			m_Components[i]->Render(renderer);
 		}
 	}
 
 	Vector2 pos = Camera::WorldToScreen(GetTransform().Position);
-	SDL_Rect rect{ (int)pos.X, (int)pos.Y, 4, 4 };
-	SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
+	SDL_Rect rect{ (int)pos.X - 2, (int)pos.Y - 2, 4, 4 };
+	float a = 255;
+
+	if (m_IsEnabled == false)
+		a = 100;
+
+	SDL_SetRenderDrawColor(&renderer, 0, 255, 0, a);
 	SDL_RenderDrawRect(&renderer, &rect);
 }
 
 void Entity::RenderProperties()
 {
 	//This is called from editor window and so you can call imgui items directly.
-	ImGui::Checkbox("Enabled", &IsEnabled);
-	ImGui::InputText("Name: ", &mName);	
-	ImGui::Text("Component Count: %i", mComponents.size());
-	ImGui::Text("Alive: %i", mIsAlive);
-	ImGui::Text("Being Destroyed?: %i", mIsWaitingToBeDestroyed);
+	static bool enabled;
+	enabled = m_IsEnabled;
+	ImGui::Checkbox("Enabled", &enabled);
+	SetEnabled(enabled);
+
+	std::string str = m_Name;
+	ImGui::InputText("Name: ", &str);	
+	if (str != m_Name)
+	{
+		SetName(str);
+	}
+	ImGui::Text("Component Count: %i", m_Components.size());
+	ImGui::Text("Alive: %i", m_IsAlive);
+	ImGui::Text("Being Destroyed?: %i", m_IsWaitingToBeDestroyed);
 	ImGui::Separator();
 	if (ImGui::CollapsingHeader("Components", ImGuiTreeNodeFlags_None))
 	{
@@ -119,15 +134,15 @@ void Entity::RenderProperties()
 
 		if (ImGui::BeginPopupContextItem("RemoveComponentPopup"))
 		{
-			for (size_t i = 1; i < mComponents.size(); i++)
+			for (size_t i = 1; i < m_Components.size(); i++)
 			{
 				ImGui::SetNextItemWidth(-FLT_MIN);
-				if (ImGui::Selectable(mComponents[i]->GetComponentName().c_str()))
+				if (ImGui::Selectable(m_Components[i]->GetComponentName().c_str()))
 				{
-					if (dynamic_cast<SpriteComponent*>(mComponents[i]))    { RemoveComponent<SpriteComponent>();	continue; }
-					if (dynamic_cast<AnimationComponent*>(mComponents[i])) { RemoveComponent<AnimationComponent>();	continue; }
-					if (dynamic_cast<ScriptComponent*>(mComponents[i]))    { RemoveComponent<ScriptComponent>();	continue; }
-					if (dynamic_cast<RigidbodyComponent*>(mComponents[i])) { RemoveComponent<RigidbodyComponent>(); continue; }
+					if (dynamic_cast<SpriteComponent*>(m_Components[i]))    { RemoveComponent<SpriteComponent>();	continue; }
+					if (dynamic_cast<AnimationComponent*>(m_Components[i])) { RemoveComponent<AnimationComponent>();	continue; }
+					if (dynamic_cast<ScriptComponent*>(m_Components[i]))    { RemoveComponent<ScriptComponent>();	continue; }
+					if (dynamic_cast<RigidbodyComponent*>(m_Components[i])) { RemoveComponent<RigidbodyComponent>(); continue; }
 					
 				}
 			}
@@ -148,45 +163,69 @@ void Entity::RenderProperties()
 
 		bool isComponentEnabled = false;
 		std::string label = "";
-		for (size_t i = 0; i < mComponents.size(); i++)
+		for (size_t i = 0; i < m_Components.size(); i++)
 		{
-			if (mComponents[i]->GetComponentName() != "Transform Component")
+			if (m_Components[i]->GetComponentName() != "Transform Component")
 			{
-				label = "##" +mComponents[i]->GetComponentName() + "componentEnabledCheckbox";
-				bool isComponentEnabled = mComponents[i]->GetIsEnabled();
+				label = "##" + m_Components[i]->GetComponentName() + "componentEnabledCheckbox";
+				bool isComponentEnabled = m_Components[i]->GetIsEnabled();
 				ImGui::Checkbox(label.c_str(), &isComponentEnabled);
-				mComponents[i]->SetIsEnabled(isComponentEnabled);
+				m_Components[i]->SetIsEnabled(isComponentEnabled);
 				ImGui::SameLine();
 			}
 
-			if (ImGui::CollapsingHeader(mComponents[i]->GetComponentName().c_str(), ImGuiTreeNodeFlags_None))
+			if (ImGui::CollapsingHeader(m_Components[i]->GetComponentName().c_str(), ImGuiTreeNodeFlags_None))
 			{
-				mComponents[i]->RenderProperties();
+				m_Components[i]->RenderProperties();
 			}
 		}
 	}
 
 }
 
+void Entity::SetEnabled(const bool state)
+{
+	if (state == m_IsEnabled)
+		return;
+
+	ScriptComponent* script = GetComponent<ScriptComponent>();
+	if (script)
+	{
+		//if now false and was true, we have been disabled.
+		//what kind of disabled?
+		//Leg disabled.
+		if (state == false && m_IsEnabled == true)
+		{
+			script->OnDisable();
+		}
+		else
+		{
+			script->OnEnable();
+		}
+	}
+
+	m_IsEnabled = state;
+}
+
 Entity* Entity::GetParent()
 {
-	//TODO : Implement
+	//TODO : Implement Parenting
 	return nullptr;
 }
 
 void Entity::SetParent(Entity* entity)
 {
-	//TODO : Implement
+	//TODO : Implement Parenting
 }
 
 bool Entity::GetIsBeingDestroyed() const
 {
-	return mIsWaitingToBeDestroyed;
+	return m_IsWaitingToBeDestroyed;
 }
 
 void Entity::Destroy()
 {
-	mIsWaitingToBeDestroyed = true;
+	m_IsWaitingToBeDestroyed = true;
 }
 
 Transform& Entity::GetTransform()
@@ -201,23 +240,32 @@ void Entity::ClampRotation()
 
 const std::string& Entity::GetName() const
 {
-	return mName;
+	return m_Name;
+}
+
+void Entity::SetName(const std::string& name)
+{
+	if (name != m_Name)
+	{
+		m_Name = name;
+		World::UpdateHashmapNames();
+	}
 }
 
 void Entity::Serialize(Serializer& writer) const
 {
 	writer.StartObject();
 
-	writer.String("Name");	  writer.String(mName.c_str());
-	writer.String("IsAlive"); writer.Bool(mIsAlive);
-	writer.String("IsEnabled"); writer.Bool(IsEnabled);
+	writer.String("Name");	  writer.String(m_Name.c_str());
+	writer.String("IsAlive"); writer.Bool(m_IsAlive);
+	writer.String("IsEnabled"); writer.Bool(m_IsEnabled);
 
 	writer.String("Components");
 	writer.StartArray();
-	for (size_t i = 0; i < mComponents.size(); i++)
+	for (size_t i = 0; i < m_Components.size(); i++)
 	{
 		writer.StartObject();
-		mComponents[i]->Serialize(writer);
+		m_Components[i]->Serialize(writer);
 		writer.EndObject();
 	}
 	writer.EndArray();
@@ -229,12 +277,12 @@ void Entity::Deserialize(SerializedValue& serializedEntity)
 {
 	if (serializedEntity["IsAlive"].IsBool())
 	{
-		mIsAlive = serializedEntity["IsAlive"].GetBool();
+		m_IsAlive = serializedEntity["IsAlive"].GetBool();
 	}
 
 	if (serializedEntity["IsEnabled"].IsBool())
 	{
-		IsEnabled = serializedEntity["IsEnabled"].GetBool();
+		m_IsEnabled = serializedEntity["IsEnabled"].GetBool();
 	}
 
 	if (serializedEntity.HasMember("Components"))

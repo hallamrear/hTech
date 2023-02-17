@@ -1,8 +1,7 @@
 #pragma once
  #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
-
-#include "Helper.h"
+#include "Utility.h"
 
 class HTECH_FUNCTION_EXPORT Transform
 {
@@ -14,10 +13,10 @@ public:
 	~Transform();
 
 	void Reset();
-	Vector2 GetUp() const;
-	Vector2 GetDown() const;
-	Vector2 GetRight() const;
-	Vector2 GetLeft() const;
+	const Vector2 GetUp() const;
+	const Vector2 GetDown() const;
+	const Vector2 GetRight() const;
+	const Vector2 GetLeft() const;
 	void Translate(const Vector2 offset);
 	void Rotate(const float angle);
 };

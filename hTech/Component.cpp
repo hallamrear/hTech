@@ -3,28 +3,28 @@
 
 Component::~Component()
 {
-	mIsEnabled = false;
-	mComponentName = "";
+	m_IsEnabled = false;
+	m_ComponentName = "";
 }
 
 void Component::SetIsEnabled(bool state)
 {
-	mIsEnabled = state;
+	m_IsEnabled = state;
 }
 
 bool Component::GetIsEnabled() const
 {
-	return mIsEnabled;
+	return m_IsEnabled;
 }
 
 std::string Component::GetComponentName() const
 {
-	return mComponentName;
+	return m_ComponentName;
 }
 
 Entity& Component::GetEntity() const
 {
-	return Parent;
+	return m_ParentEntity;
 }
 
 void Component::Update(float DeltaTime)
@@ -39,11 +39,15 @@ void Component::Render(SDL_Renderer& renderer)
 
 void Component::Serialize(Serializer& writer) const
 {
-	writer.String("Component Name"); writer.String(mComponentName.c_str());
-	writer.String("IsEnabled");      writer.Bool(mIsEnabled);
+	writer.String("Component Name"); writer.String(m_ComponentName.c_str());
+	writer.String("IsEnabled");      writer.Bool(m_IsEnabled);
 }
 
 void Component::Deserialize(SerializedValue& value)
 {
-	value["IsEnabled"].IsBool() ? mIsEnabled = value["IsEnabled"].GetBool() : true;
+	if (value["IsEnabled"].IsBool())
+	{
+		bool isEnabled = value["IsEnabled"].GetBool();
+		m_IsEnabled = isEnabled;
+	}
 }

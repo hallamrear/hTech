@@ -3,10 +3,10 @@
 class Console
 {
 private:
-	std::unordered_map<std::string, int> mIntMap;
-	std::unordered_map<std::string, std::function<void()>> mNonVariableFunctions;
+	std::unordered_map<std::string, int> m_IntMap;
+	std::unordered_map<std::string, std::function<void()>> m_NonVariableFunctionMap;
 
-	static Console* mInstance;
+	static Console* m_Instance;
 	static Console* Get();
 
 	Console();

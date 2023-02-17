@@ -1,9 +1,7 @@
 #pragma once
  #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
-
-
-#include "Collision.h"
+#include "Collider.h"
 
 /// <summary>
 /// A Bounding Sphere class HTECH_FUNCTION_EXPORT used by rigidbodies for collision detection. None of the collision detection is done using this class.
@@ -12,10 +10,13 @@
 class HTECH_FUNCTION_EXPORT BoundingSphere
 	: public Collider
 {
+private:
+	int m_PointCount;
+
 public:
 	float Radius = 0;
 
-	BoundingSphere(Transform& transform, float radius);
+	BoundingSphere(const Transform& transform, float radius, int pointCount = 12);
 	virtual ~BoundingSphere();
 
 	/// <summary>
@@ -41,4 +42,10 @@ public:
 	/// </summary>
 	/// <param name="points">Array of points on the circle outline.</param>
 	virtual void GetColliderAsPoints(Vector2 points[]) const override;
+
+	void SetPointCount(int pointCount);
+
+	void Serialize(Serializer& writer) const override;
+	void Deserialize(SerializedValue& value) override;
+	void RenderProperties() override;
 };

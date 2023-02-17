@@ -10,7 +10,7 @@
 class HTECH_FUNCTION_EXPORT TransformComponent : public Component
 {
 protected:
-	Transform mTransform;
+	Transform m_Transform;
 	void RenderProperties();
 
 public:
@@ -20,6 +20,7 @@ public:
 
 	Transform& GetTransform();
 
+	void Update(float deltaTime) override;
 	void Serialize(Serializer& writer) const override;
 	void Deserialize(SerializedValue& value) override;
 };

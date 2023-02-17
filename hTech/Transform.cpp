@@ -18,24 +18,24 @@ void Transform::Reset()
 	Rotation = 0.0f;
 }
 
-Vector2 Transform::GetUp() const
+const Vector2 Transform::GetUp() const
 {
-	return Vector2(MathsHelp::RotatePointAroundOriginDegrees(Vector2(0.0f, 1.0f), 360.0f - Rotation, Vector2())).GetNormalized();
+	return Vector2(Utils::Maths::RotatePointAroundOriginDegrees(Vector2(0.0f, 1.0f), 360.0f - Rotation, Vector2())).GetNormalized();
 }
 
-Vector2 Transform::GetDown() const
+const Vector2 Transform::GetDown() const
 {
-	return Vector2(MathsHelp::RotatePointAroundOriginDegrees(Vector2(0.0f, -1.0f), 360.0f - Rotation, Vector2()).GetNormalized());
+	return Vector2(Utils::Maths::RotatePointAroundOriginDegrees(Vector2(0.0f, -1.0f), 360.0f - Rotation, Vector2()).GetNormalized());
 }
 
-Vector2 Transform::GetRight() const
+const Vector2 Transform::GetRight() const
 {
-	return Vector2(MathsHelp::RotatePointAroundOriginDegrees(Vector2(1.0f, 0.0f), 360.0f - Rotation, Vector2()).GetNormalized());
+	return Vector2(Utils::Maths::RotatePointAroundOriginDegrees(Vector2(1.0f, 0.0f), 360.0f - Rotation, Vector2()).GetNormalized());
 }
 
-Vector2 Transform::GetLeft() const
+const Vector2 Transform::GetLeft() const
 {
-	return Vector2(MathsHelp::RotatePointAroundOriginDegrees(Vector2(-1.0f, 0.0f), 360.0f - Rotation, Vector2()).GetNormalized());
+	return Vector2(Utils::Maths::RotatePointAroundOriginDegrees(Vector2(-1.0f, 0.0f), 360.0f - Rotation, Vector2()).GetNormalized());
 }
 
 void Transform::Translate(const Vector2 offset)

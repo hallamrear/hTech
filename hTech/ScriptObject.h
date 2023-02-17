@@ -1,10 +1,11 @@
 #pragma once
+#include "Entity.h"
  #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
 #define EndScript(C) _EndScript(C)
 #define StartScript(C) _StartScript(C)
-#define _EndScript(C) }; extern "C" {  inline HTECH_FUNCTION_EXPORT ScriptObject* CREATE_FUNCTION(C) { return new C(); } }
-#define _StartScript(C) class HTECH_FUNCTION_EXPORT C : public ScriptObject { 
+#define _EndScript(C) }; extern "C" {  inline HTECH_FUNCTION_EXPORT ScriptObject* CREATE_FUNCTION(C, Entity* entity) { return new C(entity); } }
+#define _StartScript(C) class HTECH_FUNCTION_EXPORT C : public ScriptObject { public: C(Entity* entity) : ScriptObject(entity) {}; private:
 
 #define publicFunction _publicFunction
 #define _publicFunction public: inline void
@@ -12,7 +13,7 @@
 #define _privateFunction private: inline void
 
 #define Create_
-#define MAKE_FN_NAME(CLASS) Create_##CLASS(void)
+#define MAKE_FN_NAME(CLASS) Create_##CLASS(Entity* entity)
 #define CREATE_FUNCTION(CLASS) MAKE_FN_NAME(CLASS)
 
 class CollisionManifold;
@@ -20,16 +21,26 @@ class RigidbodyComponent;
 
 class HTECH_FUNCTION_EXPORT ScriptObject
 {
+private:
+	Entity* const m_ParentEntity;
+
 protected:
-	ScriptObject();
+	ScriptObject(Entity* const parent);
+	Entity* const GetEntity();
 
 public:
 	~ScriptObject();
 
 	/// <summary>
-	/// Runs at the when the play button is pressed.
+	/// Runs once before the first update tick after the start button is pressed.
 	/// </summary>
 	virtual void Start() = 0;
+
+	/// <summary>
+	/// Called whenever the stop button is pressed to reset the entity.
+	/// This function should be used to set initial positions and parameters that are not set in the script.
+	/// </summary>
+	virtual void Reset() = 0;
 
 	/// <summary>
 	/// Runs once when the object is enabled.

@@ -18,16 +18,17 @@ class HTECH_FUNCTION_EXPORT Entity
 private:
 
 protected:
-	std::string mName;
-	std::vector<Component*> mComponents;
+	std::string m_Name;
+	std::vector<Component*> m_Components;
 
-	bool mIsWaitingToBeDestroyed;
-	bool mIsAlive;
+	bool m_IsEnabled;
+	bool m_IsWaitingToBeDestroyed;
+	bool m_IsAlive;
 	void ClampRotation();
 
 public:
 	const std::string& GetName() const;
-	bool IsEnabled;
+	void SetName(const std::string& name);
 
 	Entity(Transform SpawnTransform = Transform(), std::string Name = "unnamed", Entity* Parent = nullptr);
 	virtual ~Entity();
@@ -37,8 +38,10 @@ public:
 
 	void RenderProperties();
 
-	bool const GetIsAlive()		 const { return mIsAlive; }
-	virtual void SetAlive(const bool state) { mIsAlive = state; }
+	const bool GetIsEnabled() const { return m_IsEnabled; }
+	void SetEnabled(const bool state);
+	bool const GetIsAlive() const { return m_IsAlive; }
+	virtual void SetAlive(const bool state) { m_IsAlive = state; }
 
 	Entity* GetParent();
 	void SetParent(Entity* entity);
@@ -64,9 +67,9 @@ inline C* Entity::GetComponent()
 {
 	C* ptr = nullptr;
 
-	for (size_t i = 0; i < mComponents.size(); i++)
+	for (size_t i = 0; i < m_Components.size(); i++)
 	{
-		ptr = dynamic_cast<C*>(mComponents[i]);
+		ptr = dynamic_cast<C*>(m_Components[i]);
 		if (ptr != nullptr)
 			return ptr;
 	}
@@ -78,10 +81,10 @@ template<class C>
 inline Entity* Entity::AddComponent()
 {
 	bool toAdd = true;
-	for (size_t i = 0; i < mComponents.size(); i++)
+	for (size_t i = 0; i < m_Components.size(); i++)
 	{
 		//if we cast component to a type and it exists we cant add another one so we break the loop
-		if (dynamic_cast<C*>(mComponents[i]) != nullptr)
+		if (dynamic_cast<C*>(m_Components[i]) != nullptr)
 		{
 			toAdd = false;
 		}
@@ -89,7 +92,7 @@ inline Entity* Entity::AddComponent()
 
 	if (toAdd == true)
 	{
-		mComponents.push_back(new C(*this));
+		m_Components.push_back(new C(*this));
 	}
 
 	return this;
@@ -100,9 +103,9 @@ inline Entity* Entity::RemoveComponent()
 {
 	int pos = -1;
 
-	for (size_t i = 0; i < mComponents.size(); i++)
+	for (size_t i = 0; i < m_Components.size(); i++)
 	{
-		if (dynamic_cast<C*>(mComponents[i]) != nullptr)
+		if (dynamic_cast<C*>(m_Components[i]) != nullptr)
 		{
 			pos = i;
 			break;
@@ -111,7 +114,7 @@ inline Entity* Entity::RemoveComponent()
 
 	if (pos != -1)
 	{
-		mComponents.erase(mComponents.begin() + pos);
+		m_Components.erase(m_Components.begin() + pos);
 	}
 
 	return this;

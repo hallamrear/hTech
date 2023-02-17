@@ -12,8 +12,8 @@ class HTECH_FUNCTION_EXPORT TextureCache
 private:
 	TextureCache();
 
-	static TextureCache* mInstance;
-	std::unordered_map<std::string, Texture*> mTextures;
+	static TextureCache* m_Instance;
+	std::unordered_map<std::string, Texture*> m_TextureMap;
 
 	Texture* GetTexture_Internal(const std::string& texture_path);
 	void UnloadAll_Impl();

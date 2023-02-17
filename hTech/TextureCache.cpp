@@ -7,25 +7,25 @@
 #include "ProjectLoader.h"
 #include "imgui.h"
 
-TextureCache* TextureCache::mInstance = nullptr;
+TextureCache* TextureCache::m_Instance = nullptr;
 
 TextureCache::~TextureCache()
 {
-	if(mTextures.empty())
+	if(m_TextureMap.empty())
 	{
-		for(auto& itr : mTextures)
+		for(auto& itr : m_TextureMap)
 		{
 			delete itr.second;
 			itr.second = nullptr;
 		}
 
-		mTextures.clear();
+		m_TextureMap.clear();
 	}
 }
 
 TextureCache::TextureCache()
 {
-	mTextures = std::unordered_map<std::string, Texture*>();
+	m_TextureMap = std::unordered_map<std::string, Texture*>();
 }
 
 Texture* TextureCache::GetTexture_Internal(const std::string& texture_path)
@@ -33,9 +33,9 @@ Texture* TextureCache::GetTexture_Internal(const std::string& texture_path)
 	if (texture_path == "")
 		return nullptr;
 
-	auto itr = mTextures.find(texture_path);
+	auto itr = m_TextureMap.find(texture_path);
 
-	if (itr == mTextures.end())
+	if (itr == m_TextureMap.end())
 	{
 		std::string fullPath = ""; std::string projectName = ProjectLoader::GetLoadedProjectName();
 		ProjectLoader::GetEngineProjectsLocation(fullPath);
@@ -43,8 +43,8 @@ Texture* TextureCache::GetTexture_Internal(const std::string& texture_path)
 
 		if (std::filesystem::exists(fullPath))
 		{
-			mTextures.insert(std::make_pair(texture_path, new Texture(fullPath, texture_path)));
-			itr = mTextures.find(texture_path);
+			m_TextureMap.insert(std::make_pair(texture_path, new Texture(fullPath, texture_path)));
+			itr = m_TextureMap.find(texture_path);
 		}
 		else
 		{
@@ -60,23 +60,23 @@ Texture* TextureCache::GetTexture_Internal(const std::string& texture_path)
 
 void TextureCache::UnloadAll_Impl()
 {
-	for (auto itr : mTextures)
+	for (auto itr : m_TextureMap)
 	{
 		delete itr.second;
 		itr.second = nullptr;
 	}
 
-	mTextures.clear();
+	m_TextureMap.clear();
 }
 
 TextureCache* TextureCache::Get()
 {
-	if (mInstance)
-		return mInstance;
+	if (m_Instance)
+		return m_Instance;
 	else
-		mInstance = new TextureCache();
+		m_Instance = new TextureCache();
 
-	return mInstance;
+	return m_Instance;
 }
 
 Texture* TextureCache::GetTexture(const std::string& texture_path)
@@ -98,7 +98,7 @@ void TextureCache::RenderProperties_Impl()
 {
 	ImTextureID IMtexture = nullptr;
 	
-	for (auto& itr : mTextures)
+	for (auto& itr : m_TextureMap)
 	{
 		SDL_Texture* texture = &itr.second->GetSDLTexture();
 		IMtexture = (void*)texture;

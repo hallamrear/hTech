@@ -6,22 +6,44 @@
 #include "Text.h"
 #include "Camera.h"
 #include "Transform.h"
+#include "Editor.h"
+#include "Console.h"
 
 #include "UI.h"
 
 #include "Component_Sprite.h"
 #include "Component_Script.h"
 
-World* World::mInstance = nullptr;
+World* World::m_Instance = nullptr;
+
+void World::UpdateHashmapNames_Impl()
+{
+    std::vector<std::string> toErase = std::vector<std::string>();
+    size_t size = m_EntityMap.size();
+    for (auto& itr : m_EntityMap)
+    {
+        if (itr.first != itr.second->GetName())
+        {
+            Entity* entity = itr.second;
+            m_EntityMap.insert(std::make_pair(itr.second->GetName().c_str(), itr.second));
+            toErase.push_back(itr.first);
+        }
+    }
+
+    for (size_t i = 0; i < toErase.size(); i++)
+    {
+        m_EntityMap.erase(toErase[i]);
+    }
+}
 
 Entity* World::CreateEntity_Impl(std::string Name, Transform SpawnTransform, Entity* Parent)
 {
     Entity* entity = new Entity(SpawnTransform, Name, Parent);
-    mEntityList.push_back(entity);
+    m_EntityMap.insert(std::make_pair(entity->GetName(), entity));
     
-    if (mWorldHashMap)
+    if (m_WorldHashMap)
     {
-        mWorldHashMap->Insert(entity);
+        m_WorldHashMap->Insert(entity);
     }
 
     return entity;
@@ -32,38 +54,37 @@ void World::DestroyEntity_Impl(Entity* entity)
     if (entity == nullptr)
         return;
 
-    auto itr = std::find(mEntityList.begin(), mEntityList.end(), entity);
+    auto itr = m_EntityMap.find(entity->GetName());
 
-    if (itr != mEntityList.end())
+    if (itr != m_EntityMap.end())
     {
-        Entity* entity = *itr._Ptr;
-        entity->Destroy();
+        itr->second->Destroy();
+        m_EntityMap.erase(itr);
     }
 }
 
 void World::ClearupDeadEntities()
 {
-    if (mEntityList.size() != 0)
+    if (m_EntityMap.size() != 0)
     {
-        for (std::vector<Entity*>::iterator it = mEntityList.begin(); it != mEntityList.end(); /*it++*/)
+        for (std::unordered_map<std::string, Entity*>::iterator itr = m_EntityMap.begin(); itr != m_EntityMap.end(); /*it++*/)
         {
-            auto i = *it;
-            if (i == nullptr)
+            Entity* entity = itr->second;
+            if (entity == nullptr)
             {
-                ++it;
+                ++itr;
             }
             else
             {
-                if (i->GetIsBeingDestroyed() == true)
+                if (entity->GetIsBeingDestroyed() == true)
                 {
-                    Entity* e = *it._Ptr;
-                    delete e;
-                    e = nullptr;
-                    it = mEntityList.erase(it);
+                    delete itr->second;
+                    itr->second = nullptr;
+                    itr = m_EntityMap.erase(itr);
                 }
                 else
                 {
-                    ++it;
+                    ++itr;
                 }
             }            
         }
@@ -72,19 +93,19 @@ void World::ClearupDeadEntities()
 
 void World::Update_Impl(float DeltaTime)
 {
-    mWorldHashMap->Clear();
-    mWorldHashMap->Update(DeltaTime);
+    m_WorldHashMap->Clear();
+    m_WorldHashMap->Update(DeltaTime);
 
-    for (size_t i = 0; i < mEntityList.size(); i++)
+    for (auto& itr : m_EntityMap)
     {
-        if (mEntityList[i] != nullptr)
+        if (itr.second != nullptr)
         {
-            if (mEntityList[i]->IsEnabled)
+            if (itr.second->GetIsEnabled())
             {
-                mEntityList[i]->Update(DeltaTime);
+                itr.second->Update(DeltaTime);
             }
 
-            mWorldHashMap->Insert(mEntityList[i]);
+            m_WorldHashMap->Insert(itr.second);
         }
     }
 
@@ -98,15 +119,26 @@ void World::Render_Impl(SDL_Renderer& renderer)
 
     if (Console::Query("DrawHashMap") != 0)
     {
-        mWorldHashMap->Render(renderer);
+        m_WorldHashMap->Render(renderer);
     }
 
-    for (size_t i = 0; i < mEntityList.size(); i++)
+    for(auto& itr : m_EntityMap)
     {
-        if (mEntityList[i] != nullptr)
+        if (itr.second != nullptr)
         {
-            ImGui::Text(mEntityList[i]->GetName().c_str());
-            mEntityList[i]->Render();
+            std::string str = itr.second->GetName();
+
+            if (str == "")
+            {
+                str += "unnamed###" + itr.second->GetIsAlive() + std::to_string(itr.second->GetTransform().Position.X) + "/" + std::to_string(itr.second->GetTransform().Position.Y);
+            }
+
+            if (ImGui::Selectable(str.c_str()))
+            {
+                Editor::SetSelectedEntity(itr.second);
+            }
+            
+            itr.second->Render();
         }
     }
 
@@ -115,11 +147,11 @@ void World::Render_Impl(SDL_Renderer& renderer)
 #else
 void World::Render_Impl(SDL_Renderer& renderer)
 {
-    for (size_t i = 0; i < mEntityList.size(); i++)
+    for (auto& entity : m_EntityMap)
     {
-        if (mEntityList[i] != nullptr)
+        if (entity.second != nullptr)
         {
-            mEntityList[i]->Render();
+            entity.second->Render();
         }
     }
 }
@@ -128,19 +160,19 @@ void World::Render_Impl(SDL_Renderer& renderer)
 Entity* World::GetEntityByName_Impl(std::string name)
 {
     Entity* entity = nullptr;
-    auto result = std::find_if(mEntityList.begin(), mEntityList.end(), [name](Entity* entity) { return entity->GetName() == name; });
+    auto result = m_EntityMap.find(name);
 
-    if (result != mEntityList.end())
+    if (result != m_EntityMap.end())
     {
-        return *result;
+        return result->second;
     }
 
-    return entity;
+    return nullptr;
 }
 
 void World::QuerySpaceForEntities_Impl(WorldRectangle rect, std::vector<Entity*>& entities)
 {
-    mWorldHashMap->Retrieve(rect, entities);
+    m_WorldHashMap->Retrieve(rect, entities);
 }
 
 World::World()
@@ -153,42 +185,31 @@ World::World()
     int halfSizeX = WORLD_TILE_COUNT_X / 2;
     int halfSizeY = WORLD_TILE_COUNT_Y / 2;
 
-    mWorldHashMap = new SpatialHash(sizeX, sizeY);
-
-    InputManager::Bind(
-        IM_KEY_CODE::IM_KEY_A,
-        IM_KEY_STATE::IM_KEY_PRESSED,
-        [this]()
-        {
-            Entity* entity = CreateEntity_Impl("Test", Transform(InputManager::Get()->GetMouseWorldPosition()));
-            entity->AddComponent<SpriteComponent>();
-            entity->GetComponent<SpriteComponent>()->LoadTexture("test.png");
-            entity->AddComponent<ScriptComponent>();
-        });   
+    m_WorldHashMap = new SpatialHash(sizeX, sizeY);
 }
 
 World::~World()
 {
-    if (mWorldHashMap)
+    if (m_WorldHashMap)
     {
-        delete mWorldHashMap;
-        mWorldHashMap = nullptr;
+        delete m_WorldHashMap;
+        m_WorldHashMap = nullptr;
     }
 
-    for (size_t i = 0; i < mEntityList.size(); i++)
+    for (auto& itr : m_EntityMap)
     {
-        DestroyEntity_Impl(mEntityList[i]);
+        DestroyEntity_Impl(itr.second);
     }
 
-    mEntityList.clear();
+    m_EntityMap.clear();
 }
 
 World* World::Get()
 {
-    if (mInstance == nullptr)
-        mInstance = new World();
+    if (m_Instance == nullptr)
+        m_Instance = new World();
 
-    return mInstance;
+    return m_Instance;
 }
 
 void World::QuerySpaceForEntities(WorldRectangle rect, std::vector<Entity*>& entities)
@@ -221,6 +242,16 @@ void World::Render(SDL_Renderer& renderer)
     Get()->Render_Impl(renderer);
 }
 
+void World::ResetWorldEntities()
+{
+    return Get()->ResetWorldEntities_Impl();
+}
+
+void World::CallStartFunctionOnAllEntites()
+{
+    return Get()->CallStartFunctionOnAllEntites_Impl();
+}
+
 void World::UnloadAll()
 {
     return Get()->ClearAllEntities();
@@ -234,7 +265,7 @@ Entity* World::FindNearestEntityToPosition_Impl(Vector2 WorldPosition)
     WorldRectangle rect = WorldRectangle((int)WorldPosition.X - (size / 2), (int)WorldPosition.Y + (size / 2), size, size);
     float minDistance = FLT_MAX;
     rect = WorldRectangle((int)WorldPosition.X - (size / 2), (int)WorldPosition.Y + (size / 2), size, size);
-    mWorldHashMap->Retrieve(rect, entities);
+    m_WorldHashMap->Retrieve(rect, entities);
     
     for (std::vector<Entity*>::iterator itr = entities.begin(); itr != entities.end(); itr++)
     {
@@ -258,13 +289,19 @@ Entity* World::FindNearestEntityToPosition_Impl(Vector2 WorldPosition)
 
 void World::ClearAllEntities()
 {
-    for (size_t i = 0; i < mEntityList.size(); i++)
+    //todo : proper cleanup
+    /*
+    for (auto& itr : m_EntityMap)
     {
-        delete mEntityList[i];
-        mEntityList[i] = nullptr;
-    }
+        m_EntityMap.erase(itr.first);
+    }*/
 
-    mEntityList.clear();
+    m_EntityMap.clear();
+}
+
+void World::UpdateHashmapNames()
+{
+    return Get()->UpdateHashmapNames_Impl();
 }
 
 Entity* World::FindNearestEntityToPosition(Vector2 WorldPosition)
@@ -276,9 +313,9 @@ void World::Serialize_Impl(Serializer& writer) const
 {
     writer.String("Entities");
     writer.StartArray();
-    for (size_t i = 0; i < mEntityList.size(); i++)
+    for (auto& itr : m_EntityMap)
     {
-        mEntityList[i]->Serialize(writer);
+        itr.second->Serialize(writer);
     }
     writer.EndArray();
 }
@@ -299,6 +336,32 @@ void World::Deserialize_Impl(Deserializer& reader)
     }
 
     entity = nullptr;
+}
+
+void World::ResetWorldEntities_Impl()
+{
+    for (auto& itr : m_EntityMap)
+    {
+        ScriptComponent* script = itr.second->GetComponent<ScriptComponent>();
+
+        if (script != nullptr)
+        {
+            script->Reset();
+        }
+    }
+}
+
+void World::CallStartFunctionOnAllEntites_Impl()
+{
+    for (auto& itr : m_EntityMap)
+    {
+        ScriptComponent* script = itr.second->GetComponent<ScriptComponent>();
+
+        if (script != nullptr)
+        {
+            script->Start();
+        }
+    }
 }
 
 void World::Serialize(Serializer& writer)

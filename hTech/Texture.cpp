@@ -5,14 +5,16 @@
 #include "Game.h"
 #include "Log.h"
 #include "ProjectLoader.h"
+
+#define SDL_STBIMAGE_IMPLEMENTATION
 #include <SDL_stbimage.h>
 
 Texture::Texture(std::string texture_path, std::string name)
 {
 	Width = NULL;
 	Height = NULL;
-	mName = "";
-	mPath = "";
+	m_Name = "";
+	m_Path = "";
 	Create(texture_path, name);
 }
 
@@ -20,26 +22,26 @@ Texture::~Texture()
 {
 	Width = NULL;
 	Height = NULL;
-	if (mTexture)
+	if (m_SDLTexture)
 	{
-		SDL_DestroyTexture(mTexture);
-		mTexture = nullptr;
+		SDL_DestroyTexture(m_SDLTexture);
+		m_SDLTexture = nullptr;
 	}
 }
 
 SDL_Texture& Texture::GetSDLTexture()
 {
-	return *mTexture;
+	return *m_SDLTexture;
 }
 
 const std::string& Texture::GetLocation() const
 {
-	return mPath;
+	return m_Path;
 }
 
 const std::string& Texture::GetName() const
 {
-	return mName;
+	return m_Name;
 }
 
 void Texture::Render(SDL_Renderer& renderer, Vector2 position, float rotation)
@@ -96,9 +98,9 @@ void Texture::Render(SDL_Renderer& renderer, Vector2 position, float rotation, b
 	destRect.y = (int)(renderPosition.Y);
 
 	if (flipped)
-		SDL_RenderCopyEx(&renderer, &GetSDLTexture(), NULL, &destRect, rotation, NULL, SDL_FLIP_NONE);
-	else
 		SDL_RenderCopyEx(&renderer, &GetSDLTexture(), NULL, &destRect, rotation, NULL, SDL_FLIP_HORIZONTAL);
+	else
+		SDL_RenderCopyEx(&renderer, &GetSDLTexture(), NULL, &destRect, rotation, NULL, SDL_FLIP_NONE);
 }
 
 void Texture::Render(SDL_Renderer& renderer, Vector2 position, float rotation, Vector2 sourcePosition, Vector2 sourceDimensions, bool flipped)
@@ -125,12 +127,12 @@ void Texture::Render(SDL_Renderer& renderer, Vector2 position, float rotation, V
 
 void Texture::Create(std::string texture_path, std::string name)
 {
-	assert(mTexture == nullptr);
+	assert(m_SDLTexture == nullptr);
 
 	if (texture_path != "")
 	{
-		if (mTexture)
-			SDL_DestroyTexture(mTexture);
+		if (m_SDLTexture)
+			SDL_DestroyTexture(m_SDLTexture);
 
 		// Load image as SDL_Surface
 		SDL_Surface* surface = STBIMG_Load(texture_path.c_str());
@@ -143,28 +145,28 @@ void Texture::Create(std::string texture_path, std::string name)
 
 		// SDL_Surface is just the raw pixels
 		// Convert it to a hardware-optimzed texture so we can render it
-		mTexture = SDL_CreateTextureFromSurface(Game::Renderer, surface);
-		if (mTexture == nullptr)
+		m_SDLTexture = SDL_CreateTextureFromSurface(Game::Renderer, surface);
+		if (m_SDLTexture == nullptr)
 		{
 			Log::LogMessage(LogLevel::LOG_ERROR, std::string("Failed to load texture <" + texture_path + "> error : " + SDL_GetError() + "\n"));
-			SDL_DestroyTexture(mTexture);
+			SDL_DestroyTexture(m_SDLTexture);
 			SDL_FreeSurface(surface);
 			return;
 		}
 
-		SDL_QueryTexture(mTexture, NULL, NULL, &Width, &Height);
+		SDL_QueryTexture(m_SDLTexture, NULL, NULL, &Width, &Height);
 		// Don't need the orignal texture, release the memory
 		SDL_FreeSurface(surface);
 
-		if (mTexture == nullptr)
+		if (m_SDLTexture == nullptr)
 		{
 			Log::LogMessage(LogLevel::LOG_ERROR, std::string("Failed to load texture <" + texture_path + "> error : " + SDL_GetError() + "\n"));
-			SDL_DestroyTexture(mTexture);
+			SDL_DestroyTexture(m_SDLTexture);
 			SDL_FreeSurface(surface);
 			return;
 		}
 
-		mPath = texture_path;
-		mName = name;
+		m_Path = texture_path;
+		m_Name = name;
 	}
 }

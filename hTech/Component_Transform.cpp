@@ -4,25 +4,30 @@
 
 TransformComponent::TransformComponent(Entity& entity) : Component("Transform Component", entity)
 {
-	mTransform.Position = Vector2();
-	mTransform.Rotation = 0.0f;
+	m_Transform.Position = Vector2();
+	m_Transform.Rotation = 0.0f;
 }
 
 TransformComponent::TransformComponent(Transform transform, Entity& entity) : Component("Transform Component", entity)
 {
-	mTransform = transform;
+	m_Transform = transform;
 }
 
 TransformComponent::~TransformComponent()
 {
-	mTransform.Position.X = FLT_MAX;
-	mTransform.Position.Y = FLT_MAX;
-	mTransform.Rotation = FLT_MAX;
+	m_Transform.Position.X = FLT_MAX;
+	m_Transform.Position.Y = FLT_MAX;
+	m_Transform.Rotation = FLT_MAX;
 }
 
 Transform& TransformComponent::GetTransform()
 {
-	return mTransform;
+	return m_Transform;
+}
+
+void TransformComponent::Update(float deltaTime)
+{
+	m_Transform.Rotation = fmod(m_Transform.Rotation, 360.0f);
 }
 
 void TransformComponent::Serialize(Serializer& writer) const
@@ -31,13 +36,13 @@ void TransformComponent::Serialize(Serializer& writer) const
 
 	writer.String("Position");
 	writer.StartObject();
-	writer.String("X"); writer.Double((double)mTransform.Position.X);
-	writer.String("Y"); writer.Double((double)mTransform.Position.X);
+	writer.String("X"); writer.Double((double)m_Transform.Position.X);
+	writer.String("Y"); writer.Double((double)m_Transform.Position.Y);
 	writer.EndObject();
 
 	writer.String("Rotation");
 	writer.StartObject();
-	writer.String("degrees"); writer.Double((double)mTransform.Rotation);
+	writer.String("degrees"); writer.Double((double)m_Transform.Rotation);
 	writer.EndObject();
 }
 
@@ -48,24 +53,28 @@ void TransformComponent::Deserialize(SerializedValue& value)
 	auto positionMember = value.FindMember("Position");
 	if (positionMember->value.IsObject())
 	{
-		mTransform.Position.X = (float)positionMember->value["X"].GetDouble();
-		mTransform.Position.Y = (float)positionMember->value["Y"].GetDouble();		
+		m_Transform.Position.X = (float)positionMember->value["X"].GetDouble();
+		m_Transform.Position.Y = (float)positionMember->value["Y"].GetDouble();		
 	}
 
 	auto rotationMember = value.FindMember("Rotation");
 	if (rotationMember->value.IsObject())
 	{
-		mTransform.Rotation = (float)rotationMember->value["degrees"].GetDouble();
+		m_Transform.Rotation = (float)rotationMember->value["degrees"].GetDouble();
 	}
 }
 
 void TransformComponent::RenderProperties()
 {
-	float floats[2];
-	floats[0] = mTransform.Position.X;
-	floats[1] = mTransform.Position.Y;
-	ImGui::InputFloat2("Position:", floats);
-	mTransform.Position.X = floats[0];
-	mTransform.Position.Y = floats[1];
-	ImGui::InputFloat("Rotation:", &mTransform.Rotation);
+	ImGui::Text("Position: ");
+	ImGui::SameLine();
+	ImGui::InputFloat("##posX:", &m_Transform.Position.X); 
+	ImGui::SameLine();
+	ImGui::InputFloat("##posY", &m_Transform.Position.Y);
+	ImGui::InputFloat("Rotation:", &m_Transform.Rotation);
+	if (ImGui::Button("Reset to 0, 0"))
+	{
+		m_Transform.Position.X = 0.0f;
+		m_Transform.Position.Y = 0.0f;
+	}
 }

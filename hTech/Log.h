@@ -20,8 +20,8 @@ enum class LogLevel
 class HTECH_FUNCTION_EXPORT Log
 {
 private:
-	std::vector<Text*> mTextElements;
-	static Log* mInstance;
+	std::vector<Text*> m_TextElements;
+	static Log* m_Instance;
 
 	Log();
 	~Log();

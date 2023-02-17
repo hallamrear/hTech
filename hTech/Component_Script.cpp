@@ -4,88 +4,136 @@
 #include "Entity.h"
 #include "ScriptLoader.h"
 #include "ScriptObject.h"
+#include "Game.h"
 
 void ScriptComponent::Destroy()
 {
-	if (mScriptObject)
+	if (m_ScriptObject)
 	{
-		//IMPLEMENT Proper destruction of script object.
-		//mScriptObject->Destroy();
-		//mScriptObject = nullptr;
+		m_ScriptObject->Destroy();
+		m_ScriptObject = nullptr;
 	}
 }
 
 void ScriptComponent::RenderProperties()
 {
-	ImGui::Text("Script Components run out of .h files under the same name as the object, compiled via the engine.");
-	ImGui::Text("There's really not much to write here that isn't adding a code editor and that feels abit much.");
+	ImGui::BeginDisabled(Game::GetGameState() == GAME_STATE::RUNNING);
 
-	//IMPLEMENT In-Engine code editor.
+	if (ImGui::Button("Rebuild DLL"))
+	{
+		ScriptLoader::Reload(true);
+	}
+	ImGui::SameLine();
+	if (ImGui::Button("Reload DLL"))
+	{
+		ScriptLoader::Reload(false);
+	}
+	ImGui::Separator();
+	std::string str = m_ScriptReferenceName;
+	ImGui::InputText("Class Name: ", &str);
+	if (str != m_ScriptReferenceName)
+	{
+		m_ScriptReferenceName = str;
+
+		if (m_ScriptObject)
+		{
+			m_ScriptObject->Destroy();
+			m_ScriptObject = nullptr;
+		}
+		else
+		{
+			m_ScriptObject = ScriptLoader::GetScriptObject(&m_ParentEntity, m_ScriptReferenceName);
+		}
+	}
+
+	ImGui::EndDisabled();
 }
 
 void ScriptComponent::Update(float deltaTime)
 {
-	if (mScriptObject)
+	if (Game::GetGameState() != GAME_STATE::RUNNING)
+		return;
+
+	if (!ScriptLoader::IsLibraryLoaded())
 	{
-		mScriptObject->Update(deltaTime);
+		if (m_ScriptObject)
+		{
+			m_ScriptObject->Destroy();
+			delete m_ScriptObject;
+			m_ScriptObject = nullptr;
+		}
+	}
+
+	if (m_ScriptObject)
+	{
+		m_ScriptObject->Update(deltaTime);
 	}
 }
 
-ScriptComponent::ScriptComponent(Entity& entity) : Component("Script Component", entity)
+ScriptComponent::ScriptComponent(Entity& entity) : Component("Script Component", entity), Observer()
 {
-	std::string expectedName = entity.GetName();
-	mScriptObject = ScriptLoader::GetScriptObject(expectedName);
+	m_ScriptObject = nullptr;
+	ScriptLoader::AddScriptToReloadTracking(this);
 }
 
 ScriptComponent::~ScriptComponent()
 {
 	Destroy();
+	ScriptLoader::RemoveScriptFromReloadTracking(this);
 }
 
 void ScriptComponent::Start()
 {
-	if (mScriptObject)
+	if (m_ScriptObject)
 	{
-		mScriptObject->Start();
+		m_ScriptObject->Start();
+	}
+}
+
+void ScriptComponent::Reset()
+{
+	if (m_ScriptObject)
+	{
+		m_ScriptObject->Reset();
 	}
 }
 
 void ScriptComponent::OnEnable()
 {
-	if (mScriptObject)
+	if (m_ScriptObject)
 	{
-		mScriptObject->OnEnable();
+		m_ScriptObject->OnEnable();
 	}
 }
 
 void ScriptComponent::OnDisable()
 {
-	if (mScriptObject)
+	if (m_ScriptObject)
 	{
-		mScriptObject->OnDisable();
+		m_ScriptObject->OnDisable();
 	}
 }
 
 void ScriptComponent::OnCollision(const CollisionManifold& manifold, RigidbodyComponent& other)
 {
-	if (mScriptObject)
+	if (m_ScriptObject)
 	{
-		mScriptObject->OnCollision(manifold, other);
+		m_ScriptObject->OnCollision(manifold, other);
 	}
 }
 
 void ScriptComponent::OnOverlap(const CollisionManifold& manifold, RigidbodyComponent& other)
 {
-	if (mScriptObject)
+	if (m_ScriptObject)
 	{
-		mScriptObject->OnOverlap(manifold, other);
+		m_ScriptObject->OnOverlap(manifold, other);
 	}
 }
 
 ScriptObject const * ScriptComponent::GetScriptObject()
 {
-	if (mScriptObject)
-		return mScriptObject;
+	if (m_ScriptObject)
+		return m_ScriptObject;
 	else
 		return nullptr;
 }
@@ -93,13 +141,26 @@ ScriptObject const * ScriptComponent::GetScriptObject()
 void ScriptComponent::Serialize(Serializer& writer) const
 {
 	Component::Serialize(writer);
-	//I don't think I need to initialise this because 
-	//all of the script values will be in the script object
-	//when it's created.
+	writer.String("ClassName"); writer.String(m_ScriptReferenceName.c_str());
 }
 
 void ScriptComponent::Deserialize(SerializedValue& value)
 {
 	Component::Deserialize(value);
-	//See serialize function
+	if (value["ClassName"].IsString())
+	{
+		m_ScriptReferenceName = value["ClassName"].GetString();
+		m_ScriptObject = ScriptLoader::GetScriptObject(&m_ParentEntity, m_ScriptReferenceName);
+	}
+}
+
+void ScriptComponent::OnNotify()
+{
+	if (m_ScriptObject)
+	{
+		delete m_ScriptObject;
+		m_ScriptObject = nullptr;
+	}
+
+	m_ScriptObject = ScriptLoader::GetScriptObject(&m_ParentEntity, m_ScriptReferenceName);
 }

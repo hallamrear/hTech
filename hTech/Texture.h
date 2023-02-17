@@ -9,9 +9,9 @@ struct SDL_Texture;
 class HTECH_FUNCTION_EXPORT Texture
 {
 protected:
-	std::string mName;
-	std::string mPath;
-	SDL_Texture* mTexture;
+	std::string m_Name;
+	std::string m_Path;
+	SDL_Texture* m_SDLTexture;
 
 	//! Creates the sdl texture and returns the address that will be stored in the map.
 	void Create(std::string texture_path, std::string name);

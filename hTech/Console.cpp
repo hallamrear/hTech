@@ -3,21 +3,21 @@
 #include <cstdarg>
 #include "Log.h"
 
-Console* Console::mInstance = nullptr;
+Console* Console::m_Instance = nullptr;
 
 Console* Console::Get()
 {
-    if (mInstance == nullptr)
+    if (m_Instance == nullptr)
     {
-        mInstance = new Console();
+        m_Instance = new Console();
     }
 
-    return mInstance;
+    return m_Instance;
 }
 
 Console::Console()
 {
-    mIntMap = std::unordered_map<std::string, int>();
+    m_IntMap = std::unordered_map<std::string, int>();
 
     ReloadValues();
 }
@@ -69,8 +69,8 @@ bool Console::IsVisible_Impl()
 
 int Console::Query_Impl(std::string variable)
 {
-    auto found = mIntMap.find(variable);
-    if (found != mIntMap.end())
+    auto found = m_IntMap.find(variable);
+    if (found != m_IntMap.end())
     {
         return found->second;
     }
@@ -81,22 +81,22 @@ int Console::Query_Impl(std::string variable)
 
 void Console::ReloadValues()
 {
-    mIntMap.clear();
-    mNonVariableFunctions.clear();
+    m_IntMap.clear();
+    m_NonVariableFunctionMap.clear();
 
-    mIntMap.insert(std::make_pair("ShowConsole", 0));
-    mIntMap.insert(std::make_pair("DrawLog", 0));
-    mIntMap.insert(std::make_pair("WindowDimensionsW", 1280));
-    mIntMap.insert(std::make_pair("WindowDimensionsH", 720));
-    mIntMap.insert(std::make_pair("DrawColliders", 0));
-    mIntMap.insert(std::make_pair("DrawHashMap", 0));
-    mIntMap.insert(std::make_pair("MaxLogMessages", 50));
-    mIntMap.insert(std::make_pair("WindowCentreX", 0));
-    mIntMap.insert(std::make_pair("WindowCentreY", 0));
+    m_IntMap.insert(std::make_pair("ShowConsole", 0));
+    m_IntMap.insert(std::make_pair("DrawLog", 0));
+    m_IntMap.insert(std::make_pair("WindowDimensionsW", 1280));
+    m_IntMap.insert(std::make_pair("WindowDimensionsH", 720));
+    m_IntMap.insert(std::make_pair("DrawColliders", 0));
+    m_IntMap.insert(std::make_pair("DrawHashMap", 0));
+    m_IntMap.insert(std::make_pair("MaxLogMessages", 50));
+    m_IntMap.insert(std::make_pair("WindowCentreX", 0));
+    m_IntMap.insert(std::make_pair("WindowCentreY", 0));
 
-    mNonVariableFunctions.insert(std::make_pair("reload", std::bind(&Console::ReloadValues, this)));
-    mNonVariableFunctions.insert(std::make_pair("showConsole", std::bind(&Console::Show_Impl, this)));
-    mNonVariableFunctions.insert(std::make_pair("hideConsole", std::bind(&Console::Hide_Impl, this)));
+    m_NonVariableFunctionMap.insert(std::make_pair("reload", std::bind(&Console::ReloadValues, this)));
+    m_NonVariableFunctionMap.insert(std::make_pair("showConsole", std::bind(&Console::Show_Impl, this)));
+    m_NonVariableFunctionMap.insert(std::make_pair("hideConsole", std::bind(&Console::Hide_Impl, this)));
 }
 
 void Console::Run_Impl(std::string command)
@@ -136,8 +136,8 @@ void Console::ParseCommand(std::vector<std::string>& splits)
         {
             std::string funcName = splits[0];
 
-            auto foundFunc = mNonVariableFunctions.find(funcName);
-            if (foundFunc != mNonVariableFunctions.end())
+            auto foundFunc = m_NonVariableFunctionMap.find(funcName);
+            if (foundFunc != m_NonVariableFunctionMap.end())
             {
                 output = command + " to " + funcName + "()";
                 foundFunc->second();
@@ -146,15 +146,14 @@ void Console::ParseCommand(std::vector<std::string>& splits)
             {
                 output = "Function '" + splits[0] + "' not found.";
             }
-            splits[0];
         }
     }
     else 
     {
         int arg = atoi(splits[0].c_str());
 
-        auto foundItr = mIntMap.find(command);
-        if (foundItr != mIntMap.end())
+        auto foundItr = m_IntMap.find(command);
+        if (foundItr != m_IntMap.end())
         {
             output = command + " set to " + std::to_string(arg);
             foundItr->second = arg;

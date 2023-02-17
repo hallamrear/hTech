@@ -16,7 +16,7 @@ Vector2::Vector2(float x, float y)
 //0deg == Vector(1.0, 0.0)
 float Vector2::GetAngleDegrees() const
 {
-	return MathsHelp::ConvertToDegrees(GetAngleRadians());
+	return Utils::Maths::ConvertToDegrees(GetAngleRadians());
 }
 
 //0r == Vector(1.0, 0.0)
@@ -44,7 +44,7 @@ Vector2 Vector2::GetNormalized() const
 
 Vector2 Vector2::GetVectorRotatedByAngle(float angleDegrees)
 {
-	float theta = MathsHelp::ConvertToRadians(angleDegrees);
+	float theta = Utils::Maths::ConvertToRadians(angleDegrees);
 	float cs = cos(theta);
 	float sn = sin(theta);
 
@@ -110,6 +110,22 @@ float Vector2::Dot(Vector2 vector) const
 	return ((this->X * vector.X) + (this->Y * vector.Y));
 }
 
+//Adds the vector as a string to the end of 'stringToFill'.
+//i.e. str += "X, Y";
+void Vector2::ToString(std::string& stringToFill)
+{
+	stringToFill += X;
+	stringToFill += ", ";
+	stringToFill += Y;
+}
+
+//Returns a vector as a string.
+//i.e. std::string("X, Y");
+const std::string Vector2::ToString() const
+{
+	return std::string(std::to_string(X) + ", " + std::to_string(Y));
+}
+
 bool Vector2::operator==(const Vector2& rhs) const
 {
 	return ((this->X == rhs.X) && (this->Y == rhs.Y));
@@ -132,9 +148,10 @@ void Vector2::RotatePointAroundOriginRadians(float rotationRad, Vector2 origin)
 	X = xnew + origin.X;
 	Y = ynew + origin.Y;
 }
+
 void Vector2::RotatePointAroundOriginDegrees(float rotationDeg, Vector2 origin)
 {
-	float rotationRad = MathsHelp::ConvertToRadians(rotationDeg);
+	float rotationRad = Utils::Maths::ConvertToRadians(rotationDeg);
 	float s = sin(rotationRad);
 	float c = cos(rotationRad);
 
@@ -151,16 +168,42 @@ void Vector2::RotatePointAroundOriginDegrees(float rotationDeg, Vector2 origin)
 	Y = ynew + origin.Y;
 }
 
-//
-//bool operator==(const Vector2& lhs, const Vector2& rhs)
-//{
-//	if ((lhs.X == rhs.X) && (lhs.Y == rhs.Y))
-//		return true;
-//	else
-//		return false;
-//}
-//
-//Vector2 operator-(const Vector2& lhs, const Vector2& rhs)
-//{
-//	return Vector2(lhs.X - rhs.X, lhs.Y - rhs.Y);
-//}
+
+const Vector2 Vector2::operator+(const Vector2& rhs) const
+{
+	return Vector2(this->X + rhs.X, this->Y + rhs.Y);
+}
+
+const Vector2 Vector2::operator-(const Vector2& rhs) const
+{
+	return Vector2(this->X - rhs.X, this->Y - rhs.Y);
+}
+
+const Vector2 Vector2::operator*(const float& scalar) const
+{
+	return Vector2(this->X * scalar, this->Y * scalar);
+}
+
+const Vector2 Vector2::operator/(const float& scalar) const
+{
+	return Vector2(this->X / scalar, this->Y / scalar);
+}
+
+Vector2 Vector2::operator-()
+{
+	return Vector2(-X, -Y);
+}
+
+Vector2& Vector2::operator*=(const float& rhs)
+{
+	this->X *= rhs;
+	this->Y *= rhs;
+	return *this;
+}
+
+Vector2& Vector2::operator*=(const Vector2& rhs)
+{
+	this->X *= rhs.X;
+	this->Y *= rhs.Y;
+	return *this;
+}
