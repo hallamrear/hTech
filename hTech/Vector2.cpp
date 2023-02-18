@@ -189,7 +189,7 @@ const Vector2 Vector2::operator/(const float& scalar) const
 	return Vector2(this->X / scalar, this->Y / scalar);
 }
 
-Vector2 Vector2::operator-()
+const Vector2 Vector2::operator-() const
 {
 	return Vector2(-X, -Y);
 }

@@ -35,8 +35,7 @@ public:
 	Vector2& operator*=(const Vector2& rhs);
 	bool operator!=(const Vector2& rhs);
 	bool operator==(const Vector2& rhs) const;
-	Vector2 operator-();
-
+	const Vector2 operator-() const;
 
 	const Vector2 operator+(const Vector2& rhs) const;
 	const Vector2 operator-(const Vector2& rhs) const;
