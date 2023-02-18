@@ -81,12 +81,10 @@ void RigidbodyComponent::PhysicsUpdate(float DeltaTime)
 		m_NetForce += frictionForce;
 	}
 
-	///External
-	//No need for gravity
+	///Gravity
 	if (GetGravityEnabled())
 	{
-		//HARDCODED Gravity value
-		m_NetForce += (Vector2(0.0f, -9.81f) * m_Mass);
+		m_NetForce += (Physics::GetGravity() * m_Mass);
 	}
 
 	m_NetForce += m_ExternalForce;

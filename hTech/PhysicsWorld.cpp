@@ -10,6 +10,7 @@ Physics* Physics::m_Instance = nullptr;
 Physics::Physics(float fixedTimeStep)
 {
 	mFixedTimestep = fixedTimeStep;
+	m_Gravity = Vector2(0.0f, -9.81f);
 }
 
 Physics::~Physics()
@@ -113,6 +114,26 @@ void Physics::Update(float DeltaTime)
 void Physics::RegisterRigidbody(RigidbodyComponent* rb)
 {
 	Get()->RegisterRigidbody_Impl(rb);
+}
+
+const Vector2 Physics::GetGravity()
+{
+	return Get()->GetGravity_Impl();
+}
+
+const Vector2 Physics::GetGravity_Impl()
+{
+	return m_Gravity;
+}
+
+void Physics::SetGravity_Impl(const Vector2& gravity)
+{
+	m_Gravity = gravity;
+}
+
+void Physics::SetGravity(const Vector2& gravity)
+{
+	return Get()->SetGravity_Impl(gravity);
 }
 
 void Physics::RegisterRigidbody_Impl(RigidbodyComponent* rb)
