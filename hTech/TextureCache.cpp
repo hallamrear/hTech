@@ -33,18 +33,25 @@ Texture* TextureCache::GetTexture_Internal(const std::string& texture_path)
 	if (texture_path == "")
 		return nullptr;
 
-	auto itr = m_TextureMap.find(texture_path);
+	std::string texturePathStandardised = texture_path;
+	
+	for (size_t i = 0; i < texture_path.size(); i++)
+	{
+		texturePathStandardised[i] = tolower(texture_path[i]);
+	}
+
+	auto itr = m_TextureMap.find(texturePathStandardised);
 
 	if (itr == m_TextureMap.end())
 	{
 		std::string fullPath = ""; std::string projectName = ProjectLoader::GetLoadedProjectName();
 		ProjectLoader::GetEngineProjectsLocation(fullPath);
-		fullPath += (projectName + "\\Assets\\" + texture_path);
+		fullPath += (projectName + "\\Assets\\" + texturePathStandardised);
 
 		if (std::filesystem::exists(fullPath))
 		{
-			m_TextureMap.insert(std::make_pair(texture_path, new Texture(fullPath, texture_path)));
-			itr = m_TextureMap.find(texture_path);
+			m_TextureMap.insert(std::make_pair(texturePathStandardised, new Texture(fullPath, texture_path)));
+			itr = m_TextureMap.find(texturePathStandardised);
 		}
 		else
 		{
