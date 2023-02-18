@@ -54,6 +54,8 @@ private:
 	void MouseRelease();
 	void MouseHold();
 	void ClearSelected_Impl();
+	Entity* GetSelectedEntity_Impl();
+	std::vector<Entity*> GetSelectedEntities_Impl();
 
 protected:
 	Editor();
@@ -66,6 +68,8 @@ public:
 	static void Render(SDL_Renderer&);
 	static void SetEditorCursorState(EDITOR_STATE state);
 	static void SetSelectedEntity(Entity* entity);
+	static Entity* GetSelectedEntity();
+	static std::vector<Entity*> GetSelectedEntities();
 	static EDITOR_STATE GetEditorCursorState();
 	static void ClearSelected();
 };

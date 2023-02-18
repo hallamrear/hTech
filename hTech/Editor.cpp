@@ -335,4 +335,24 @@ void Editor::SetSelectedEntity(Entity* entity)
     Get()->SetSelectedEntity_Impl(entity);
 }
 
+Entity* Editor::GetSelectedEntity_Impl()
+{
+    return selected;
+}
+
+std::vector<Entity*> Editor::GetSelectedEntities_Impl()
+{
+    return m_SelectedEntities;
+}
+
+Entity* Editor::GetSelectedEntity()
+{
+    return Get()->GetSelectedEntity_Impl();
+}
+
+std::vector<Entity*> Editor::GetSelectedEntities()
+{
+    return Get()->GetSelectedEntities_Impl();
+}
+
 #endif

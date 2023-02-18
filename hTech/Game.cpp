@@ -719,6 +719,7 @@ void Game::Render()
 
 	ImGui::Begin("Render Window", 0, ImGuiWindowFlags_::ImGuiWindowFlags_MenuBar);
 
+	static bool showDeletionConfirmation = false;
 	ImGui::BeginMenuBar();
 	{
 		switch (m_GameState)
@@ -755,6 +756,14 @@ void Game::Render()
 			if (ImGui::Button("Create Empty entity"))
 			{
 				World::CreateEntity();
+			}
+
+			if (ImGui::Button("Delete selected entity"))
+			{
+				if (Editor::GetSelectedEntity() != nullptr)
+				{
+					showDeletionConfirmation = true;
+				}
 			}
 
 			ImGui::SameLine();
@@ -823,6 +832,42 @@ void Game::Render()
 
 	ImGui::EndMenuBar();
 
+
+	if (showDeletionConfirmation)
+	{
+		if (ImGui::IsPopupOpen("Are you sure?") == false)
+			ImGui::OpenPopup("Are you sure?");
+
+		// Always center this window when appearing
+		ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+		ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+
+		if (ImGui::BeginPopupModal("Are you sure?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			std::string text = "Are you sure you want to delete entity \"" + Editor::GetSelectedEntity()->GetName() + "\"";
+			ImGui::Text(text.c_str());
+
+			if (ImGui::Button("Delete", ImVec2(120, 0)))
+			{
+				World::DestroyEntity(Editor::GetSelectedEntity());
+				Editor::ClearSelected();
+				showDeletionConfirmation = false;
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::SetItemDefaultFocus();
+			ImGui::SameLine();
+
+			if (ImGui::Button("Cancel", ImVec2(120, 0)))
+			{
+				showDeletionConfirmation = false;
+				ImGui::CloseCurrentPopup();
+			}
+
+			ImGui::EndPopup();
+		}
+	}
+
 	SDL_SetRenderTarget(Renderer, NULL);
 	Vector2 size;
 	size.X = ImGui::GetWindowWidth();
@@ -847,7 +892,7 @@ void Game::Render()
 	ImGui::Render();
 	ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
 
-	if (showNewProjectModal == false)
+	if (showNewProjectModal == false && showDeletionConfirmation == false)
 	{
 		SDL_RenderCopyEx(Renderer, m_RenderToTextureTarget, nullptr, nullptr, 0.0F, &center, SDL_RendererFlip::SDL_FLIP_NONE);
 	}

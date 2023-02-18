@@ -137,7 +137,7 @@ void World::Render_Impl(SDL_Renderer& renderer)
             {
                 Editor::SetSelectedEntity(itr.second);
             }
-            
+                        
             itr.second->Render();
         }
     }
