@@ -73,7 +73,7 @@ void SpriteComponent::Render(SDL_Renderer& renderer)
 {
 	if (m_SDLTexture)
 	{
-		m_SDLTexture->Render(renderer, m_ParentEntity.GetTransform().Position, m_ParentEntity.GetTransform().Rotation, m_IsFlipped);
+		m_SDLTexture->Render(renderer, m_ParentEntity.GetTransform(), m_IsFlipped);
 	}
 }
 

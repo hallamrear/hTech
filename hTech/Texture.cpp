@@ -5,6 +5,7 @@
 #include "Game.h"
 #include "Log.h"
 #include "ProjectLoader.h"
+#include "Transform.h"
 
 #define SDL_STBIMAGE_IMPLEMENTATION
 #include <SDL_stbimage.h>
@@ -44,21 +45,21 @@ const std::string& Texture::GetName() const
 	return m_Name;
 }
 
-void Texture::Render(SDL_Renderer& renderer, Vector2 position, float rotation)
+void Texture::Render(SDL_Renderer& renderer, const Transform& transform)
 {
-	Vector2 renderPosition = Camera::WorldToScreen(position);
+	Vector2 renderPosition = Camera::WorldToScreen(transform.Position);
 
 	SDL_Rect destRect{};
 	destRect.w = Width;
 	destRect.h = Height;
 	destRect.x = (int)(renderPosition.X) - (destRect.w / 2);
 	destRect.y = (int)(renderPosition.Y) - (destRect.h / 2);
-	SDL_RenderCopyEx(&renderer, &GetSDLTexture(), NULL, &destRect, rotation, NULL, SDL_FLIP_NONE);
+	SDL_RenderCopyEx(&renderer, &GetSDLTexture(), NULL, &destRect, transform.Rotation, NULL, SDL_FLIP_NONE);
 }
 
-void Texture::Render(SDL_Renderer& renderer, Vector2 position, float rotation, Vector2 sourcePosition, Vector2 sourceDimensions)
+void Texture::Render(SDL_Renderer& renderer, const Transform& transform, const Vector2& sourcePosition, const Vector2& sourceDimensions)
 {
-	Vector2 renderPosition = Camera::WorldToScreen(position);
+	Vector2 renderPosition = Camera::WorldToScreen(transform.Position);
 
 	SDL_Rect destRect{};
 	destRect.w = (int)sourceDimensions.X;
@@ -72,11 +73,11 @@ void Texture::Render(SDL_Renderer& renderer, Vector2 position, float rotation, V
 	srcRect.x = (int)(sourcePosition.X) - (srcRect.w / 2);
 	srcRect.y = (int)(sourcePosition.Y) - (srcRect.h / 2);
 
-	SDL_RenderCopyEx(&renderer, &GetSDLTexture(), &srcRect, &destRect, rotation, NULL, SDL_FLIP_NONE);
+	SDL_RenderCopyEx(&renderer, &GetSDLTexture(), &srcRect, &destRect, transform.Rotation, NULL, SDL_FLIP_NONE);
 }
 
 
-void Texture::Render(SDL_Renderer& renderer, Vector2 position, float rotation, bool flipped)
+void Texture::Render(SDL_Renderer& renderer, const Transform& transform, const bool& flipped)
 {
 	////ORIGINAL
 	//Vector2 renderPosition = Camera::WorldToScreen(position);
@@ -87,7 +88,7 @@ void Texture::Render(SDL_Renderer& renderer, Vector2 position, float rotation, b
 	//destRect.y = (int)(renderPosition.Y) - (destRect.h / 2);
 
 	//ALTERED
-	Vector2 renderPosition = position;
+	Vector2 renderPosition = transform.Position;
 	renderPosition.X -= (Width / 2);
 	renderPosition.Y += (Height / 2);
 	renderPosition = Camera::WorldToScreen(renderPosition);
@@ -98,14 +99,14 @@ void Texture::Render(SDL_Renderer& renderer, Vector2 position, float rotation, b
 	destRect.y = (int)(renderPosition.Y);
 
 	if (flipped)
-		SDL_RenderCopyEx(&renderer, &GetSDLTexture(), NULL, &destRect, rotation, NULL, SDL_FLIP_HORIZONTAL);
-	else
-		SDL_RenderCopyEx(&renderer, &GetSDLTexture(), NULL, &destRect, rotation, NULL, SDL_FLIP_NONE);
+		SDL_RenderCopyEx(&renderer, &GetSDLTexture(), NULL, &destRect, transform.Rotation, NULL, SDL_FLIP_HORIZONTAL);
+	else															   
+		SDL_RenderCopyEx(&renderer, &GetSDLTexture(), NULL, &destRect, transform.Rotation, NULL, SDL_FLIP_NONE);
 }
 
-void Texture::Render(SDL_Renderer& renderer, Vector2 position, float rotation, Vector2 sourcePosition, Vector2 sourceDimensions, bool flipped)
+void Texture::Render(SDL_Renderer& renderer, const Transform& transform, const Vector2& sourcePosition, const Vector2& sourceDimensions, const bool& flipped)
 {
-	const Vector2 renderPosition = Camera::WorldToScreen(position);
+	const Vector2 renderPosition = Camera::WorldToScreen(transform.Position);
 
 	SDL_Rect destRect{};
 	destRect.w = (int)sourceDimensions.X;
@@ -120,9 +121,9 @@ void Texture::Render(SDL_Renderer& renderer, Vector2 position, float rotation, V
 	srcRect.y = (int)(sourcePosition.Y) - (srcRect.h / 2);
 
 	if(flipped)
-		SDL_RenderCopyEx(&renderer, &GetSDLTexture(), &srcRect, &destRect, (double)rotation, NULL, SDL_FLIP_NONE);
+		SDL_RenderCopyEx(&renderer, &GetSDLTexture(), &srcRect, &destRect, (double)transform.Rotation, NULL, SDL_FLIP_NONE);
 	else																   
-		SDL_RenderCopyEx(&renderer, &GetSDLTexture(), &srcRect, &destRect, (double)rotation, NULL, SDL_FLIP_HORIZONTAL);
+		SDL_RenderCopyEx(&renderer, &GetSDLTexture(), &srcRect, &destRect, (double)transform.Rotation, NULL, SDL_FLIP_HORIZONTAL);
 }
 
 void Texture::Create(std::string texture_path, std::string name)

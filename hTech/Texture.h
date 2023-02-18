@@ -3,6 +3,8 @@
 
 #include <string>
 
+class Transform;
+
 class HTECH_FUNCTION_EXPORT Vector2;
 struct SDL_Texture;
 
@@ -26,8 +28,8 @@ public:
 	const std::string& GetLocation() const;
 	const std::string& GetName() const;
 
-	virtual void Render(SDL_Renderer& renderer, Vector2 position, float rotation, Vector2 sourcePosition, Vector2 sourceDimensions, bool flipped);
-	virtual void Render(SDL_Renderer& renderer, Vector2 position, float rotation, Vector2 sourcePosition, Vector2 sourceDimensions);
-	virtual void Render(SDL_Renderer& renderer, Vector2 position, float rotation, bool flipped);
-	virtual void Render(SDL_Renderer& renderer, Vector2 position, float rotation);
+	virtual void Render(SDL_Renderer& renderer, const Transform& transform, const Vector2& sourcePosition, const Vector2& sourceDimensions, const bool& flipped);
+	virtual void Render(SDL_Renderer& renderer, const Transform& transform, const Vector2& sourcePosition, const Vector2& sourceDimensions);
+	virtual void Render(SDL_Renderer& renderer, const Transform& transform, const bool& flipped);
+	virtual void Render(SDL_Renderer& renderer, const Transform& transform);
 };
