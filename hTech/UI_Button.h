@@ -18,7 +18,7 @@ public:
 	~UI_Button();
 
 	void Update(float DeltaTime);
-	void Render(SDL_Renderer& renderer);
+	void Render(IRenderer& renderer);
 
 	void OnClick();
 	void SetPressedColour(Colour colour);

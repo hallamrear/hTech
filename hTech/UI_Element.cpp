@@ -54,7 +54,7 @@ void UI_Element::Update(float DeltaTime)
 
 }
 
-void UI_Element::Render(SDL_Renderer& renderer)
+void UI_Element::Render(IRenderer& renderer)
 {
 
 }

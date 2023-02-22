@@ -19,7 +19,7 @@ public:
 	BoundingPolygon(const Transform& origin);
 
 	virtual void Update(float DeltaTime);
-	virtual void Render(SDL_Renderer& renderer);
+	virtual void Render(IRenderer& renderer);
 
 	virtual Vector2 FindFurthestPoint(Vector2 direction) const;
 	virtual void GetColliderAsPoints(Vector2 points[]) const;

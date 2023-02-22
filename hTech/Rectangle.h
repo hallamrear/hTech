@@ -11,7 +11,6 @@ public:
 
 	WorldRectangle(Vector2 TL, Vector2 BR);
 	WorldRectangle(int x, int y, int w, int h);
-
-	void Render(SDL_Renderer& renderer, bool drawFromCenter = false);
 };
 
+typedef WorldRectangle ScreenRectangle;

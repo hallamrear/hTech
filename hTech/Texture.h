@@ -6,7 +6,6 @@
 class Transform;
 
 class HTECH_FUNCTION_EXPORT Vector2;
-struct SDL_Texture;
 
 class HTECH_FUNCTION_EXPORT Texture
 {
@@ -24,12 +23,7 @@ public:
 
 	int Width;
 	int Height;
-	SDL_Texture& GetSDLTexture();
+	SDL_Texture& GetSDLTexture() const;
 	const std::string& GetLocation() const;
 	const std::string& GetName() const;
-
-	virtual void Render(SDL_Renderer& renderer, const Transform& transform, const Vector2& sourcePosition, const Vector2& sourceDimensions, const bool& flipped);
-	virtual void Render(SDL_Renderer& renderer, const Transform& transform, const Vector2& sourcePosition, const Vector2& sourceDimensions);
-	virtual void Render(SDL_Renderer& renderer, const Transform& transform, const bool& flipped);
-	virtual void Render(SDL_Renderer& renderer, const Transform& transform);
 };

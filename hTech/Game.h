@@ -4,20 +4,9 @@
 #include <string>
 #include "Vector2.h"
 
-enum class HTECH_FUNCTION_EXPORT SCREEN_STATE
-{
-	WINDOW_FULLSCREEN = 0,
-	WINDOW_BORDERLESS_FULLSCREEN,
-	WINDOW_WINDOWED
-};
-
-class HTECH_FUNCTION_EXPORT WindowDetails
-{
-public:
-	std::string Title = "";
-	Vector2 Position = Vector2();
-	Vector2 Dimensions = Vector2(600.0f, 300.0f);
-};
+struct WindowDetails;
+class IRenderer;
+class IWindow;
 
 enum GAME_STATE : int
 {
@@ -29,6 +18,9 @@ enum GAME_STATE : int
 class HTECH_FUNCTION_EXPORT Game
 {
 private:
+	static IRenderer* m_Renderer;
+	static IWindow*   m_Window;
+
 	bool  m_AutosaveEnabled;
 	float m_AutosaveTimer;
 	float m_AutosaveCooldown;
@@ -36,18 +28,11 @@ private:
 	static GAME_STATE			m_GameState;
 	bool						m_IsInitialised;
 	bool						m_IsRunning;
-	struct SDL_Window*			m_Window;
-	struct SDL_Texture*			m_RenderToTextureTarget;
 	 
-	bool		InitialiseGraphics();
-	bool		CreateRenderTargetTexture();
-															
-	//4 == SDL_WINDOW_SHOWN 
-	bool		InitialiseWindow(const char* Title = "", int xpos = 0, int ypos = 0, int width = 0, int height = 0, unsigned int flags = 4, bool isFullscreen = false);
-	bool		InitialiseDearIMGUI();
-	void		SettingDearIMGUIColourScheme();
+	bool		InitialiseWindow(const WindowDetails& details);
+	bool		InitialiseSystems(const WindowDetails& details);
 	bool		InitialiseApplicationControls();
-	bool		InitialiseSystems(WindowDetails details);
+	bool		InitialiseGraphics();
 
 	void		HandleEvents();
 	void		Update(float DeltaTime);
@@ -56,7 +41,9 @@ private:
 
 
 public:
-	static struct SDL_Renderer* Renderer;
+
+	static IRenderer& GetRenderer();
+	static IWindow&   GetWindow();
 
 	Game();
 	~Game();
@@ -65,12 +52,9 @@ public:
 	void		Start();
 
 	static const GAME_STATE  GetGameState();
-	void		SetFullscreen(SCREEN_STATE state);
 	void	    SetIsRunning(bool state) { m_IsRunning = state; };
 	const bool  GetIsRunning() const { return m_IsRunning; };
 	const bool  GetIsInitialised() const { return m_IsInitialised; };
-
-	void		TakeScreenshot(std::string name);
 	bool		OpenProject(std::string& path);
 };
 

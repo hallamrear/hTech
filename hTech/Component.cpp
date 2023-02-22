@@ -32,7 +32,7 @@ void Component::Update(float DeltaTime)
 
 }
 
-void Component::Render(SDL_Renderer& renderer)
+void Component::Render(IRenderer& renderer)
 {
 
 }

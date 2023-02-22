@@ -112,8 +112,7 @@ void World::Update_Impl(float DeltaTime)
     ClearupDeadEntities();
 }
 
-#ifdef _DEBUG
-void World::Render_Impl(SDL_Renderer& renderer)
+void World::Render_Impl(IRenderer& renderer)
 {
     ImGui::Begin("Scene Graph");
 
@@ -138,24 +137,12 @@ void World::Render_Impl(SDL_Renderer& renderer)
                 Editor::SetSelectedEntity(itr.second);
             }
                         
-            itr.second->Render();
+            itr.second->Render(renderer);
         }
     }
 
     ImGui::End();
 }
-#else
-void World::Render_Impl(SDL_Renderer& renderer)
-{
-    for (auto& entity : m_EntityMap)
-    {
-        if (entity.second != nullptr)
-        {
-            entity.second->Render();
-        }
-    }
-}
-#endif
 
 Entity* World::GetEntityByName_Impl(std::string name)
 {
@@ -237,7 +224,7 @@ void World::Update(float DeltaTime)
     Get()->Update_Impl(DeltaTime);
 }
 
-void World::Render(SDL_Renderer& renderer)
+void World::Render(IRenderer& renderer)
 {
     Get()->Render_Impl(renderer);
 }

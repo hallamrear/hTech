@@ -14,6 +14,8 @@
 #include "rapidjson/rapidjson.h"
 #include "World.h"
 
+#include "IRenderer.h"
+
 Entity::Entity(Transform SpawnTransform, std::string Name, Entity* Parent)
 {
 	m_IsEnabled = true;
@@ -52,10 +54,8 @@ void Entity::Update(float DeltaTime)
 	}
 }
 
-void Entity::Render()
+void Entity::Render(IRenderer& renderer)
 {
-	SDL_Renderer& renderer = *Game::Renderer;
-
 	for (int i = 0; i != m_Components.size(); i++)
 	{
 		if (m_Components[i]->GetIsEnabled() == true)
@@ -64,15 +64,16 @@ void Entity::Render()
 		}
 	}
 
-	Vector2 pos = Camera::WorldToScreen(GetTransform().Position);
-	SDL_Rect rect{ (int)pos.X - 2, (int)pos.Y - 2, 4, 4 };
+	Vector2 position = Camera::WorldToScreen(GetTransform().Position);
+	position.X -= 2; position.Y = 2;
+	WorldRectangle rect = WorldRectangle(position.X, position.Y, 4, 4);
 	float a = 255;
 
 	if (m_IsEnabled == false)
 		a = 100;
 
-	SDL_SetRenderDrawColor(&renderer, 0, 255, 0, a);
-	SDL_RenderDrawRect(&renderer, &rect);
+	renderer.SetPrimativeDrawColour(Colour(0, 255, 0, a));
+	renderer.Render_ScreenSpaceRectangle(rect, RENDER_LAYER::FOREGROUND, false, true);
 }
 
 void Entity::RenderProperties()

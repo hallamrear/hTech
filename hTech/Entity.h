@@ -3,14 +3,12 @@
 
 #include <string>
 #include "Transform.h"
-#include "UI.h"
 #include "Component.h"
+#include "UI.h"
 
 enum class ENUM_COMPONENT_LIST;
-
-struct SDL_Renderer;
-class HTECH_FUNCTION_EXPORT  Collider;
-class HTECH_FUNCTION_EXPORT  Texture;
+class HTECH_FUNCTION_EXPORT Collider;
+class HTECH_FUNCTION_EXPORT Texture;
 class HTECH_FUNCTION_EXPORT TransformComponent;
 
 class HTECH_FUNCTION_EXPORT Entity
@@ -34,7 +32,7 @@ public:
 	virtual ~Entity();
 
 	virtual void Update(float DeltaTime);
-	virtual void Render();
+	virtual void Render(IRenderer& renderer);
 
 	void RenderProperties();
 

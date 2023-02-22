@@ -27,6 +27,7 @@ namespace std {
 }
 
 class WorldRectangle;
+class IRenderer;
 class Entity;
 class Text;
 
@@ -66,5 +67,5 @@ public:
 	void Remove(Entity* entity);
 
 	void Update(float deltaTime);
-	void Render(SDL_Renderer&);
+	void Render(IRenderer& renderer);
 };

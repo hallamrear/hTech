@@ -274,7 +274,7 @@ void RigidbodyComponent::Update(float DeltaTime)
 	}
 }
 
-void RigidbodyComponent::Render(SDL_Renderer& renderer)
+void RigidbodyComponent::Render(IRenderer& renderer)
 {
 	if (m_Collider)
 	{

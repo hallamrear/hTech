@@ -2,6 +2,7 @@
  #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
 #include "Colour.h"
+#include "Transform.h"
 
 class HTECH_FUNCTION_EXPORT Text
 {
@@ -12,7 +13,7 @@ private:
 	SDL_Texture* mTextTexture;
 	static TTF_Font* m_Font;
 	int m_WrapWidth = 0;
-	Vector2 m_Position;
+	Transform m_Transform;
 	std::string m_Data;
 	Colour m_Colour;
 	bool m_IsDirty;
@@ -24,11 +25,11 @@ private:
 
 
 public:
-	Text(Vector2 Position = Vector2(), std::string text = "Empty.", Colour colour = Colour());
+	Text(Transform transform = Transform(), std::string text = "Empty.", Colour colour = Colour());
 	~Text();
 
 	void Update(float DeltaTime);
-	void Render(SDL_Renderer& renderer);
+	void Render(IRenderer& renderer);
 
 	/// <summary>
 	/// Text is wrapped on multiple lines on line endings and word boundaries if it extends past WrapWidth.

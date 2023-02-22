@@ -3,6 +3,8 @@
 #include "Log.h"
 #include "Transform.h"
 #include "Game.h"
+#include "IRenderer.h"
+#include "OriginalRenderer.h"
 
 TTF_Font* Text::m_Font = nullptr;
 
@@ -41,6 +43,10 @@ bool Text::DestroyTTFFontAsset()
 
 void Text::CreateTextTexture()
 {
+	return;
+	
+	//TODO : UNCOMMENT WHEN REDOING TEXT;
+	/*
 	if (m_IsDirty)
 	{
 		if (m_Data == "")
@@ -51,7 +57,7 @@ void Text::CreateTextTexture()
 			DestroyTextTexture();
 		}
 
-		SDL_Renderer& renderer = const_cast<SDL_Renderer&>(*Game::Renderer);
+		SDL_Renderer& renderer = const_cast<SDL_Renderer&>(*Game::GetRenderer());
 		SDL_Surface* textSurface = nullptr;
 		SDL_Color color = { m_Colour.R, m_Colour.G, m_Colour.B, m_Colour.A };
 
@@ -69,7 +75,7 @@ void Text::CreateTextTexture()
 
 		SDL_FreeSurface(textSurface);
 		textSurface = nullptr;
-	}
+	}*/
 }
 
 void Text::DestroyTextTexture()
@@ -77,8 +83,9 @@ void Text::DestroyTextTexture()
 	SDL_DestroyTexture(mTextTexture);
 }
 
-Text::Text(Vector2 Position, std::string text, Colour colour)
+Text::Text(Transform transform, std::string text, Colour colour)
 {
+	m_Transform = transform;
 	m_IsDirty = true;
 	m_Colour = colour;
 	m_Data = text;
@@ -112,16 +119,36 @@ void Text::Update(float DeltaTime)
 	}
 }
 
-void Text::Render(SDL_Renderer& renderer)
+void Text::Render(IRenderer& renderer)
 {
 	if (mTextTexture)
 	{
-		SDL_Rect destRect{};
-		destRect.x = (int)m_Position.X;
-		destRect.y = (int)m_Position.Y;
-		destRect.w = m_Width;
-		destRect.h = m_Height;
-		SDL_RenderCopy(&renderer, mTextTexture, NULL, &destRect);
+		SDL_Rect destRect =
+		{
+			(int)m_Transform.Position.X,
+			(int)m_Transform.Position.Y,
+			m_Width,
+			m_Height
+		};
+
+		//todo : text needs to be abstracted to avoid using SDL_Renderer. 
+		//it cant use the existing render functions because it uses SDL_Textures directly rather than 
+		//my texture class.
+
+		OriginalRenderer& ref = (OriginalRenderer&)Game::GetRenderer();
+		SDL_Renderer* r = ref.GetAPIRenderer();
+		SDL_RenderCopy(r, mTextTexture, nullptr, &destRect);
+
+		/*renderer.Render_Texture(mTextTexture, m_Transform, RENDER_LAYER::DEFAULT, false);
+		renderer.Render_Texture(
+			*mTextTexture, 
+			m_Transform, 
+			RENDER_LAYER::FOREGROUND,
+			nullptr,
+			nullptr, 
+			&destRect,
+			false);*/
+
 	}
 }
 
@@ -132,7 +159,7 @@ void Text::SetWrapWidthInPixels(int width)
 
 void Text::SetPosition(const Vector2& screenSpacePosition)
 {
-	m_Position = screenSpacePosition;
+	m_Transform.Position = screenSpacePosition;
 }
 
 void Text::SetString(const std::string& str)

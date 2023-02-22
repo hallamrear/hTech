@@ -8,7 +8,7 @@ class HTECH_FUNCTION_EXPORT SpriteComponent :
     public Component
 {
 private:
-    Texture* m_SDLTexture;
+    Texture* m_Texture;
     bool     m_IsFlipped;
 
 protected:
@@ -24,7 +24,7 @@ public:
     void UnloadTexture();
 
     void Update(float DeltaTime);
-    void Render(SDL_Renderer& renderer);
+    void Render(IRenderer& renderer);
 
     void Serialize(Serializer& writer) const override;
     void Deserialize(SerializedValue& value) override;

@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "UI.h"
+#include "IRenderer.h"
 
 #ifdef DEFINE_OLD_UI
 #include "UI_Button.h"
@@ -130,7 +131,7 @@ void UI::Update_Impl(float DeltaTime)
 	}
 }
 
-void UI::Render_Impl(SDL_Renderer& renderer)
+void UI::Render_Impl(IRenderer& renderer)
 {
 	SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
 	SDL_RenderDrawPoints(&renderer, mUIGridLayoutPoints.data(), mUIGridLayoutPoints.size());
@@ -175,7 +176,7 @@ void UI::Update(float DeltaTime)
 	Get()->Update_Impl(DeltaTime);
 }
 
-void UI::Render(SDL_Renderer& renderer)
+void UI::Render(IRenderer& renderer)
 {
 	Get()->Render_Impl(renderer);
 }
@@ -208,7 +209,7 @@ void UI::Update(float DeltaTime)
 	Get()->Update_Impl(DeltaTime);
 }
 
-void UI::Render(SDL_Renderer& renderer)
+void UI::Render(IRenderer& renderer)
 {
 	Get()->Render_Impl(renderer);
 }
@@ -218,7 +219,7 @@ void UI::Update_Impl(float DeltaTime)
 
 }
 
-void UI::Render_Impl(SDL_Renderer& renderer)
+void UI::Render_Impl(IRenderer& renderer)
 {
 
 }

@@ -18,7 +18,7 @@ public:
 	~OrientedBoundingBox();
 
 	virtual void Update(float DeltaTime);
-	virtual void Render(SDL_Renderer& renderer);
+	virtual void Render(IRenderer& renderer);
 
 	//Fills array with points of the box.
 	void GetColliderAsPoints(Vector2 points[]) const; 

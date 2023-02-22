@@ -10,8 +10,6 @@ enum class EDITOR_STATE
 	NONE
 };
 
-#if _DEBUG
-
 class Entity;
 class Texture;
 
@@ -39,7 +37,7 @@ private:
 	EDITOR_STATE m_CurrentCursorState;
 
 	void Update_Impl(float deltaTime);
-	void Render_Impl(SDL_Renderer&);
+	void Render_Impl(IRenderer&);
 
 	void SetEditorCursorState_Impl(EDITOR_STATE state);
 	void SetCursorStateToMoveMode();
@@ -65,7 +63,7 @@ public:
 	~Editor();
 
 	static void Update(float deltaTime);
-	static void Render(SDL_Renderer&);
+	static void Render(IRenderer& renderer);
 	static void SetEditorCursorState(EDITOR_STATE state);
 	static void SetSelectedEntity(Entity* entity);
 	static Entity* GetSelectedEntity();
@@ -73,22 +71,3 @@ public:
 	static EDITOR_STATE GetEditorCursorState();
 	static void ClearSelected();
 };
-
-#else
-
-class Editor
-{
-private:
-
-protected:
-	Editor() {};
-	static Editor* Get() { return nullptr; };
-
-public:
-	~Editor();
-
-	static inline void Update(float deltaTime) {};
-	static inline void Render(SDL_Renderer&) {};
-	static inline void SetEditorCursorState(EDITOR_STATE state);
-};
-#endif

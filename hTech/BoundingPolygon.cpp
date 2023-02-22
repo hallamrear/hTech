@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "Console.h"
 #include "imgui.h"
+#include "IRenderer.h"
 
 BoundingPolygon::BoundingPolygon(const Transform& origin) : Collider(origin), m_Rotation(origin.Rotation)
 {
@@ -35,18 +36,18 @@ void BoundingPolygon::Update(float DeltaTime)
 	}
 }
 
-void BoundingPolygon::Render(SDL_Renderer& renderer)
+void BoundingPolygon::Render(IRenderer& renderer)
 {
 	if (Console::Query("DrawColliders") != 0)
 	{
-		SDL_SetRenderDrawColor(&renderer, 0, 0, 255, 255);
+		renderer.SetPrimativeDrawColour(Colour::Blue);
 
 		switch (m_PointCount)
 		{
 		case 0:
 			break;
 		case 1:
-			SDL_RenderDrawPoint(&renderer, (int)m_TransformedPoints[0].X, (int)m_TransformedPoints[0].Y);
+			renderer.Render_Point(m_TransformedPoints[0]);
 			break;
 		default:
 			Vector2 pOne = m_TransformedPoints[0];
@@ -57,10 +58,7 @@ void BoundingPolygon::Render(SDL_Renderer& renderer)
 				pOne = m_TransformedPoints[i % m_PointCount];
 				pTwo = m_TransformedPoints[(i + 1) % m_PointCount];
 
-				Vector2 screenSpaceOne = Camera::WorldToScreen(pOne);
-				Vector2 screenSpaceTwo = Camera::WorldToScreen(pTwo);
-
-				SDL_RenderDrawLine(&renderer, (int)screenSpaceOne.X, (int)screenSpaceOne.Y, (int)screenSpaceTwo.X, (int)screenSpaceTwo.Y);
+				renderer.Render_Line(pOne, pTwo);
 			}
 			break;
 		}

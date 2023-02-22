@@ -28,7 +28,7 @@ public:
 	/// Renders the circle using SDL_RenderDrawPoint and an SDL_Renderer.
 	/// </summary>
 	/// <param name="renderer">SDL_Renderer to use for rendering the circles points.</param>
-	virtual void Render(SDL_Renderer& renderer);
+	virtual void Render(IRenderer& renderer);
 
 	/// <summary>
 	/// Returns a point on the circle in the direction from the centre.
