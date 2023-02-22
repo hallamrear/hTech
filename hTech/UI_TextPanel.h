@@ -12,7 +12,7 @@ public:
 	~UI_TextPanel();
 
 	virtual void Update(float DeltaTime);
-	virtual void Render(SDL_Renderer& renderer);
+	virtual void Render(IRenderer& renderer);
 };
 
 #endif

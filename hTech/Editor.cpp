@@ -1,8 +1,6 @@
 #include "pch.h"
 #include "Editor.h"
 
-#if _DEBUG
-
 #include "UI.h"
 #include "InputManager.h"
 #include "TextureCache.h"
@@ -15,6 +13,8 @@
 #include "World.h"
 #include "UI_Button.h"
 #include "Time.h"
+
+#include "IRenderer.h"
 
 Editor* Editor::m_Instance = nullptr;
 
@@ -196,12 +196,12 @@ void Editor::Update_Impl(float deltaTime)
     }
 }
 
-void Editor::Render(SDL_Renderer& renderer)
+void Editor::Render(IRenderer& renderer)
 {
     Get()->Render_Impl(renderer);
 }
 
-void Editor::Render_Impl(SDL_Renderer& renderer)
+void Editor::Render_Impl(IRenderer& renderer)
 {
     Camera::RenderProperties();
 
@@ -222,13 +222,9 @@ void Editor::Render_Impl(SDL_Renderer& renderer)
 
     for (size_t i = 0; i < m_SelectedEntities.size(); i++)
     {
-        Vector2 rectTR = Camera::WorldToScreen(m_SelectedEntities[i]->GetTransform().Position + Vector2(-32, 32));
-        SDL_Rect rect{};
-        rect.x = (int)rectTR.X;
-        rect.y = (int)rectTR.Y;
-        rect.w = 64;
-        rect.h = 64;
-        SDL_RenderDrawRect(&renderer, &rect);
+        Vector2 pos = Camera::WorldToScreen(m_SelectedEntities[i]->GetTransform().Position) + Vector2(-32, 32);
+        WorldRectangle rect = WorldRectangle(pos.X, pos.Y, 64, 64);
+        renderer.Render_ScreenSpaceRectangle(rect);
     }
 
     if (m_IsDraggingRect)
@@ -242,33 +238,34 @@ void Editor::Render_Impl(SDL_Renderer& renderer)
         };
 
         Vector2 r;
-        SDL_Rect c{};
+        WorldRectangle corner = WorldRectangle(0, 0, 0, 0);
+        Vector2 p;
         for (size_t i = 0; i < 4; i++)
         {
-            r = Camera::WorldToScreen(points[i]);
-            c.w = 4;
-            c.h = 4;
-            c.x = (int)r.X - (c.w / 2);
-            c.y = (int)r.Y - (c.h / 2);
-            SDL_RenderFillRect(&renderer, &c);
+            p = Camera::WorldToScreen(points[i]);
+
+            corner.W = 4;
+            corner.H = 4;
+            corner.X = p.X - (corner.W / 2);
+            corner.Y = p.Y - (corner.H / 2);
+            renderer.Render_ScreenSpaceRectangle(corner);
         }
 
-        SDL_SetRenderDrawColor(&renderer, 255, 255, 255, 255);
-        m_SelectionRect.Render(renderer);
+        renderer.SetPrimativeDrawColour(Colour::White);
+        renderer.Render_WorldSpaceRectangle(m_SelectionRect, RENDER_LAYER::FOREGROUND, false);
     }
 
     if (selected)
     {
-        SDL_Rect d{};
-        d.w = 256;
-        d.h = 256;
-        Vector2 Position = Camera::WorldToScreen(selected->GetTransform().Position + Vector2(0 - (d.w / 2), d.h / 2));
-        d.x = (int)Position.X;
-        d.y = (int)Position.Y;
-        SDL_SetRenderDrawColor(&renderer, 255, 255, 0, 255);
-        SDL_RenderDrawRect(&renderer, &d);
-        SDL_RenderDrawLine(&renderer, d.x, d.y, d.x + d.w, d.y + d.h);
-        SDL_RenderDrawLine(&renderer, d.x + d.w, d.y, d.x, d.y + d.h);
+        WorldRectangle selectedRect = WorldRectangle(0, 0, 256, 256);
+        Vector2 Position = Camera::WorldToScreen(selected->GetTransform().Position) + Vector2(0 - (selectedRect.W / 2), selectedRect.H / 2);
+        selectedRect.X = (int)Position.X;
+        selectedRect.Y = (int)Position.Y;
+
+        renderer.SetPrimativeDrawColour(Colour(255, 255, 0, 255));
+        //renderer.Render_ScreenSpaceRectangle(selectedRect, RENDER_LAYER::FOREGROUND, false);
+        //renderer.Render_Line(Vector2(selectedRect.X,  selectedRect.Y), Vector2(selectedRect.X + selectedRect.W, selectedRect.Y + selectedRect.H));
+        //renderer.Render_Line(Vector2(selectedRect.X + selectedRect.W, selectedRect.Y), Vector2(selectedRect.X, selectedRect.Y + selectedRect.H));
     }
 }
 
@@ -354,5 +351,3 @@ std::vector<Entity*> Editor::GetSelectedEntities()
 {
     return Get()->GetSelectedEntities_Impl();
 }
-
-#endif

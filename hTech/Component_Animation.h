@@ -49,7 +49,7 @@ public:
 	~AnimationComponent();
 
 	void Update(float DeltaTime);
-	void Render(SDL_Renderer& renderer);
+	void Render(IRenderer& renderer);
 
 	void Serialize(Serializer& writer) const override;
 	void Deserialize(SerializedValue& value) override;

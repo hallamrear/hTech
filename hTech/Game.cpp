@@ -17,7 +17,13 @@
 #include "Camera.h"
 #include "BUILD_NUMBER.h"
 
-SDL_Renderer* Game::Renderer = nullptr;
+#include "IRenderer.h"
+#include "IWindow.h"
+#include "OriginalWindow.h"
+#include "OriginalRenderer.h"
+
+IWindow* Game::m_Window = nullptr;
+IRenderer* Game::m_Renderer = nullptr;
 GAME_STATE Game::m_GameState = GAME_STATE::STOPPED;
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
@@ -52,13 +58,32 @@ int main(int argc, char* argv[])
 	return 0;
 }
 
+IRenderer& Game::GetRenderer()
+{
+	if (!m_Renderer)
+	{
+		Log::LogMessage(LogLevel::LOG_WARNING, "Tried to get the renderer when it is not initalised yet.");
+	}
+
+	return *m_Renderer;
+}
+
+IWindow& Game::GetWindow()
+{
+	if (!m_Window)
+	{
+		Log::LogMessage(LogLevel::LOG_WARNING, "Tried to get the window when it is not initalised yet.");
+	}
+
+	return *m_Window;
+}
+
 Game::Game()
 {
 	m_IsInitialised = false;
 	m_IsRunning = false;
 	m_Window = nullptr;
-	m_RenderToTextureTarget = nullptr;
-
+	m_Renderer = nullptr;
 	m_AutosaveEnabled = true;
 	m_AutosaveTimer = 0.0f;
 	m_AutosaveCooldown = 15.0f;
@@ -118,74 +143,6 @@ const GAME_STATE Game::GetGameState()
 	return Game::m_GameState;
 }
 
-/// <summary>
-/// Sets the window state and resizes to the enum state passed in.
-/// </summary>
-/// <param name="state">SCREEN_STATE enum defining either fullscreen, borderless fullscreen or windowed mode.</param>
-void Game::SetFullscreen(SCREEN_STATE state)
-{
-	switch (state)
-	{
-	case SCREEN_STATE::WINDOW_FULLSCREEN:
-	{
-		SDL_DisplayMode DM;
-		SDL_GetCurrentDisplayMode(0, &DM);
-		auto Width = DM.w;
-		auto Height = DM.h;
-		SDL_SetWindowSize(m_Window, Width, Height);
-		SDL_SetWindowFullscreen(m_Window, SDL_WINDOW_FULLSCREEN);
-	}
-		break;
-	case SCREEN_STATE::WINDOW_BORDERLESS_FULLSCREEN:
-		SDL_SetWindowFullscreen(m_Window, SDL_WINDOW_FULLSCREEN_DESKTOP);
-		break;
-	case SCREEN_STATE::WINDOW_WINDOWED:
-		SDL_SetWindowFullscreen(m_Window, 0);
-		break;
-	}
-
-	int w, h;
-	SDL_GetWindowSize(m_Window, &w, &h);
-	Console::Run("WindowDimensionsW " + std::to_string(w));
-	Console::Run("WindowDimensionsH " + std::to_string(h));
-
-	Console::Run("WindowCentreX " + std::to_string(w / 2));
-	Console::Run("WindowCentreY " + std::to_string(h / 2));
-}
-
-/// <summary>
-/// Creates a screenshot of the current frame.
-/// </summary>
-/// <param name="name">Name of the output file.</param>
-void Game::TakeScreenshot(std::string name)
-{
-	int w, h;
-	w = Console::Query("WindowDimensionsW");
-	h = Console::Query("WindowDimensionsH");
-
-	SDL_Surface* sshot = SDL_CreateRGBSurface(0, w, h, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
-	SDL_RenderReadPixels(Game::Renderer, NULL, SDL_PIXELFORMAT_ARGB8888, sshot->pixels, sshot->pitch);
-
-	struct tm _time;
-	std::string str = name;
-	time_t now = time(nullptr);
-	localtime_s(&_time, &now);
-	char* buffer = new char[256];
-	strftime(buffer, 256, "%d-%m-%Y %H-%M-%S", &_time);
-
-	if (str == "")
-	{
-		str = buffer;
-		str += ".bmp";
-	}
-
-	SDL_SaveBMP(sshot, str.c_str());
-	SDL_FreeSurface(sshot);
-
-	str = "Screenshot taken: " + str;
-
-	Log::LogMessage(LogLevel::LOG_MESSAGE, str.c_str());
-}
 
 void Game::Initialise(int argc, char* argv[], WindowDetails details)
 {
@@ -197,179 +154,34 @@ void Game::Initialise(int argc, char* argv[], WindowDetails details)
 	}
 }
 
-bool Game::InitialiseWindow(const char* Title, int xpos, int ypos, int width, int height, unsigned int flags, bool isFullscreen)
-{
-	if (m_Window)
-		SDL_DestroyWindow(m_Window);
-		
-	if (Title == "")
-		Title = "No Window Title Given";
-
-	if (xpos == 0)
-		xpos = SDL_WINDOWPOS_CENTERED;
-
-	if (ypos == 0)
-		ypos = SDL_WINDOWPOS_CENTERED;
-
-	if (width == 0)
-		width = 800;
-
-	if (height == 0)
-		height = 600;
-
-	if (isFullscreen)
-		flags |= SDL_WINDOW_FULLSCREEN;
-
-	//For IMGUI
-	flags |= SDL_WINDOW_ALLOW_HIGHDPI;
-	
-	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
-
-	m_Window = SDL_CreateWindow(Title, xpos, ypos, width, height, flags);
-
-	if (m_Window)
-	{
-		Log::LogMessage(LogLevel::LOG_MESSAGE, "Window created.");
-		return true;
-	}
-	else
-	{
-		Log::LogMessage(LogLevel::LOG_ERROR, "Window failed to create.");
-		return false;
-	}
-}
-
-bool Game::InitialiseDearIMGUI()
-{
-	// Setup Dear ImGui context
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-	io.ConfigDockingWithShift = true;
-	io.ConfigFlags |= ImGuiDockNodeFlags_PassthruCentralNode;
-	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-
-	// Setup Dear ImGui style
-	SettingDearIMGUIColourScheme();
-
-	// Setup Platform/Renderer backends
-	return (ImGui_ImplSDL2_InitForSDLRenderer(m_Window, Renderer) && ImGui_ImplSDLRenderer_Init(Renderer));
-}
-
-void Game::SettingDearIMGUIColourScheme()
-{
-	ImGuiStyle& style = ImGui::GetStyle();
-	style.WindowRounding = 5.3f;
-	style.FrameRounding = 2.3f;
-	style.ScrollbarRounding = 0;
-
-	style.Colors[ImGuiCol_Text] = ImVec4(0.90f, 0.90f, 0.90f, 0.90f);
-	style.Colors[ImGuiCol_TextDisabled] = ImVec4(0.60f, 0.60f, 0.60f, 1.00f);
-	style.Colors[ImGuiCol_WindowBg] = ImVec4(0.09f, 0.09f, 0.15f, 1.00f);
-	style.Colors[ImGuiCol_ChildBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-	style.Colors[ImGuiCol_PopupBg] = ImVec4(0.05f, 0.05f, 0.10f, 0.85f);
-	style.Colors[ImGuiCol_Border] = ImVec4(0.70f, 0.70f, 0.70f, 0.65f);
-	style.Colors[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-	style.Colors[ImGuiCol_FrameBg] = ImVec4(0.00f, 0.00f, 0.01f, 1.00f);
-	style.Colors[ImGuiCol_FrameBgHovered] = ImVec4(0.90f, 0.80f, 0.80f, 0.40f);
-	style.Colors[ImGuiCol_FrameBgActive] = ImVec4(0.90f, 0.65f, 0.65f, 0.45f);
-	style.Colors[ImGuiCol_TitleBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.83f);
-	style.Colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.40f, 0.40f, 0.80f, 0.20f);
-	style.Colors[ImGuiCol_TitleBgActive] = ImVec4(0.00f, 0.00f, 0.00f, 0.87f);
-	style.Colors[ImGuiCol_MenuBarBg] = ImVec4(0.01f, 0.01f, 0.02f, 0.80f);
-	style.Colors[ImGuiCol_ScrollbarBg] = ImVec4(0.20f, 0.25f, 0.30f, 0.60f);
-	style.Colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.55f, 0.53f, 0.55f, 0.51f);
-	style.Colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.56f, 0.56f, 0.56f, 1.00f);
-	style.Colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.56f, 0.56f, 0.56f, 0.91f);
-	style.Colors[ImGuiCol_PopupBg] = ImVec4(0.1f, 0.1f, 0.1f, 0.99f);
-	style.Colors[ImGuiCol_CheckMark] = ImVec4(0.90f, 0.90f, 0.90f, 0.83f);
-	style.Colors[ImGuiCol_SliderGrab] = ImVec4(0.70f, 0.70f, 0.70f, 0.62f);
-	style.Colors[ImGuiCol_SliderGrabActive] = ImVec4(0.30f, 0.30f, 0.30f, 0.84f);
-	style.Colors[ImGuiCol_Button] = ImVec4(0.48f, 0.72f, 0.89f, 0.49f);
-	style.Colors[ImGuiCol_ButtonHovered] = ImVec4(0.50f, 0.69f, 0.99f, 0.68f);
-	style.Colors[ImGuiCol_ButtonActive] = ImVec4(0.80f, 0.50f, 0.50f, 1.00f);
-	style.Colors[ImGuiCol_Header] = ImVec4(0.30f, 0.69f, 1.00f, 0.53f);
-	style.Colors[ImGuiCol_HeaderHovered] = ImVec4(0.44f, 0.61f, 0.86f, 1.00f);
-	style.Colors[ImGuiCol_HeaderActive] = ImVec4(0.38f, 0.62f, 0.83f, 1.00f);
-	style.Colors[ImGuiCol_Separator] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
-	style.Colors[ImGuiCol_SeparatorHovered] = ImVec4(0.70f, 0.60f, 0.60f, 1.00f);
-	style.Colors[ImGuiCol_SeparatorActive] = ImVec4(0.90f, 0.70f, 0.70f, 1.00f);
-	style.Colors[ImGuiCol_ResizeGrip] = ImVec4(1.00f, 1.00f, 1.00f, 0.85f);
-	style.Colors[ImGuiCol_ResizeGripHovered] = ImVec4(1.00f, 1.00f, 1.00f, 0.60f);
-	style.Colors[ImGuiCol_ResizeGripActive] = ImVec4(1.00f, 1.00f, 1.00f, 0.90f);
-	style.Colors[ImGuiCol_PlotLines] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
-	style.Colors[ImGuiCol_PlotLinesHovered] = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
-	style.Colors[ImGuiCol_PlotHistogram] = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
-	style.Colors[ImGuiCol_PlotHistogramHovered] = ImVec4(1.00f, 0.60f, 0.00f, 1.00f);
-	style.Colors[ImGuiCol_TextSelectedBg] = ImVec4(0.00f, 0.00f, 1.00f, 0.35f);
-	style.Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.20f, 0.20f, 0.20f, 0.35f);
-}
-
 bool Game::InitialiseGraphics()
 {
+	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
+
 	if (!m_Window || m_Window == nullptr)
 		return false;
 
 	SDL_SetHint(SDL_HINT_RENDER_BATCHING, "1");
 
-	if (Game::Renderer)
-		SDL_DestroyRenderer(Game::Renderer);
-
-	Game::Renderer = SDL_CreateRenderer(m_Window, -1, 0);
-
-	if (Game::Renderer)
+	if (m_Renderer)
 	{
-		Log::LogMessage(LogLevel::LOG_MESSAGE, "Renderer created.");
+		m_Renderer->Shutdown();
 
-#ifdef _DEBUG
-		if (!CreateRenderTargetTexture())
-		{
-			Log::LogMessage(LogLevel::LOG_ERROR, "Failed to render target texture.");
-			Log::LogMessage(LogLevel::LOG_ERROR, SDL_GetError());
-			return false;
-		}
+		delete m_Renderer;
+		m_Renderer = nullptr;
+	}
 
-		Log::LogMessage(LogLevel::LOG_MESSAGE, "Created render target texture.");
-#endif
+	m_Renderer = new OriginalRenderer();
+	m_Renderer->Startup(*m_Window);
 
-		if (InitialiseDearIMGUI())
-		{
-			Log::LogMessage(LogLevel::LOG_MESSAGE, "DearIMGUI initialised.");
-
-			return true;
-		}
-		
+	if (m_Renderer->IsInitialised() == false)
+	{
+		m_Renderer->Shutdown();
+		m_Renderer = nullptr;
 		return false;
 	}
-	else
-	{
-		Log::LogMessage(LogLevel::LOG_ERROR, "Renderer failed to create.");
-		return false;
-	}
-}
 
-bool Game::CreateRenderTargetTexture()
-{
-	bool success = true;
-
-	if (m_RenderToTextureTarget != nullptr)
-	{
-		SDL_DestroyTexture(m_RenderToTextureTarget);
-	}
-
-	int w, h;
-	SDL_GetWindowSize(m_Window, &w, &h);
-
-	m_RenderToTextureTarget = SDL_CreateTexture(Renderer, SDL_PIXELFORMAT_RGBA8888, SDL_TEXTUREACCESS_TARGET, w, h);
-
-	if (!m_RenderToTextureTarget)
-	{
-		success = false;
-	}
-	
-	return success;
+	return true;
 }
 
 bool Game::InitialiseApplicationControls()
@@ -377,7 +189,7 @@ bool Game::InitialiseApplicationControls()
 	InputManager::Bind(IM_KEY_CODE::IM_KEY_F1, IM_KEY_STATE::IM_KEY_PRESSED,
 		[this]
 		{
-			TakeScreenshot("");
+			m_Renderer->TakeScreenshot("");
 		}); 
 
 	InputManager::Bind(IM_KEY_CODE::IM_KEY_F2, IM_KEY_STATE::IM_KEY_PRESSED,
@@ -396,7 +208,25 @@ bool Game::InitialiseApplicationControls()
 	return true;
 }
 
-bool Game::InitialiseSystems(WindowDetails details)
+bool Game::InitialiseWindow(const WindowDetails& details)
+{
+	if (m_Window)
+	{
+		if (m_Window->IsInitialised())
+		{
+			m_Window->Shutdown();
+			delete m_Window;
+			m_Window = nullptr;
+		}
+	}
+
+	m_Window = new OriginalWindow();
+	m_Window->Startup(details);
+
+	return m_Window->IsInitialised();
+}
+
+bool Game::InitialiseSystems(const WindowDetails& details)
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
 	{
@@ -408,37 +238,23 @@ bool Game::InitialiseSystems(WindowDetails details)
 
 		Log::LogMessage(LogLevel::LOG_MESSAGE, "Subsystem created.");
 
-		if (InitialiseWindow(details.Title.c_str(), (int)details.Position.X, (int)details.Position.Y, (int)details.Dimensions.X, (int)details.Dimensions.Y, SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE | SDL_WINDOW_MAXIMIZED | SDL_WINDOW_OPENGL, false) == false)
+		if (InitialiseWindow(details) == false)
 			return false;
-
-		int w, h;
-		SDL_GetWindowSize(m_Window, &w, &h);
-		Console::Run("WindowDimensionsW " + std::to_string(w));
-		Console::Run("WindowDimensionsH " + std::to_string(h));
-		Console::Run("WindowCentreX " + std::to_string(w / 2));
-		Console::Run("WindowCentreY " + std::to_string(h / 2));
 
 		if (InitialiseGraphics() == false)
 			return false;
-
-		SDL_SetRenderDrawBlendMode(Game::Renderer, SDL_BLENDMODE_BLEND);
 			
 		return true;
 	}
-	else
-		return false;
+	
+	return false;
 }
 
 void Game::Shutdown()
 {
 	// Cleanup
-	ImGui_ImplSDLRenderer_Shutdown();
-	ImGui_ImplSDL2_Shutdown();
-	ImGui::DestroyContext();
-
-	SDL_DestroyRenderer(Game::Renderer);
-	SDL_DestroyWindow(m_Window);
-	SDL_Quit();
+	if(m_Renderer) m_Renderer->Shutdown();
+	if(m_Window) m_Window->Shutdown();
 
 	m_IsInitialised = false;
 }
@@ -497,12 +313,9 @@ void Game::HandleEvents()
 		case SDL_WINDOWEVENT:
 			if (event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED || event.window.event == SDL_WINDOWEVENT_RESIZED)
 			{
-				int w, h;
-				SDL_GetWindowSize(m_Window, &w, &h);
-				Console::Run("WindowDimensionsW " + std::to_string(w));
-				Console::Run("WindowDimensionsH " + std::to_string(h));
-				Console::Run("WindowCentreX " + std::to_string(w / 2));
-				Console::Run("WindowCentreY " + std::to_string(h / 2));
+				//Call to getwindowsize to update the console variables.
+				Vector2 size;
+				m_Window->GetWindowSize(size);
 			}
 			break;
 
@@ -562,18 +375,14 @@ void Game::Render()
 
 	ImGui::DockSpaceOverViewport(0, ImGuiDockNodeFlags_PassthruCentralNode);
 
-	SDL_RenderClear(Renderer);
-	SDL_SetRenderTarget(Renderer, m_RenderToTextureTarget);
-	SDL_SetRenderDrawColor(Renderer, 0, 0, 0, 255);
-	SDL_RenderClear(Renderer);
+	m_Renderer->StartFrame();
 
-	World::Render(*Renderer);
-	UI::Render(*Renderer);
+	World::Render(*m_Renderer);
+	UI::Render(*m_Renderer);
 
 	if (Console::Query("DrawLog") != 0)
-		Log::Render(*Renderer);
+		Log::Render(*m_Renderer);
 
-#ifdef _DEBUG
 	static bool showNewProjectModal = false,
 		showOpenProjectModal = false;
 	if (ImGui::BeginMainMenuBar())
@@ -714,8 +523,7 @@ void Game::Render()
 		}
 	}
 
-	Editor::Render(*Renderer);
-
+	Editor::Render(*m_Renderer);
 
 	ImGui::Begin("Render Window", 0, ImGuiWindowFlags_::ImGuiWindowFlags_MenuBar);
 
@@ -868,7 +676,11 @@ void Game::Render()
 		}
 	}
 
-	SDL_SetRenderTarget(Renderer, NULL);
+	
+	//todo : this needs sorting out later on.
+	OriginalRenderer* renderer = (OriginalRenderer*)m_Renderer;
+
+	SDL_SetRenderTarget(renderer->GetAPIRenderer(), NULL);
 	Vector2 size;
 	size.X = ImGui::GetWindowWidth();
 	size.Y = ImGui::GetWindowHeight();
@@ -884,22 +696,20 @@ void Game::Render()
 	Console::Run("WindowCentreY " + std::to_string(size.Y / 2));
 
 	SDL_Rect renderQuad = { (int)(pos.X + vMin.x), (int)(pos.Y + vMin.y), (int)(vMax.x - vMin.x), (int)(vMax.y - vMin.y) };
-	SDL_RenderSetClipRect(Renderer, &renderQuad);
+	SDL_RenderSetClipRect(renderer->GetAPIRenderer(), &renderQuad);
 	//Render to screen
 	SDL_Point center = { (int)(renderQuad.x + (renderQuad.w / 2)),  (int)(renderQuad.y + (renderQuad.h / 2)) };
 	ImGui::End();
 
 	ImGui::Render();
 	ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
-
-	if (showNewProjectModal == false && showDeletionConfirmation == false)
+	
+	if (showDeletionConfirmation == false && showNewProjectModal == false && showOpenProjectModal == false)
 	{
-		SDL_RenderCopyEx(Renderer, m_RenderToTextureTarget, nullptr, nullptr, 0.0F, &center, SDL_RendererFlip::SDL_FLIP_NONE);
+		SDL_RenderCopyEx(renderer->GetAPIRenderer(), renderer->GetRenderTexture(), &renderQuad, &renderQuad, 0.0F, &center, SDL_RendererFlip::SDL_FLIP_NONE);
 	}
 
-#endif
-
-	SDL_RenderPresent(Game::Renderer);
+	m_Renderer->EndFrame();
 }
 
 // callback function
@@ -911,9 +721,15 @@ INT CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lp, LPARAM pData)
 
 bool Game::OpenProject(std::string& path)
 {
+	//todo : sortout
+	//This is not abstracted :(
 	SDL_SysWMinfo wmInfo{};
 	SDL_VERSION(&wmInfo.version);
-	SDL_GetWindowWMInfo(m_Window, &wmInfo);
+	OriginalWindow* window = dynamic_cast<OriginalWindow*>(m_Window);
+	if (window == nullptr)
+		return false;
+
+	SDL_GetWindowWMInfo(window->GetAPIWindow(), &wmInfo);
 
 	// common dialog box structure, setting all fields to 0 is important
 	OPENFILENAME ofn = { 0 };

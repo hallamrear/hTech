@@ -5,6 +5,8 @@
 #include "imgui.h"
 #include "Console.h"
 
+#include "IRenderer.h"
+
 BoundingBox::BoundingBox(const Transform& transform, float size_x, float size_y)
 	: Collider(transform)
 {
@@ -15,6 +17,11 @@ BoundingBox::BoundingBox(const Transform& transform, float size_x, float size_y)
 	
 	m_TopLeft = Vector2(m_EntityTransform.Position.X - (m_Size.X / 2.0f), m_EntityTransform.Position.Y + (m_Size.Y / 2.0f));
 	m_BottomRight = Vector2(m_EntityTransform.Position.X + (m_Size.X / 2.0f), m_EntityTransform.Position.Y - (m_Size.Y / 2.0f));
+};
+
+BoundingBox::~BoundingBox()
+{
+
 };
 
 const Vector2 BoundingBox::GetTopLeft() const
@@ -32,30 +39,25 @@ const Vector2 BoundingBox::GetSize() const
 	return Vector2(m_BottomRight.X - m_TopLeft.X, m_TopLeft.Y - m_BottomRight.Y);
 }
 
-BoundingBox::~BoundingBox()
-{
-	
-};
-
 void BoundingBox::Update(float DeltaTime)
 {
 	m_TopLeft = Vector2(m_EntityTransform.Position.X - (m_Size.X / 2), m_EntityTransform.Position.Y + (m_Size.Y / 2));
 	m_BottomRight = Vector2(m_EntityTransform.Position.X + (m_Size.X / 2), m_EntityTransform.Position.Y - (m_Size.Y / 2));
 }
 
-void BoundingBox::Render(SDL_Renderer& renderer)
+void BoundingBox::Render(IRenderer& renderer)
 {
 	if (Console::Query("DrawColliders") != 0)
 	{
-		SDL_Rect r{};
-		Vector2 Position = Camera::WorldToScreen(Vector2(m_EntityTransform.Position.X - (m_Size.X / 2), m_EntityTransform.Position.Y + (m_Size.Y / 2)));
-		r.x = (int)Position.X;
-		r.y = (int)Position.Y;
-		r.w = (int)(m_Size.X);
-		r.h = (int)(m_Size.Y);
-
-		SDL_SetRenderDrawColor(&renderer, 0, 255, 0, 255);
-		SDL_RenderDrawRect(&renderer, &r);
+		Vector2 ssPosition = Camera::WorldToScreen(m_EntityTransform.Position);
+		WorldRectangle rect = WorldRectangle(
+		ssPosition.X - (m_Size.X / 2),
+		ssPosition.Y - (m_Size.Y / 2),
+		m_Size.X,
+		m_Size.Y);
+		
+		renderer.SetPrimativeDrawColour(Colour::Blue);
+		renderer.Render_ScreenSpaceRectangle(rect, RENDER_LAYER::DEFAULT, false);
 	}
 }
 

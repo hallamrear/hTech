@@ -26,7 +26,7 @@ public:
 	Collider(const Transform& transform);
 
 	virtual void Update(float DeltaTime) = 0;
-	virtual void Render(SDL_Renderer& renderer) = 0;
+	virtual void Render(IRenderer& renderer) = 0;
 
 	virtual Vector2 FindFurthestPoint(Vector2 direction) const = 0;
 	virtual void GetColliderAsPoints(Vector2 points[]) const = 0;

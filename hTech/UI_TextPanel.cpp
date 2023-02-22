@@ -25,7 +25,7 @@ void UI_TextPanel::Update(float DeltaTime)
 	mText->Update(DeltaTime);
 }
 
-void UI_TextPanel::Render(SDL_Renderer& renderer)
+void UI_TextPanel::Render(IRenderer& renderer)
 {
 	DrawPanel(renderer, mPanel.BackgroundColour);
 	mText->Render(renderer);

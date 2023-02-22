@@ -7,7 +7,7 @@
 
 #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
-struct SDL_Renderer;
+struct IRenderer;
 
 #ifdef DEFINE_OLD_UI
 
@@ -43,7 +43,7 @@ protected:
 
 	static UI* Get();
 	void Update_Impl(float DeltaTime);
-	void Render_Impl(SDL_Renderer& renderer);
+	void Render_Impl(IRenderer& renderer);
 
 	template<class T>
 	UI_VariableTracker<T>* CreateVariableTracker_Impl(UI_Panel panel, T& reference, std::string additionalText);
@@ -61,7 +61,7 @@ public:
 	static UI_VariableTracker<T>* CreateVariableTracker(UI_Panel panel, T& reference, std::string additionalText);
 
 	static void Update(float DeltaTime);
-	static void Render(SDL_Renderer& renderer);
+	static void Render(IRenderer& renderer);
 };
 
 template<class T>
@@ -90,9 +90,9 @@ protected:
 
 	static UI* Get();
 	void Update_Impl(float DeltaTime);
-	void Render_Impl(SDL_Renderer& renderer);
+	void Render_Impl(IRenderer& renderer);
 
 public:
 	static void Update(float DeltaTime);
-	static void Render(SDL_Renderer& renderer);
+	static void Render(IRenderer& renderer);
 };

@@ -26,7 +26,7 @@ public:
 	UI_Panel& GetPanel();
 
 	virtual void Update(float DeltaTime);
-	virtual void Render(SDL_Renderer& renderer);
+	virtual void Render(IRenderer& renderer);
 	virtual void OnClick();
 
 	bool GetInFocus() const;

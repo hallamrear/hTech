@@ -21,7 +21,7 @@ public:
     ~UI_VariableTracker();
 
     void Update(float DeltaTime);
-    void Render(SDL_Renderer& renderer);
+    void Render(IRenderer& renderer);
 };
 
 template<class R>
@@ -51,7 +51,7 @@ inline void UI_VariableTracker<R>::Update(float DeltaTime)
 }
 
 template<class R>
-inline void UI_VariableTracker<R>::Render(SDL_Renderer& renderer)
+inline void UI_VariableTracker<R>::Render(IRenderer& renderer)
 {
 	DrawPanel(renderer, mPanel.BackgroundColour, true);
 	mText->Render(renderer);
@@ -81,7 +81,7 @@ inline void UI_VariableTracker<Entity>::Update(float DeltaTime)
 }
 
 template<>
-inline void UI_VariableTracker<Entity>::Render(SDL_Renderer& renderer)
+inline void UI_VariableTracker<Entity>::Render(IRenderer& renderer)
 {
 	DrawPanel(renderer, mPanel.BackgroundColour, true);
 	mText->Render(renderer);

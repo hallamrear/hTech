@@ -4,6 +4,7 @@
 #include "Texture.h"
 #include "Entity.h"
 #include "Game.h"
+#include "IRenderer.h"
 
 AnimationComponent::AnimationComponent(Entity& entity) : Component("Animation Component", entity)
 {
@@ -59,13 +60,18 @@ void AnimationComponent::Update(float DeltaTime)
 	}
 }
 
-void AnimationComponent::Render(SDL_Renderer& renderer)
+void AnimationComponent::Render(IRenderer& renderer)
 {
 	if (m_AnimationSheet)
 	{
 		Transform& transform = m_ParentEntity.GetTransform();
-		Vector2 srcPos = Vector2((m_FrameSize.X * m_CurrentFrame) + (m_FrameSize.X / 2.0f), (m_FrameSize.Y * m_CurrentAnimation) + m_FrameSize.Y / 2.0f);
-		m_AnimationSheet->Render(*Game::Renderer, transform, srcPos, m_FrameSize, m_IsFlipped);
+		WorldRectangle srcRect = WorldRectangle(
+			(m_FrameSize.X * m_CurrentFrame) + (m_FrameSize.X / 2.0f),
+			(m_FrameSize.Y * m_CurrentAnimation) + (m_FrameSize.Y / 2.0f),
+			m_FrameSize.X,
+			m_FrameSize.Y
+		);
+		renderer.Render_Texture(*m_AnimationSheet, transform, RENDER_LAYER::LAYER_TO_BE_REMOVED_WHEN_I_HOOK_UP_LAYERS_TO_COMPONENT, nullptr, &srcRect, nullptr, m_IsFlipped);
 	}
 }
 
