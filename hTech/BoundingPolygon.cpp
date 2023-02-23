@@ -58,7 +58,7 @@ void BoundingPolygon::Render(IRenderer& renderer)
 				pOne = m_TransformedPoints[i % m_PointCount];
 				pTwo = m_TransformedPoints[(i + 1) % m_PointCount];
 
-				renderer.Render_Line(pOne, pTwo);
+				renderer.Render_WorldSpaceLine(pOne, pTwo);
 			}
 			break;
 		}

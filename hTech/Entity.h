@@ -16,6 +16,7 @@ class HTECH_FUNCTION_EXPORT Entity
 private:
 
 protected:
+	RENDER_LAYER m_Layer;
 	std::string m_Name;
 	std::vector<Component*> m_Components;
 
@@ -43,6 +44,9 @@ public:
 
 	Entity* GetParent();
 	void SetParent(Entity* entity);
+
+	const RENDER_LAYER& GetEntityRenderLayer() const;
+	void SetEntityRenderLayer(const RENDER_LAYER& layer);
 
 	bool GetIsBeingDestroyed() const;
 	void Destroy();

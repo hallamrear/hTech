@@ -19,6 +19,7 @@
 Entity::Entity(Transform SpawnTransform, std::string Name, Entity* Parent)
 {
 	m_IsEnabled = true;
+	m_Layer = RENDER_LAYER::DEFAULT;
 	m_Components = std::vector<Component*>();
 	AddComponent<TransformComponent>();
 	GetTransform() = SpawnTransform;
@@ -30,10 +31,14 @@ Entity::Entity(Transform SpawnTransform, std::string Name, Entity* Parent)
 	{
 		SetParent(Parent);
 	}
+
+	SetEntityRenderLayer(m_Layer);
 }
 
 Entity::~Entity()
 {
+	Game::GetRenderer().GetRenderLayer(m_Layer).RemoveEntity(*this);
+
 	for (size_t i = 0; i < m_Components.size(); i++)
 	{
 		delete m_Components[i];
@@ -64,16 +69,18 @@ void Entity::Render(IRenderer& renderer)
 		}
 	}
 
-	Vector2 position = Camera::WorldToScreen(GetTransform().Position);
-	position.X -= 2; position.Y = 2;
-	WorldRectangle rect = WorldRectangle(position.X, position.Y, 4, 4);
-	float a = 255;
+	if (Game::GetGameState() != GAME_STATE::RUNNING)
+	{
+		Vector2 position = Camera::WorldToScreen(GetTransform().Position);
+		ScreenRectangle rect = ScreenRectangle(position.X, position.Y, 8, 8);
+		float a = 255;
 
-	if (m_IsEnabled == false)
-		a = 100;
+		if (m_IsEnabled == false)
+			a = 100;
 
-	renderer.SetPrimativeDrawColour(Colour(0, 255, 0, a));
-	renderer.Render_ScreenSpaceRectangle(rect, RENDER_LAYER::FOREGROUND, false, true);
+		renderer.SetPrimativeDrawColour(Colour(0, 255, 0, a));
+		renderer.Render_ScreenSpaceRectangle(rect, RENDER_LAYER::FOREGROUND, false);
+	}
 }
 
 void Entity::RenderProperties()
@@ -90,6 +97,33 @@ void Entity::RenderProperties()
 	{
 		SetName(str);
 	}
+
+	static const std::string layerStrs[5] = { "Background", "Default", "Foreground", "UI", "Debug Layer" };
+	std::string currentItem = layerStrs[(int)m_Layer];
+
+	ImGui::Separator();
+	if (ImGui::BeginCombo("Render Sort Layer", currentItem.c_str()))
+	{
+		for (int n = 0; n < IM_ARRAYSIZE(layerStrs); n++)
+		{
+			bool is_selected = (currentItem == layerStrs[n].c_str()); // You can store your selection however you want, outside or inside your objects
+			if (ImGui::Selectable(layerStrs[n].c_str(), is_selected))
+			{
+				if (currentItem != layerStrs[n])
+				{
+					Game::GetRenderer().GetRenderLayer(m_Layer).RemoveEntity(*this);
+					currentItem = layerStrs[n];
+					m_Layer = (RENDER_LAYER)n;
+					Game::GetRenderer().GetRenderLayer(m_Layer).AddEntity(*this);
+
+					if (is_selected)
+						ImGui::SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
+				}
+			}
+		}
+		ImGui::EndCombo();
+	}
+
 	ImGui::Text("Component Count: %i", m_Components.size());
 	ImGui::Text("Alive: %i", m_IsAlive);
 	ImGui::Text("Being Destroyed?: %i", m_IsWaitingToBeDestroyed);
@@ -219,6 +253,18 @@ void Entity::SetParent(Entity* entity)
 	//TODO : Implement Parenting
 }
 
+const RENDER_LAYER& Entity::GetEntityRenderLayer() const
+{
+	return m_Layer;
+}
+
+void Entity::SetEntityRenderLayer(const RENDER_LAYER& layer)
+{
+	Game::GetRenderer().GetRenderLayer(m_Layer).RemoveEntity(*this);
+	m_Layer = layer;
+	Game::GetRenderer().GetRenderLayer(m_Layer).AddEntity(*this);
+}
+
 bool Entity::GetIsBeingDestroyed() const
 {
 	return m_IsWaitingToBeDestroyed;
@@ -260,6 +306,7 @@ void Entity::Serialize(Serializer& writer) const
 	writer.String("Name");	  writer.String(m_Name.c_str());
 	writer.String("IsAlive"); writer.Bool(m_IsAlive);
 	writer.String("IsEnabled"); writer.Bool(m_IsEnabled);
+	writer.String("Layer"); writer.Int((int)m_Layer);
 
 	writer.String("Components");
 	writer.StartArray();
@@ -284,6 +331,15 @@ void Entity::Deserialize(SerializedValue& serializedEntity)
 	if (serializedEntity["IsEnabled"].IsBool())
 	{
 		m_IsEnabled = serializedEntity["IsEnabled"].GetBool();
+	}
+
+	if (serializedEntity.HasMember("Layer"))
+	{
+		if (serializedEntity["Layer"].IsInt())
+		{
+			int layer = serializedEntity["Layer"].GetInt();
+			SetEntityRenderLayer((RENDER_LAYER)layer);			
+		}
 	}
 
 	if (serializedEntity.HasMember("Components"))
