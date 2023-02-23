@@ -2,6 +2,7 @@
 #include "Entity.h"
 #include "Component_Sprite.h"
 #include "TextureCache.h"
+#include "IRenderer.h"
 
 void SpriteComponent::RenderProperties()
 {
@@ -15,12 +16,12 @@ void SpriteComponent::RenderProperties()
 		mUINewSpriteString = "";
 	}
 	ImGui::Dummy(ImVec2(0.0f, 20.0f));
-	if (m_SDLTexture != nullptr)
+	if (m_Texture != nullptr)
 	{
-		ImGui::Text("Texture Location: %s", m_SDLTexture->GetLocation().c_str());
-		ImGui::Text("Texture Name: %s", m_SDLTexture->GetName().c_str());
-		ImGui::Text("Height: %i", m_SDLTexture->Height);
-		ImGui::Text("Width: %i", m_SDLTexture->Width);
+		ImGui::Text("Texture Location: %s", m_Texture->GetLocation().c_str());
+		ImGui::Text("Texture Name: %s", m_Texture->GetName().c_str());
+		ImGui::Text("Height: %i", m_Texture->Height);
+		ImGui::Text("Width: %i", m_Texture->Width);
 		ImGui::Checkbox("Flip texture", &m_IsFlipped);
 	}
 	else
@@ -32,13 +33,13 @@ void SpriteComponent::RenderProperties()
 
 SpriteComponent::SpriteComponent(Entity& entity) : Component("Sprite Component", entity)
 {
-	m_SDLTexture = nullptr;
+	m_Texture = nullptr;
 	m_IsFlipped = false;
 }
 
 SpriteComponent::~SpriteComponent()
 {
-	m_SDLTexture = nullptr;
+	m_Texture = nullptr;
 }
 
 void SpriteComponent::SetIsFlipped(bool state)
@@ -53,14 +54,15 @@ bool SpriteComponent::IsFlipped()
 
 void SpriteComponent::LoadTexture(std::string texture_path)
 {
-	m_SDLTexture = TextureCache::GetTexture(texture_path);
+	m_Texture = TextureCache::GetTexture(texture_path);
 }
 
 void SpriteComponent::UnloadTexture()
 {
-	if (m_SDLTexture)
+	if (m_Texture)
 	{
-		m_SDLTexture = nullptr;
+		//Cleanup is handled by the texture cache.
+		m_Texture = nullptr;
 	}
 }
 
@@ -69,11 +71,11 @@ void SpriteComponent::Update(float DeltaTime)
 
 }
 
-void SpriteComponent::Render(SDL_Renderer& renderer)
+void SpriteComponent::Render(IRenderer& renderer)
 {
-	if (m_SDLTexture)
+	if (m_Texture)
 	{
-		m_SDLTexture->Render(renderer, m_ParentEntity.GetTransform(), m_IsFlipped);
+		renderer.Render_Texture(*m_Texture, m_ParentEntity.GetTransform(), RENDER_LAYER::LAYER_TO_BE_REMOVED_WHEN_I_HOOK_UP_LAYERS_TO_COMPONENT, nullptr, nullptr, nullptr, m_IsFlipped);
 	}
 }
 
@@ -82,9 +84,9 @@ void SpriteComponent::Serialize(Serializer& writer) const
 	Component::Serialize(writer);
 
 	writer.String("Texture");  
-	if (m_SDLTexture != nullptr)
+	if (m_Texture != nullptr)
 	{
-		writer.String(m_SDLTexture->GetName().c_str());
+		writer.String(m_Texture->GetName().c_str());
 	}
 	else
 	{
@@ -105,7 +107,7 @@ void SpriteComponent::Deserialize(SerializedValue& value)
 	}
 	else
 	{
-		m_SDLTexture = nullptr;
+		m_Texture = nullptr;
 	}
 
 	if (value["IsFlipped"].IsBool())

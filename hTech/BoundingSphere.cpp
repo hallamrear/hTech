@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "Transform.h"
 #include "imgui.h"
+#include "IRenderer.h"
 
 BoundingSphere::BoundingSphere(const Transform& transform, float radius, int pointCount)
 	: Collider(transform)
@@ -38,20 +39,20 @@ void BoundingSphere::SetPointCount(int pointCount)
 	m_PointCount = 4;
 }
 
-void BoundingSphere::Render(SDL_Renderer& renderer)
+void BoundingSphere::Render(IRenderer& renderer)
 {
 	if(Console::Query("DrawColliders") != 0)
 	{
 		//Fibonacci sphere
 		float angleIncrement = M_TAU * M_GOLDENRATIO;
-		SDL_SetRenderDrawColor(&renderer, 0, 255, 255, 255);
-		Vector2 centre = Camera::WorldToScreen(m_EntityTransform.Position);
-		SDL_RenderDrawPoint(&renderer, (int)centre.X, (int)centre.Y);
+
+		renderer.SetPrimativeDrawColour(Colour(0, 255, 255, 255));
+		renderer.Render_Point(m_EntityTransform.Position);
+
 		float angle = 0.0f;
 		Vector2 point;
 		point.X = m_EntityTransform.Position.X + (Radius * (float)sin(angle));
 		point.Y = m_EntityTransform.Position.Y + (Radius * (float)cos(angle));
-		point = Camera::WorldToScreen(point);
 		Vector2 lastPoint = Vector2();
 
 		for (int i = 1; i < m_PointCount + 1; i++)
@@ -60,8 +61,8 @@ void BoundingSphere::Render(SDL_Renderer& renderer)
 			angle = Utils::Maths::ConvertToRadians((360.0f / m_PointCount) * i);
 			point.X = m_EntityTransform.Position.X + (Radius * (float)sin(angle));
 			point.Y = m_EntityTransform.Position.Y + (Radius * (float)cos(angle));
-			point = Camera::WorldToScreen(point);
-			SDL_RenderDrawLine(&renderer, (int)lastPoint.X, (int)lastPoint.Y, (int)point.X, (int)point.Y);
+
+			renderer.Render_WorldSpaceLine(lastPoint, point);
 		}
 	}
 }

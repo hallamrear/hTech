@@ -13,6 +13,7 @@
 
 #include "Component_Sprite.h"
 #include "Component_Script.h"
+#include "Game.h"
 
 World* World::m_Instance = nullptr;
 
@@ -59,7 +60,6 @@ void World::DestroyEntity_Impl(Entity* entity)
     if (itr != m_EntityMap.end())
     {
         itr->second->Destroy();
-        m_EntityMap.erase(itr);
     }
 }
 
@@ -112,8 +112,7 @@ void World::Update_Impl(float DeltaTime)
     ClearupDeadEntities();
 }
 
-#ifdef _DEBUG
-void World::Render_Impl(SDL_Renderer& renderer)
+void World::Render_Impl(IRenderer& renderer)
 {
     ImGui::Begin("Scene Graph");
 
@@ -122,40 +121,75 @@ void World::Render_Impl(SDL_Renderer& renderer)
         m_WorldHashMap->Render(renderer);
     }
 
-    for(auto& itr : m_EntityMap)
+    int layerCount = (int)RENDER_LAYER::COUNT;
+    for (int i = 0; i < layerCount; i++)
     {
-        if (itr.second != nullptr)
+        RENDER_LAYER layer = (RENDER_LAYER)i;
+        std::string layerName = "UNNAMED LAYER";
+
+        switch (layer)
         {
-            std::string str = itr.second->GetName();
-
-            if (str == "")
-            {
-                str += "unnamed###" + itr.second->GetIsAlive() + std::to_string(itr.second->GetTransform().Position.X) + "/" + std::to_string(itr.second->GetTransform().Position.Y);
-            }
-
-            if (ImGui::Selectable(str.c_str()))
-            {
-                Editor::SetSelectedEntity(itr.second);
-            }
-                        
-            itr.second->Render();
+        case RENDER_LAYER::BACKGROUND:
+        {
+                layerName = "Background";
         }
+        break;
+
+        case RENDER_LAYER::DEFAULT:
+        {
+            layerName = "Default";
+        }
+        break;
+
+        case RENDER_LAYER::FOREGROUND:
+        {
+            layerName = "Foreground";
+        }
+        break;
+
+        case RENDER_LAYER::UI:
+        {
+            layerName = "UI";
+        }
+        break;
+
+        case RENDER_LAYER::LAYER_TO_BE_REMOVED_WHEN_I_HOOK_UP_LAYERS_TO_COMPONENT:
+        {
+            layerName = "Debug (to be removed) layer";
+        }
+        break;
+
+        default:
+            break;
+        }
+
+        if (ImGui::CollapsingHeader(layerName.c_str()))
+        {
+            std::list<Entity*> layerEntities = renderer.GetRenderLayer(layer).GetEntitiesFromLayer();
+
+            for (auto& itr : layerEntities)
+            {
+                std::string str = itr->GetName();
+
+                if (str == "")
+                {
+                    str += "unnamed###" + itr->GetIsAlive() + std::to_string(itr->GetTransform().Position.X) + "/" + std::to_string(itr->GetTransform().Position.Y);
+                }
+
+                if (ImGui::Selectable(str.c_str()))
+                {
+                    Editor::SetSelectedEntity(itr);
+                }
+            }
+        }
+
+
+
+        renderer.GetRenderLayer(layer).Render(renderer);
     }
 
     ImGui::End();
 }
-#else
-void World::Render_Impl(SDL_Renderer& renderer)
-{
-    for (auto& entity : m_EntityMap)
-    {
-        if (entity.second != nullptr)
-        {
-            entity.second->Render();
-        }
-    }
-}
-#endif
 
 Entity* World::GetEntityByName_Impl(std::string name)
 {
@@ -237,7 +271,7 @@ void World::Update(float DeltaTime)
     Get()->Update_Impl(DeltaTime);
 }
 
-void World::Render(SDL_Renderer& renderer)
+void World::Render(IRenderer& renderer)
 {
     Get()->Render_Impl(renderer);
 }
@@ -288,13 +322,29 @@ Entity* World::FindNearestEntityToPosition_Impl(Vector2 WorldPosition)
 }
 
 void World::ClearAllEntities()
-{
-    //todo : proper cleanup
-    /*
-    for (auto& itr : m_EntityMap)
+{    
+    for (int i = 0; i < (int)RENDER_LAYER::COUNT; i++)
     {
-        m_EntityMap.erase(itr.first);
-    }*/
+        Game::GetRenderer().GetRenderLayer((RENDER_LAYER)i).GetEntitiesFromLayer().clear();
+    }
+
+    if (m_EntityMap.size() != 0)
+    {
+        for (std::unordered_map<std::string, Entity*>::iterator itr = m_EntityMap.begin(); itr != m_EntityMap.end(); /*it++*/)
+        {
+            Entity* entity = itr->second;
+            if (entity == nullptr)
+            {
+                ++itr;
+            }
+            else
+            {
+                delete itr->second;
+                itr->second = nullptr;
+                itr = m_EntityMap.erase(itr);
+            }
+        }
+    }
 
     m_EntityMap.clear();
 }

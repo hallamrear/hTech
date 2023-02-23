@@ -46,7 +46,7 @@ void UI_Button::Update(float DeltaTime)
 	mText->Update(DeltaTime);
 }
 
-void UI_Button::Render(SDL_Renderer& renderer)
+void UI_Button::Render(IRenderer& renderer)
 {
 	if (mIsPressed)
 	{

@@ -17,25 +17,3 @@ WorldRectangle::WorldRectangle(int x, int y, int w, int h)
 	W = w;
 	H = h;
 }
-
-void WorldRectangle::Render(SDL_Renderer& renderer, bool drawFromCenter)
-{
-	SDL_Rect rect{};
-	Vector2 Position = Vector2();
-	if (drawFromCenter)
-	{
-		Position = Vector2((float)(X - (W / 2)), (float)(Y + (H / 2)));
-	}
-	else
-	{
-		Position.X = (float)X;
-		Position.Y = (float)Y;
-	}
-
-	Position = Camera::WorldToScreen(Position);
-	rect.x = (int)Position.X;
-	rect.y = (int)Position.Y;
-	rect.w = W;
-	rect.h = H;
-	SDL_RenderDrawRect(&renderer, &rect);
-}

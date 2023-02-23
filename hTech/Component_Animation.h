@@ -45,11 +45,14 @@ public:
 	const bool IsLooping() const;
 	const bool IsFlipped() const;
 
+	const unsigned int GetPlayingAnimation();
+	void SetPlayingAnimation(unsigned int animation);
+
 	AnimationComponent(Entity& entity);
 	~AnimationComponent();
 
 	void Update(float DeltaTime);
-	void Render(SDL_Renderer& renderer);
+	void Render(IRenderer& renderer);
 
 	void Serialize(Serializer& writer) const override;
 	void Deserialize(SerializedValue& value) override;

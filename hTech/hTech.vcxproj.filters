@@ -1,23 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Animation.cpp" />
-    <ClCompile Include="Camera.cpp" />
-    <ClCompile Include="Colour.cpp" />
-    <ClCompile Include="Line.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="Utility.cpp" />
     <ClCompile Include="ObserverSubject.cpp" />
     <ClCompile Include="Log.cpp" />
     <ClCompile Include="Observer.cpp" />
-    <ClCompile Include="Rectangle.cpp" />
     <ClCompile Include="ScriptObject.cpp" />
     <ClCompile Include="SpatialDivisionMethod.cpp" />
     <ClCompile Include="Time.cpp" />
     <ClCompile Include="pch.cpp" />
-    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transform.cpp" />
-    <ClCompile Include="Text.cpp" />
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="World.cpp" />
     <ClCompile Include="Component.cpp">
@@ -134,6 +126,41 @@
     <ClCompile Include="InputManager.cpp">
       <Filter>System</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Animation.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Texture.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Rectangle.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Line.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Colour.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Text.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Utility.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="IRenderer.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="RenderLayer.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="OriginalRenderer.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="IWindow.cpp" />
+    <ClCompile Include="OriginalWindow.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imstb_truetype.h">
@@ -202,23 +229,15 @@
     <ClInclude Include="UI_VariableTracker.h">
       <Filter>Legacy</Filter>
     </ClInclude>
-    <ClInclude Include="Animation.h" />
-    <ClInclude Include="Camera.h" />
-    <ClInclude Include="Colour.h" />
     <ClInclude Include="Game.h" />
-    <ClInclude Include="Line.h" />
     <ClInclude Include="Log.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="ObserverSubject.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="Rectangle.h" />
     <ClInclude Include="ScriptObject.h" />
     <ClInclude Include="SpatialDivisionMethod.h" />
-    <ClInclude Include="Text.h" />
-    <ClInclude Include="Texture.h" />
     <ClInclude Include="Time.h" />
     <ClInclude Include="Transform.h" />
-    <ClInclude Include="Utility.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="World.h" />
     <ClInclude Include="BoundingBox.h">
@@ -276,6 +295,41 @@
       <Filter>System</Filter>
     </ClInclude>
     <ClInclude Include="BUILD_NUMBER.h" />
+    <ClInclude Include="Camera.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Animation.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Rectangle.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Line.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Colour.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Text.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Utility.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="IRenderer.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="RenderLayer.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="OriginalRenderer.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="IWindow.h" />
+    <ClInclude Include="OriginalWindow.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="External">
@@ -295,6 +349,9 @@
     </Filter>
     <Filter Include="System">
       <UniqueIdentifier>{6f04d8a9-0190-44c1-ad78-e8300ce46aff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Rendering">
+      <UniqueIdentifier>{2c0a45a5-ef43-40d9-9f7f-45dce5f696ec}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

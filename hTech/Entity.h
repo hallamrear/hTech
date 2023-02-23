@@ -3,14 +3,12 @@
 
 #include <string>
 #include "Transform.h"
-#include "UI.h"
 #include "Component.h"
+#include "UI.h"
 
 enum class ENUM_COMPONENT_LIST;
-
-struct SDL_Renderer;
-class HTECH_FUNCTION_EXPORT  Collider;
-class HTECH_FUNCTION_EXPORT  Texture;
+class HTECH_FUNCTION_EXPORT Collider;
+class HTECH_FUNCTION_EXPORT Texture;
 class HTECH_FUNCTION_EXPORT TransformComponent;
 
 class HTECH_FUNCTION_EXPORT Entity
@@ -18,6 +16,7 @@ class HTECH_FUNCTION_EXPORT Entity
 private:
 
 protected:
+	RENDER_LAYER m_Layer;
 	std::string m_Name;
 	std::vector<Component*> m_Components;
 
@@ -34,7 +33,7 @@ public:
 	virtual ~Entity();
 
 	virtual void Update(float DeltaTime);
-	virtual void Render();
+	virtual void Render(IRenderer& renderer);
 
 	void RenderProperties();
 
@@ -45,6 +44,9 @@ public:
 
 	Entity* GetParent();
 	void SetParent(Entity* entity);
+
+	const RENDER_LAYER& GetEntityRenderLayer() const;
+	void SetEntityRenderLayer(const RENDER_LAYER& layer);
 
 	bool GetIsBeingDestroyed() const;
 	void Destroy();

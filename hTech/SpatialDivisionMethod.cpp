@@ -5,7 +5,7 @@
 #include "Log.h"
 #include "Entity.h"
 #include "Text.h"
-#include "Rectangle.h"
+#include "IRenderer.h"
 
 Vector2 SpatialHash::GetIDFromEntity(Entity* entity)
 {
@@ -176,20 +176,16 @@ void SpatialHash::Update(float deltaTime)
 	}
 }
 
-void SpatialHash::Render(SDL_Renderer& renderer)
+void SpatialHash::Render(IRenderer& renderer)
 {
 	for (const auto& itr : m_HashBucketMap)
 	{
-		SDL_SetRenderDrawColor(&renderer, 0, 0, 255, 255);
+		renderer.SetPrimativeDrawColour(Colour::Blue);
 
 		Vector2 wPosition = Vector2(itr.first.X * (float)WORLD_TILE_SIZE, (itr.first.Y + 1) * (float)WORLD_TILE_SIZE);
 		Vector2 sPosition = Camera::WorldToScreen(wPosition);
-		SDL_Rect rect{};
-		rect.x = (int)sPosition.X;
-		rect.y = (int)sPosition.Y;
-		rect.w = WORLD_TILE_SIZE;
-		rect.h = WORLD_TILE_SIZE;
-		SDL_RenderDrawRect(&renderer, &rect);
+		WorldRectangle rect = WorldRectangle((int)sPosition.X, (int)sPosition.Y, WORLD_TILE_SIZE, WORLD_TILE_SIZE);
+		renderer.Render_ScreenSpaceRectangle(rect, RENDER_LAYER::FOREGROUND, false);
 
 		if (itr.second.Count() != 0)
 		{

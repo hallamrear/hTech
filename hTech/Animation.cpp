@@ -2,6 +2,7 @@
 #include "Animation.h"
 #include "Game.h"
 #include "TextureCache.h"
+#include "IRenderer.h"
 
 AnimationController::AnimationController(std::string sheetPath, unsigned int animationCount, unsigned int frameCountPerAnimation, float duration, bool looping)
 {
@@ -35,6 +36,11 @@ void AnimationController::Start()
 void AnimationController::SetAnimation(unsigned int animation)
 {
 	m_CurrentAnimation = animation;
+}
+
+const unsigned int AnimationController::GetCurrentAnimationId()
+{
+	return m_CurrentAnimation;
 }
 
 const Vector2 AnimationController::GetFrameSize() const
@@ -72,21 +78,11 @@ void AnimationController::Update(float DeltaTime)
 	}
 }
 
-
-void AnimationController::Render(SDL_Renderer& renderer, Transform transform)
+void AnimationController::Render(IRenderer& renderer, Transform transform, bool flipped)
 {
 	if (m_AnimationSheet)
 	{
-		Vector2 srcPos = Vector2((m_FrameSize.X * m_CurrentFrame) + (m_FrameSize.X / 2.0f), (m_FrameSize.Y * m_CurrentAnimation) + (m_FrameSize.Y / 2.0f));
-		m_AnimationSheet->Render(*Game::Renderer, transform, srcPos, m_FrameSize);
-	}
-}
-
-void AnimationController::Render(SDL_Renderer& renderer, Transform transform, bool flipped)
-{
-	if (m_AnimationSheet)
-	{
-		Vector2 srcPos = Vector2((m_FrameSize.X * m_CurrentFrame) + (m_FrameSize.X / 2.0f), (m_FrameSize.Y * m_CurrentAnimation) + m_FrameSize.Y / 2.0f);
-		m_AnimationSheet->Render(*Game::Renderer, transform, srcPos, m_FrameSize, flipped);
+		WorldRectangle frame = WorldRectangle((m_FrameSize.X * m_CurrentFrame) + (m_FrameSize.X / 2.0f), (m_FrameSize.Y * m_CurrentAnimation) + (m_FrameSize.Y / 2.0f), m_FrameSize.X, m_FrameSize.Y);
+		renderer.Render_Texture(*m_AnimationSheet, transform, RENDER_LAYER::LAYER_TO_BE_REMOVED_WHEN_I_HOOK_UP_LAYERS_TO_COMPONENT, nullptr, nullptr, &frame, flipped);
 	}
 }

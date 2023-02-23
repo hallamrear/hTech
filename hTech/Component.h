@@ -1,11 +1,11 @@
 #pragma once
 #include "JSON.h"
+#include "IRenderer.h"
 #include <string>
 
 #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
 class HTECH_FUNCTION_EXPORT Entity;
-struct SDL_Renderer;
 
 class HTECH_FUNCTION_EXPORT Component
 {
@@ -28,7 +28,7 @@ public:
 	Entity& GetEntity() const;
 
 	virtual void Update(float DeltaTime);
-	virtual void Render(SDL_Renderer& renderer);
+	virtual void Render(IRenderer& renderer);
 	virtual void RenderProperties() = 0;
 	virtual void Serialize(Serializer& writer) const = 0;
 	virtual void Deserialize(SerializedValue& value) = 0;

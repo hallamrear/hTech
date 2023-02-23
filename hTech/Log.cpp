@@ -6,6 +6,7 @@
 #include "Transform.h"
 #include "Console.h"
 #include "UI.h"
+#include "IRenderer.h"
 
 Log* Log::m_Instance = nullptr;
 
@@ -51,7 +52,7 @@ Log* Log::Get()
 	return m_Instance;
 }
 
-void Log::Render_Impl(SDL_Renderer& renderer)
+void Log::Render_Impl(IRenderer& renderer)
 {
 	ImGui::Begin("Log | Console", 0, ImGuiWindowFlags_::ImGuiWindowFlags_NoResize);
 
@@ -153,7 +154,7 @@ void Log::Update_Impl(float DeltaTime)
 		itr->Update(DeltaTime);
 }
 
-void Log::Render(SDL_Renderer& renderer)
+void Log::Render(IRenderer& renderer)
 {
 	Get()->Render_Impl(renderer);
 }

@@ -24,7 +24,7 @@ TwoPointLine<P>& TwoPointLine<P>::operator=(const TwoPointLine<P>& line)
 };
 
 template<class P>
-void TwoPointLine<P>::Render(SDL_Renderer& renderer)
+void TwoPointLine<P>::Render(IRenderer& renderer)
 {
 	SDL_RenderDrawLine(&renderer, A.X, A.Y, B.X, B.Y);
 }

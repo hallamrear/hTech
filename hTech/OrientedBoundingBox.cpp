@@ -5,6 +5,7 @@
 #include "rapidjson/rapidjson.h"
 #include "imgui.h"
 #include "Console.h"
+#include "IRenderer.h"
 
 OrientedBoundingBox::OrientedBoundingBox(const Transform& transform, float size_x, float size_y)
 	: BoundingBox(transform, size_x, size_y)
@@ -36,25 +37,15 @@ void OrientedBoundingBox::Update(float DeltaTime)
 	CalculateRotations();
 }
 
-void OrientedBoundingBox::Render(SDL_Renderer& renderer)
+void OrientedBoundingBox::Render(IRenderer& renderer)
 {
 	if (Console::Query("DrawColliders") != 0)
 	{
-		SDL_SetRenderDrawColor(&renderer, 255, 0, 0, 255);
-
-		const Vector2 TopLeft_ScreenSpace = Camera::WorldToScreen(m_TopLeft);
-		const Vector2 TopRight_ScreenSpace = Camera::WorldToScreen(m_TopRight);
-		const Vector2 BottomLeft_ScreenSpace = Camera::WorldToScreen(m_BottomLeft);
-		const Vector2 BottomRight_ScreenSpace = Camera::WorldToScreen(m_BottomRight);
-
-		//Top
-		SDL_RenderDrawLine(&renderer, round(TopLeft_ScreenSpace.X), round(TopLeft_ScreenSpace.Y), round(TopRight_ScreenSpace.X), round(TopRight_ScreenSpace.Y));
-		//Bot
-		SDL_RenderDrawLine(&renderer, round(BottomLeft_ScreenSpace.X), round(BottomLeft_ScreenSpace.Y), round(BottomRight_ScreenSpace.X), round(BottomRight_ScreenSpace.Y));
-		//Left
-		SDL_RenderDrawLine(&renderer, round(TopLeft_ScreenSpace.X), round(TopLeft_ScreenSpace.Y), round(BottomLeft_ScreenSpace.X), round(BottomLeft_ScreenSpace.Y));
-		//Right
-		SDL_RenderDrawLine(&renderer, round(TopRight_ScreenSpace.X), round(TopRight_ScreenSpace.Y), round(BottomRight_ScreenSpace.X), round(BottomRight_ScreenSpace.Y));
+		renderer.SetPrimativeDrawColour(Colour::Red);
+		renderer.Render_WorldSpaceLine(m_TopLeft, m_TopRight);
+		renderer.Render_WorldSpaceLine(m_BottomLeft, m_BottomRight);
+		renderer.Render_WorldSpaceLine(m_TopLeft, m_BottomLeft);
+		renderer.Render_WorldSpaceLine(m_TopRight, m_BottomRight);
 	}
 }
 

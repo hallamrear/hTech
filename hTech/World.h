@@ -30,7 +30,7 @@ private:
 	void					ClearupDeadEntities();
 
 	void					Update_Impl(float DeltaTime);
-	void					Render_Impl(SDL_Renderer&);
+	void					Render_Impl(IRenderer& renderer);
 	Entity*					GetEntityByName_Impl(std::string name);
 	void					QuerySpaceForEntities_Impl(WorldRectangle rect, std::vector<Entity*>& entities);
 	Entity*					FindNearestEntityToPosition_Impl(Vector2 WorldPosition);
@@ -58,7 +58,7 @@ public:
 	static void				Deserialize(Deserializer& reader);
 
 	static void				Update(float DeltaTime);
-	static void				Render(SDL_Renderer&);
+	static void				Render(IRenderer& renderer);
 
 	static void				ResetWorldEntities();
 	static void				CallStartFunctionOnAllEntites();

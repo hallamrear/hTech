@@ -1,7 +1,7 @@
 #pragma once
 #include "Vector2.h"
 
-struct SDL_Renderer;
+struct IRenderer;
 
 template<class P>
 struct TwoPointLine
@@ -15,7 +15,7 @@ struct TwoPointLine
 	Vector2 GetNormal() const;
 	Vector2 GetCentrePoint() const;
 	TwoPointLine& operator=(const TwoPointLine& line);
-	void Render(SDL_Renderer& renderer);
+	void Render(IRenderer& renderer);
 };
 
 typedef TwoPointLine<Point&> Edge;

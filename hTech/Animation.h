@@ -1,8 +1,6 @@
 #pragma once
  #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
-
-
 #include "Texture.h"
 #include "Transform.h"
 
@@ -29,8 +27,8 @@ public:
 	bool HasFinished();
 	void Start();
 	void SetAnimation(unsigned int animation);
+	const unsigned int GetCurrentAnimationId();
 	const Vector2 GetFrameSize() const;
 	void Update(float DeltaTime);
-	void Render(SDL_Renderer& renderer, Transform transform);
-	void Render(SDL_Renderer& renderer, Transform transform, bool flipped);
+	void Render(IRenderer& renderer, Transform transform, bool flipped = false);
 };
