@@ -45,6 +45,9 @@ public:
 	const bool IsLooping() const;
 	const bool IsFlipped() const;
 
+	const unsigned int GetPlayingAnimation();
+	void SetPlayingAnimation(unsigned int animation);
+
 	AnimationComponent(Entity& entity);
 	~AnimationComponent();
 

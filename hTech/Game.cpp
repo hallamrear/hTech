@@ -688,17 +688,18 @@ void Game::Render()
 	pos.X = ImGui::GetWindowPos().x;
 	pos.Y = ImGui::GetWindowPos().y;
 	ImVec2 vMin = ImGui::GetWindowContentRegionMin();
-	ImVec2 vMax = ImGui::GetWindowContentRegionMax();
+	ImVec2 vMax = ImGui::GetWindowContentRegionMax();/*
 
 	Console::Run("WindowDimensionsW " + std::to_string(size.X));
 	Console::Run("WindowDimensionsH " + std::to_string(size.Y));
 	Console::Run("WindowCentreX " + std::to_string(size.X / 2));
-	Console::Run("WindowCentreY " + std::to_string(size.Y / 2));
+	Console::Run("WindowCentreY " + std::to_string(size.Y / 2));*/
 
-	SDL_Rect renderQuad = { (int)(pos.X + vMin.x), (int)(pos.Y + vMin.y), (int)(vMax.x - vMin.x), (int)(vMax.y - vMin.y) };
-	SDL_RenderSetClipRect(renderer->GetAPIRenderer(), &renderQuad);
+	SDL_Rect renderDstQuad = { (int)(pos.X + vMin.x), (int)(pos.Y + vMin.y), (int)(vMax.x - vMin.x), (int)(vMax.y - vMin.y) };
+	SDL_Rect renderSrcQuad = renderDstQuad;
+
+	SDL_RenderSetClipRect(renderer->GetAPIRenderer(), &renderDstQuad);
 	//Render to screen
-	SDL_Point center = { (int)(renderQuad.x + (renderQuad.w / 2)),  (int)(renderQuad.y + (renderQuad.h / 2)) };
 	ImGui::End();
 
 	ImGui::Render();
@@ -706,7 +707,7 @@ void Game::Render()
 	
 	if (showDeletionConfirmation == false && showNewProjectModal == false && showOpenProjectModal == false)
 	{
-		SDL_RenderCopyEx(renderer->GetAPIRenderer(), renderer->GetRenderTexture(), &renderQuad, &renderQuad, 0.0F, &center, SDL_RendererFlip::SDL_FLIP_NONE);
+		SDL_RenderCopyEx(renderer->GetAPIRenderer(), renderer->GetRenderTexture(), &renderSrcQuad, &renderDstQuad, 0.0F, nullptr, SDL_RendererFlip::SDL_FLIP_NONE);
 	}
 
 	m_Renderer->EndFrame();

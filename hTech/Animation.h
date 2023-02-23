@@ -27,6 +27,7 @@ public:
 	bool HasFinished();
 	void Start();
 	void SetAnimation(unsigned int animation);
+	const unsigned int GetCurrentAnimationId();
 	const Vector2 GetFrameSize() const;
 	void Update(float DeltaTime);
 	void Render(IRenderer& renderer, Transform transform, bool flipped = false);

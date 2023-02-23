@@ -222,18 +222,21 @@ void Editor::Render_Impl(IRenderer& renderer)
 
     for (size_t i = 0; i < m_SelectedEntities.size(); i++)
     {
-        Vector2 pos = Camera::WorldToScreen(m_SelectedEntities[i]->GetTransform().Position) + Vector2(-32, 32);
+        Vector2 pos = Camera::WorldToScreen(m_SelectedEntities[i]->GetTransform().Position);
         WorldRectangle rect = WorldRectangle(pos.X, pos.Y, 64, 64);
-        renderer.Render_ScreenSpaceRectangle(rect);
+        renderer.Render_ScreenSpaceRectangle(rect, RENDER_LAYER::DEFAULT, false);
     }
 
     if (m_IsDraggingRect)
     {
+        int halfW = m_SelectionRect.W / 2;
+        int halfH = m_SelectionRect.H / 2;
+
         Vector2 points[4] =
         {
-            {(float)m_SelectionRect.X,				   (float)m_SelectionRect.Y},
+            {(float)m_SelectionRect.X,				       (float)m_SelectionRect.Y},
             {(float)m_SelectionRect.X + m_SelectionRect.W, (float)m_SelectionRect.Y},
-            {(float)m_SelectionRect.X,				   (float)m_SelectionRect.Y - m_SelectionRect.H},
+            {(float)m_SelectionRect.X,				       (float)m_SelectionRect.Y - m_SelectionRect.H},
             {(float)m_SelectionRect.X + m_SelectionRect.W, (float)m_SelectionRect.Y - m_SelectionRect.H}
         };
 
@@ -246,26 +249,37 @@ void Editor::Render_Impl(IRenderer& renderer)
 
             corner.W = 4;
             corner.H = 4;
-            corner.X = p.X - (corner.W / 2);
-            corner.Y = p.Y - (corner.H / 2);
+            corner.X = p.X;
+            corner.Y = p.Y;
             renderer.Render_ScreenSpaceRectangle(corner);
         }
 
         renderer.SetPrimativeDrawColour(Colour::White);
-        renderer.Render_WorldSpaceRectangle(m_SelectionRect, RENDER_LAYER::FOREGROUND, false);
+        WorldRectangle outline = m_SelectionRect;
+        outline.X += (m_SelectionRect.W / 2);
+        outline.Y -= (m_SelectionRect.H / 2);
+        renderer.Render_WorldSpaceRectangle(outline, RENDER_LAYER::FOREGROUND, false);
     }
 
     if (selected)
     {
         WorldRectangle selectedRect = WorldRectangle(0, 0, 256, 256);
-        Vector2 Position = Camera::WorldToScreen(selected->GetTransform().Position) + Vector2(0 - (selectedRect.W / 2), selectedRect.H / 2);
+        Vector2 Position = Camera::WorldToScreen(selected->GetTransform().Position);
         selectedRect.X = (int)Position.X;
         selectedRect.Y = (int)Position.Y;
 
         renderer.SetPrimativeDrawColour(Colour(255, 255, 0, 255));
-        //renderer.Render_ScreenSpaceRectangle(selectedRect, RENDER_LAYER::FOREGROUND, false);
-        //renderer.Render_Line(Vector2(selectedRect.X,  selectedRect.Y), Vector2(selectedRect.X + selectedRect.W, selectedRect.Y + selectedRect.H));
-        //renderer.Render_Line(Vector2(selectedRect.X + selectedRect.W, selectedRect.Y), Vector2(selectedRect.X, selectedRect.Y + selectedRect.H));
+        renderer.Render_ScreenSpaceRectangle(selectedRect, RENDER_LAYER::FOREGROUND, false);
+
+        int halfWidth = selectedRect.W / 2;
+        int halfHeight = selectedRect.H / 2;
+        renderer.Render_ScreenSpaceLine(
+            Vector2(selectedRect.X - halfWidth, selectedRect.Y - halfHeight), 
+            Vector2(selectedRect.X + halfWidth, selectedRect.Y + halfHeight));
+
+        renderer.Render_ScreenSpaceLine(
+            Vector2(selectedRect.X + halfWidth, selectedRect.Y - halfHeight),
+            Vector2(selectedRect.X - halfWidth, selectedRect.Y + halfHeight));
     }
 }
 

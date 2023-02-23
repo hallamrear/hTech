@@ -38,6 +38,11 @@ void AnimationController::SetAnimation(unsigned int animation)
 	m_CurrentAnimation = animation;
 }
 
+const unsigned int AnimationController::GetCurrentAnimationId()
+{
+	return m_CurrentAnimation;
+}
+
 const Vector2 AnimationController::GetFrameSize() const
 {
 	return m_FrameSize;

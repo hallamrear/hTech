@@ -42,10 +42,10 @@ void OrientedBoundingBox::Render(IRenderer& renderer)
 	if (Console::Query("DrawColliders") != 0)
 	{
 		renderer.SetPrimativeDrawColour(Colour::Red);
-		renderer.Render_Line(m_TopLeft, m_TopRight);
-		renderer.Render_Line(m_BottomLeft, m_BottomRight);
-		renderer.Render_Line(m_TopLeft, m_BottomLeft);
-		renderer.Render_Line(m_TopRight, m_BottomRight);
+		renderer.Render_WorldSpaceLine(m_TopLeft, m_TopRight);
+		renderer.Render_WorldSpaceLine(m_BottomLeft, m_BottomRight);
+		renderer.Render_WorldSpaceLine(m_TopLeft, m_BottomLeft);
+		renderer.Render_WorldSpaceLine(m_TopRight, m_BottomRight);
 	}
 }
 

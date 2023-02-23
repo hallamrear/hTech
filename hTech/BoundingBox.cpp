@@ -51,8 +51,8 @@ void BoundingBox::Render(IRenderer& renderer)
 	{
 		Vector2 ssPosition = Camera::WorldToScreen(m_EntityTransform.Position);
 		WorldRectangle rect = WorldRectangle(
-		ssPosition.X - (m_Size.X / 2),
-		ssPosition.Y - (m_Size.Y / 2),
+		ssPosition.X,
+		ssPosition.Y,
 		m_Size.X,
 		m_Size.Y);
 		

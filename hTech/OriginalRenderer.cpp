@@ -289,8 +289,9 @@ void OriginalRenderer::Render_Texture(
 
 	if (dstRect)
 	{
-		dst.x = dstRect->X;
-		dst.y = dstRect->Y;
+		Vector2 ssPosition = Camera::WorldToScreen(Vector2(dstRect->X - (dstRect->W / 2), dstRect->Y + (dstRect->H / 2)));
+		dst.x = ssPosition.X;
+		dst.y = ssPosition.Y;
 		dst.w = dstRect->W;
 		dst.h = dstRect->H;
 	}
@@ -341,32 +342,31 @@ void OriginalRenderer::Render_Point(const Vector2& worldSpacePoint)
 	SDL_RenderDrawPoint(m_SDLRenderer, (int)point.X, (int)point.Y);
 }
 
-void OriginalRenderer::Render_Line(const Vector2& worldSpacePointA, const Vector2& worldSpacePointB)
+void OriginalRenderer::Render_ScreenSpaceLine(const Vector2& pointA, const Vector2& pointB)
 {
-	Vector2 screenSpacePointA = Camera::WorldToScreen(worldSpacePointA);
-	Vector2 screenSpacePointB = Camera::WorldToScreen(worldSpacePointB);
+	SDL_RenderDrawLine(m_SDLRenderer,
+		(int)pointA.X, (int)pointA.Y,
+		(int)pointB.X, (int)pointB.Y);
+}
+
+void OriginalRenderer::Render_WorldSpaceLine(const Vector2& pointA, const Vector2& pointB)
+{
+	Vector2 screenSpacePointA = Camera::WorldToScreen(pointA);
+	Vector2 screenSpacePointB = Camera::WorldToScreen(pointB);
 	SDL_RenderDrawLine(m_SDLRenderer, 
 		(int)screenSpacePointA.X, (int)screenSpacePointA.Y,
 		(int)screenSpacePointB.X, (int)screenSpacePointB.Y);
 }
 
-void OriginalRenderer::Render_ScreenSpaceRectangle(const ScreenRectangle& rectangle, const RENDER_LAYER& layer, bool filled, bool drawCentered)
+void OriginalRenderer::Render_ScreenSpaceRectangle(const ScreenRectangle& rectangle, const RENDER_LAYER& layer, bool filled)
 {
 	SDL_Rect rect{};
 	Vector2 Position = Vector2();
-	if (drawCentered)
-	{
-		rect.x = (rectangle.X - (rectangle.W / 2));
-		rect.y = (rectangle.Y + (rectangle.H / 2));
-	}
-	else
-	{
-		rect.x = rectangle.X;
-		rect.y = rectangle.Y;
-	}
 
 	rect.w = rectangle.W;
 	rect.h = rectangle.H;
+	rect.x = rectangle.X - (rect.w / 2);
+	rect.y = rectangle.Y - (rect.h / 2);
 
 	if (filled)
 	{
@@ -378,25 +378,15 @@ void OriginalRenderer::Render_ScreenSpaceRectangle(const ScreenRectangle& rectan
 	}
 }
 
-void OriginalRenderer::Render_WorldSpaceRectangle(const WorldRectangle& rectangle, const RENDER_LAYER& layer, bool filled, bool drawCentered)
+void OriginalRenderer::Render_WorldSpaceRectangle(const WorldRectangle& rectangle, const RENDER_LAYER& layer, bool filled)
 {
 	SDL_Rect rect{};
-	Vector2 Position = Vector2();
-	if (drawCentered)
-	{
-		Position = Vector2((float)(rectangle.X - (rectangle.W / 2)), (float)(rectangle.Y + (rectangle.H / 2)));
-	}
-	else
-	{
-		Position.X = (float)rectangle.X;
-		Position.Y = (float)rectangle.Y;
-	}
-
+	Vector2 Position = Vector2(rectangle.X, rectangle.Y);
 	Position = Camera::WorldToScreen(Position);
-	rect.x = (int)Position.X;
-	rect.y = (int)Position.Y;
 	rect.w = rectangle.W;
 	rect.h = rectangle.H;
+	rect.x = (int)Position.X - (rectangle.W / 2);
+	rect.y = (int)Position.Y - (rectangle.H / 2);
 
 	if (filled)
 	{

@@ -62,7 +62,7 @@ void BoundingSphere::Render(IRenderer& renderer)
 			point.X = m_EntityTransform.Position.X + (Radius * (float)sin(angle));
 			point.Y = m_EntityTransform.Position.Y + (Radius * (float)cos(angle));
 
-			renderer.Render_Line(lastPoint, point);
+			renderer.Render_WorldSpaceLine(lastPoint, point);
 		}
 	}
 }
