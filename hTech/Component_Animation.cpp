@@ -66,12 +66,20 @@ void AnimationComponent::Render(IRenderer& renderer)
 	{
 		Transform& transform = m_ParentEntity.GetTransform();
 		WorldRectangle srcRect = WorldRectangle(
-			(m_FrameSize.X * m_CurrentFrame) + (m_FrameSize.X / 2.0f),
-			(m_FrameSize.Y * m_CurrentAnimation) + (m_FrameSize.Y / 2.0f),
+			(m_FrameSize.X * m_CurrentFrame),
+			(m_FrameSize.Y * m_CurrentAnimation),
 			m_FrameSize.X,
 			m_FrameSize.Y
 		);
-		renderer.Render_Texture(*m_AnimationSheet, transform, RENDER_LAYER::LAYER_TO_BE_REMOVED_WHEN_I_HOOK_UP_LAYERS_TO_COMPONENT, nullptr, &srcRect, nullptr, m_IsFlipped);
+
+		WorldRectangle dstRect = WorldRectangle(
+			transform.Position.X,
+			transform.Position.Y,
+			m_FrameSize.X,
+			m_FrameSize.Y
+		);
+
+		renderer.Render_Texture(*m_AnimationSheet, transform, RENDER_LAYER::LAYER_TO_BE_REMOVED_WHEN_I_HOOK_UP_LAYERS_TO_COMPONENT, nullptr, &srcRect, &dstRect, m_IsFlipped);
 	}
 }
 
@@ -79,9 +87,10 @@ void AnimationComponent::Serialize(Serializer& writer) const
 {
 	Component::Serialize(writer);
 
-	writer.String("Duration"			 ); writer.Double((double)m_Duration);
+	writer.String("Duration"); writer.Double((double)m_Duration);
 	writer.String("Animation Frame Count"); writer.Int(m_TotalFrames);
-	writer.String("Animation Count"		 ); writer.Int(m_AnimationCount);
+	writer.String("Animation Count"); writer.Int(m_AnimationCount);
+	writer.String("Playing Animation"); writer.Uint(m_CurrentAnimation);
 
 	writer.String("Texture");
 	if (m_AnimationSheet != nullptr)
@@ -101,17 +110,32 @@ void AnimationComponent::Deserialize(SerializedValue& value)
 {
 	Component::Deserialize(value);
 
-	m_Duration = (float)value.FindMember("Duration")->value.GetDouble();
-	m_TotalFrames = value.FindMember("Animation Frame Count")->value.GetInt();
-	m_AnimationCount = value.FindMember("Animation Count")->value.GetInt();
-	m_IsFlipped = value.FindMember("IsFlipped")->value.GetBool();
-	m_IsLooping = value.FindMember("IsLooping")->value.GetBool();
+	if (value.HasMember("Duration"))
+		m_Duration = (float)value.FindMember("Duration")->value.GetDouble();
+
+	if (value.HasMember("Animation Frame Count"))
+		m_TotalFrames = value.FindMember("Animation Frame Count")->value.GetInt();
+
+	if (value.HasMember("Animation Count"))
+		m_AnimationCount = value.FindMember("Animation Count")->value.GetInt();
+
+	if (value.HasMember("IsFlipped"))
+		m_IsFlipped = value.FindMember("IsFlipped")->value.GetBool();
+
+	if (value.HasMember("IsLooping"))
+		m_IsLooping = value.FindMember("IsLooping")->value.GetBool();
 	
-	auto texture = value.FindMember("Texture");
-	if (texture->value.IsNull() == false)
+	if(value.HasMember("Playing Animation"))
+		m_CurrentAnimation = value.FindMember("Playing Animation")->value.GetUint();
+	
+	if (value.HasMember("Texture"))
 	{
-		std::string textureSheet = texture->value.GetString();
-		LoadAnimationSheet(textureSheet);
+		auto texture = value.FindMember("Texture");
+		if (texture->value.IsNull() == false)
+		{
+			std::string textureSheet = texture->value.GetString();
+			LoadAnimationSheet(textureSheet);
+		}
 	}
 }
 
@@ -141,11 +165,11 @@ void AnimationComponent::RenderProperties()
 	ImGui::DragFloat("Animation duration", &m_Duration, 0.25f, 1, 60);
 	ImGui::DragInt("Total Frames per Animation", &m_TotalFrames, 1.0f, 1, 200);
 	ImGui::DragInt("Total Animations in sheet", &m_AnimationCount, 1.0f, 0, 200);
+	ImGui::DragInt("Current animation: ", (int*)&m_CurrentAnimation, 1.0f, 0, m_AnimationCount);;
 	ImGui::Text("Current frame: %f", m_TimeBetweenFrames);
 	ImGui::Text("Frame time elapsed: %f", m_TimeElapsed);
 	ImGui::Text("Current frame: %i", (int)m_CurrentFrame);
-	ImGui::Text("Current animation: %i", (int)m_CurrentAnimation);
-	ImGui::Text("Frame Size: X = %i, Y = %i", m_FrameSize.X, m_FrameSize.Y);
+	ImGui::Text("Frame Size: X = %i, Y = %i", (int)m_FrameSize.X, (int)m_FrameSize.Y);
 	ImGui::Text("Has Finished: %i", (int)&m_HasFinished);
 	ImGui::Checkbox("Loop animation: ", &m_IsLooping);
 	ImGui::Checkbox("Flip animation: ", &m_IsFlipped);
@@ -181,6 +205,16 @@ const bool AnimationComponent::IsLooping() const
 const bool AnimationComponent::IsFlipped() const
 {
 	return m_IsFlipped;
+}
+
+const unsigned int AnimationComponent::GetPlayingAnimation()
+{
+	return m_CurrentAnimation;
+}
+
+void AnimationComponent::SetPlayingAnimation(unsigned int animation)
+{
+	m_CurrentAnimation = animation;
 }
 
 void AnimationComponent::SetDuration(float value)
