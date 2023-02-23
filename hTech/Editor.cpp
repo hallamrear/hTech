@@ -222,7 +222,7 @@ void Editor::Render_Impl(IRenderer& renderer)
 
     for (size_t i = 0; i < m_SelectedEntities.size(); i++)
     {
-        Vector2 pos = Camera::WorldToScreen(m_SelectedEntities[i]->GetTransform().Position) + Vector2(-32, 32);
+        Vector2 pos = Camera::WorldToScreen(m_SelectedEntities[i]->GetTransform().Position);
         WorldRectangle rect = WorldRectangle(pos.X, pos.Y, 64, 64);
         renderer.Render_ScreenSpaceRectangle(rect, RENDER_LAYER::DEFAULT, false);
     }
