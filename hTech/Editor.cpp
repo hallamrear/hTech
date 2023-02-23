@@ -229,6 +229,9 @@ void Editor::Render_Impl(IRenderer& renderer)
 
     if (m_IsDraggingRect)
     {
+        int halfW = m_SelectionRect.W / 2;
+        int halfH = m_SelectionRect.H / 2;
+
         Vector2 points[4] =
         {
             {(float)m_SelectionRect.X,				       (float)m_SelectionRect.Y},
@@ -246,13 +249,16 @@ void Editor::Render_Impl(IRenderer& renderer)
 
             corner.W = 4;
             corner.H = 4;
-            corner.X = p.X - (corner.W / 2);
-            corner.Y = p.Y - (corner.H / 2);
+            corner.X = p.X;
+            corner.Y = p.Y;
             renderer.Render_ScreenSpaceRectangle(corner);
         }
 
         renderer.SetPrimativeDrawColour(Colour::White);
-        renderer.Render_WorldSpaceRectangle(m_SelectionRect, RENDER_LAYER::FOREGROUND, false);
+        WorldRectangle outline = m_SelectionRect;
+        outline.X += (m_SelectionRect.W / 2);
+        outline.Y -= (m_SelectionRect.H / 2);
+        renderer.Render_WorldSpaceRectangle(outline, RENDER_LAYER::FOREGROUND, false);
     }
 
     if (selected)
