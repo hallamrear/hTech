@@ -1,7 +1,12 @@
 #pragma once
  #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
-
+#define ENABLE_ZOOMING false
+#if(ENABLE_ZOOMING)
+#define MAX_ZOOM 10.0f
+#define MIN_ZOOM 1.0f
+#define ZOOM_STEP 0.5f
+#endif
 
 #include "Vector2.h"
 
@@ -22,6 +27,8 @@ private:
 public:
 	~Camera();
 	static Camera* Get();
+
+	static float ZoomLevel;
 
 	static void SetCameraPosition(Vector2 Position);
 	static Vector2 GetCameraPosition();

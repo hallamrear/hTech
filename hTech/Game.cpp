@@ -696,7 +696,10 @@ void Game::Render()
 	Console::Run("WindowCentreY " + std::to_string(size.Y / 2));*/
 
 	SDL_Rect renderDstQuad = { (int)(pos.X + vMin.x), (int)(pos.Y + vMin.y), (int)(vMax.x - vMin.x), (int)(vMax.y - vMin.y) };
+
 	SDL_Rect renderSrcQuad = renderDstQuad;
+	renderSrcQuad.w /= Camera::ZoomLevel;
+	renderSrcQuad.h /= Camera::ZoomLevel;
 
 	SDL_RenderSetClipRect(renderer->GetAPIRenderer(), &renderDstQuad);
 	//Render to screen

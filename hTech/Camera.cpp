@@ -5,6 +5,7 @@
 #include "Console.h"
 
 Camera* Camera::m_Instance = nullptr;
+float Camera::ZoomLevel = 1.0f;
 
 Camera::Camera()
 {
@@ -41,6 +42,21 @@ Camera::Camera()
 			pos.X += 2.5f;
 			Camera::SetCameraPosition(pos);
 		});
+
+#if(ENABLE_ZOOMING)
+		InputManager::Bind(IM_MOUSE_CODE::IM_MOUSE_SCROLL_UP, IM_KEY_STATE::IM_KEY_PRESSED,
+			[this]()
+			{
+				Camera::ZoomLevel = std::min(MAX_ZOOM, Camera::ZoomLevel + ZOOM_STEP);
+			});
+
+
+		InputManager::Bind(IM_MOUSE_CODE::IM_MOUSE_SCROLL_DOWN, IM_KEY_STATE::IM_KEY_PRESSED, 
+			[this]()
+			{
+				Camera::ZoomLevel = std::max(MIN_ZOOM, Camera::ZoomLevel - ZOOM_STEP);
+			});
+#endif
 }
 
 Camera::~Camera()
