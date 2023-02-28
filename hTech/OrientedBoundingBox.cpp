@@ -23,8 +23,8 @@ void OrientedBoundingBox::CalculateRotations()
 {
 	//if (m_EntityTransform.Rotation != 0.0f && m_EntityTransform.Rotation != 360.0f)
 	{
-		//float rotation = 360.0f - m_EntityTransform.Rotation;
-		float rotation = m_EntityTransform.Rotation;
+		float rotation = 360.0f - m_EntityTransform.Rotation;
+		//float rotation = (m_EntityTransform.Rotation);
 		m_TopLeft =     Utils::Maths::RotatePointAroundOriginDegrees(Vector2(m_EntityTransform.Position.X - (m_Size.X / 2), m_EntityTransform.Position.Y + (m_Size.Y / 2)), rotation, m_EntityTransform.Position);
 		m_BottomLeft =  Utils::Maths::RotatePointAroundOriginDegrees(Vector2(m_EntityTransform.Position.X - (m_Size.X / 2), m_EntityTransform.Position.Y - (m_Size.Y / 2)), rotation, m_EntityTransform.Position);
 		m_TopRight =    Utils::Maths::RotatePointAroundOriginDegrees(Vector2(m_EntityTransform.Position.X + (m_Size.X / 2), m_EntityTransform.Position.Y + (m_Size.Y / 2)), rotation, m_EntityTransform.Position);

@@ -1,20 +1,20 @@
 #pragma once
- #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+#include <unordered_map>
+#include "ObserverSubject.h"
+
+#define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
 #ifndef _WINDEF_
 class HINSTANCE__; // Forward or never
 typedef HINSTANCE__* HINSTANCE;
 #endif
 
-#include "ObserverSubject.h"
-
 class Entity;
 class ScriptComponent;
-
 class HTECH_FUNCTION_EXPORT ScriptObject;
 typedef ScriptObject* (__cdecl* scriptPtr)(Entity*);
 
-class HTECH_FUNCTION_EXPORT ScriptLoader : public ObserverSubject
+class ScriptLoader : public ObserverSubject
 {
 private:	
 	static ScriptLoader* m_Instance;

@@ -358,7 +358,6 @@ void Game::Update(float DeltaTime)
 		Physics::Update(DeltaTime);
 
 	World::Update(DeltaTime);
-
 	UI::Update(DeltaTime);
 
 	if(Console::Query("DrawLog") != 0)
@@ -558,6 +557,7 @@ void Game::Render()
 				m_GameState = GAME_STATE::RUNNING;
 				World::ResetWorldEntities();
 				World::CallStartFunctionOnAllEntites();
+				Editor::ClearSelected();
 			}
 			ImGui::PopStyleColor();
 

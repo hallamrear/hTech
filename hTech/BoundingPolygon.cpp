@@ -30,9 +30,11 @@ void BoundingPolygon::Update(float DeltaTime)
 {
 	m_PointCount = m_TransformedPoints.size();
 
+	float r;
 	for (size_t i = 0; i < m_TransformedPoints.size(); i++)
 	{
-		m_TransformedPoints[i] = Utils::Maths::RotatePointAroundOriginDegrees(m_EntityTransform.Position + m_OriginalPoints[i], m_Rotation, m_EntityTransform.Position);
+		r = 360.0f - m_Rotation;
+		m_TransformedPoints[i] = Utils::Maths::RotatePointAroundOriginDegrees(m_EntityTransform.Position + m_OriginalPoints[i], r, m_EntityTransform.Position);
 	}
 }
 

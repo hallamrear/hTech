@@ -245,7 +245,11 @@ void RigidbodyComponent::CalculateInverseMass()
 	if (GetIsStatic())
 		m_InverseMass = 0.0f;
 	else
-		m_InverseMass = 1.0f / m_Mass;
+	{
+		float m;
+		m_Mass == 0.0f ? m = 1.0f : m = m_Mass;
+		m_InverseMass = 1.0f / m;
+	}
 }
 
 void RigidbodyComponent::OnCollision(const CollisionManifold& manifold, RigidbodyComponent& other)

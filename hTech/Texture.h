@@ -3,6 +3,7 @@
 
 #include <string>
 
+class SDL_Texture;
 class Transform;
 
 class HTECH_FUNCTION_EXPORT Vector2;

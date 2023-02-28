@@ -8,9 +8,9 @@
 #define _StartScript(C) class HTECH_FUNCTION_EXPORT C : public ScriptObject { public: C(Entity* entity) : ScriptObject(entity) {}; private:
 
 #define publicFunction _publicFunction
-#define _publicFunction public: inline void
+#define _publicFunction public: inline
 #define privateFunction _privateFunction
-#define _privateFunction private: inline void
+#define _privateFunction private: inline
 
 #define Create_
 #define MAKE_FN_NAME(CLASS) Create_##CLASS(Entity* entity)
