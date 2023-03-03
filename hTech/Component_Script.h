@@ -71,7 +71,8 @@ public:
 
 	void Serialize(Serializer& writer) const override;
 	void Deserialize(SerializedValue& value) override;
-
 	void OnNotify() override;
+
+	void SetClass(const std::string& name);
 };
 

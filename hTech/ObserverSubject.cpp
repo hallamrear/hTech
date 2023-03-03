@@ -32,7 +32,12 @@ void ObserverSubject::RemoveObserver(Observer* observer)
 {
 	if (observer != nullptr)
 	{
-		m_Observers.push_back(observer);
+		auto itr =  std::find(m_Observers.begin(), m_Observers.end(), observer);
+
+		if (itr != m_Observers.end())
+		{
+			m_Observers.erase(itr);
+		}
 	}
 }
 

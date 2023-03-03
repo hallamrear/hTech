@@ -28,6 +28,11 @@ const bool Collider::IsOverlap() const
 	return m_IsOverlap;
 }
 
+void Collider::SetIsOverlap(const bool& state)
+{
+	m_IsOverlap = state;
+}
+
 void Collider::Serialize(Serializer& writer) const
 {
 	writer.String("Is Overlap");

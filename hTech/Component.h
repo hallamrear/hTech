@@ -25,7 +25,7 @@ public:
 	virtual void SetIsEnabled(bool state);
 	bool GetIsEnabled() const;
 	std::string GetComponentName() const;
-	Entity& GetEntity() const;
+	Entity& GetEntity();
 
 	virtual void Update(float DeltaTime);
 	virtual void Render(IRenderer& renderer);

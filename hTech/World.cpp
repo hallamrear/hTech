@@ -191,7 +191,20 @@ void World::Render_Impl(IRenderer& renderer)
     ImGui::End();
 }
 
-Entity* World::GetEntityByName_Impl(std::string name)
+Entity* World::GetEntityByName_Impl(const std::string& name)
+{
+    Entity* entity = nullptr;
+    auto result = m_EntityMap.find(name);
+
+    if (result != m_EntityMap.end())
+    {
+        return result->second;
+    }
+
+    return nullptr;
+}
+
+Entity* World::GetEntityByName_Impl(const char* name)
 {
     Entity* entity = nullptr;
     auto result = m_EntityMap.find(name);
@@ -261,7 +274,12 @@ void World::DestroyEntity(Entity* entity)
     Get()->DestroyEntity_Impl(entity);
 }
 
-Entity* World::GetEntityByName(std::string name)
+Entity* World::GetEntityByName(const char* name)
+{
+    return Get()->GetEntityByName_Impl(name);
+}
+
+Entity* World::GetEntityByName(const std::string& name)
 {
     return Get()->GetEntityByName_Impl(name);
 }

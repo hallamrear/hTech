@@ -18,9 +18,6 @@
     <ClCompile Include="Component_Animation.cpp">
       <Filter>Entity\Components</Filter>
     </ClCompile>
-    <ClCompile Include="Component_Rigidbody.cpp">
-      <Filter>Entity\Components</Filter>
-    </ClCompile>
     <ClCompile Include="Component_Script.cpp">
       <Filter>Entity\Components</Filter>
     </ClCompile>
@@ -159,8 +156,15 @@
     <ClCompile Include="OriginalRenderer.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
-    <ClCompile Include="IWindow.cpp" />
-    <ClCompile Include="OriginalWindow.cpp" />
+    <ClCompile Include="Component_Rigidbody.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="IWindow.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="OriginalWindow.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imstb_truetype.h">
@@ -328,8 +332,12 @@
     <ClInclude Include="OriginalRenderer.h">
       <Filter>Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="IWindow.h" />
-    <ClInclude Include="OriginalWindow.h" />
+    <ClInclude Include="IWindow.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="OriginalWindow.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="External">

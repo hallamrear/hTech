@@ -19,6 +19,7 @@ public:
 	const Vector2 GetTopLeft() const;
 	const Vector2 GetBottomRight() const;
 	const Vector2 GetSize() const;	
+	void SetSize(const Vector2& size);
 
 	BoundingBox(const Transform& transform, float size_x, float size_y);
 	virtual ~BoundingBox();

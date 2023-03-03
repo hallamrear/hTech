@@ -53,10 +53,6 @@ void RigidbodyComponent::PhysicsUpdate(float DeltaTime)
 {
 	CalculateInverseMass();
 
-	if (isnan(abs(m_ParentEntity.GetTransform().Position.X)))
-	{
-		assert(0);
-	}
 
 	if (m_IsStatic)
 		return;

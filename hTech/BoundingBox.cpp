@@ -39,6 +39,11 @@ const Vector2 BoundingBox::GetSize() const
 	return Vector2(m_BottomRight.X - m_TopLeft.X, m_TopLeft.Y - m_BottomRight.Y);
 }
 
+void BoundingBox::SetSize(const Vector2& size)
+{
+	m_Size = size;
+}
+
 void BoundingBox::Update(float DeltaTime)
 {
 	m_TopLeft = Vector2(m_EntityTransform.Position.X - (m_Size.X / 2), m_EntityTransform.Position.Y + (m_Size.Y / 2));

@@ -50,22 +50,28 @@ Entity::~Entity()
 
 void Entity::Update(float DeltaTime)
 {
-	for (int i = 0; i != m_Components.size(); i++)
+	if (m_IsEnabled && !m_IsWaitingToBeDestroyed)
 	{
-		if (m_Components[i]->GetIsEnabled() == true)
+		for (int i = 0; i != m_Components.size(); i++)
 		{
-			m_Components[i]->Update(DeltaTime);
+			if (m_Components[i]->GetIsEnabled() == true)
+			{
+				m_Components[i]->Update(DeltaTime);
+			}
 		}
 	}
 }
 
 void Entity::Render(IRenderer& renderer)
 {
-	for (int i = 0; i != m_Components.size(); i++)
+	if (m_IsEnabled && !m_IsWaitingToBeDestroyed)
 	{
-		if (m_Components[i]->GetIsEnabled() == true)
+		for (int i = 0; i != m_Components.size(); i++)
 		{
-			m_Components[i]->Render(renderer);
+			if (m_Components[i]->GetIsEnabled() == true)
+			{
+				m_Components[i]->Render(renderer);
+			}
 		}
 	}
 
@@ -177,7 +183,9 @@ void Entity::RenderProperties()
 					if (dynamic_cast<SpriteComponent*>(m_Components[i]))    { RemoveComponent<SpriteComponent>();	continue; }
 					if (dynamic_cast<AnimationComponent*>(m_Components[i])) { RemoveComponent<AnimationComponent>();	continue; }
 					if (dynamic_cast<ScriptComponent*>(m_Components[i]))    { RemoveComponent<ScriptComponent>();	continue; }
-					if (dynamic_cast<RigidbodyComponent*>(m_Components[i])) { RemoveComponent<RigidbodyComponent>(); continue; }
+					if (dynamic_cast<RigidbodyComponent*>(m_Components[i])) { 
+						RemoveComponent<RigidbodyComponent>(); 
+						continue; }
 					
 				}
 			}

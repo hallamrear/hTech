@@ -22,7 +22,7 @@ std::string Component::GetComponentName() const
 	return m_ComponentName;
 }
 
-Entity& Component::GetEntity() const
+Entity& Component::GetEntity()
 {
 	return m_ParentEntity;
 }

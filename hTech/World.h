@@ -31,7 +31,8 @@ private:
 
 	void					Update_Impl(float DeltaTime);
 	void					Render_Impl(IRenderer& renderer);
-	Entity*					GetEntityByName_Impl(std::string name);
+	Entity*					GetEntityByName_Impl(const std::string& name);
+	Entity*					GetEntityByName_Impl(const char* name);
 	void					QuerySpaceForEntities_Impl(WorldRectangle rect, std::vector<Entity*>& entities);
 	Entity*					FindNearestEntityToPosition_Impl(Vector2 WorldPosition);
 
@@ -52,7 +53,8 @@ public:
 	static void				QuerySpaceForEntities(WorldRectangle rect, std::vector<Entity*>& entities);
 	static Entity*			CreateEntity(std::string Name = "unnamed", Transform SpawnTransform = Transform(), Entity* Parent = nullptr);
 	static void				DestroyEntity(Entity* entity);
-	static Entity*			GetEntityByName(std::string name);
+	static Entity*			GetEntityByName(const std::string& name);
+	static Entity*			GetEntityByName(const char* name);
 
 	static void				Serialize(Serializer& writer);
 	static void				Deserialize(Deserializer& reader);

@@ -1,12 +1,12 @@
 #include "pch.h"
 #include "ScriptObject.h"
 
-ScriptObject::ScriptObject(Entity* const parent) : m_ParentEntity(parent)
+ScriptObject::ScriptObject(Entity& parent) : m_ParentEntity(parent)
 {
 
 }
 
-Entity* const ScriptObject::GetEntity()
+Entity& ScriptObject::GetEntity()
 {
 	return m_ParentEntity;
 }

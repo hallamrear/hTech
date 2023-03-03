@@ -4,8 +4,8 @@
 
 #define EndScript(C) _EndScript(C)
 #define StartScript(C) _StartScript(C)
-#define _EndScript(C) }; extern "C" {  inline HTECH_FUNCTION_EXPORT ScriptObject* CREATE_FUNCTION(C, Entity* entity) { return new C(entity); } }
-#define _StartScript(C) class HTECH_FUNCTION_EXPORT C : public ScriptObject { public: C(Entity* entity) : ScriptObject(entity) {}; private:
+#define _EndScript(C) }; extern "C" {  inline HTECH_FUNCTION_EXPORT ScriptObject* CREATE_FUNCTION(C, Entity& entity) { return new C(entity); } }
+#define _StartScript(C) class HTECH_FUNCTION_EXPORT C : public ScriptObject { public: C(Entity& entity) : ScriptObject(entity) {}; private:
 
 #define publicFunction _publicFunction
 #define _publicFunction public: inline
@@ -13,20 +13,20 @@
 #define _privateFunction private: inline
 
 #define Create_
-#define MAKE_FN_NAME(CLASS) Create_##CLASS(Entity* entity)
+#define MAKE_FN_NAME(CLASS) Create_##CLASS(Entity& entity)
 #define CREATE_FUNCTION(CLASS) MAKE_FN_NAME(CLASS)
 
-class CollisionManifold;
-class RigidbodyComponent;
+class HTECH_FUNCTION_EXPORT CollisionManifold;
+class HTECH_FUNCTION_EXPORT RigidbodyComponent;
 
 class HTECH_FUNCTION_EXPORT ScriptObject
 {
 private:
-	Entity* const m_ParentEntity;
+	Entity& m_ParentEntity;
 
 protected:
-	ScriptObject(Entity* const parent);
-	Entity* const GetEntity();
+	ScriptObject(Entity& parent);
+	Entity& GetEntity();
 
 public:
 	~ScriptObject();

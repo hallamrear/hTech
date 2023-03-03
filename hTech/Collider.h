@@ -38,4 +38,5 @@ public:
 	const Transform& GetEntityTransform() const;
 	const COLLIDER_TYPE GetType() const;
 	const bool IsOverlap() const;
+	void SetIsOverlap(const bool& state);
 };

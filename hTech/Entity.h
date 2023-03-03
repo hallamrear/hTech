@@ -116,6 +116,8 @@ inline Entity* Entity::RemoveComponent()
 
 	if (pos != -1)
 	{
+		delete m_Components[pos];
+		m_Components[pos] = nullptr;
 		m_Components.erase(m_Components.begin() + pos);
 	}
 

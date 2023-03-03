@@ -182,10 +182,9 @@ void SpatialHash::Render(IRenderer& renderer)
 	{
 		renderer.SetPrimativeDrawColour(Colour::Blue);
 
-		Vector2 wPosition = Vector2(itr.first.X * (float)WORLD_TILE_SIZE, (itr.first.Y + 1) * (float)WORLD_TILE_SIZE);
-		Vector2 sPosition = Camera::WorldToScreen(wPosition);
-		WorldRectangle rect = WorldRectangle((int)sPosition.X, (int)sPosition.Y, WORLD_TILE_SIZE, WORLD_TILE_SIZE);
-		renderer.Render_ScreenSpaceRectangle(rect, RENDER_LAYER::FOREGROUND, false);
+		Vector2 wPosition = Vector2((itr.first.X * WORLD_TILE_SIZE) + (WORLD_TILE_SIZE / 2), (itr.first.Y * WORLD_TILE_SIZE) + (WORLD_TILE_SIZE / 2));
+		WorldRectangle wsRect = WorldRectangle(wPosition.X, wPosition.Y, WORLD_TILE_SIZE, WORLD_TILE_SIZE);
+		renderer.Render_WorldSpaceRectangle(wsRect, RENDER_LAYER::FOREGROUND, false);
 
 		if (itr.second.Count() != 0)
 		{

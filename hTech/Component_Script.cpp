@@ -158,9 +158,15 @@ void ScriptComponent::OnNotify()
 {
 	if (m_ScriptObject)
 	{
-		delete m_ScriptObject;
+		m_ScriptObject->Destroy();
 		m_ScriptObject = nullptr;
 	}
 
 	m_ScriptObject = ScriptLoader::GetScriptObject(&m_ParentEntity, m_ScriptReferenceName);
+}
+
+void ScriptComponent::SetClass(const std::string& name)
+{
+	m_ScriptReferenceName = name;
+	OnNotify();
 }
