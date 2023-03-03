@@ -38,8 +38,6 @@ void ProjectLoader::LoadProject(std::filesystem::path sceneFilePath)
 
 		rapidjson::StringStream stream(buffer);
 
-		Log::LogMessage(LogLevel::LOG_ERROR, buffer);
-
 		//IMPLEMENT Loading Console variables from project.
 		 		
 		/// ---- This section was previously underneath m_HasProjectLoaded = true;

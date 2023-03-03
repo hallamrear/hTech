@@ -13,20 +13,18 @@ class IRenderer;
 enum class LogLevel
 {
 	LOG_ERROR = 0,
-	LOG_WARNING,
-	LOG_MESSAGE,
+	LOG_WARNING = 1,
+	LOG_MESSAGE = 2,
 };
 
 class HTECH_FUNCTION_EXPORT Log
 {
 private:
-	std::vector<Text*> m_TextElements;
 	static Log* m_Instance;
 
 	Log();
 	~Log();
 	static Log* Get();
-	std::vector<std::pair<LogLevel, std::string>> mMessages;
 	std::deque<std::pair<LogLevel, std::string>> mMessageQueue;
 	void LogMessage_Impl(LogLevel indicator, std::string str);
 	void Render_Impl(IRenderer& renderer);

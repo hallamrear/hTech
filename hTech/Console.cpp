@@ -175,5 +175,5 @@ void Console::Print(std::string line)
     }
 
     //We pass it a number outside the enum to get the alternative colour in the switch.
-    Log::LogMessage((LogLevel)4, line.c_str());
+    Log::LogMessage(LogLevel::LOG_MESSAGE, line.c_str());
 }

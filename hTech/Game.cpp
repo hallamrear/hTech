@@ -33,15 +33,6 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
 int main(int argc, char* argv[])
 {
-#ifdef _DEBUG
-
-	AllocConsole();
-	AttachConsole(GetCurrentProcessId());
-	FILE* dummy;
-	freopen_s(&dummy, "CON", "w", stdout);
-
-#endif
-
 	WindowDetails details;
 	details.Dimensions = Vector2(1280.0f, 720.0f);
 	details.Title = "hTech | Build Number " + std::to_string(BUILD_NUMBER);
