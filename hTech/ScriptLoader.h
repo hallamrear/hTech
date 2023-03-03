@@ -18,9 +18,7 @@ class ScriptLoader : public ObserverSubject
 {
 private:	
 	static ScriptLoader* m_Instance;
-
 	
-	std::vector<ScriptObject*> m_LoadedScriptObjects;
 	HINSTANCE m_LoadedLibraryInstance;
 	std::unordered_map<std::string, scriptPtr> m_ScriptCreationFunctionMap;
 	bool m_IsLibraryLoaded;

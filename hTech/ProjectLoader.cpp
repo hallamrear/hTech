@@ -84,7 +84,6 @@ void ProjectLoader::UnloadProject(bool save)
 {
 	if (m_HasProjectLoaded)
 	{
-		ScriptLoader::UnloadLibrary();
 
 		if (save)
 		{
@@ -96,6 +95,7 @@ void ProjectLoader::UnloadProject(bool save)
 #endif
 		TextureCache::UnloadAll();
 		World::UnloadAll();
+		ScriptLoader::UnloadLibrary();
 
 		m_HasProjectLoaded = false;
 		m_ProjectName = "No Project Loaded";

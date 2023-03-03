@@ -78,8 +78,8 @@ ScriptComponent::ScriptComponent(Entity& entity) : Component("Script Component",
 
 ScriptComponent::~ScriptComponent()
 {
-	Destroy();
 	ScriptLoader::RemoveScriptFromReloadTracking(this);
+	Destroy();
 }
 
 void ScriptComponent::Start()

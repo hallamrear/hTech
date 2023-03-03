@@ -52,18 +52,7 @@ void ScriptLoader::UnloadLibrary()
 void ScriptLoader::UnloadLibrary_Impl()
 {
 	if (m_LoadedLibraryInstance)
-	{/*
-		for (size_t i = 0; i < m_LoadedScriptObjects.size(); i++)
-		{
-			if (m_LoadedScriptObjects[i])
-			{
-				m_LoadedScriptObjects[i]->Destroy();
-				m_LoadedScriptObjects[i] = nullptr;
-			}
-		}
-
-		m_LoadedScriptObjects.clear();*/
-
+	{
 		m_ScriptCreationFunctionMap.clear();
 
 		FreeLibrary(m_LoadedLibraryInstance);
@@ -140,8 +129,7 @@ bool ScriptLoader::LoadScriptObjectToMap(std::string functionName)
 	ProjectLoader::GetEngineProjectsLocation(scriptsLocation);
 	scriptsLocation += projectName + "\\" + projectName + "\\" + projectName + ".dll";
 
-	if(!m_LoadedLibraryInstance)
-		LoadCustomScriptDLL(scriptsLocation);
+	LoadCustomScriptDLL(scriptsLocation);
 
 	if (m_LoadedLibraryInstance)
 	{
@@ -195,8 +183,7 @@ ScriptObject* ScriptLoader::GetScriptObject_Impl(Entity* entityFromComponent, st
 
 	if (script)
 	{
-		m_LoadedScriptObjects.push_back(script);
-		return m_LoadedScriptObjects.back();
+		return script;
 	}
 
 	return nullptr;
