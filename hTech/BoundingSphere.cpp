@@ -100,6 +100,7 @@ void BoundingSphere::Deserialize(SerializedValue& value)
 
 void BoundingSphere::RenderProperties()
 {
+	Collider::RenderProperties();
 	ImGui::SliderFloat("Radius: ", &Radius, 1.0f, 512.0f, "%.0f");
 	ImGui::SliderInt("Point Count: ", &m_PointCount, 4, 64);
 }

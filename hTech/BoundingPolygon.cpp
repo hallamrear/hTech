@@ -172,6 +172,7 @@ void BoundingPolygon::Deserialize(SerializedValue& value)
 
 void BoundingPolygon::RenderProperties()
 {
+	Collider::RenderProperties();
 	static Vector2 newPoint;
 
 	//Display existing points
