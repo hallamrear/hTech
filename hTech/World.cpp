@@ -130,38 +130,11 @@ void World::Render_Impl(IRenderer& renderer)
 
         switch (layer)
         {
-        case RENDER_LAYER::BACKGROUND:
-        {
-                layerName = "Background";
-        }
-        break;
-
-        case RENDER_LAYER::DEFAULT:
-        {
-            layerName = "Default";
-        }
-        break;
-
-        case RENDER_LAYER::FOREGROUND:
-        {
-            layerName = "Foreground";
-        }
-        break;
-
-        case RENDER_LAYER::UI:
-        {
-            layerName = "UI";
-        }
-        break;
-
-        case RENDER_LAYER::LAYER_TO_BE_REMOVED_WHEN_I_HOOK_UP_LAYERS_TO_COMPONENT:
-        {
-            layerName = "Debug (to be removed) layer";
-        }
-        break;
-
-        default:
-            break;
+            case RENDER_LAYER::BACKGROUND: layerName = "Background";  break;
+            case RENDER_LAYER::DEFAULT:    layerName = "Default"; break;
+            case RENDER_LAYER::FOREGROUND: layerName = "Foreground"; break;
+            case RENDER_LAYER::UI:         layerName = "UI"; break;
+            default: break;
         }
 
         if (ImGui::CollapsingHeader(layerName.c_str()))
@@ -183,8 +156,6 @@ void World::Render_Impl(IRenderer& renderer)
                 }
             }
         }
-
-
 
         renderer.GetRenderLayer(layer).Render(renderer);
     }

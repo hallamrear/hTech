@@ -85,7 +85,7 @@ void Entity::Render(IRenderer& renderer)
 			a = 100;
 
 		renderer.SetPrimativeDrawColour(Colour(0, 255, 0, a));
-		renderer.Render_ScreenSpaceRectangle(rect, RENDER_LAYER::FOREGROUND, false);
+		renderer.Render_ScreenSpaceRectangle(rect, false);
 	}
 }
 

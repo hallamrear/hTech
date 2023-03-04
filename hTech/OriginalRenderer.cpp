@@ -255,10 +255,10 @@ void OriginalRenderer::SettingDearIMGUIColourScheme()
 }
 
 void OriginalRenderer::Render_Texture(
-	const Texture& texture, const Transform& transform, const RENDER_LAYER& layer,
+	const Texture& texture, const Transform& transform,
 	const bool& isFlipped)
 {
-	Render_Texture(texture, transform, layer, nullptr, nullptr, nullptr, isFlipped);
+	Render_Texture(texture, transform, nullptr, nullptr, nullptr, isFlipped);
 }
 
 void OriginalRenderer::SetRenderTexture(SDL_Texture* texture)
@@ -272,7 +272,7 @@ SDL_Texture* OriginalRenderer::GetRenderTexture()
 }
 
 void OriginalRenderer::Render_Texture(
-	const Texture& texture, const Transform& transform, const RENDER_LAYER& layer,
+	const Texture& texture, const Transform& transform,
 	const Vector2* center,
 	const WorldRectangle* srcRect, const WorldRectangle* dstRect,
 	const bool& isFlipped)
@@ -358,7 +358,7 @@ void OriginalRenderer::Render_WorldSpaceLine(const Vector2& pointA, const Vector
 		(int)screenSpacePointB.X, (int)screenSpacePointB.Y);
 }
 
-void OriginalRenderer::Render_ScreenSpaceRectangle(const ScreenRectangle& rectangle, const RENDER_LAYER& layer, bool filled)
+void OriginalRenderer::Render_ScreenSpaceRectangle(const ScreenRectangle& rectangle, bool filled)
 {
 	SDL_Rect rect{};
 	Vector2 Position = Vector2();
@@ -378,7 +378,7 @@ void OriginalRenderer::Render_ScreenSpaceRectangle(const ScreenRectangle& rectan
 	}
 }
 
-void OriginalRenderer::Render_WorldSpaceRectangle(const WorldRectangle& rectangle, const RENDER_LAYER& layer, bool filled)
+void OriginalRenderer::Render_WorldSpaceRectangle(const WorldRectangle& rectangle, bool filled)
 {
 	SDL_Rect rect{};
 	Vector2 Position = Vector2(rectangle.X, rectangle.Y);

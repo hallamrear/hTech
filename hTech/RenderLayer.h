@@ -10,8 +10,7 @@ enum class RENDER_LAYER
 	DEFAULT = 1,
 	FOREGROUND = 2,
 	UI = 3,
-	LAYER_TO_BE_REMOVED_WHEN_I_HOOK_UP_LAYERS_TO_COMPONENT = 4,
-	COUNT = 5
+	COUNT = 4
 };
 
 class RenderLayer

@@ -184,7 +184,7 @@ void SpatialHash::Render(IRenderer& renderer)
 
 		Vector2 wPosition = Vector2((itr.first.X * WORLD_TILE_SIZE) + (WORLD_TILE_SIZE / 2), (itr.first.Y * WORLD_TILE_SIZE) + (WORLD_TILE_SIZE / 2));
 		WorldRectangle wsRect = WorldRectangle(wPosition.X, wPosition.Y, WORLD_TILE_SIZE, WORLD_TILE_SIZE);
-		renderer.Render_WorldSpaceRectangle(wsRect, RENDER_LAYER::FOREGROUND, false);
+		renderer.Render_WorldSpaceRectangle(wsRect, false);
 
 		if (itr.second.Count() != 0)
 		{

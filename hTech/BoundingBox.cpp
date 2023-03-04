@@ -62,7 +62,7 @@ void BoundingBox::Render(IRenderer& renderer)
 		m_Size.Y);
 		
 		renderer.SetPrimativeDrawColour(Colour::Blue);
-		renderer.Render_ScreenSpaceRectangle(rect, RENDER_LAYER::DEFAULT, false);
+		renderer.Render_ScreenSpaceRectangle(rect, false);
 	}
 }
 

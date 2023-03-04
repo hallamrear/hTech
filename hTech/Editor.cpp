@@ -224,7 +224,7 @@ void Editor::Render_Impl(IRenderer& renderer)
     {
         Vector2 pos = Camera::WorldToScreen(m_SelectedEntities[i]->GetTransform().Position);
         WorldRectangle rect = WorldRectangle(pos.X, pos.Y, 64, 64);
-        renderer.Render_ScreenSpaceRectangle(rect, RENDER_LAYER::DEFAULT, false);
+        renderer.Render_ScreenSpaceRectangle(rect, false);
     }
 
     if (m_IsDraggingRect)
@@ -258,7 +258,7 @@ void Editor::Render_Impl(IRenderer& renderer)
         WorldRectangle outline = m_SelectionRect;
         outline.X += (m_SelectionRect.W / 2);
         outline.Y -= (m_SelectionRect.H / 2);
-        renderer.Render_WorldSpaceRectangle(outline, RENDER_LAYER::FOREGROUND, false);
+        renderer.Render_WorldSpaceRectangle(outline, false);
     }
 
     if (selected)
@@ -269,7 +269,7 @@ void Editor::Render_Impl(IRenderer& renderer)
         selectedRect.Y = (int)Position.Y;
 
         renderer.SetPrimativeDrawColour(Colour(255, 255, 0, 255));
-        renderer.Render_ScreenSpaceRectangle(selectedRect, RENDER_LAYER::FOREGROUND, false);
+        renderer.Render_ScreenSpaceRectangle(selectedRect, false);
 
         int halfWidth = selectedRect.W / 2;
         int halfHeight = selectedRect.H / 2;

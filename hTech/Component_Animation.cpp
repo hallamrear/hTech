@@ -79,7 +79,7 @@ void AnimationComponent::Render(IRenderer& renderer)
 			m_FrameSize.Y
 		);
 
-		renderer.Render_Texture(*m_AnimationSheet, transform, RENDER_LAYER::LAYER_TO_BE_REMOVED_WHEN_I_HOOK_UP_LAYERS_TO_COMPONENT, nullptr, &srcRect, &dstRect, m_IsFlipped);
+		renderer.Render_Texture(*m_AnimationSheet, transform, nullptr, &srcRect, &dstRect, m_IsFlipped);
 	}
 }
 

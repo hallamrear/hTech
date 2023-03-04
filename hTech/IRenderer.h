@@ -42,10 +42,9 @@ public:
 	virtual void Render_WorldSpaceLine(const Vector2& pointA, const Vector2& pointB) = 0;
 	virtual void Render_ScreenSpaceLine(const Vector2& pointA, const Vector2& pointB) = 0;
 
-	virtual void Render_WorldSpaceRectangle(const WorldRectangle& rectangle, const RENDER_LAYER& layer = RENDER_LAYER::DEFAULT, bool filled = true) = 0;
-	virtual void Render_ScreenSpaceRectangle(const ScreenRectangle& rectangle, const RENDER_LAYER& layer = RENDER_LAYER::DEFAULT, bool filled = true) = 0;
-
-	virtual void Render_Texture(const Texture& texture, const Transform& transform, const RENDER_LAYER& layer = RENDER_LAYER::DEFAULT, const bool& flipped = false) = 0;
-	virtual void Render_Texture(const Texture& texture, const Transform& transform, const RENDER_LAYER& layer = RENDER_LAYER::DEFAULT, const Vector2* center = nullptr, const WorldRectangle* srcRect = nullptr, const WorldRectangle* dstRect = nullptr, const bool& flipped = false) = 0;
+	virtual void Render_WorldSpaceRectangle(const WorldRectangle& rectangle,   bool filled = true) = 0;
+	virtual void Render_ScreenSpaceRectangle(const ScreenRectangle& rectangle, bool filled = true) = 0;
+	virtual void Render_Texture(const Texture& texture, const Transform& transform, const bool& flipped = false) = 0;
+	virtual void Render_Texture(const Texture& texture, const Transform& transform, const Vector2* center = nullptr, const WorldRectangle* srcRect = nullptr, const WorldRectangle* dstRect = nullptr, const bool& flipped = false) = 0;
 };
 

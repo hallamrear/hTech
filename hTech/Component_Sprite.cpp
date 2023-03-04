@@ -75,7 +75,7 @@ void SpriteComponent::Render(IRenderer& renderer)
 {
 	if (m_Texture)
 	{
-		renderer.Render_Texture(*m_Texture, m_ParentEntity.GetTransform(), RENDER_LAYER::LAYER_TO_BE_REMOVED_WHEN_I_HOOK_UP_LAYERS_TO_COMPONENT, nullptr, nullptr, nullptr, m_IsFlipped);
+		renderer.Render_Texture(*m_Texture, m_ParentEntity.GetTransform(), nullptr, nullptr, nullptr, m_IsFlipped);
 	}
 }
 
