@@ -82,7 +82,7 @@ void AnimationController::Render(IRenderer& renderer, Transform transform, bool 
 {
 	if (m_AnimationSheet)
 	{
-		WorldRectangle frame = WorldRectangle((m_FrameSize.X * m_CurrentFrame) + (m_FrameSize.X / 2.0f), (m_FrameSize.Y * m_CurrentAnimation) + (m_FrameSize.Y / 2.0f), m_FrameSize.X, m_FrameSize.Y);
+		WorldRectangle frame = WorldRectangle(((int)m_FrameSize.X * m_CurrentFrame) + ((int)m_FrameSize.X / 2.0f), ((int)m_FrameSize.Y * m_CurrentAnimation) + ((int)m_FrameSize.Y / 2.0f), (int)m_FrameSize.X, (int)m_FrameSize.Y);
 		renderer.Render_Texture(*m_AnimationSheet, transform, nullptr, nullptr, &frame, flipped);
 	}
 }

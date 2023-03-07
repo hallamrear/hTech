@@ -522,7 +522,7 @@ void Game::Render()
 	{
 		switch (m_GameState)
 		{
-		case RUNNING:
+		case GAME_STATE::RUNNING:
 		{
 			ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 0, 0, 255));
 			if (ImGui::Button("Stop"))
@@ -534,13 +534,13 @@ void Game::Render()
 		}
 		break;
 
-		case PAUSED:
+		case GAME_STATE::PAUSED:
 		{
 
 		}
 		break;
 
-		case STOPPED:
+		case GAME_STATE::STOPPED:
 		{
 			ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
 			if (ImGui::Button("Start"))
@@ -689,8 +689,8 @@ void Game::Render()
 	SDL_Rect renderDstQuad = { (int)(pos.X + vMin.x), (int)(pos.Y + vMin.y), (int)(vMax.x - vMin.x), (int)(vMax.y - vMin.y) };
 
 	SDL_Rect renderSrcQuad = renderDstQuad;
-	renderSrcQuad.w /= Camera::ZoomLevel;
-	renderSrcQuad.h /= Camera::ZoomLevel;
+	renderSrcQuad.w /= (int)Camera::ZoomLevel;
+	renderSrcQuad.h /= (int)Camera::ZoomLevel;
 
 	SDL_RenderSetClipRect(renderer->GetAPIRenderer(), &renderDstQuad);
 	//Render to screen

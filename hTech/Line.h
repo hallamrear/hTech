@@ -1,7 +1,7 @@
 #pragma once
 #include "Vector2.h"
 
-struct IRenderer;
+class IRenderer;
 
 template<class P>
 struct TwoPointLine

@@ -8,7 +8,7 @@ enum class HTECH_FUNCTION_EXPORT SCREEN_STATE
 	WINDOW_WINDOWED
 };
 
-class HTECH_FUNCTION_EXPORT WindowDetails
+struct HTECH_FUNCTION_EXPORT WindowDetails
 {
 public:
 	std::string Title = "";

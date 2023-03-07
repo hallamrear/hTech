@@ -8,7 +8,7 @@ struct WindowDetails;
 class IRenderer;
 class IWindow;
 
-enum GAME_STATE : int
+enum class GAME_STATE : int
 {
 	STOPPED = 0,
 	PAUSED = 1,

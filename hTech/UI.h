@@ -7,7 +7,7 @@
 
 #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
-struct IRenderer;
+class IRenderer;
 
 #ifdef DEFINE_OLD_UI
 
