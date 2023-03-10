@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "Console.h"
-#include <cstdarg>
-#include "Log.h"
+#include "ImGuiIncludes.h"
 
 Console* Console::m_Instance = nullptr;
 
@@ -18,12 +17,14 @@ Console* Console::Get()
 Console::Console()
 {
     m_IntMap = std::unordered_map<std::string, int>();
+    mMessageQueue = std::deque<std::pair<LogLevel, std::string>>();
 
     ReloadValues();
 }
 
 Console::~Console()
 {
+    mMessageQueue.clear();
 
 }
 
@@ -175,5 +176,79 @@ void Console::Print(std::string line)
     }
 
     //We pass it a number outside the enum to get the alternative colour in the switch.
-    Log::LogMessage(LogLevel::LOG_MESSAGE, line.c_str());
+    Console::LogMessage(LogLevel::LOG_MESSAGE, line.c_str());
+}
+
+void Console::LogMessage(LogLevel indicator, const char* str)
+{
+    Get()->LogMessage_Impl(indicator, std::string(str));
+}
+
+void Console::LogMessage(LogLevel indicator, std::string str)
+{
+    Get()->LogMessage_Impl(indicator, str);
+}
+
+void Console::LogMessage_Impl(LogLevel indicator, std::string str)
+{
+    mMessageQueue.push_back(std::make_pair(indicator, str));
+
+    if (mMessageQueue.size() > Console::Query("MaxLogMessages"))
+        mMessageQueue.pop_front();
+}
+
+void Console::Render_Impl(IRenderer& renderer)
+{
+    ImGui::Begin("Log | Console", 0, ImGuiWindowFlags_::ImGuiWindowFlags_NoResize);
+
+    ImVec4 colour = ImVec4(0, 0, 0, 0);
+
+    int count = Console::Query("MaxLogMessages");
+
+    if (mMessageQueue.size() < count)
+        count = mMessageQueue.size();
+
+    if (count != 0)
+    {
+        for (int i = 0; i <= count - 1; i++)
+        {
+            switch (mMessageQueue[i].first)
+            {
+            case LogLevel::LOG_ERROR:   colour = ImVec4(255, 0, 0, 255); break;
+            case LogLevel::LOG_WARNING: colour = ImVec4(255, 255, 0, 255); break;
+            case LogLevel::LOG_MESSAGE: colour = ImVec4(255, 255, 255, 255); break;
+
+            default: colour = ImVec4(0.0f, 0.0f, 1.0f, 1.0f); break;
+
+            }
+
+            ImGui::TextColored(colour, mMessageQueue[i].second.c_str());
+        }
+    }
+
+    ImGui::Separator();
+    ImGui::SetNextItemWidth(-FLT_MAX);
+    static std::string textInput;
+    if (ImGui::InputText("##ConsoleInput", &textInput[0], ImGuiInputTextFlags_EnterReturnsTrue))
+    {
+        Console::Run(textInput);
+        textInput = "";
+    }
+
+    ImGui::End();
+}
+
+void Console::Update_Impl(float DeltaTime)
+{
+
+}
+
+void Console::Render(IRenderer& renderer)
+{
+    Get()->Render_Impl(renderer);
+}
+
+void Console::Update(float DeltaTime)
+{
+    Get()->Update_Impl(DeltaTime);
 }

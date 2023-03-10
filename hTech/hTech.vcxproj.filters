@@ -1,9 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Game.cpp" />
     <ClCompile Include="ObserverSubject.cpp" />
-    <ClCompile Include="Log.cpp" />
     <ClCompile Include="Observer.cpp" />
     <ClCompile Include="ScriptObject.cpp" />
     <ClCompile Include="SpatialDivisionMethod.cpp" />
@@ -165,6 +163,15 @@
     <ClCompile Include="OriginalWindow.cpp">
       <Filter>Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="Engine.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="entry.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="WindowDetails.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imstb_truetype.h">
@@ -233,8 +240,6 @@
     <ClInclude Include="UI_VariableTracker.h">
       <Filter>Legacy</Filter>
     </ClInclude>
-    <ClInclude Include="Game.h" />
-    <ClInclude Include="Log.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="ObserverSubject.h" />
     <ClInclude Include="pch.h" />
@@ -337,6 +342,15 @@
     </ClInclude>
     <ClInclude Include="OriginalWindow.h">
       <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGuiIncludes.h">
+      <Filter>External</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="WindowDetails.h">
+      <Filter>System</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -7,7 +7,7 @@
 #include "BoundingSphere.h"
 #include "BoundingPolygon.h"
 #include "OrientedBoundingBox.h"
-#include "Log.h"
+#include "Console.h"
 
 RigidbodyComponent::RigidbodyComponent(Entity& entity) : Component("Rigidbody Component", entity)
 {

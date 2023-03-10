@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "IWindow.h"
+#include "WindowDetails.h"
 
 IWindow::IWindow()
 {

@@ -276,11 +276,12 @@ xcopy /Y /H /E /I "$(ProjectDir)rapidjson\*.h" "$(OutputPath)Engine_Includes\rap
     <ClInclude Include="Component_Sprite.h" />
     <ClInclude Include="Component_Transform.h" />
     <ClInclude Include="Console.h" />
+    <ClInclude Include="ImGuiIncludes.h" />
     <ClInclude Include="IWindow.h" />
     <ClInclude Include="Line.h" />
     <ClInclude Include="Editor.h" />
     <ClInclude Include="Entity.h" />
-    <ClInclude Include="Game.h" />
+    <ClInclude Include="Engine.h" />
     <ClInclude Include="GJKCollisionSolver.h" />
     <ClInclude Include="OriginalRenderer.h" />
     <ClInclude Include="IRenderer.h" />
@@ -349,7 +350,6 @@ xcopy /Y /H /E /I "$(ProjectDir)rapidjson\*.h" "$(OutputPath)Engine_Includes\rap
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="ObserverSubject.h" />
-    <ClInclude Include="Log.h" />
     <ClInclude Include="CollisionSolver.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="ProjectLoader.h" />
@@ -373,6 +373,7 @@ xcopy /Y /H /E /I "$(ProjectDir)rapidjson\*.h" "$(OutputPath)Engine_Includes\rap
     <ClInclude Include="UI_TextPanel.h" />
     <ClInclude Include="UI_VariableTracker.h" />
     <ClInclude Include="Vector2.h" />
+    <ClInclude Include="WindowDetails.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>
   <ItemGroup>
@@ -392,11 +393,12 @@ xcopy /Y /H /E /I "$(ProjectDir)rapidjson\*.h" "$(OutputPath)Engine_Includes\rap
     <ClCompile Include="Component_Sprite.cpp" />
     <ClCompile Include="Component_Transform.cpp" />
     <ClCompile Include="Console.cpp" />
+    <ClCompile Include="entry.cpp" />
     <ClCompile Include="IWindow.cpp" />
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="Editor.cpp" />
     <ClCompile Include="Entity.cpp" />
-    <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Engine.cpp" />
     <ClCompile Include="GJKCollisionSolver.cpp" />
     <ClCompile Include="OriginalRenderer.cpp" />
     <ClCompile Include="IRenderer.cpp" />
@@ -459,7 +461,6 @@ xcopy /Y /H /E /I "$(ProjectDir)rapidjson\*.h" "$(OutputPath)Engine_Includes\rap
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="ObserverSubject.cpp" />
-    <ClCompile Include="Log.cpp" />
     <ClCompile Include="CollisionSolver.cpp" />
     <ClCompile Include="Observer.cpp" />
     <ClCompile Include="ProjectLoader.cpp" />
@@ -487,6 +488,7 @@ xcopy /Y /H /E /I "$(ProjectDir)rapidjson\*.h" "$(OutputPath)Engine_Includes\rap
     <ClCompile Include="UI_TextPanel.cpp" />
     <ClCompile Include="UI_VariableTracker.cpp" />
     <ClCompile Include="Vector2.cpp" />
+    <ClCompile Include="WindowDetails.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

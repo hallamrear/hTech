@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Entity.h"
-#include "Game.h"
+#include "Engine.h"
 #include "Texture.h"
 #include "TextureCache.h"
 #include "Component.h"
@@ -37,7 +37,7 @@ Entity::Entity(Transform SpawnTransform, std::string Name, Entity* Parent)
 
 Entity::~Entity()
 {
-	Game::GetRenderer().GetRenderLayer(m_Layer).RemoveEntity(*this);
+	Engine::GetRenderer().GetRenderLayer(m_Layer).RemoveEntity(*this);
 
 	for (size_t i = 0; i < m_Components.size(); i++)
 	{
@@ -75,7 +75,7 @@ void Entity::Render(IRenderer& renderer)
 		}
 	}
 
-	if (Game::GetGameState() != GAME_STATE::RUNNING)
+	if (Engine::GetGameState() != GAME_STATE::RUNNING)
 	{
 		Vector2 position = Camera::WorldToScreen(GetTransform().Position);
 		ScreenRectangle rect = ScreenRectangle(position.X, position.Y, 8, 8);
@@ -117,10 +117,10 @@ void Entity::RenderProperties()
 			{
 				if (currentItem != layerStrs[n])
 				{
-					Game::GetRenderer().GetRenderLayer(m_Layer).RemoveEntity(*this);
+					Engine::GetRenderer().GetRenderLayer(m_Layer).RemoveEntity(*this);
 					currentItem = layerStrs[n];
 					m_Layer = (RENDER_LAYER)n;
-					Game::GetRenderer().GetRenderLayer(m_Layer).AddEntity(*this);
+					Engine::GetRenderer().GetRenderLayer(m_Layer).AddEntity(*this);
 
 					if (is_selected)
 						ImGui::SetItemDefaultFocus();   // You may set the initial focus when opening the combo (scrolling + for keyboard navigation support)
@@ -268,9 +268,9 @@ const RENDER_LAYER& Entity::GetEntityRenderLayer() const
 
 void Entity::SetEntityRenderLayer(const RENDER_LAYER& layer)
 {
-	Game::GetRenderer().GetRenderLayer(m_Layer).RemoveEntity(*this);
+	Engine::GetRenderer().GetRenderLayer(m_Layer).RemoveEntity(*this);
 	m_Layer = layer;
-	Game::GetRenderer().GetRenderLayer(m_Layer).AddEntity(*this);
+	Engine::GetRenderer().GetRenderLayer(m_Layer).AddEntity(*this);
 }
 
 bool Entity::GetIsBeingDestroyed() const

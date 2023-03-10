@@ -1,76 +1,57 @@
 #include "pch.h"
-#include "Game.h"
-#include "InputManager.h"
-#include "World.h"
-#include "Log.h"
+#include "Engine.h"
+#include "Console.h"
 #include "Time.h"
-#include "PhysicsWorld.h"
-#include <iostream>
+#include "WindowDetails.h"
+#include "OriginalRenderer.h"
+#include "OriginalWindow.h"
+#include "InputManager.h"
+#include "ImGuiIncludes.h"
+#include "ProjectLoader.h"
+#include "World.h"
 #include "UI.h"
 #include "Editor.h"
-#include "Console.h"
-#include "ProjectLoader.h"
-#include <filesystem>
+#include "Camera.h"
+#include "PhysicsWorld.h"
+
+///Includes specifically for the file opening screen.
 #include <ShlObj_core.h>
 #include <SDL_syswm.h>
-#include <SDL.h>
-#include "Camera.h"
-#include "BUILD_NUMBER.h"
 
-#include "IRenderer.h"
-#include "IWindow.h"
-#include "OriginalWindow.h"
-#include "OriginalRenderer.h"
+IWindow* Engine::m_Window = nullptr;
+IRenderer* Engine::m_Renderer = nullptr;
+GAME_STATE Engine::m_GameState = GAME_STATE::STOPPED;
+std::string Engine::m_EngineEXELocation = "";
 
-IWindow* Game::m_Window = nullptr;
-IRenderer* Game::m_Renderer = nullptr;
-GAME_STATE Game::m_GameState = GAME_STATE::STOPPED;
-
-int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
+const std::string& Engine::GetEXELocation()
 {
-	return main(0, nullptr);
+	return m_EngineEXELocation;
 }
 
-int main(int argc, char* argv[])
-{
-	WindowDetails details;
-	details.Dimensions = Vector2(1280.0f, 720.0f);
-	details.Title = "hTech | Build Number " + std::to_string(BUILD_NUMBER);
-	details.Position = Vector2(200.0f, 200.0f);
-
-	Game* game = new Game();
-	game->Initialise(argc, argv, details);
-
-	if (game->GetIsInitialised())
-	{
-		game->Start();
-	}
-
-	return 0;
-}
-
-IRenderer& Game::GetRenderer()
+IRenderer& Engine::GetRenderer()
 {
 	if (!m_Renderer)
 	{
-		Log::LogMessage(LogLevel::LOG_WARNING, "Tried to get the renderer when it is not initalised yet.");
+		Console::LogMessage(LogLevel::LOG_WARNING, "Tried to get the renderer when it is not initalised yet.");
 	}
 
 	return *m_Renderer;
 }
 
-IWindow& Game::GetWindow()
+IWindow& Engine::GetWindow()
 {
 	if (!m_Window)
 	{
-		Log::LogMessage(LogLevel::LOG_WARNING, "Tried to get the window when it is not initalised yet.");
+		Console::LogMessage(LogLevel::LOG_WARNING, "Tried to get the window when it is not initalised yet.");
 	}
 
 	return *m_Window;
 }
 
-Game::Game()
+Engine::Engine()
 {
+	m_IsInEngineMode = false;
+	m_EngineEXELocation = "";
 	m_IsInitialised = false;
 	m_IsRunning = false;
 	m_Window = nullptr;
@@ -80,16 +61,18 @@ Game::Game()
 	m_AutosaveCooldown = 15.0f;
 }
 
-Game::~Game()
+Engine::~Engine()
 {
 	if (m_IsInitialised)
 		Shutdown();
 }
 
-void Game::Start()
+void Engine::Start(const ENGINE_MODE& mode)
 {
 	if(GetIsInitialised())
 	{
+		mode == ENGINE_MODE::EDITOR ? m_IsInEngineMode = true : m_IsInEngineMode = false;
+
 		SetIsRunning(true);
 
 		const int FPS = 60;
@@ -129,15 +112,15 @@ void Game::Start()
 	}
 }
 
-const GAME_STATE Game::GetGameState()
+const GAME_STATE Engine::GetGameState()
 {
-	return Game::m_GameState;
+	return Engine::m_GameState;
 }
 
 
-void Game::Initialise(int argc, char* argv[], WindowDetails details)
+void Engine::Initialise(int argc, char* argv[], WindowDetails details)
 {
-	m_IsInitialised = (InitialiseSystems(details) && InitialiseApplicationControls());
+	m_IsInitialised = (InitialiseSystems(details, argc, argv) && InitialiseApplicationControls());
 
 	if(m_IsInitialised == false)
 	{
@@ -145,7 +128,7 @@ void Game::Initialise(int argc, char* argv[], WindowDetails details)
 	}
 }
 
-bool Game::InitialiseGraphics()
+bool Engine::InitialiseGraphics()
 {
 	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
 
@@ -175,7 +158,7 @@ bool Game::InitialiseGraphics()
 	return true;
 }
 
-bool Game::InitialiseApplicationControls()
+bool Engine::InitialiseApplicationControls()
 {
 	InputManager::Bind(IM_KEY_CODE::IM_KEY_F1, IM_KEY_STATE::IM_KEY_PRESSED,
 		[this]
@@ -199,7 +182,7 @@ bool Game::InitialiseApplicationControls()
 	return true;
 }
 
-bool Game::InitialiseWindow(const WindowDetails& details)
+bool Engine::InitialiseWindow(const WindowDetails& details)
 {
 	if (m_Window)
 	{
@@ -217,31 +200,36 @@ bool Game::InitialiseWindow(const WindowDetails& details)
 	return m_Window->IsInitialised();
 }
 
-bool Game::InitialiseSystems(const WindowDetails& details)
+bool Engine::InitialiseSystems(const WindowDetails& details, int argc, char* argv[])
 {
 	if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
 	{
 		if (TTF_Init() < 0)
 		{
-			Log::LogMessage(LogLevel::LOG_ERROR, "Error initializing SDL_ttf");
-			Log::LogMessage(LogLevel::LOG_ERROR, TTF_GetError());
+			Console::LogMessage(LogLevel::LOG_ERROR, "Error initializing SDL_ttf");
+			Console::LogMessage(LogLevel::LOG_ERROR, TTF_GetError());
 		}
 
-		Log::LogMessage(LogLevel::LOG_MESSAGE, "Subsystem created.");
+		Console::LogMessage(LogLevel::LOG_MESSAGE, "Subsystem created.");
 
 		if (InitialiseWindow(details) == false)
 			return false;
 
 		if (InitialiseGraphics() == false)
 			return false;
-			
+	
+		if (argv != nullptr)
+		{
+			m_EngineEXELocation = argv[0];
+		}
+
 		return true;
 	}
 	
 	return false;
 }
 
-void Game::Shutdown()
+void Engine::Shutdown()
 {
 	// Cleanup
 	if(m_Renderer) m_Renderer->Shutdown();
@@ -250,7 +238,7 @@ void Game::Shutdown()
 	m_IsInitialised = false;
 }
 
-void Game::HandleEvents()
+void Engine::HandleEvents()
 {
 	SDL_Event event;
 	bool hadWheelEvent = false;
@@ -327,7 +315,7 @@ void Game::HandleEvents()
 	}
 }
 
-void Game::Update(float DeltaTime)
+void Engine::Update(float DeltaTime)
 {
 	if (ProjectLoader::HasProjectLoaded() && m_GameState != GAME_STATE::RUNNING)
 	{
@@ -352,12 +340,12 @@ void Game::Update(float DeltaTime)
 	UI::Update(DeltaTime);
 
 	if(Console::Query("DrawLog") != 0)
-		Log::Update(DeltaTime);
+		Console::Update(DeltaTime);
 
 	Editor::Update(DeltaTime);
 }
 
-void Game::Render()
+void Engine::Render()
 {
 	ImGui_ImplSDLRenderer_NewFrame();
 	ImGui_ImplSDL2_NewFrame();
@@ -371,7 +359,7 @@ void Game::Render()
 	UI::Render(*m_Renderer);
 
 	if (Console::Query("DrawLog") != 0)
-		Log::Render(*m_Renderer);
+		Console::Render(*m_Renderer);
 
 	static bool showNewProjectModal = false,
 		showOpenProjectModal = false;
@@ -714,7 +702,7 @@ INT CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lp, LPARAM pData)
 	return 0;
 }
 
-bool Game::OpenProject(std::string& path)
+bool Engine::OpenProject(std::string& path)
 {
 	//todo : sortout
 	//This is not abstracted :(

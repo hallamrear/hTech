@@ -2,8 +2,8 @@
 #include "Texture.h"
 
 #include "Camera.h"
-#include "Game.h"
-#include "Log.h"
+#include "Engine.h"
+#include "Console.h"
 #include "ProjectLoader.h"
 #include "Transform.h"
 
@@ -59,7 +59,7 @@ void Texture::Create(std::string texture_path, std::string name)
 		SDL_Surface* surface = STBIMG_Load(texture_path.c_str());
 		if (surface == nullptr)
 		{
-			Log::LogMessage(LogLevel::LOG_ERROR, std::string("Failed to load surface <" + texture_path + "> error : " + SDL_GetError() + "\n"));
+			Console::LogMessage(LogLevel::LOG_ERROR, std::string("Failed to load surface <" + texture_path + "> error : " + SDL_GetError() + "\n"));
 			SDL_FreeSurface(surface);
 			return;
 		}
@@ -68,11 +68,11 @@ void Texture::Create(std::string texture_path, std::string name)
 		// Convert it to a hardware-optimzed texture so we can render it
 
 		//todo : texture needs to be abstracted so this needs to be replaced.
-		OriginalRenderer& sdlRenderer = (OriginalRenderer&)(Game::GetRenderer());
+		OriginalRenderer& sdlRenderer = (OriginalRenderer&)(Engine::GetRenderer());
 		m_SDLTexture = SDL_CreateTextureFromSurface(sdlRenderer.GetAPIRenderer(), surface);
 		if (m_SDLTexture == nullptr)
 		{
-			Log::LogMessage(LogLevel::LOG_ERROR, std::string("Failed to load texture <" + texture_path + "> error : " + SDL_GetError() + "\n"));
+			Console::LogMessage(LogLevel::LOG_ERROR, std::string("Failed to load texture <" + texture_path + "> error : " + SDL_GetError() + "\n"));
 			SDL_DestroyTexture(m_SDLTexture);
 			SDL_FreeSurface(surface);
 			return;
@@ -84,7 +84,7 @@ void Texture::Create(std::string texture_path, std::string name)
 
 		if (m_SDLTexture == nullptr)
 		{
-			Log::LogMessage(LogLevel::LOG_ERROR, std::string("Failed to load texture <" + texture_path + "> error : " + SDL_GetError() + "\n"));
+			Console::LogMessage(LogLevel::LOG_ERROR, std::string("Failed to load texture <" + texture_path + "> error : " + SDL_GetError() + "\n"));
 			SDL_DestroyTexture(m_SDLTexture);
 			SDL_FreeSurface(surface);
 			return;

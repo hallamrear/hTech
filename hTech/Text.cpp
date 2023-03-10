@@ -1,8 +1,8 @@
 #include "pch.h"
 #include "Text.h"
-#include "Log.h"
+#include "Console.h"
 #include "Transform.h"
-#include "Game.h"
+#include "Engine.h"
 #include "IRenderer.h"
 #include "OriginalRenderer.h"
 
@@ -19,8 +19,8 @@ bool Text::CreateTTFFontAsset(const int& fontSize, const std::string& fontLocati
 	if (!m_Font)
 	{		
 		std::string str = TTF_GetError();
-		Log::LogMessage(LogLevel::LOG_ERROR, "FAILED TO LOAD FONT");
-		Log::LogMessage(LogLevel::LOG_ERROR, TTF_GetError());
+		Console::LogMessage(LogLevel::LOG_ERROR, "FAILED TO LOAD FONT");
+		Console::LogMessage(LogLevel::LOG_ERROR, TTF_GetError());
 		
 		DestroyTTFFontAsset();
 		return false;
@@ -34,7 +34,7 @@ bool Text::DestroyTTFFontAsset()
 	if (m_Font != nullptr)
 	{
 		TTF_CloseFont(m_Font);
-		Log::LogMessage(LogLevel::LOG_MESSAGE, "Font destroyed.");
+		Console::LogMessage(LogLevel::LOG_MESSAGE, "Font destroyed.");
 		return true;
 	}
 
@@ -57,7 +57,7 @@ void Text::CreateTextTexture()
 			DestroyTextTexture();
 		}
 
-		SDL_Renderer& renderer = const_cast<SDL_Renderer&>(*Game::GetRenderer());
+		SDL_Renderer& renderer = const_cast<SDL_Renderer&>(*Engine::GetRenderer());
 		SDL_Surface* textSurface = nullptr;
 		SDL_Color color = { m_Colour.R, m_Colour.G, m_Colour.B, m_Colour.A };
 
@@ -65,8 +65,8 @@ void Text::CreateTextTexture()
 
 		if (!textSurface)
 		{
-			Log::LogMessage(LogLevel::LOG_ERROR, "FAILED TO RENDER TEXT");
-			Log::LogMessage(LogLevel::LOG_ERROR, TTF_GetError());
+			Console::LogMessage(LogLevel::LOG_ERROR, "FAILED TO RENDER TEXT");
+			Console::LogMessage(LogLevel::LOG_ERROR, TTF_GetError());
 			return;
 		}
 
@@ -135,7 +135,7 @@ void Text::Render(IRenderer& renderer)
 		//it cant use the existing render functions because it uses SDL_Textures directly rather than 
 		//my texture class.
 
-		OriginalRenderer& ref = (OriginalRenderer&)Game::GetRenderer();
+		OriginalRenderer& ref = (OriginalRenderer&)Engine::GetRenderer();
 		SDL_Renderer* r = ref.GetAPIRenderer();
 		SDL_RenderCopy(r, mTextTexture, nullptr, &destRect);
 

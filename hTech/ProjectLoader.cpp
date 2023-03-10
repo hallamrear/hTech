@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "ProjectLoader.h"
-#include "Log.h"
+#include "Console.h"
 #include <ShlObj_core.h>
 #include <fstream>
 #include "World.h"
@@ -170,7 +170,7 @@ void ProjectLoader::CreateProject(std::string projectName)
 	//Checks if the folder exists, if not, creates.
 	if (std::filesystem::exists(projectRootLocation + projectName) == false)
 	{
-		Log::LogMessage(LogLevel::LOG_MESSAGE, "ProjectLoader -> Created engine project hierarchy root.");
+		Console::LogMessage(LogLevel::LOG_MESSAGE, "ProjectLoader -> Created engine project hierarchy root.");
 		CreateEmptyProjectHierarchy(projectName, projectRootLocation);
 
 		std::filesystem::path solutionPath = projectRootLocation + projectName + '\\' + std::string(projectName + ".sln");
@@ -200,7 +200,7 @@ void ProjectLoader::CreateEmptyProjectHierarchy(const std::string& projectName, 
 	}
 	else
 	{
-		Log::LogMessage(LogLevel::LOG_ERROR, "ProjectLoader -> Trying to create a project with a name that already exists.");
+		Console::LogMessage(LogLevel::LOG_ERROR, "ProjectLoader -> Trying to create a project with a name that already exists.");
 	}
 }
 

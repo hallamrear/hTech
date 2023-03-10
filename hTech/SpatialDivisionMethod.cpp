@@ -2,7 +2,7 @@
 #include "SpatialDivisionMethod.h"
 #include "World.h"
 #include "Camera.h"
-#include "Log.h"
+#include "Console.h"
 #include "Entity.h"
 #include "Text.h"
 #include "IRenderer.h"
@@ -135,7 +135,7 @@ void SpatialHash::Insert(Entity* entity)
 		//m_HashBucketMap.insert(std::make_pair<Vector2, HashBucket>(Vector2(i - (m_SizeX / 2), j - (m_SizeY / 2)), HashBucket()));
 		m_HashBucketMap.insert(std::pair<Vector2, HashBucket>(index, HashBucket()));
 		m_HashBucketMap.find(index)->second.Insert(entity);
-		//Log::LogMessage(LogLevel::LOG_ERROR, "Error adding an entity to the hash map.");
+		//Console::LogMessage(LogLevel::LOG_ERROR, "Error adding an entity to the hash map.");
 		//throw;
 	}
 }
@@ -151,7 +151,7 @@ void SpatialHash::Remove(Entity* entity)
 	}
 	else
 	{
-		Log::LogMessage(LogLevel::LOG_ERROR, "Error removing an entity to the hash map.");
+		Console::LogMessage(LogLevel::LOG_ERROR, "Error removing an entity to the hash map.");
 		throw;
 	}
 }

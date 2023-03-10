@@ -15,11 +15,19 @@ enum class GAME_STATE : int
 	RUNNING = 2
 };
 
-class HTECH_FUNCTION_EXPORT Game
+enum class ENGINE_MODE : int
+{
+	EDITOR = 0,
+	PLAYER = 1
+};
+
+class HTECH_FUNCTION_EXPORT Engine
 {
 private:
-	static IRenderer* m_Renderer;
-	static IWindow*   m_Window;
+	static std::string m_EngineEXELocation;
+	bool			   m_IsInEngineMode;
+	static IRenderer*  m_Renderer;
+	static IWindow*    m_Window;
 
 	bool  m_AutosaveEnabled;
 	float m_AutosaveTimer;
@@ -30,7 +38,7 @@ private:
 	bool						m_IsRunning;
 	 
 	bool		InitialiseWindow(const WindowDetails& details);
-	bool		InitialiseSystems(const WindowDetails& details);
+	bool		InitialiseSystems(const WindowDetails& details, int argc, char* argv[]);
 	bool		InitialiseApplicationControls();
 	bool		InitialiseGraphics();
 
@@ -41,15 +49,15 @@ private:
 
 
 public:
-
+	static const std::string& GetEXELocation();
 	static IRenderer& GetRenderer();
 	static IWindow&   GetWindow();
 
-	Game();
-	~Game();
+	Engine();
+	~Engine();
 
 	void		Initialise(int argc, char* argv[], WindowDetails details);
-	void		Start();
+	void		Start(const ENGINE_MODE& mode);
 
 	static const GAME_STATE  GetGameState();
 	void	    SetIsRunning(bool state) { m_IsRunning = state; };

@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "ScriptLoader.h"
 #include "ScriptObject.h"
-#include "Log.h"
+#include "Console.h"
 #include <unordered_map>
 #include <filesystem>
 #include "ProjectLoader.h"
@@ -89,12 +89,12 @@ void ScriptLoader::LoadCustomScriptDLL(std::string libraryLocation)
 	//validate
 	if (!m_LoadedLibraryInstance)
 	{
-		Log::LogMessage(LogLevel::LOG_ERROR, "Could not load library");
+		Console::LogMessage(LogLevel::LOG_ERROR, "Could not load library");
 		m_IsLibraryLoaded = false;
 	}
 	else
 	{
-		Log::LogMessage(LogLevel::LOG_MESSAGE, "Loaded custom script DLL successfully.");
+		Console::LogMessage(LogLevel::LOG_MESSAGE, "Loaded custom script DLL successfully.");
 		m_IsLibraryLoaded = true;
 	}
 }
@@ -109,7 +109,7 @@ scriptPtr ScriptLoader::GetScriptObjectCreationFunctionFromLibrary(std::string s
 
 		if (!DLLFunction)
 		{
-			Log::LogMessage(LogLevel::LOG_ERROR, "Error getting function from DLL.");
+			Console::LogMessage(LogLevel::LOG_ERROR, "Error getting function from DLL.");
 			return nullptr;
 		}
 
@@ -174,7 +174,7 @@ ScriptObject* ScriptLoader::GetScriptObject_Impl(Entity* entityFromComponent, st
 		if (LoadScriptObjectToMap(scriptDLLName) == false)
 		{
 			std::string str = "Cannot find function to create script object : " + scriptDLLName;
-			Log::LogMessage(LogLevel::LOG_ERROR, str);
+			Console::LogMessage(LogLevel::LOG_ERROR, str);
 			return nullptr;
 		}
 	}

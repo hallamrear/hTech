@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "InputManager.h"
 #include "Camera.h"
-#include "Log.h"
+#include "Console.h"
 
 InputManager* InputManager::m_Instance = nullptr;
 
@@ -31,7 +31,7 @@ void InputManager::Bind_Impl(IM_MOUSE_CODE keycode, IM_KEY_STATE mouseState, std
 		}
 	}
 	else
-		Log::LogMessage(LogLevel::LOG_ERROR, "FAILED TO BIND FUNCTION TO MOUSECODE REFERENCE");
+		Console::LogMessage(LogLevel::LOG_ERROR, "FAILED TO BIND FUNCTION TO MOUSECODE REFERENCE");
 }
 
 void InputManager::Bind_Impl(IM_KEY_CODE keycode, IM_KEY_STATE keystate, std::function<void()> func)
@@ -48,7 +48,7 @@ void InputManager::Bind_Impl(IM_KEY_CODE keycode, IM_KEY_STATE keystate, std::fu
 		}
 	}
 	else
-		Log::LogMessage(LogLevel::LOG_ERROR, "FAILED TO BIND FUNCTION TO KEYCODE REFERENCE");
+		Console::LogMessage(LogLevel::LOG_ERROR, "FAILED TO BIND FUNCTION TO KEYCODE REFERENCE");
 }
 
 void InputManager::Bind(IM_KEY_CODE mouseCode, IM_KEY_STATE mouseState, std::function<void()> func)

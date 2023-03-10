@@ -13,7 +13,7 @@
 
 #include "Component_Sprite.h"
 #include "Component_Script.h"
-#include "Game.h"
+#include "Engine.h"
 
 World* World::m_Instance = nullptr;
 
@@ -100,7 +100,7 @@ void World::Update_Impl(float DeltaTime)
     {
         if (itr.second != nullptr)
         {
-            if(Game::GetGameState() == GAME_STATE::RUNNING &&
+            if(Engine::GetGameState() == GAME_STATE::RUNNING &&
                 itr.second->GetIsEnabled())
             {
                 itr.second->Update(DeltaTime);
@@ -315,7 +315,7 @@ void World::ClearAllEntities()
 {    
     for (int i = 0; i < (int)RENDER_LAYER::COUNT; i++)
     {
-        Game::GetRenderer().GetRenderLayer((RENDER_LAYER)i).GetEntitiesFromLayer().clear();
+        Engine::GetRenderer().GetRenderLayer((RENDER_LAYER)i).GetEntitiesFromLayer().clear();
     }
 
     if (m_EntityMap.size() != 0)

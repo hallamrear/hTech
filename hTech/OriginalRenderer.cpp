@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "OriginalRenderer.h"
 #include "Console.h"
-#include "Log.h"
+#include "Console.h"
 #include "Colour.h"
 #include "imgui.h"
 #include "imgui_impl_sdl.h"
@@ -47,7 +47,7 @@ void OriginalRenderer::Startup(const IWindow& window)
 
 	if (sdlWindow == nullptr)
 	{
-		Log::LogMessage(LogLevel::LOG_WARNING, "Trying to use a non-SDL window to create an SDL Renderer.\n");
+		Console::LogMessage(LogLevel::LOG_WARNING, "Trying to use a non-SDL window to create an SDL Renderer.\n");
 		return;
 	}
 
@@ -55,20 +55,20 @@ void OriginalRenderer::Startup(const IWindow& window)
 
 	if (m_SDLRenderer)
 	{
-		Log::LogMessage(LogLevel::LOG_MESSAGE, "Renderer created.");
+		Console::LogMessage(LogLevel::LOG_MESSAGE, "Renderer created.");
 
 		Vector2 size;
 		sdlWindow->GetWindowSize(size);
 		CreateRenderTargetTexture(size);
 		if (m_RenderToTextureTarget == nullptr)
 		{
-			Log::LogMessage(LogLevel::LOG_ERROR, "Failed to render target texture.");
-			Log::LogMessage(LogLevel::LOG_ERROR, SDL_GetError());
+			Console::LogMessage(LogLevel::LOG_ERROR, "Failed to render target texture.");
+			Console::LogMessage(LogLevel::LOG_ERROR, SDL_GetError());
 			Shutdown();
 			return;
 		}
 
-		Log::LogMessage(LogLevel::LOG_MESSAGE, "Created render target texture.");
+		Console::LogMessage(LogLevel::LOG_MESSAGE, "Created render target texture.");
 
 		InitialiseDearIMGUI(*sdlWindow);
 
@@ -78,7 +78,7 @@ void OriginalRenderer::Startup(const IWindow& window)
 		return;
 	}
 
-	Log::LogMessage(LogLevel::LOG_ERROR, "Renderer failed to create.");
+	Console::LogMessage(LogLevel::LOG_ERROR, "Renderer failed to create.");
 	Shutdown();
 	return;
 }
@@ -103,7 +103,7 @@ void OriginalRenderer::TakeScreenshot(const std::string& name)
 	if (!m_IsInitialised)
 	{
 		str = "Tried to take screenshot before renderer is initialised.\n";
-		Log::LogMessage(LogLevel::LOG_ERROR, str.c_str());
+		Console::LogMessage(LogLevel::LOG_ERROR, str.c_str());
 		return;
 	}
 
@@ -135,7 +135,7 @@ void OriginalRenderer::TakeScreenshot(const std::string& name)
 
 	str = "Screenshot taken: " + str;
 
-	Log::LogMessage(LogLevel::LOG_MESSAGE, str.c_str());
+	Console::LogMessage(LogLevel::LOG_MESSAGE, str.c_str());
 }
 
 SDL_Renderer* OriginalRenderer::GetAPIRenderer() const
@@ -146,7 +146,7 @@ SDL_Renderer* OriginalRenderer::GetAPIRenderer() const
 	}
 	else
 	{
-		Log::LogMessage(LogLevel::LOG_WARNING, "Tried to get the SDL renderer without it being initialised. Returning nullptr.");
+		Console::LogMessage(LogLevel::LOG_WARNING, "Tried to get the SDL renderer without it being initialised. Returning nullptr.");
 		return nullptr;
 	}
 }
@@ -180,8 +180,8 @@ void OriginalRenderer::InitialiseDearIMGUI(IWindow& window)
 
 	if (sdlWindow == nullptr)
 	{
-		Log::LogMessage(LogLevel::LOG_WARNING, "Trying to use a non-SDL window to create an SDL Renderer.\n");
-		Log::LogMessage(LogLevel::LOG_ERROR, "Failed to initialise DearIMGUI.\n");
+		Console::LogMessage(LogLevel::LOG_WARNING, "Trying to use a non-SDL window to create an SDL Renderer.\n");
+		Console::LogMessage(LogLevel::LOG_ERROR, "Failed to initialise DearIMGUI.\n");
 		return;
 	}
 
@@ -202,7 +202,7 @@ void OriginalRenderer::InitialiseDearIMGUI(IWindow& window)
 	// Setup Platform/Renderer backends
 	ImGui_ImplSDL2_InitForSDLRenderer(sdlWindow->GetAPIWindow(), m_SDLRenderer);
 	ImGui_ImplSDLRenderer_Init(m_SDLRenderer);
-	Log::LogMessage(LogLevel::LOG_MESSAGE, "DearIMGUI initialised.");
+	Console::LogMessage(LogLevel::LOG_MESSAGE, "DearIMGUI initialised.");
 }
 
 void OriginalRenderer::SettingDearIMGUIColourScheme()

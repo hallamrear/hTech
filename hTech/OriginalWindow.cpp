@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "OriginalWindow.h"
-#include "Log.h"
+#include "Console.h"
 #include "Console.h"
 
 
@@ -86,12 +86,12 @@ void OriginalWindow::Startup(const WindowDetails& details)
 		Vector2 size;
 		GetWindowSize(size);
 	
-		Log::LogMessage(LogLevel::LOG_MESSAGE, "Window created.");
+		Console::LogMessage(LogLevel::LOG_MESSAGE, "Window created.");
 		m_IsInitialised = true;
 	}
 	else
 	{
-		Log::LogMessage(LogLevel::LOG_ERROR, "Window failed to create.");
+		Console::LogMessage(LogLevel::LOG_ERROR, "Window failed to create.");
 		SDL_DestroyWindow(m_SDLWindow);
 	}
 }

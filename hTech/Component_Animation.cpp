@@ -3,7 +3,7 @@
 #include "TextureCache.h"
 #include "Texture.h"
 #include "Entity.h"
-#include "Game.h"
+#include "Engine.h"
 #include "IRenderer.h"
 
 AnimationComponent::AnimationComponent(Entity& entity) : Component("Animation Component", entity)

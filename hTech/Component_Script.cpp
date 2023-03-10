@@ -4,7 +4,7 @@
 #include "Entity.h"
 #include "ScriptLoader.h"
 #include "ScriptObject.h"
-#include "Game.h"
+#include "Engine.h"
 
 void ScriptComponent::Destroy()
 {
@@ -17,7 +17,7 @@ void ScriptComponent::Destroy()
 
 void ScriptComponent::RenderProperties()
 {
-	ImGui::BeginDisabled(Game::GetGameState() == GAME_STATE::RUNNING);
+	ImGui::BeginDisabled(Engine::GetGameState() == GAME_STATE::RUNNING);
 
 	if (ImGui::Button("Rebuild DLL"))
 	{
@@ -51,7 +51,7 @@ void ScriptComponent::RenderProperties()
 
 void ScriptComponent::Update(float deltaTime)
 {
-	if (Game::GetGameState() != GAME_STATE::RUNNING)
+	if (Engine::GetGameState() != GAME_STATE::RUNNING)
 		return;
 
 	if (!ScriptLoader::IsLibraryLoaded())

@@ -1,7 +1,7 @@
 #include "pch.h"
 #include <assert.h>
-#include "Game.h"
-#include "Log.h"
+#include "Engine.h"
+#include "Console.h"
 #include "Texture.h"
 #include "TextureCache.h"
 #include "ProjectLoader.h"
@@ -55,7 +55,7 @@ Texture* TextureCache::GetTexture_Internal(const std::string& texture_path)
 		}
 		else
 		{
-			Log::LogMessage(LogLevel::LOG_ERROR, "TextureCache -> Error loading texture file at [" + fullPath + "]");
+			Console::LogMessage(LogLevel::LOG_ERROR, "TextureCache -> Error loading texture file at [" + fullPath + "]");
 			return nullptr;
 		}
 	}
