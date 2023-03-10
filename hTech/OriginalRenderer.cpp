@@ -98,12 +98,12 @@ void OriginalRenderer::Shutdown()
 
 void OriginalRenderer::TakeScreenshot(const std::string& name)
 {
-	std::string str;
+	std::string filename = name;
 
 	if (!m_IsInitialised)
 	{
-		str = "Tried to take screenshot before renderer is initialised.\n";
-		Console::LogMessage(LogLevel::LOG_ERROR, str.c_str());
+		filename = "Tried to take screenshot before renderer is initialised.\n";
+		Console::LogMessage(LogLevel::LOG_ERROR, filename.c_str());
 		return;
 	}
 
@@ -114,28 +114,27 @@ void OriginalRenderer::TakeScreenshot(const std::string& name)
 	SDL_Surface* sshot = SDL_CreateRGBSurface(0, w, h, 32, 0x00ff0000, 0x0000ff00, 0x000000ff, 0xff000000);
 	SDL_RenderReadPixels(m_SDLRenderer, NULL, SDL_PIXELFORMAT_ARGB8888, sshot->pixels, sshot->pitch);
 
-	if (name == "")
+	char buffer[256];
+	if (filename == "")
 	{
 		struct tm _time;
-		std::string str = name;
 		time_t now = time(nullptr);
 		localtime_s(&_time, &now);
-		char* buffer = new char[256];
 		strftime(buffer, 256, "%d-%m-%Y %H-%M-%S", &_time);
-		str = buffer;
+		filename = std::string(buffer);
 	}
 	else
 	{
-		str = name;
+		filename = name;
 	}
 
-	str += ".bmp";
-	SDL_SaveBMP(sshot, str.c_str());
+	filename += ".bmp";
+	SDL_SaveBMP(sshot, filename.c_str());
 	SDL_FreeSurface(sshot);
 
-	str = "Screenshot taken: " + str;
+	filename = "Screenshot taken: " + filename;
 
-	Console::LogMessage(LogLevel::LOG_MESSAGE, str.c_str());
+	Console::LogMessage(LogLevel::LOG_MESSAGE, filename.c_str());
 }
 
 SDL_Renderer* OriginalRenderer::GetAPIRenderer() const
