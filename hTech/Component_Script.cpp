@@ -150,7 +150,10 @@ void ScriptComponent::Deserialize(SerializedValue& value)
 	if (value["ClassName"].IsString())
 	{
 		m_ScriptReferenceName = value["ClassName"].GetString();
-		m_ScriptObject = ScriptLoader::GetScriptObject(&m_ParentEntity, m_ScriptReferenceName);
+		//TODO : Ensure this is not needed at all.
+		//The script reloading is done after the project is loaded so
+		//there should be no need to call it here as it will always fail.
+		//m_ScriptObject = ScriptLoader::GetScriptObject(&m_ParentEntity, m_ScriptReferenceName);
 	}
 }
 

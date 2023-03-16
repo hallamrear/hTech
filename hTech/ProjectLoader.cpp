@@ -68,6 +68,8 @@ void ProjectLoader::LoadProject(std::filesystem::path sceneFilePath)
 
 		m_HasProjectLoaded = true;
 
+		ScriptLoader::Reload(false);
+
 	}
 	else
 	{

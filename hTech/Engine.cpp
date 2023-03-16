@@ -77,7 +77,6 @@ void Engine::Start(const char* ProjectToOpenPath)
 			if (ProjectToOpenPath != "")
 			{
 				ProjectLoader::LoadProject(ProjectToOpenPath);
-				ScriptLoader::Reload(false);
 				World::ResetWorldEntities();
 			}
 			else
