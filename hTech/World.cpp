@@ -115,12 +115,16 @@ void World::Update_Impl(float DeltaTime)
 
 void World::Render_Impl(IRenderer& renderer)
 {
+    if (Engine::GetEngineMode() == ENGINE_MODE::EDITOR)
+    {
+    
     ImGui::Begin("Scene Graph");
 
     if (Console::Query("DrawHashMap") != 0)
     {
         m_WorldHashMap->Render(renderer);
     }
+
 
     int layerCount = (int)RENDER_LAYER::COUNT;
     for (int i = 0; i < layerCount; i++)
@@ -159,8 +163,16 @@ void World::Render_Impl(IRenderer& renderer)
 
         renderer.GetRenderLayer(layer).Render(renderer);
     }
-
     ImGui::End();
+    }
+    else
+    {
+        int layerCount = (int)RENDER_LAYER::COUNT;
+        for (int i = 0; i < layerCount; i++)
+        {
+            renderer.GetRenderLayer((RENDER_LAYER)i).Render(renderer);
+        }
+    }
 }
 
 Entity* World::GetEntityByName_Impl(const std::string& name)

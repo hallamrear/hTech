@@ -24,18 +24,14 @@ enum class ENGINE_MODE : int
 class HTECH_FUNCTION_EXPORT Engine
 {
 private:
-	static std::string m_EngineEXELocation;
-	bool			   m_IsInEngineMode;
-	static IRenderer*  m_Renderer;
-	static IWindow*    m_Window;
-
-	bool  m_AutosaveEnabled;
-	float m_AutosaveTimer;
-	float m_AutosaveCooldown;
+	static std::string			m_EngineEXELocation;
+	static ENGINE_MODE			m_EngineMode;
+	static IRenderer*			m_Renderer;
+	static IWindow*				m_Window;
 
 	static GAME_STATE			m_GameState;
 	bool						m_IsInitialised;
-	bool						m_IsRunning;
+	static bool					m_IsRunning;
 	 
 	bool		InitialiseWindow(const WindowDetails& details);
 	bool		InitialiseSystems(const WindowDetails& details, int argc, char* argv[]);
@@ -49,6 +45,7 @@ private:
 
 
 public:
+	static ENGINE_MODE GetEngineMode();
 	static const std::string& GetEXELocation();
 	static IRenderer& GetRenderer();
 	static IWindow&   GetWindow();
@@ -56,13 +53,13 @@ public:
 	Engine();
 	~Engine();
 
-	void		Initialise(int argc, char* argv[], WindowDetails details);
-	void		Start(const ENGINE_MODE& mode);
+	void		Initialise(int argc, char* argv[], WindowDetails details, const ENGINE_MODE& mode);
+	void		Start(const char* ProjectToOpenPath);
 
 	static const GAME_STATE  GetGameState();
-	void	    SetIsRunning(bool state) { m_IsRunning = state; };
-	const bool  GetIsRunning() const { return m_IsRunning; };
-	const bool  GetIsInitialised() const { return m_IsInitialised; };
-	bool		OpenProject(std::string& path);
+	static const void		 SetGameState(const GAME_STATE& state) { m_GameState = state; };
+	static void				 SetIsRunning(bool state) { m_IsRunning = state; };
+	static const bool		 GetIsRunning() { return m_IsRunning; };
+	const bool				 GetIsInitialised() const { return m_IsInitialised; };
 };
 

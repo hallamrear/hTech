@@ -303,7 +303,6 @@
     <ClInclude Include="InputManager.h">
       <Filter>System</Filter>
     </ClInclude>
-    <ClInclude Include="BUILD_NUMBER.h" />
     <ClInclude Include="Camera.h">
       <Filter>Rendering</Filter>
     </ClInclude>
@@ -350,6 +349,9 @@
       <Filter>System</Filter>
     </ClInclude>
     <ClInclude Include="WindowDetails.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="BUILD_NUMBER.h">
       <Filter>System</Filter>
     </ClInclude>
   </ItemGroup>

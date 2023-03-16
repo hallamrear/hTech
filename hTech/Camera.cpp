@@ -11,38 +11,6 @@ Camera::Camera()
 {
 	m_Position = Vector2();
 
-	InputManager::Bind(IM_KEY_CODE::IM_KEY_UP_ARROW, IM_KEY_STATE::IM_KEY_HELD,
-		[this]
-		{
-			Vector2 pos = Camera::GetCameraPosition();
-			pos.Y += 2.5f;
-			Camera::SetCameraPosition(pos);
-		});
-
-	InputManager::Bind(IM_KEY_CODE::IM_KEY_DOWN_ARROW, IM_KEY_STATE::IM_KEY_HELD,
-		[this]
-		{
-			Vector2 pos = Camera::GetCameraPosition();
-			pos.Y -= 2.5f;
-			Camera::SetCameraPosition(pos);
-		});
-
-	InputManager::Bind(IM_KEY_CODE::IM_KEY_LEFT_ARROW, IM_KEY_STATE::IM_KEY_HELD,
-		[this]
-		{
-			Vector2 pos = Camera::GetCameraPosition();
-			pos.X -= 2.5f;
-			Camera::SetCameraPosition(pos);
-		});
-
-	InputManager::Bind(IM_KEY_CODE::IM_KEY_RIGHT_ARROW, IM_KEY_STATE::IM_KEY_HELD,
-		[this]
-		{
-			Vector2 pos = Camera::GetCameraPosition();
-			pos.X += 2.5f;
-			Camera::SetCameraPosition(pos);
-		});
-
 #if(ENABLE_ZOOMING)
 		InputManager::Bind(IM_MOUSE_CODE::IM_MOUSE_SCROLL_UP, IM_KEY_STATE::IM_KEY_PRESSED,
 			[this]()

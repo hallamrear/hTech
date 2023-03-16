@@ -8,20 +8,24 @@
 #include "InputManager.h"
 #include "ImGuiIncludes.h"
 #include "ProjectLoader.h"
+#include "ScriptLoader.h"
 #include "World.h"
 #include "UI.h"
 #include "Editor.h"
 #include "Camera.h"
 #include "PhysicsWorld.h"
 
-///Includes specifically for the file opening screen.
-#include <ShlObj_core.h>
-#include <SDL_syswm.h>
-
 IWindow* Engine::m_Window = nullptr;
 IRenderer* Engine::m_Renderer = nullptr;
 GAME_STATE Engine::m_GameState = GAME_STATE::STOPPED;
 std::string Engine::m_EngineEXELocation = "";
+ENGINE_MODE Engine::m_EngineMode = ENGINE_MODE::PLAYER;
+bool Engine::m_IsRunning = false;
+
+ENGINE_MODE Engine::GetEngineMode()
+{
+	return m_EngineMode;
+}
 
 const std::string& Engine::GetEXELocation()
 {
@@ -50,15 +54,10 @@ IWindow& Engine::GetWindow()
 
 Engine::Engine()
 {
-	m_IsInEngineMode = false;
 	m_EngineEXELocation = "";
 	m_IsInitialised = false;
-	m_IsRunning = false;
 	m_Window = nullptr;
 	m_Renderer = nullptr;
-	m_AutosaveEnabled = true;
-	m_AutosaveTimer = 0.0f;
-	m_AutosaveCooldown = 15.0f;
 }
 
 Engine::~Engine()
@@ -67,11 +66,30 @@ Engine::~Engine()
 		Shutdown();
 }
 
-void Engine::Start(const ENGINE_MODE& mode)
+void Engine::Start(const char* ProjectToOpenPath)
 {
 	if(GetIsInitialised())
 	{
-		mode == ENGINE_MODE::EDITOR ? m_IsInEngineMode = true : m_IsInEngineMode = false;
+		if (m_EngineMode == ENGINE_MODE::PLAYER)
+		{
+			m_GameState = GAME_STATE::RUNNING;
+
+			if (ProjectToOpenPath != "")
+			{
+				ProjectLoader::LoadProject(ProjectToOpenPath);
+				ScriptLoader::Reload(false);
+				World::ResetWorldEntities();
+			}
+			else
+			{
+				Console::LogMessage(LogLevel::LOG_ERROR, "Engine loaded in Player mode but the path for the project cannot be found.");
+				Console::LogMessage(LogLevel::LOG_ERROR, std::string("Path: ") + ProjectToOpenPath);
+				return;
+			}
+		}
+
+		
+
 
 		SetIsRunning(true);
 
@@ -89,7 +107,6 @@ void Engine::Start(const ENGINE_MODE& mode)
 			while (GetIsRunning())
 			{
 				currentTime = SDL_GetTicks();
-
 				//frame delta in miliseconds
 				deltaTimeMilliseconds = currentTime - oldTime;
 
@@ -117,9 +134,10 @@ const GAME_STATE Engine::GetGameState()
 	return Engine::m_GameState;
 }
 
-
-void Engine::Initialise(int argc, char* argv[], WindowDetails details)
+void Engine::Initialise(int argc, char* argv[], WindowDetails details, const ENGINE_MODE& mode)
 {
+	m_EngineMode = mode;
+
 	m_IsInitialised = (InitialiseSystems(details, argc, argv) && InitialiseApplicationControls());
 
 	if(m_IsInitialised == false)
@@ -178,6 +196,41 @@ bool Engine::InitialiseApplicationControls()
 				Console::Show();
 			}
 		});
+
+	if (GetEngineMode() == ENGINE_MODE::EDITOR)
+	{
+		InputManager::Bind(IM_KEY_CODE::IM_KEY_UP_ARROW, IM_KEY_STATE::IM_KEY_HELD,
+			[this]
+			{
+				Vector2 pos = Camera::GetCameraPosition();
+				pos.Y += 2.5f;
+				Camera::SetCameraPosition(pos);
+			});
+
+		InputManager::Bind(IM_KEY_CODE::IM_KEY_DOWN_ARROW, IM_KEY_STATE::IM_KEY_HELD,
+			[this]
+			{
+				Vector2 pos = Camera::GetCameraPosition();
+				pos.Y -= 2.5f;
+				Camera::SetCameraPosition(pos);
+			});
+
+		InputManager::Bind(IM_KEY_CODE::IM_KEY_LEFT_ARROW, IM_KEY_STATE::IM_KEY_HELD,
+			[this]
+			{
+				Vector2 pos = Camera::GetCameraPosition();
+				pos.X -= 2.5f;
+				Camera::SetCameraPosition(pos);
+			});
+
+		InputManager::Bind(IM_KEY_CODE::IM_KEY_RIGHT_ARROW, IM_KEY_STATE::IM_KEY_HELD,
+			[this]
+			{
+				Vector2 pos = Camera::GetCameraPosition();
+				pos.X += 2.5f;
+				Camera::SetCameraPosition(pos);
+			});
+	}
 
 	return true;
 }
@@ -317,20 +370,6 @@ void Engine::HandleEvents()
 
 void Engine::Update(float DeltaTime)
 {
-	if (ProjectLoader::HasProjectLoaded() && m_GameState != GAME_STATE::RUNNING)
-	{
-		if (m_AutosaveEnabled)
-		{
-			m_AutosaveTimer += DeltaTime;
-
-			if (m_AutosaveTimer >= m_AutosaveCooldown)
-			{
-				ProjectLoader::SaveProject();
-				m_AutosaveTimer = 0.0f;
-			}
-		}
-	}
-
 	InputManager::Update();
 	
 	if(m_GameState == GAME_STATE::RUNNING)
@@ -361,381 +400,23 @@ void Engine::Render()
 	if (Console::Query("DrawLog") != 0)
 		Console::Render(*m_Renderer);
 
-	static bool showNewProjectModal = false,
-		showOpenProjectModal = false;
-	if (ImGui::BeginMainMenuBar())
+	switch (m_EngineMode)
 	{
-		if (ImGui::BeginMenu("File"))
-		{
-			if (ImGui::MenuItem("New Project"))
-			{
-				static std::string projectName;
-				showNewProjectModal = true;
-			}
-			
-			if (ImGui::MenuItem("Open Project"))
-			{
-				std::string projectFilePath = "";
-				if (OpenProject(projectFilePath))
-				{
-					ProjectLoader::LoadProject(projectFilePath);
-					m_AutosaveTimer = 0.0f;
-				}
-			}
-
-			if (ImGui::MenuItem("Save Project"))
-			{
-				ProjectLoader::SaveProject();
-				m_AutosaveTimer = 0.0f;
-			}
-			
-			if (ImGui::MenuItem("Close Project"))
-			{
-				ProjectLoader::UnloadProject();
-				m_AutosaveTimer = 0.0f;
-			}
-
-			if (ImGui::BeginMenu("Exit##Menu"))
-			{
-				if (ImGui::MenuItem("Exit with Saving"))
-				{
-					ProjectLoader::SaveProject();
-					m_IsRunning = false;
-				}
-
-				ImGui::Dummy(Vector2(-FLT_MAX, 100.0f));
-
-				if (ImGui::MenuItem("Exit without Saving"))
-				{
-					m_IsRunning = false;
-				}
-				ImGui::EndMenu();
-			}
-			
-			ImGui::EndMenu();
-		}
-
-		ImGui::Text(ProjectLoader::GetLoadedProjectName().c_str());
-
-		if (ImGui::BeginMenu("Options"))
-		{
-			std::string autosaveStr;
-			m_AutosaveEnabled == true ? autosaveStr = "Autosave Enabled" : autosaveStr = "Autosave Disabled";
-
-			if (ImGui::MenuItem(autosaveStr.c_str()))
-			{
-				m_AutosaveEnabled = !m_AutosaveEnabled;
-			}
-
-			bool queryHash = (bool)Console::Query("DrawHashMap");
-			if (ImGui::MenuItem("Spatial Hash"))
-			{
-				if (queryHash)
-				{
-					Console::Run("DrawHashMap 0");
-				}
-				else
-				{
-					Console::Run("DrawHashMap 1");
-				}
-			}
-
-			bool queryC = (bool)Console::Query("DrawColliders");
-			if (ImGui::MenuItem("Collider Outlines"))
-			{
-				if (queryC)
-				{
-					Console::Run("DrawColliders 0");
-				}
-				else
-				{
-					Console::Run("DrawColliders 1");
-				}
-			}
-			ImGui::EndMenu();
-		}
-
-		if (m_AutosaveEnabled)
-		{
-			std::string timeToSave = "Autosave in: " + std::to_string(m_AutosaveCooldown - m_AutosaveTimer) + " seconds";
-			ImGui::MenuItem(timeToSave.c_str());
-		}
-
-		ImGui::EndMainMenuBar();
-
-		if (showNewProjectModal)
-		{
-			if(ImGui::IsPopupOpen("New Project") == false)
-				ImGui::OpenPopup("New Project");
-
-			// Always center this window when appearing
-			ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-			ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-
-			if (ImGui::BeginPopupModal("New Project", NULL, ImGuiWindowFlags_AlwaysAutoResize))
-			{
-				static std::string projectName = "";
-				ImGui::Text("Create a new project?\n"); 
-				ImGui::Text("Project Name: "); ImGui::SameLine(); ImGui::InputText("##ProjectNameInput", &projectName);
-				ImGui::Separator();
-
-				if (ImGui::Button("Create", ImVec2(120, 0)))
-				{ 
-					ProjectLoader::CreateProject(projectName);
-					projectName = "";
-					showNewProjectModal = false;
-					m_AutosaveTimer = 0.0f;
-					ImGui::CloseCurrentPopup();
-				}
-				ImGui::SetItemDefaultFocus();
-				ImGui::SameLine();
-				if (ImGui::Button("Cancel", ImVec2(120, 0)))
-				{
-					showNewProjectModal = false;
-					ImGui::CloseCurrentPopup();
-					projectName = "";
-				}
-
-				ImGui::EndPopup();
-			}
-		}
-	}
-
-	Editor::Render(*m_Renderer);
-
-	ImGui::Begin("Render Window", 0, ImGuiWindowFlags_::ImGuiWindowFlags_MenuBar);
-
-	static bool showDeletionConfirmation = false;
-	ImGui::BeginMenuBar();
-	{
-		switch (m_GameState)
-		{
-		case GAME_STATE::RUNNING:
-		{
-			ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 0, 0, 255));
-			if (ImGui::Button("Stop"))
-			{
-				m_GameState = GAME_STATE::STOPPED;
-				World::ResetWorldEntities();
-			}
-			ImGui::PopStyleColor();
-		}
+	case ENGINE_MODE::EDITOR:
+		Editor::Render(*m_Renderer);
 		break;
-
-		case GAME_STATE::PAUSED:
-		{
-
-		}
-		break;
-
-		case GAME_STATE::STOPPED:
-		{
-			ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(0, 255, 0, 255));
-			if (ImGui::Button("Start"))
-			{
-				m_GameState = GAME_STATE::RUNNING;
-				World::ResetWorldEntities();
-				World::CallStartFunctionOnAllEntites();
-				Editor::ClearSelected();
-			}
-			ImGui::PopStyleColor();
-
-			if (ImGui::Button("Create Empty entity"))
-			{
-				World::CreateEntity();
-			}
-
-			if (ImGui::Button("Delete selected entity"))
-			{
-				if (Editor::GetSelectedEntity() != nullptr)
-				{
-					showDeletionConfirmation = true;
-				}
-			}
-
-			ImGui::SameLine();
-
-			//IMPLEMENT Editor tools window
-			std::string modeStr = "";
-			EDITOR_STATE state = Editor::GetEditorCursorState();
-
-			float buttonSize = 16;
-
-			if (ImGui::Button("M##Move", Vector2(buttonSize, buttonSize)))
-			{
-				Editor::SetEditorCursorState(EDITOR_STATE::MOVE);
-			}
-
-			ImGui::SameLine();
-
-			if (ImGui::Button("R##Rotate", Vector2(buttonSize, buttonSize)))
-			{
-				Editor::SetEditorCursorState(EDITOR_STATE::ROTATE);
-			}
-
-			ImGui::SameLine();
-
-			if (ImGui::Button("I##Inspect", Vector2(buttonSize, buttonSize)))
-			{
-				Editor::SetEditorCursorState(EDITOR_STATE::INSPECT);
-			}
-
-			ImGui::SameLine();
-
-			if (ImGui::Button("S##Select", Vector2(buttonSize, buttonSize)))
-			{
-				Editor::SetEditorCursorState(EDITOR_STATE::SELECT);
-			}
-
-			switch (state)
-			{
-			case EDITOR_STATE::SELECT:
-				modeStr = "Selection";
-				break;
-			case EDITOR_STATE::MOVE:
-				modeStr = "Move";
-				break;
-			case EDITOR_STATE::INSPECT:
-				modeStr = "Inspect";
-				break;
-			case EDITOR_STATE::ROTATE:
-				modeStr = "Rotate";
-				break;
-			case EDITOR_STATE::NONE:
-			default:
-				modeStr = "No mode";
-				break;
-			}
-			ImGui::SameLine(0.0f, buttonSize);
-			ImGui::Text("Current mode: %s", modeStr.c_str());
-
-		}
-		break;
-
-		default:
-			break;
-		}
-	}
-
-	ImGui::EndMenuBar();
-
-
-	if (showDeletionConfirmation)
+	case ENGINE_MODE::PLAYER:
 	{
-		if (ImGui::IsPopupOpen("Are you sure?") == false)
-			ImGui::OpenPopup("Are you sure?");
-
-		// Always center this window when appearing
-		ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-		ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-
-		if (ImGui::BeginPopupModal("Are you sure?", NULL, ImGuiWindowFlags_AlwaysAutoResize))
-		{
-			std::string text = "Are you sure you want to delete entity \"" + Editor::GetSelectedEntity()->GetName() + "\"";
-			ImGui::Text(text.c_str());
-
-			if (ImGui::Button("Delete", ImVec2(120, 0)))
-			{
-				World::DestroyEntity(Editor::GetSelectedEntity());
-				Editor::ClearSelected();
-				showDeletionConfirmation = false;
-				ImGui::CloseCurrentPopup();
-			}
-
-			ImGui::SetItemDefaultFocus();
-			ImGui::SameLine();
-
-			if (ImGui::Button("Cancel", ImVec2(120, 0)))
-			{
-				showDeletionConfirmation = false;
-				ImGui::CloseCurrentPopup();
-			}
-
-			ImGui::EndPopup();
-		}
+		OriginalRenderer* castedRenderer = (OriginalRenderer*)m_Renderer;
+		SDL_SetRenderTarget(castedRenderer->GetAPIRenderer(), NULL);
+		SDL_RenderCopyEx(castedRenderer->GetAPIRenderer(), castedRenderer->GetRenderTexture(), NULL, NULL, 0.0F, nullptr, SDL_RendererFlip::SDL_FLIP_NONE);
+		ImGui::Render();
+		ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
 	}
-
-	
-	//todo : this needs sorting out later on.
-	OriginalRenderer* renderer = (OriginalRenderer*)m_Renderer;
-
-	SDL_SetRenderTarget(renderer->GetAPIRenderer(), NULL);
-	Vector2 size;
-	size.X = ImGui::GetWindowWidth();
-	size.Y = ImGui::GetWindowHeight();
-	Vector2 pos;
-	pos.X = ImGui::GetWindowPos().x;
-	pos.Y = ImGui::GetWindowPos().y;
-	ImVec2 vMin = ImGui::GetWindowContentRegionMin();
-	ImVec2 vMax = ImGui::GetWindowContentRegionMax();/*
-
-	Console::Run("WindowDimensionsW " + std::to_string(size.X));
-	Console::Run("WindowDimensionsH " + std::to_string(size.Y));
-	Console::Run("WindowCentreX " + std::to_string(size.X / 2));
-	Console::Run("WindowCentreY " + std::to_string(size.Y / 2));*/
-
-	SDL_Rect renderDstQuad = { (int)(pos.X + vMin.x), (int)(pos.Y + vMin.y), (int)(vMax.x - vMin.x), (int)(vMax.y - vMin.y) };
-
-	SDL_Rect renderSrcQuad = renderDstQuad;
-	renderSrcQuad.w /= (int)Camera::ZoomLevel;
-	renderSrcQuad.h /= (int)Camera::ZoomLevel;
-
-	SDL_RenderSetClipRect(renderer->GetAPIRenderer(), &renderDstQuad);
-	//Render to screen
-	ImGui::End();
-
-	ImGui::Render();
-	ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
-	
-	if (showDeletionConfirmation == false && showNewProjectModal == false && showOpenProjectModal == false)
-	{
-		SDL_RenderCopyEx(renderer->GetAPIRenderer(), renderer->GetRenderTexture(), &renderSrcQuad, &renderDstQuad, 0.0F, nullptr, SDL_RendererFlip::SDL_FLIP_NONE);
+		break;
+	default:
+		break;
 	}
 
 	m_Renderer->EndFrame();
-}
-
-// callback function
-INT CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lp, LPARAM pData)
-{
-	if (uMsg == BFFM_INITIALIZED) SendMessage(hwnd, BFFM_SETSELECTION, TRUE, pData);
-	return 0;
-}
-
-bool Engine::OpenProject(std::string& path)
-{
-	//todo : sortout
-	//This is not abstracted :(
-	SDL_SysWMinfo wmInfo{};
-	SDL_VERSION(&wmInfo.version);
-	OriginalWindow* window = dynamic_cast<OriginalWindow*>(m_Window);
-	if (window == nullptr)
-		return false;
-
-	SDL_GetWindowWMInfo(window->GetAPIWindow(), &wmInfo);
-
-	// common dialog box structure, setting all fields to 0 is important
-	OPENFILENAME ofn = { 0 };
-	TCHAR szFile[260] = { 0 };
-	// Initialize remaining fields of OPENFILENAME structure
-	ofn.lStructSize = sizeof(ofn);
-	ofn.hwndOwner = wmInfo.info.win.window;
-	ofn.lpstrFile = szFile;
-	ofn.nMaxFile = sizeof(szFile);
-	ofn.lpstrFilter = TEXT("Project Files\0*.hProj\0");
-	ofn.nFilterIndex = 1;
-	ofn.lpstrFileTitle = NULL;
-	ofn.nMaxFileTitle = 0;
-	ofn.lpstrInitialDir = NULL;
-	ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
-
-	if (GetOpenFileName(&ofn) == TRUE)
-	{
-		// use ofn.lpstrFile here
-		path = ofn.lpstrFile;		
-		return true;
-	}
-
-	path = "";
-	return false;
 }

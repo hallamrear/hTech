@@ -129,7 +129,8 @@ bool ScriptLoader::LoadScriptObjectToMap(std::string functionName)
 	ProjectLoader::GetEngineProjectsLocation(scriptsLocation);
 	scriptsLocation += projectName + "\\" + projectName + "\\" + projectName + ".dll";
 
-	LoadCustomScriptDLL(scriptsLocation);
+	if(!IsLibraryLoaded_Impl())
+		LoadCustomScriptDLL(scriptsLocation);
 
 	if (m_LoadedLibraryInstance)
 	{
