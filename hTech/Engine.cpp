@@ -78,6 +78,7 @@ void Engine::Start(const char* ProjectToOpenPath)
 			{
 				ProjectLoader::LoadProject(ProjectToOpenPath);
 				World::ResetWorldEntities();
+				m_Window->SetFullscreenState(SCREEN_STATE::WINDOW_BORDERLESS_FULLSCREEN);
 			}
 			else
 			{

@@ -1,4 +1,6 @@
 #pragma once
+#define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
 #include <unordered_map>
 #include <functional>
 #include <string>
@@ -11,7 +13,7 @@ enum class LogLevel
 	LOG_MESSAGE = 2,
 };
 
-class Console
+class HTECH_FUNCTION_EXPORT Console
 {
 private:
 	std::unordered_map<std::string, int> m_IntMap;
