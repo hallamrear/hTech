@@ -43,26 +43,21 @@ void Physics::FixedUpdate()
 			{
 				if (Collision::CheckCollision(*m_RigidbodyVector[i], *m_RigidbodyVector[j], &manifold))
 				{
-					if (m_RigidbodyVector[i]->GetCollider()->IsOverlap())
+					if (m_RigidbodyVector[i]->GetCollider()->IsOverlap() || m_RigidbodyVector[j]->GetCollider()->IsOverlap())
 					{
 						if (m_RigidbodyVector[i]->GetCollider()->IsOverlap())
 							m_RigidbodyVector[i]->OnOverlap(manifold, *m_RigidbodyVector[j]);
-					}
-					else if (m_RigidbodyVector[j]->GetCollider()->IsOverlap())
-					{
+
 						if (m_RigidbodyVector[j]->GetCollider()->IsOverlap())
 							m_RigidbodyVector[j]->OnOverlap(manifold, *m_RigidbodyVector[i]);
 					}
-					else
+					else if((m_RigidbodyVector[i]->GetIsStatic() && m_RigidbodyVector[j]->GetIsStatic()) == false)
 					{
-						if ((m_RigidbodyVector[i]->GetIsStatic() && m_RigidbodyVector[j]->GetIsStatic()) == false)
-						{
-							manifold.BodyA = m_RigidbodyVector[i];
-							manifold.BodyB = m_RigidbodyVector[j];
-							m_PhysicsSolvers.push_back(new GJKCollisionSolver(manifold));
-							m_RigidbodyVector[i]->OnCollision(manifold, *m_RigidbodyVector[j]);
-							m_RigidbodyVector[j]->OnCollision(manifold, *m_RigidbodyVector[i]);
-						}
+						manifold.BodyA = m_RigidbodyVector[i];
+						manifold.BodyB = m_RigidbodyVector[j];
+						m_PhysicsSolvers.push_back(new GJKCollisionSolver(manifold));
+						m_RigidbodyVector[i]->OnCollision(manifold, *m_RigidbodyVector[j]);
+						m_RigidbodyVector[j]->OnCollision(manifold, *m_RigidbodyVector[i]);
 					}
 				}
 			}

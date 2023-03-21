@@ -7,7 +7,8 @@
 class Project;
 
 class ProjectLoader
-{	
+{
+	static std::string m_SolutionLocation;
 	static std::string m_ProjectName;
 	static bool	m_HasProjectLoaded;
 
@@ -35,4 +36,5 @@ public:
 	static void UnloadProject(bool save = true);
 	static void SaveProject();
 	static void GetEngineProjectsLocation(std::string& path);
+	static void OpenSolutionFile();
 };

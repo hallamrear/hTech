@@ -281,6 +281,7 @@ bool Entity::GetIsBeingDestroyed() const
 void Entity::Destroy()
 {
 	m_IsWaitingToBeDestroyed = true;
+	SetEnabled(false);
 }
 
 Transform& Entity::GetTransform()

@@ -4,6 +4,7 @@
 #include "InputManager.h"
 #include "World.h"
 #include "ProjectLoader.h"
+#include "ScriptLoader.h"
 #include "Engine.h"
 #include "Time.h"
 #include "Camera.h"
@@ -355,7 +356,24 @@ void Editor::Render_Impl(IRenderer& renderer)
 			ImGui::EndMenu();
 		}
 
-		ImGui::Text(ProjectLoader::GetLoadedProjectName().c_str());
+		
+		if (ProjectLoader::HasProjectLoaded())
+		{
+			if (ImGui::BeginMenu(ProjectLoader::GetLoadedProjectName().c_str()))
+			{
+				if (ImGui::MenuItem("Open Solution"))
+				{
+					ProjectLoader::OpenSolutionFile();
+				}
+
+				if (ImGui::MenuItem("Build Solution"))
+				{
+					ScriptLoader::Reload(true);
+				}
+
+				ImGui::EndMenu();
+			}
+		}
 
 		if (ImGui::BeginMenu("Options"))
 		{
@@ -395,7 +413,7 @@ void Editor::Render_Impl(IRenderer& renderer)
 			ImGui::EndMenu();
 		}
 
-		if (m_AutosaveEnabled)
+		if (ProjectLoader::HasProjectLoaded() && m_AutosaveEnabled)
 		{
 			std::string timeToSave = "Autosave in: " + std::to_string(m_AutosaveCooldown - m_AutosaveTimer) + " seconds";
 			ImGui::MenuItem(timeToSave.c_str());

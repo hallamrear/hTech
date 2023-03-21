@@ -16,6 +16,7 @@
 
 bool ProjectLoader::m_HasProjectLoaded = false;
 std::string ProjectLoader::m_ProjectName = "No Project Loaded";
+std::string ProjectLoader::m_SolutionLocation = "No Project Loaded";
 
 void ProjectLoader::LoadProject(std::filesystem::path sceneFilePath)
 {
@@ -45,6 +46,8 @@ void ProjectLoader::LoadProject(std::filesystem::path sceneFilePath)
 		//Remove extension.
 		m_ProjectName = m_ProjectName.substr(0, m_ProjectName.size() - sceneFilePath.extension().string().size()).c_str();
 
+		m_SolutionLocation = sceneFilePath.parent_path().string() + "\\" + m_ProjectName + ".sln";
+
 		std::filesystem::path projectPath = sceneFilePath;
 		projectPath = projectPath.parent_path().string() + "\\Assets\\";
 
@@ -68,6 +71,7 @@ void ProjectLoader::LoadProject(std::filesystem::path sceneFilePath)
 
 		m_HasProjectLoaded = true;
 
+		ProjectLoader::OpenSolutionFile();
 		ScriptLoader::Reload(false);
 
 	}
@@ -75,7 +79,8 @@ void ProjectLoader::LoadProject(std::filesystem::path sceneFilePath)
 	{
 		//IMPLEMENT FILE ERROR THROW;
 		m_HasProjectLoaded = false;
-		m_ProjectName = "No Project Loaded";
+		m_ProjectName = "No Project Loaded"; 
+		m_SolutionLocation = "No Project Loaded";
 		throw;
 	}
 
@@ -101,6 +106,7 @@ void ProjectLoader::UnloadProject(bool save)
 
 		m_HasProjectLoaded = false;
 		m_ProjectName = "No Project Loaded";
+		m_SolutionLocation = "No Project Loaded";
 	}
 }
 
@@ -148,6 +154,15 @@ void ProjectLoader::GetEngineProjectsLocation(std::string& path)
 	path += "\\hTech\\Projects\\";
 }
 
+void ProjectLoader::OpenSolutionFile()
+{
+	if (m_HasProjectLoaded)
+	{
+		std::string command = "start devenv " + m_SolutionLocation;
+		system(command.c_str());
+	}
+}
+
 const std::string ProjectLoader::GetLoadedProjectName()
 {
 	return m_ProjectName;
@@ -175,12 +190,12 @@ void ProjectLoader::CreateProject(std::string projectName)
 		Console::LogMessage(LogLevel::LOG_MESSAGE, "ProjectLoader -> Created engine project hierarchy root.");
 		CreateEmptyProjectHierarchy(projectName, projectRootLocation);
 
-		std::filesystem::path solutionPath = projectRootLocation + projectName + '\\' + std::string(projectName + ".sln");
-		std::string command = "start devenv " + solutionPath.string();
-		system(command.c_str());
-
 		m_HasProjectLoaded = true;
 		m_ProjectName = projectName;
+
+		std::filesystem::path solutionPath = projectRootLocation + m_ProjectName + '\\' + std::string(m_ProjectName + ".sln");
+		m_SolutionLocation = solutionPath.string();
+		OpenSolutionFile();
 
 		SaveProject();
 	}
@@ -267,7 +282,7 @@ void ProjectLoader::CreateScriptSolution(const std::filesystem::path& projectFol
 	std::filesystem::path includesPath = exePath.string() + ENGINE_INCLUDE_FOLDER_PATH_FROM_EXE_FOLDER;
 
 	//Copies and unzips the source folder.
-	std::filesystem::path sourceLocation = "Assets\\HTECH_SCRIPT.zip";
+	std::filesystem::path sourceLocation = "Assets\\HTECH_SCRIPT.hPack";
 	std::filesystem::path destinationLocation = projectFolderRoot;
 	std::string command = "PowerShell -Command \"Expand-Archive -Path " + sourceLocation.string() + " -DestinationPath " + destinationLocation.string() + " -Force \"";
 	system(command.c_str());
