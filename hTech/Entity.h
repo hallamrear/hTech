@@ -14,6 +14,8 @@ class HTECH_FUNCTION_EXPORT TransformComponent;
 class HTECH_FUNCTION_EXPORT Entity
 {
 private:
+	Entity* m_Parent;
+	std::vector<Entity*> m_Children;
 
 protected:
 	RENDER_LAYER m_Layer;
@@ -34,16 +36,21 @@ public:
 
 	virtual void Update(float DeltaTime);
 	virtual void Render(IRenderer& renderer);
-
 	void RenderProperties();
 
 	const bool GetIsEnabled() const { return m_IsEnabled; }
-	void SetEnabled(const bool state);
+	void SetEnabled(const bool state, const bool alterChildren = true);
 	bool const GetIsAlive() const { return m_IsAlive; }
 	virtual void SetAlive(const bool state) { m_IsAlive = state; }
 
+	//Parenting
 	Entity* GetParent();
 	void SetParent(Entity* entity);
+	bool HasParent() const { return (m_Parent != nullptr); };
+	void AddChild(Entity* entity);
+	void RemoveChild(Entity* entity);
+	std::vector<Entity*>& GetChildren();
+	bool HasChildren() const { return (m_Children.size() > 0); };
 
 	const RENDER_LAYER& GetEntityRenderLayer() const;
 	void SetEntityRenderLayer(const RENDER_LAYER& layer);

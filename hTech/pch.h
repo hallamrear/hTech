@@ -16,10 +16,6 @@
 #include <SDL2_gfxPrimitives.h>
 #include <SDL_ttf.h>
 
-//STB //TODO : if want to use image writing, like screenshotting uncomment this and use like stb_image
-//#define STB_IMAGE_WRITE_IMPLEMENTATION
-//#include <stb_image_write.h>
-
 //C++ Libaries
 #include <Windows.h>
 #include <iostream>
@@ -31,6 +27,7 @@
 #include <mmsystem.h>
 #include <algorithm>
 #include <cassert>
+#include <memory>
 
 #include "Utility.h"
 

@@ -24,23 +24,25 @@ private:
 	std::unordered_map<std::string, Entity*>	m_EntityMap;
 	SpatialHash*								m_WorldHashMap;
 
-	void					UpdateHashmapNames_Impl();
-	Entity*					CreateEntity_Impl(std::string Name = "unnamed", Transform SpawnTransform = Transform(), Entity* Parent = nullptr);
-	void					DestroyEntity_Impl(Entity* entity);
-	void					ClearupDeadEntities();
+	void	Update_Impl(float DeltaTime);
+	void	Render_Impl(IRenderer& renderer);
+	void	Deserialize_Impl(Deserializer& reader);
+	void	RenderPropertiesForEntity(Entity* entity);
 
-	void					Update_Impl(float DeltaTime);
-	void					Render_Impl(IRenderer& renderer);
-	Entity*					GetEntityByName_Impl(const std::string& name);
-	Entity*					GetEntityByName_Impl(const char* name);
-	void					QuerySpaceForEntities_Impl(WorldRectangle rect, std::vector<Entity*>& entities);
-	Entity*					FindNearestEntityToPosition_Impl(Vector2 WorldPosition);
+	Entity* CreateEntity_Impl(std::string Name = "unnamed", Transform SpawnTransform = Transform(), Entity* Parent = nullptr);
+	void	DestroyEntity_Impl(Entity* entity);
+	void	ClearupDeadEntities();
 
-	void Serialize_Impl(Serializer& writer) const;
-	void Deserialize_Impl(Deserializer& reader);
-	void ResetWorldEntities_Impl();
-	void CallStartFunctionOnAllEntites_Impl();
-	void ClearAllEntities();
+	void	CallStartFunctionOnAllEntites_Impl();
+	void	ClearAllEntities();
+	void	ResetWorldEntities_Impl();
+	void	UpdateHashmapNames_Impl();
+	Entity* GetEntityByName_Impl(const std::string& name);
+	Entity* GetEntityByName_Impl(const char* name);
+	void	QuerySpaceForEntities_Impl(WorldRectangle rect, std::vector<Entity*>& entities);
+	Entity* FindNearestEntityToPosition_Impl(Vector2 WorldPosition);
+
+	void	Serialize_Impl(Serializer& writer) const;
 
 protected:
 							World();

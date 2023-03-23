@@ -21,6 +21,7 @@ Entity::Entity(Transform SpawnTransform, std::string Name, Entity* Parent)
 	m_IsEnabled = true;
 	m_Layer = RENDER_LAYER::DEFAULT;
 	m_Components = std::vector<Component*>();
+	m_Children = std::vector<Entity*>();
 	AddComponent<TransformComponent>();
 	GetTransform() = SpawnTransform;
 	m_IsWaitingToBeDestroyed = false;
@@ -96,6 +97,19 @@ void Entity::RenderProperties()
 	enabled = m_IsEnabled;
 	ImGui::Checkbox("Enabled", &enabled);
 	SetEnabled(enabled);
+	
+	std::string parentName = "";
+	if (m_Parent) parentName = m_Parent->GetName();
+	ImGui::InputText("Parent: ", &parentName);
+	Entity* parent = World::GetEntityByName(parentName);
+
+	if (parent != nullptr)
+	{
+		if (parent != GetParent())
+		{
+			SetParent(parent);
+		}
+	}
 
 	std::string str = m_Name;
 	ImGui::InputText("Name: ", &str);	
@@ -226,7 +240,7 @@ void Entity::RenderProperties()
 
 }
 
-void Entity::SetEnabled(const bool state)
+void Entity::SetEnabled(const bool state, const bool alterChildren)
 {
 	if (state == m_IsEnabled)
 		return;
@@ -248,17 +262,64 @@ void Entity::SetEnabled(const bool state)
 	}
 
 	m_IsEnabled = state;
+
+	if (alterChildren)
+	{
+		for (size_t i = 0; i < m_Children.size(); i++)
+		{
+			m_Children[i]->SetEnabled(state, alterChildren);
+		}
+	}
 }
 
 Entity* Entity::GetParent()
 {
-	//TODO : Implement Parenting
-	return nullptr;
+	return m_Parent;
 }
 
 void Entity::SetParent(Entity* entity)
 {
-	//TODO : Implement Parenting
+	if (m_Parent != nullptr)
+	{
+		m_Parent->RemoveChild(this);
+	}
+
+	m_Parent = entity;
+	
+	if(m_Parent)
+		m_Parent->AddChild(this);
+}
+
+void Entity::AddChild(Entity* entity)
+{
+	if (!entity)
+		return;
+
+	if (entity->GetParent() != nullptr)
+	{
+		entity->GetParent()->RemoveChild(entity);
+	}
+
+	m_Children.push_back(entity);
+}
+
+void Entity::RemoveChild(Entity* entity)
+{
+	if (entity != nullptr && m_Children.size() > 0)
+	{
+		auto itr = std::find(m_Children.begin(), m_Children.end(), entity);
+
+		if (itr != m_Children.end())
+		{
+			m_Children.erase(itr);	
+			entity->SetParent(nullptr);
+		}
+	}
+}
+
+std::vector<Entity*>& Entity::GetChildren()
+{
+	return m_Children;
 }
 
 const RENDER_LAYER& Entity::GetEntityRenderLayer() const

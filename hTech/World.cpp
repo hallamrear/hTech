@@ -117,53 +117,43 @@ void World::Render_Impl(IRenderer& renderer)
 {
     if (Engine::GetEngineMode() == ENGINE_MODE::EDITOR)
     {
-    
-    ImGui::Begin("Scene Graph");
+        ImGui::Begin("Scene Graph");
 
-    if (Console::Query("DrawHashMap") != 0)
-    {
-        m_WorldHashMap->Render(renderer);
-    }
-
-
-    int layerCount = (int)RENDER_LAYER::COUNT;
-    for (int i = 0; i < layerCount; i++)
-    {
-        RENDER_LAYER layer = (RENDER_LAYER)i;
-        std::string layerName = "UNNAMED LAYER";
-
-        switch (layer)
+        if (Console::Query("DrawHashMap") != 0)
         {
-            case RENDER_LAYER::BACKGROUND: layerName = "Background";  break;
-            case RENDER_LAYER::DEFAULT:    layerName = "Default"; break;
-            case RENDER_LAYER::FOREGROUND: layerName = "Foreground"; break;
-            case RENDER_LAYER::UI:         layerName = "UI"; break;
-            default: break;
+            m_WorldHashMap->Render(renderer);
         }
 
-        if (ImGui::CollapsingHeader(layerName.c_str()))
+        int layerCount = (int)RENDER_LAYER::COUNT;
+        for (int i = 0; i < layerCount; i++)
         {
-            std::list<Entity*> layerEntities = renderer.GetRenderLayer(layer).GetEntitiesFromLayer();
+            RENDER_LAYER layer = (RENDER_LAYER)i;
+            std::string layerName = "UNNAMED LAYER";
 
-            for (auto& itr : layerEntities)
+            switch (layer)
             {
-                std::string str = itr->GetName();
+                case RENDER_LAYER::BACKGROUND: layerName = "Background";  break;
+                case RENDER_LAYER::DEFAULT:    layerName = "Default"; break;
+                case RENDER_LAYER::FOREGROUND: layerName = "Foreground"; break;
+                case RENDER_LAYER::UI:         layerName = "UI"; break;
+                default: break;
+            }
 
-                if (str == "")
-                {
-                    str += "unnamed###" + itr->GetIsAlive() + std::to_string(itr->GetTransform().Position.X) + "/" + std::to_string(itr->GetTransform().Position.Y);
-                }
+            if (ImGui::CollapsingHeader(layerName.c_str()))
+            {
+                std::vector<Entity*> layerEntities(renderer.GetRenderLayer(layer).GetEntitiesFromLayer().begin(), renderer.GetRenderLayer(layer).GetEntitiesFromLayer().end());
 
-                if (ImGui::Selectable(str.c_str()))
+                for (auto& itr : layerEntities)
                 {
-                    Editor::SetSelectedEntity(itr);
+                    if(itr->HasParent() == false)
+                        RenderPropertiesForEntity(itr);
                 }
             }
-        }
 
-        renderer.GetRenderLayer(layer).Render(renderer);
-    }
-    ImGui::End();
+            renderer.GetRenderLayer(layer).Render(renderer);
+        }
+    
+        ImGui::End();
     }
     else
     {
@@ -171,6 +161,32 @@ void World::Render_Impl(IRenderer& renderer)
         for (int i = 0; i < layerCount; i++)
         {
             renderer.GetRenderLayer((RENDER_LAYER)i).Render(renderer);
+        }
+    }
+}
+
+void World::RenderPropertiesForEntity(Entity* entity)
+{
+    std::string str = entity->GetName();
+
+    if (str == "")
+    {
+        str += "unnamed###" + entity->GetIsAlive() + std::to_string(entity->GetTransform().Position.X) + "/" + std::to_string(entity->GetTransform().Position.Y);
+    }
+
+    if (ImGui::Selectable(str.c_str()))
+    {
+        Editor::SetSelectedEntity(entity);
+    }
+
+    if (entity->HasChildren())
+    {
+        std::vector<Entity*>& children = entity->GetChildren();
+        for (size_t i = 0; i < children.size(); i++)
+        {
+            ImGui::Indent(16.0f);
+            RenderPropertiesForEntity(children[i]);
+            ImGui::Unindent(16.0f);
         }
     }
 }
