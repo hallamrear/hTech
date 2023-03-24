@@ -138,21 +138,50 @@ void World::Render_Impl(IRenderer& renderer)
                 case RENDER_LAYER::UI:         layerName = "UI"; break;
                 default: break;
             }
-
-            if (ImGui::CollapsingHeader(layerName.c_str()))
+              
+            if (ImGui::TreeNodeEx(layerName.c_str(),
+                ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_DefaultOpen
+                | ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_Leaf
+                | ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_Framed
+                | ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_NoTreePushOnOpen
+            ))
             {
                 std::vector<Entity*> layerEntities(renderer.GetRenderLayer(layer).GetEntitiesFromLayer().begin(), renderer.GetRenderLayer(layer).GetEntitiesFromLayer().end());
 
+                if (ImGui::BeginDragDropTarget())
+                {
+                    auto payload = const_cast<ImGuiPayload*>(ImGui::AcceptDragDropPayload("SceneHierarchy"));
+                    if (payload != nullptr)
+                    {
+                        Entity** droppedPayload = reinterpret_cast<Entity**>(payload);
+                        Entity* droppedEntityPtr = *droppedPayload;
+                        Entity* foundEntity = World::GetEntityByName_Impl(droppedEntityPtr->GetName());
+                        if (foundEntity)
+                        {
+                            foundEntity->SetParent(nullptr);
+                        }
+
+
+                        if (foundEntity->GetEntityRenderLayer() != layer)
+                        {
+                            foundEntity->SetEntityRenderLayer(layer);
+                        }
+                    }
+                    ImGui::EndDragDropTarget();
+                }
+
                 for (auto& itr : layerEntities)
                 {
-                    if(itr->HasParent() == false)
+                    if (itr->HasParent() == false)
                         RenderPropertiesForEntity(itr);
                 }
-            }
+                //ImGui::TreePop();
+            }                
 
             renderer.GetRenderLayer(layer).Render(renderer);
         }
     
+       
         ImGui::End();
     }
     else
@@ -165,35 +194,66 @@ void World::Render_Impl(IRenderer& renderer)
     }
 }
 
+
 void World::RenderPropertiesForEntity(Entity* entity)
 {
-    std::string str = entity->GetName();
+    ImGuiTreeNodeFlags flags = 0;
 
-    if (str == "")
+    if (!entity->HasChildren())
+        flags = ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_Leaf;
+    else
+        flags = ImGuiTreeNodeFlags_::ImGuiTreeNodeFlags_DefaultOpen;
+
+    bool node_open = ImGui::TreeNodeEx(entity->GetName().c_str(), flags);
+
+    if (ImGui::BeginDragDropSource())
     {
-        str += "unnamed###" + entity->GetIsAlive() + std::to_string(entity->GetTransform().Position.X) + "/" + std::to_string(entity->GetTransform().Position.Y);
+        ImGui::SetDragDropPayload("SceneHierarchy", entity, sizeof(Entity));
+        //Whatever gets added between this and end source, 
+        //gets shown next to the mouse during the drag.
+        ImGui::Text(entity->GetName().c_str());
+        ImGui::EndDragDropSource();
     }
-
-    if (ImGui::Selectable(str.c_str()))
+    if (ImGui::BeginDragDropTarget())
     {
-        Editor::SetSelectedEntity(entity);
-    }
-
-    if (entity->HasChildren())
-    {
-        std::vector<Entity*>& children = entity->GetChildren();
-        for (size_t i = 0; i < children.size(); i++)
+        auto payload = const_cast<ImGuiPayload*>(ImGui::AcceptDragDropPayload("SceneHierarchy"));
+        if (payload != nullptr)
         {
-            ImGui::Indent(16.0f);
-            RenderPropertiesForEntity(children[i]);
-            ImGui::Unindent(16.0f);
+            Entity** droppedPayload = reinterpret_cast<Entity**>(payload);
+            Entity* droppedEntityPtr = *droppedPayload;
+            Entity* foundEntity = World::GetEntityByName_Impl(droppedEntityPtr->GetName());
+            if (foundEntity)
+            {
+                //entity->AddChild(foundEntity);
+                foundEntity->SetParent(entity);
+            }
         }
+        ImGui::EndDragDropTarget();
+    }
+
+    if(node_open)
+    {
+        if (entity->HasChildren())
+        {
+            std::vector<Entity*>& children = entity->GetChildren();
+            for (size_t i = 0; i < children.size(); i++)
+            {
+                ImGui::Indent(16.0f);
+                RenderPropertiesForEntity(children[i]);
+                ImGui::Unindent(16.0f);
+            }
+        }
+        ImGui::TreePop();
     }
 }
 
 Entity* World::GetEntityByName_Impl(const std::string& name)
 {
+    if (name == "")
+        return nullptr;
+
     Entity* entity = nullptr;
+
     auto result = m_EntityMap.find(name);
 
     if (result != m_EntityMap.end())

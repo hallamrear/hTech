@@ -26,6 +26,7 @@ private:
 
 	void	Update_Impl(float DeltaTime);
 	void	Render_Impl(IRenderer& renderer);
+	void	Serialize_Impl(Serializer& writer) const;
 	void	Deserialize_Impl(Deserializer& reader);
 	void	RenderPropertiesForEntity(Entity* entity);
 
@@ -42,7 +43,6 @@ private:
 	void	QuerySpaceForEntities_Impl(WorldRectangle rect, std::vector<Entity*>& entities);
 	Entity* FindNearestEntityToPosition_Impl(Vector2 WorldPosition);
 
-	void	Serialize_Impl(Serializer& writer) const;
 
 protected:
 							World();
