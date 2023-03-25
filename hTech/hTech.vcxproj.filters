@@ -172,6 +172,12 @@
     <ClCompile Include="Component_Rigidbody.cpp">
       <Filter>Entity\Components</Filter>
     </ClCompile>
+    <ClCompile Include="Component_TextElement.cpp">
+      <Filter>Entity\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="FontLoader.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imstb_truetype.h">
@@ -352,6 +358,12 @@
       <Filter>System</Filter>
     </ClInclude>
     <ClInclude Include="BUILD_NUMBER.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="Component_TextElement.h">
+      <Filter>Entity\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="FontLoader.h">
       <Filter>System</Filter>
     </ClInclude>
   </ItemGroup>

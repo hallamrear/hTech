@@ -402,8 +402,10 @@ xcopy /Y /H /E /I "$(ProjectDir)rapidjson\*.h" "$(OutputPath)Engine_Includes\rap
     <ClInclude Include="Component_Rigidbody.h" />
     <ClInclude Include="Component_Script.h" />
     <ClInclude Include="Component_Sprite.h" />
+    <ClInclude Include="Component_TextElement.h" />
     <ClInclude Include="Component_Transform.h" />
     <ClInclude Include="Console.h" />
+    <ClInclude Include="FontLoader.h" />
     <ClInclude Include="ImGuiIncludes.h" />
     <ClInclude Include="IWindow.h" />
     <ClInclude Include="Line.h" />
@@ -539,9 +541,11 @@ xcopy /Y /H /E /I "$(ProjectDir)rapidjson\*.h" "$(OutputPath)Engine_Includes\rap
     <ClCompile Include="Component_Rigidbody.cpp" />
     <ClCompile Include="Component_Script.cpp" />
     <ClCompile Include="Component_Sprite.cpp" />
+    <ClCompile Include="Component_TextElement.cpp" />
     <ClCompile Include="Component_Transform.cpp" />
     <ClCompile Include="Console.cpp" />
     <ClCompile Include="entry.cpp" />
+    <ClCompile Include="FontLoader.cpp" />
     <ClCompile Include="IWindow.cpp" />
     <ClCompile Include="Line.cpp" />
     <ClCompile Include="Editor.cpp" />

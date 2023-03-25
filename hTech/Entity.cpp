@@ -11,6 +11,7 @@
 #include "Component_Animation.h"
 #include "Component_Script.h"
 #include "Component_Rigidbody.h"
+#include "Component_TextElement.h"
 #include "rapidjson/rapidjson.h"
 #include "World.h"
 
@@ -184,6 +185,12 @@ void Entity::RenderProperties()
 				AddComponent<RigidbodyComponent>();
 			}
 
+			ImGui::SetNextItemWidth(-FLT_MIN);
+			if (ImGui::Selectable("Text Component"))
+			{
+				AddComponent<TextComponent>();
+			}
+
 			ImGui::EndPopup();
 		}
 
@@ -197,10 +204,8 @@ void Entity::RenderProperties()
 					if (dynamic_cast<SpriteComponent*>(m_Components[i]))    { RemoveComponent<SpriteComponent>();	continue; }
 					if (dynamic_cast<AnimationComponent*>(m_Components[i])) { RemoveComponent<AnimationComponent>();	continue; }
 					if (dynamic_cast<ScriptComponent*>(m_Components[i]))    { RemoveComponent<ScriptComponent>();	continue; }
-					if (dynamic_cast<RigidbodyComponent*>(m_Components[i])) { 
-						RemoveComponent<RigidbodyComponent>(); 
-						continue; }
-					
+					if (dynamic_cast<RigidbodyComponent*>(m_Components[i])) { RemoveComponent<RigidbodyComponent>(); continue; }
+					if (dynamic_cast<TextComponent*>(m_Components[i]))		{ RemoveComponent<TextComponent>();	continue; }
 				}
 			}
 			ImGui::EndPopup();
@@ -447,6 +452,11 @@ void Entity::Deserialize(SerializedValue& serializedEntity)
 				{
 					AddComponent<ScriptComponent>();
 					component = GetComponent<ScriptComponent>();
+				}
+				else if (name == "Text Component")
+				{
+					AddComponent<TextComponent>();
+					component = GetComponent<TextComponent>();
 				}
 
 				component->Deserialize(components[i]);

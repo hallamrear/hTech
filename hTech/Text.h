@@ -3,6 +3,7 @@
 
 #include "Colour.h"
 #include "Transform.h"
+#include <SDL_ttf.h>
 
 class HTECH_FUNCTION_EXPORT Text
 {

@@ -19,4 +19,14 @@ public:
 
 	Colour();
 	Colour(Uint8 r, Uint8 g, Uint8 b, Uint8 a);
+
+	inline bool operator==(const Colour& other)
+	{
+		return (R == other.R && G == other.G && B == other.B && A == other.A);
+	}
+
+	inline bool operator!=(const Colour& other)
+	{
+		return !(R == other.R && G == other.G && B == other.B && A == other.A);
+	}
 };

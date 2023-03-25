@@ -140,6 +140,10 @@ void Engine::Initialise(int argc, char* argv[], WindowDetails details, const ENG
 
 	m_IsInitialised = (InitialiseSystems(details, argc, argv) && InitialiseApplicationControls());
 
+	char buffer[260];
+	GetModuleFileName(NULL, buffer, MAX_PATH);
+	m_EngineEXELocation = buffer;
+
 	if(m_IsInitialised == false)
 	{
 		Shutdown();
