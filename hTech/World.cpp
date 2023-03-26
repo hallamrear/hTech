@@ -100,8 +100,7 @@ void World::Update_Impl(float DeltaTime)
     {
         if (itr.second != nullptr)
         {
-            if(Engine::GetGameState() == GAME_STATE::RUNNING &&
-                itr.second->GetIsEnabled())
+            if(Engine::GetGameState() == GAME_STATE::RUNNING)
             {
                 itr.second->Update(DeltaTime);
             }
