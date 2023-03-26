@@ -1,15 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="ObserverSubject.cpp" />
-    <ClCompile Include="Observer.cpp" />
-    <ClCompile Include="ScriptObject.cpp" />
-    <ClCompile Include="SpatialDivisionMethod.cpp" />
-    <ClCompile Include="Time.cpp" />
     <ClCompile Include="pch.cpp" />
-    <ClCompile Include="Transform.cpp" />
-    <ClCompile Include="Vector2.cpp" />
-    <ClCompile Include="World.cpp" />
     <ClCompile Include="Component.cpp">
       <Filter>Entity\Components</Filter>
     </ClCompile>
@@ -178,6 +170,30 @@
     <ClCompile Include="FontLoader.cpp">
       <Filter>System</Filter>
     </ClCompile>
+    <ClCompile Include="SpatialDivisionMethod.cpp">
+      <Filter>Physics and Collision</Filter>
+    </ClCompile>
+    <ClCompile Include="World.cpp">
+      <Filter>Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Data Types</Filter>
+    </ClCompile>
+    <ClCompile Include="Vector2.cpp">
+      <Filter>Data Types</Filter>
+    </ClCompile>
+    <ClCompile Include="Time.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="Observer.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="ObserverSubject.cpp">
+      <Filter>System</Filter>
+    </ClCompile>
+    <ClCompile Include="ScriptObject.cpp">
+      <Filter>Data Types</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imstb_truetype.h">
@@ -246,15 +262,7 @@
     <ClInclude Include="UI_VariableTracker.h">
       <Filter>Legacy</Filter>
     </ClInclude>
-    <ClInclude Include="Observer.h" />
-    <ClInclude Include="ObserverSubject.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="ScriptObject.h" />
-    <ClInclude Include="SpatialDivisionMethod.h" />
-    <ClInclude Include="Time.h" />
-    <ClInclude Include="Transform.h" />
-    <ClInclude Include="Vector2.h" />
-    <ClInclude Include="World.h" />
     <ClInclude Include="BoundingBox.h">
       <Filter>Physics and Collision</Filter>
     </ClInclude>
@@ -366,6 +374,30 @@
     <ClInclude Include="FontLoader.h">
       <Filter>System</Filter>
     </ClInclude>
+    <ClInclude Include="SpatialDivisionMethod.h">
+      <Filter>Physics and Collision</Filter>
+    </ClInclude>
+    <ClInclude Include="World.h">
+      <Filter>Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Data Types</Filter>
+    </ClInclude>
+    <ClInclude Include="Vector2.h">
+      <Filter>Data Types</Filter>
+    </ClInclude>
+    <ClInclude Include="Time.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="Observer.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="ObserverSubject.h">
+      <Filter>System</Filter>
+    </ClInclude>
+    <ClInclude Include="ScriptObject.h">
+      <Filter>Data Types</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="External">
@@ -388,6 +420,9 @@
     </Filter>
     <Filter Include="Rendering">
       <UniqueIdentifier>{2c0a45a5-ef43-40d9-9f7f-45dce5f696ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Data Types">
+      <UniqueIdentifier>{30dd57c9-620d-4214-ae89-a15f65adefd0}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
