@@ -108,7 +108,6 @@ void TextComponent::Serialize(Serializer& writer) const
 	writer.String("ColourR");   writer.Int(m_Colour.R);
 	writer.String("ColourG");   writer.Int(m_Colour.G);
 	writer.String("ColourB");   writer.Int(m_Colour.B);
-	writer.String("ColourA");   writer.Int(m_Colour.A);
 	writer.String("WrapWidth"); writer.Int(m_WrapWidth);
 	writer.String("OffsetX");	writer.Double(m_Offset.X);
 	writer.String("OffsetY");	writer.Double(m_Offset.Y);
@@ -130,8 +129,6 @@ void TextComponent::Deserialize(SerializedValue& value)
 		m_Colour.G = value.FindMember("ColourG")->value.GetInt();
 	if (value.HasMember("ColourB"))
 		m_Colour.B = value.FindMember("ColourB")->value.GetInt();
-	if (value.HasMember("ColourA"))
-		m_Colour.A = value.FindMember("ColourA")->value.GetInt();
 
 	if (value.HasMember("WrapWidth"))
 		m_WrapWidth = value.FindMember("WrapWidth")->value.GetInt();
@@ -153,9 +150,9 @@ void TextComponent::RenderProperties()
 	ImGui::InputInt("Font Size: ", &fontSize, 1, 2);
 	SetFontSize(fontSize);
 
-	float c[4] = { m_Colour.R, m_Colour.G, m_Colour.B, m_Colour.A };
-	ImGui::DragFloat4("Text colour: ", c);
-	SetColour(Colour(c[0], c[1], c[2], c[3]));
+	float c[3] = { m_Colour.R, m_Colour.G, m_Colour.B };
+	ImGui::DragFloat3("Text colour: ", c);
+	SetColour(Colour(c[0], c[1], c[2], 255));
 
 	int ww = m_WrapWidth;
 	ImGui::InputInt("Font wrap width: ", &ww);
