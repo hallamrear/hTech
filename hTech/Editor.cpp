@@ -636,7 +636,11 @@ void Editor::Render_Impl(IRenderer& renderer)
 
 	ImGui::Render();
 	ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
+
 	//Render to screen
+	if (showNewProjectModal || showDeletionConfirmation || showOpenProjectModal)
+		return;
+
 	SDL_RenderCopyEx(castedRenderer.GetAPIRenderer(), castedRenderer.GetRenderTexture(), &renderSrcQuad, &renderDstQuad, 0.0F, nullptr, SDL_RendererFlip::SDL_FLIP_NONE);
 }
 
