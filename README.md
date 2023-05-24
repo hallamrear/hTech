@@ -2,7 +2,7 @@ hTech
 ======
 
 <p align="center">
-  <img src="./README_Images/Engine_Preview.png">
+  <img src="./README_Images/Engine_Preview.gif">
 </p> 
 
 <!--
