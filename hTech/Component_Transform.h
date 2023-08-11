@@ -18,7 +18,8 @@ public:
 	TransformComponent(Transform transform, Entity& entity);
 	~TransformComponent();
 
-	Transform& GetTransform();
+	Transform GetTransform() const;
+	void SetTransform(const Transform& transform);
 
 	void Update(float deltaTime) override;
 	void Serialize(Serializer& writer) const override;

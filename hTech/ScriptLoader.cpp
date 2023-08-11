@@ -158,7 +158,7 @@ void ScriptLoader::Reload_Impl(bool rebuildDLL)
 	if (rebuildDLL)
 	{
 		projectLocation += ".sln";
-		std::string buildCommand = "msbuild.exe " + projectLocation + " /t:Clean;Rebuild /property:Configuration=Debug -m && pause";
+		std::string buildCommand = "msbuild.exe " + projectLocation + " /t:Clean;Rebuild /property:Configuration=Debug -m || pause";
 		system(buildCommand.c_str());
 	}
 

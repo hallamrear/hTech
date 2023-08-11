@@ -27,8 +27,8 @@ void CollisionSolver::PositionResolution()
 
 	for (size_t i = 0; i < m_ContactPoints.size(); i++)
 	{
-		Transform& transformA = m_ContactPoints[i].BodyA->GetEntity().GetTransform();
-		Transform& transformB = m_ContactPoints[i].BodyB->GetEntity().GetTransform();
+		Transform transformA = m_ContactPoints[i].BodyA->GetEntity().GetTransform();
+		Transform transformB = m_ContactPoints[i].BodyB->GetEntity().GetTransform();
 
 		if (m_ContactPoints[i].BodyA->GetIsStatic() == true && m_ContactPoints[i].BodyB->GetIsStatic() == true)
 			continue;

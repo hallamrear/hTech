@@ -25,7 +25,6 @@ protected:
 	bool m_IsEnabled;
 	bool m_IsWaitingToBeDestroyed;
 	bool m_IsAlive;
-	void ClampRotation();
 
 public:
 	const std::string& GetName() const;
@@ -65,7 +64,7 @@ public:
 	template<class C>
 	Entity* RemoveComponent();
 
-	Transform& GetTransform();
+	Transform GetTransform();
 
 	void Serialize(Serializer& writer) const;
 	void Deserialize(SerializedValue& serializedEntity);

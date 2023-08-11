@@ -64,7 +64,7 @@ void AnimationComponent::Render(IRenderer& renderer)
 {
 	if (m_AnimationSheet)
 	{
-		Transform& transform = m_ParentEntity.GetTransform();
+		Transform transform = m_ParentEntity.GetTransform();
 		WorldRectangle srcRect = WorldRectangle(
 			(m_FrameSize.X * m_CurrentFrame),
 			(m_FrameSize.Y * m_CurrentAnimation),

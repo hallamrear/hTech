@@ -20,8 +20,8 @@ class ProjectLoader
 		"\\Logs\\"
 	};
 
-	static void CreateScriptSolution(const std::filesystem::path& projectFolderRoot, const std::string& projectName);
-	static void CreateEmptyProjectHierarchy(const std::string& projectName, const std::string& folderRoot);
+	static bool CreateScriptSolution(const std::filesystem::path& projectFolderRoot, const std::string& projectName);
+	static bool CreateEmptyProjectHierarchy(const std::string& projectName, const std::string& folderRoot);
 	static void ReplaceStringInFile(const std::filesystem::path& filePath, const std::string& wordBeingReplaced, const std::string& wordToReplaceWith);
 
 public:

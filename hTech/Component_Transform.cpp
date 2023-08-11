@@ -20,9 +20,20 @@ TransformComponent::~TransformComponent()
 	m_Transform.Rotation = FLT_MAX;
 }
 
-Transform& TransformComponent::GetTransform()
+Transform TransformComponent::GetTransform() const
 {
-	return m_Transform;
+	if (m_ParentEntity.HasParent())
+	{
+		Transform t = m_ParentEntity.GetParent()->GetTransform() + m_Transform;
+		return t;
+	}
+	else
+		return m_Transform;
+}
+
+void TransformComponent::SetTransform(const Transform& transform)
+{
+	m_Transform = transform;
 }
 
 void TransformComponent::Update(float deltaTime)
@@ -68,9 +79,8 @@ void TransformComponent::RenderProperties()
 {
 	ImGui::Text("Position: ");
 	ImGui::SameLine();
-	ImGui::InputFloat("##posX:", &m_Transform.Position.X); 
-	ImGui::SameLine();
-	ImGui::InputFloat("##posY", &m_Transform.Position.Y);
+	float pos[2] = { m_Transform.Position.X, m_Transform.Position.Y };
+	ImGui::InputFloat2("##pos:", pos); 
 	ImGui::InputFloat("Rotation:", &m_Transform.Rotation);
 	if (ImGui::Button("Reset to 0, 0"))
 	{

@@ -12,18 +12,18 @@ class HTECH_FUNCTION_EXPORT AnimationComponent
 	: public Component
 {
 private:
-	std::string m_UINewAnimationSheetString;
-	float m_TimeBetweenFrames;
-	float m_TimeElapsed;
-	float m_Duration;
+	std::string		m_UINewAnimationSheetString;
+	float			m_TimeBetweenFrames;
+	float			m_TimeElapsed;
+	float			m_Duration;
 	int m_CurrentFrame;
 	Texture* m_AnimationSheet;
 	int m_CurrentAnimation;
 	int m_TotalFrames;
 	Vector2 m_FrameSize;
 	int m_AnimationCount;
-	bool m_IsLooping;
-	bool m_IsFlipped;
+	bool			m_IsLooping;
+	bool			m_IsFlipped;
 
 	//If the animation does not loop, this will set to true when it has finished playing.
 	bool m_HasFinished;

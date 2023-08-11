@@ -157,7 +157,7 @@ void ProjectLoader::OpenSolutionFile()
 {
 	if (m_HasProjectLoaded)
 	{
-		std::string command = "start devenv " + m_SolutionLocation;
+		std::string command = "start devenv " + m_SolutionLocation + " || pause";
 		system(command.c_str());
 	}
 }
@@ -186,8 +186,15 @@ void ProjectLoader::CreateProject(std::string projectName)
 	//Checks if the folder exists, if not, creates.
 	if (std::filesystem::exists(projectRootLocation + projectName) == false)
 	{
+		bool projectCreated = CreateEmptyProjectHierarchy(projectName, projectRootLocation);
+
+		if (!projectCreated)
+		{
+			Console::LogMessage(LogLevel::LOG_ERROR, "ProjectLoader -> Failed to create project.");
+			return;
+		}
+
 		Console::LogMessage(LogLevel::LOG_MESSAGE, "ProjectLoader -> Created engine project hierarchy root.");
-		CreateEmptyProjectHierarchy(projectName, projectRootLocation);
 
 		m_HasProjectLoaded = true;
 		m_ProjectName = projectName;
@@ -200,16 +207,22 @@ void ProjectLoader::CreateProject(std::string projectName)
 	}
 }
 
-void ProjectLoader::CreateEmptyProjectHierarchy(const std::string& projectName, const std::string& folderRoot)
+bool ProjectLoader::CreateEmptyProjectHierarchy(const std::string& projectName, const std::string& folderRoot)
 {
 	std::filesystem::path projectFolderRoot = folderRoot + projectName;
 
 	//If the project does not exist, create it
 	if (std::filesystem::exists(folderRoot + projectName) == false)
 	{
-		CreateScriptSolution(folderRoot, projectName);
+		int solutionCreated = CreateScriptSolution(folderRoot, projectName);
 
-		for (int i = 0; i < PROJECT_DIRECTORY_PATH_COUNT; i++)
+		if (!solutionCreated)
+		{
+			Console::LogMessage(LogLevel::LOG_ERROR, "ProjectLoader -> Failed to create the script solution.");
+			return false;
+		}
+
+		for (int i = 0; i < 4; i++)
 		{
 			std::filesystem::create_directories(projectFolderRoot.string().append(ProjectDirectoryLayout[i]));
 		}
@@ -217,7 +230,10 @@ void ProjectLoader::CreateEmptyProjectHierarchy(const std::string& projectName, 
 	else
 	{
 		Console::LogMessage(LogLevel::LOG_ERROR, "ProjectLoader -> Trying to create a project with a name that already exists.");
+		return false;
 	}
+
+	return true;
 }
 
 void ProjectLoader::ReplaceStringInFile(const std::filesystem::path& filePath, const std::string& wordBeingReplaced, const std::string& wordToReplaceWith)
@@ -271,7 +287,7 @@ void ProjectLoader::ReplaceStringInFile(const std::filesystem::path& filePath, c
 }
 
 
-void ProjectLoader::CreateScriptSolution(const std::filesystem::path& projectFolderRoot, const std::string& projectName)
+bool ProjectLoader::CreateScriptSolution(const std::filesystem::path& projectFolderRoot, const std::string& projectName)
 {
 	char buffer[260];
 	std::filesystem::path exePath;
@@ -281,10 +297,11 @@ void ProjectLoader::CreateScriptSolution(const std::filesystem::path& projectFol
 	std::filesystem::path includesPath = exePath.string() + ENGINE_INCLUDE_FOLDER_PATH_FROM_EXE_FOLDER;
 
 	//Copies and unzips the source folder.
-	std::filesystem::path sourceLocation = "Assets\\HTECH_SCRIPT.hPack";
+	std::filesystem::path sourceLocation = "Assets\\HTECH_SCRIPT.zip";
 	std::filesystem::path destinationLocation = projectFolderRoot;
-	std::string command = "PowerShell -Command \"Expand-Archive -Path " + sourceLocation.string() + " -DestinationPath " + destinationLocation.string() + " -Force \"";
-	system(command.c_str());
+	std::string command = "PowerShell -Command \"Expand-Archive -Path " + sourceLocation.string() + " -DestinationPath " + destinationLocation.string() + " -Force \"; pause;";
+	int result = system(command.c_str());
+
 	//This section renames all the folders and directories to match the project name.
 	std::vector<std::string> mFilePaths;
 	std::vector<std::string> mAlteredFilePaths;
@@ -306,6 +323,9 @@ void ProjectLoader::CreateScriptSolution(const std::filesystem::path& projectFol
 			}
 		}
 	}
+
+	if (mFilePaths.size() == 0 || mDirectoryPaths.size() == 0)
+		return false;
 
 	mAlteredFilePaths = mFilePaths;
 	mAlteredDirectoryPaths = mDirectoryPaths;
@@ -356,4 +376,6 @@ void ProjectLoader::CreateScriptSolution(const std::filesystem::path& projectFol
 			std::cout << error.code() << "\n" << error.what() << "\n";
 		}
 	}
+
+	return true;
 }

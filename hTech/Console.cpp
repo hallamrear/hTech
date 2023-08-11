@@ -191,6 +191,9 @@ void Console::LogMessage(LogLevel indicator, std::string str)
 
 void Console::LogMessage_Impl(LogLevel indicator, std::string str)
 {
+    if (indicator == LogLevel::LOG_ERROR && IsVisible_Impl() == false)
+        Show_Impl();
+
     mMessageQueue.push_back(std::make_pair(indicator, str));
 
     if (mMessageQueue.size() > Console::Query("MaxLogMessages"))

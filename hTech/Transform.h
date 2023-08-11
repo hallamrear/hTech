@@ -19,5 +19,9 @@ public:
 	const Vector2 GetLeft() const;
 	void Translate(const Vector2 offset);
 	void Rotate(const float angle);
-};
 
+	Transform operator+(const Transform& rhs) const
+	{
+		return Transform(Position + rhs.Position, Rotation + rhs.Rotation);;
+	}
+};

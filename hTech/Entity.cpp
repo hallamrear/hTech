@@ -350,14 +350,9 @@ void Entity::Destroy()
 	SetEnabled(false);
 }
 
-Transform& Entity::GetTransform()
+Transform Entity::GetTransform()
 {
 	return GetComponent<TransformComponent>()->GetTransform();
-}
-
-void Entity::ClampRotation()
-{
-	GetTransform().Rotation = fmod(GetTransform().Rotation, 360.0f);
 }
 
 const std::string& Entity::GetName() const
