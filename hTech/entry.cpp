@@ -9,8 +9,8 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	int argc = __argc;
 
 	//TODO : Check that this conversion from pointer to an array has not broken any of the copys.
-	char exeLocation[512];
-	char projectLocation[512];
+	char exeLocation[512] = { '\0' };
+	char projectLocation[512] = { '\0' };
 
 	//Have to use LPWSTR for the commandline as there is no CommandLineToArgvA.
 	LPWSTR* CMDLine = CommandLineToArgvW(GetCommandLineW(), &argc);
@@ -27,7 +27,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
 	WindowDetails details;
 	details.Dimensions = Vector2(1280.0f, 720.0f);
-	details.Title = "hTech | Build Number " + std::to_string(BUILD_NUMBER);
+	details.Title = "hTech | Build Number : TEMPORARILY DISABLED"; // +std::to_string(BUILD_NUMBER);
 	details.Position = Vector2(200.0f, 200.0f);
 
 	Engine* game = new Engine();

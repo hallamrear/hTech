@@ -103,6 +103,7 @@
     <ReferencePath>$(ProjectDir)SDL\lib\$(PlatformTarget);$(ReferencePath)</ReferencePath>
     <OutDir>$(SolutionDir)Builds\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>Builds\$(Platform)\$(Configuration)\</IntDir>
+    <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-Player|Win32'">
     <LinkIncremental>true</LinkIncremental>
@@ -111,6 +112,7 @@
     <ReferencePath>$(ProjectDir)SDL\lib\$(PlatformTarget);$(ReferencePath)</ReferencePath>
     <OutDir>$(SolutionDir)Builds\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>Builds\$(Platform)\$(Configuration)\</IntDir>
+    <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -119,6 +121,7 @@
     <ReferencePath>$(ProjectDir)SDL\lib\$(PlatformTarget);$(ReferencePath)</ReferencePath>
     <OutDir>$(SolutionDir)Builds\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>Builds\$(Platform)\$(Configuration)\</IntDir>
+    <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -127,6 +130,7 @@
     <ReferencePath>$(ProjectDir)SDL\lib\$(PlatformTarget);$(ReferencePath)</ReferencePath>
     <OutDir>$(SolutionDir)Builds\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>Builds\$(Platform)\$(Configuration)\</IntDir>
+    <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug-Player|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -135,6 +139,7 @@
     <ReferencePath>$(ProjectDir)SDL\lib\$(PlatformTarget);$(ReferencePath)</ReferencePath>
     <OutDir>$(SolutionDir)Builds\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>Builds\$(Platform)\$(Configuration)\</IntDir>
+    <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -143,6 +148,7 @@
     <ReferencePath>$(ProjectDir)SDL\lib\$(PlatformTarget);$(ReferencePath)</ReferencePath>
     <OutDir>$(SolutionDir)Builds\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>Builds\$(Platform)\$(Configuration)\</IntDir>
+    <PreBuildEventUseInBuild>false</PreBuildEventUseInBuild>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
