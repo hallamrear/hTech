@@ -6,6 +6,7 @@ Console* Console::m_Instance = nullptr;
 
 Console* Console::Get()
 {
+    //Creating a singleton.
     if (m_Instance == nullptr)
     {
         m_Instance = new Console();
@@ -82,6 +83,8 @@ int Console::Query_Impl(std::string variable)
 
 void Console::ReloadValues()
 {
+    //Sets up command maps with command strings and default values.
+
     m_IntMap.clear();
     m_NonVariableFunctionMap.clear();
 

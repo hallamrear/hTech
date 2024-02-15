@@ -7,20 +7,22 @@
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 {
 	int argc = __argc;
-	char* exeLocation = new char[512];
-	char* projectLocation = new char[512];
+
+	//TODO : Check that this conversion from pointer to an array has not broken any of the copys.
+	char exeLocation[512];
+	char projectLocation[512];
 
 	//Have to use LPWSTR for the commandline as there is no CommandLineToArgvA.
 	LPWSTR* CMDLine = CommandLineToArgvW(GetCommandLineW(), &argc);
 	wchar_t* argv = (wchar_t*)CMDLine[0];
 	size_t convertedSize = 0;
-	wcstombs_s(&convertedSize, exeLocation, 512, argv, 512);
+	wcstombs_s(&convertedSize, &exeLocation[0], 512, argv, 512);
 
 	if (argc > 1)
 	{
 		argv = (wchar_t*)CMDLine[1];
 		size_t convertedSize = 0;
-		wcstombs_s(&convertedSize, projectLocation, 512, argv, 512);
+		wcstombs_s(&convertedSize, &projectLocation[0], 512, argv, 512);
 	}
 
 	WindowDetails details;
@@ -29,6 +31,9 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	details.Position = Vector2(200.0f, 200.0f);
 
 	Engine* game = new Engine();
+
+	//If the game has more than 1 argument,
+	//it assumes that it is a project folder location and goes into editor mode.
 	ENGINE_MODE mode;
 	argc > 1 ? mode = ENGINE_MODE::PLAYER : mode = ENGINE_MODE::EDITOR;
 

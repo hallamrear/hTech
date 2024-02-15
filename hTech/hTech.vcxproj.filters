@@ -39,31 +39,31 @@
       <Filter>Legacy</Filter>
     </ClCompile>
     <ClCompile Include="BoundingBox.cpp">
-      <Filter>Physics and Collision</Filter>
+      <Filter>Legacy\Physics and Collision</Filter>
     </ClCompile>
     <ClCompile Include="BoundingPolygon.cpp">
-      <Filter>Physics and Collision</Filter>
+      <Filter>Legacy\Physics and Collision</Filter>
     </ClCompile>
     <ClCompile Include="BoundingSphere.cpp">
-      <Filter>Physics and Collision</Filter>
+      <Filter>Legacy\Physics and Collision</Filter>
     </ClCompile>
     <ClCompile Include="Collider.cpp">
-      <Filter>Physics and Collision</Filter>
+      <Filter>Legacy\Physics and Collision</Filter>
     </ClCompile>
     <ClCompile Include="Collision.cpp">
-      <Filter>Physics and Collision</Filter>
+      <Filter>Legacy\Physics and Collision</Filter>
     </ClCompile>
     <ClCompile Include="CollisionManifold.cpp">
-      <Filter>Physics and Collision</Filter>
+      <Filter>Legacy\Physics and Collision</Filter>
     </ClCompile>
     <ClCompile Include="CollisionSolver.cpp">
-      <Filter>Physics and Collision</Filter>
+      <Filter>Legacy\Physics and Collision</Filter>
     </ClCompile>
     <ClCompile Include="GJKCollisionSolver.cpp">
-      <Filter>Physics and Collision</Filter>
+      <Filter>Legacy\Physics and Collision</Filter>
     </ClCompile>
     <ClCompile Include="PhysicsWorld.cpp">
-      <Filter>Physics and Collision</Filter>
+      <Filter>Legacy\Physics and Collision</Filter>
     </ClCompile>
     <ClCompile Include="imgui.cpp">
       <Filter>External</Filter>
@@ -90,7 +90,7 @@
       <Filter>External</Filter>
     </ClCompile>
     <ClCompile Include="OrientedBoundingBox.cpp">
-      <Filter>Physics and Collision</Filter>
+      <Filter>Legacy\Physics and Collision</Filter>
     </ClCompile>
     <ClCompile Include="Console.cpp">
       <Filter>System</Filter>
@@ -171,7 +171,7 @@
       <Filter>System</Filter>
     </ClCompile>
     <ClCompile Include="SpatialDivisionMethod.cpp">
-      <Filter>Physics and Collision</Filter>
+      <Filter>Legacy\Physics and Collision</Filter>
     </ClCompile>
     <ClCompile Include="World.cpp">
       <Filter>Entity</Filter>
@@ -264,37 +264,37 @@
     </ClInclude>
     <ClInclude Include="pch.h" />
     <ClInclude Include="BoundingBox.h">
-      <Filter>Physics and Collision</Filter>
+      <Filter>Legacy\Physics and Collision</Filter>
     </ClInclude>
     <ClInclude Include="BoundingPolygon.h">
-      <Filter>Physics and Collision</Filter>
+      <Filter>Legacy\Physics and Collision</Filter>
     </ClInclude>
     <ClInclude Include="BoundingSphere.h">
-      <Filter>Physics and Collision</Filter>
+      <Filter>Legacy\Physics and Collision</Filter>
     </ClInclude>
     <ClInclude Include="Collider.h">
-      <Filter>Physics and Collision</Filter>
+      <Filter>Legacy\Physics and Collision</Filter>
     </ClInclude>
     <ClInclude Include="Collision.h">
-      <Filter>Physics and Collision</Filter>
+      <Filter>Legacy\Physics and Collision</Filter>
     </ClInclude>
     <ClInclude Include="CollisionManifold.h">
-      <Filter>Physics and Collision</Filter>
+      <Filter>Legacy\Physics and Collision</Filter>
     </ClInclude>
     <ClInclude Include="CollisionSolver.h">
-      <Filter>Physics and Collision</Filter>
+      <Filter>Legacy\Physics and Collision</Filter>
     </ClInclude>
     <ClInclude Include="GJKCollisionSolver.h">
-      <Filter>Physics and Collision</Filter>
+      <Filter>Legacy\Physics and Collision</Filter>
     </ClInclude>
     <ClInclude Include="PhysicsWorld.h">
-      <Filter>Physics and Collision</Filter>
+      <Filter>Legacy\Physics and Collision</Filter>
     </ClInclude>
     <ClInclude Include="PhysicsProperties.h">
-      <Filter>Physics and Collision</Filter>
+      <Filter>Legacy\Physics and Collision</Filter>
     </ClInclude>
     <ClInclude Include="OrientedBoundingBox.h">
-      <Filter>Physics and Collision</Filter>
+      <Filter>Legacy\Physics and Collision</Filter>
     </ClInclude>
     <ClInclude Include="Console.h">
       <Filter>System</Filter>
@@ -375,7 +375,7 @@
       <Filter>System</Filter>
     </ClInclude>
     <ClInclude Include="SpatialDivisionMethod.h">
-      <Filter>Physics and Collision</Filter>
+      <Filter>Legacy\Physics and Collision</Filter>
     </ClInclude>
     <ClInclude Include="World.h">
       <Filter>Entity</Filter>
@@ -412,9 +412,6 @@
     <Filter Include="Legacy">
       <UniqueIdentifier>{ad969063-aad6-4dba-a8f7-cf9113f61101}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Physics and Collision">
-      <UniqueIdentifier>{d36de7a5-f933-4efc-86ca-9252c8177a96}</UniqueIdentifier>
-    </Filter>
     <Filter Include="System">
       <UniqueIdentifier>{6f04d8a9-0190-44c1-ad78-e8300ce46aff}</UniqueIdentifier>
     </Filter>
@@ -423,6 +420,9 @@
     </Filter>
     <Filter Include="Data Types">
       <UniqueIdentifier>{30dd57c9-620d-4214-ae89-a15f65adefd0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Legacy\Physics and Collision">
+      <UniqueIdentifier>{d36de7a5-f933-4efc-86ca-9252c8177a96}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

@@ -37,6 +37,7 @@ IRenderer& Engine::GetRenderer()
 	if (!m_Renderer)
 	{
 		Console::LogMessage(LogLevel::LOG_WARNING, "Tried to get the renderer when it is not initalised yet.");
+		throw;
 	}
 
 	return *m_Renderer;
@@ -47,6 +48,7 @@ IWindow& Engine::GetWindow()
 	if (!m_Window)
 	{
 		Console::LogMessage(LogLevel::LOG_WARNING, "Tried to get the window when it is not initalised yet.");
+		throw;
 	}
 
 	return *m_Window;
@@ -68,63 +70,64 @@ Engine::~Engine()
 
 void Engine::Start(const char* ProjectToOpenPath)
 {
-	if(GetIsInitialised())
+	if (GetIsInitialised() == false)
 	{
-		if (m_EngineMode == ENGINE_MODE::PLAYER)
-		{
-			m_GameState = GAME_STATE::RUNNING;
+		//If the engine has not been initalised properly, exit.
+		Console::LogMessage(LogLevel::LOG_WARNING, "Tried to start engine without proper initialisation.");
+		return;
+	}
 
-			if (ProjectToOpenPath != "")
-			{
-				ProjectLoader::LoadProject(ProjectToOpenPath);
-				World::ResetWorldEntities();
-				m_Window->SetFullscreenState(SCREEN_STATE::WINDOW_BORDERLESS_FULLSCREEN);
-			}
-			else
-			{
-				Console::LogMessage(LogLevel::LOG_ERROR, "Engine loaded in Player mode but the path for the project cannot be found.");
-				Console::LogMessage(LogLevel::LOG_ERROR, std::string("Path: ") + ProjectToOpenPath);
-				return;
-			}
+	if (m_EngineMode == ENGINE_MODE::PLAYER)
+	{
+		m_GameState = GAME_STATE::RUNNING;
+
+		if (ProjectToOpenPath != "")
+		{
+			ProjectLoader::LoadProject(ProjectToOpenPath);
+			World::ResetWorldEntities();
+			m_Window->SetFullscreenState(SCREEN_STATE::WINDOW_BORDERLESS_FULLSCREEN);
 		}
-
-		
-
-
-		SetIsRunning(true);
-
-		const int FPS = 60;
-		const int frameDelay = 1000 / FPS;
-		Uint32 currentTime = 0, deltaTimeMilliseconds = 0, oldTime = 0;
-		Uint32 frameTime = 0;
-		float DeltaTimeInSeconds = 0.0;
-		Time::Get(DeltaTimeInSeconds);
-
-		while(GetIsRunning())
+		else
 		{
-			oldTime = SDL_GetTicks();
+			Console::LogMessage(LogLevel::LOG_ERROR, "Engine loaded in Player mode but the path for the project cannot be found.");
+			Console::LogMessage(LogLevel::LOG_ERROR, std::string("Path: ") + ProjectToOpenPath);
+			return;
+		}
+	}
 
-			while (GetIsRunning())
+	SetIsRunning(true);
+
+	const int FPS = 60;
+	const int frameDelay = 1000 / FPS;
+	Uint32 currentTime = 0, deltaTimeMilliseconds = 0, oldTime = 0;
+	Uint32 frameTime = 0;
+	float DeltaTimeInSeconds = 0.0;
+	Time::Get(DeltaTimeInSeconds);
+
+	while(GetIsRunning())
+	{
+		oldTime = SDL_GetTicks();
+
+		while (GetIsRunning())
+		{
+			currentTime = SDL_GetTicks();
+			//frame delta in miliseconds
+			deltaTimeMilliseconds = currentTime - oldTime;
+
+			DeltaTimeInSeconds = deltaTimeMilliseconds / 1000.0f;
+
+			if (deltaTimeMilliseconds != 0)
 			{
-				currentTime = SDL_GetTicks();
-				//frame delta in miliseconds
-				deltaTimeMilliseconds = currentTime - oldTime;
-
-				DeltaTimeInSeconds = deltaTimeMilliseconds / 1000.0f;
-
-				if (deltaTimeMilliseconds != 0)
-				{
-					HandleEvents();
-					Update(DeltaTimeInSeconds);
-					Render();
-				}
-
-				frameTime = SDL_GetTicks() - currentTime;
-				if (frameDelay > frameTime)
-					SDL_Delay(frameDelay - frameTime);
-
-				oldTime = currentTime;
+				HandleEvents();
+				Update(DeltaTimeInSeconds);
+				Render();
 			}
+
+			frameTime = SDL_GetTicks() - currentTime;
+			if (frameDelay > frameTime)
+				SDL_Delay(frameDelay - frameTime);
+
+			oldTime = currentTime;
 		}
 	}
 }
@@ -136,15 +139,19 @@ const GAME_STATE Engine::GetGameState()
 
 void Engine::Initialise(int argc, char* argv[], WindowDetails details, const ENGINE_MODE& mode)
 {
+	//Store the startup engine mode.
 	m_EngineMode = mode;
 
+	//Check all the system started up correctly.
 	m_IsInitialised = (InitialiseSystems(details, argc, argv) && InitialiseApplicationControls());
 
+	//Get the filepath of this exe to store. This is used to find the include files that the project solution uses.
 	char buffer[260];
 	GetModuleFileName(NULL, buffer, MAX_PATH);
 	m_EngineEXELocation = buffer;
 
-	if(m_IsInitialised == false)
+	//If failed to startup, call shutdown.
+	if (m_IsInitialised == false)
 	{
 		Shutdown();
 	}
@@ -152,13 +159,15 @@ void Engine::Initialise(int argc, char* argv[], WindowDetails details, const ENG
 
 bool Engine::InitialiseGraphics()
 {
-	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
-
+	//Early exit if we do not have a window created.
 	if (!m_Window || m_Window == nullptr)
 		return false;
 
+	//Setup SDL rendering hints for opengl and sprite batching.
+	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
 	SDL_SetHint(SDL_HINT_RENDER_BATCHING, "1");
 
+	//Delete any existing renderer.
 	if (m_Renderer)
 	{
 		m_Renderer->Shutdown();
@@ -167,9 +176,11 @@ bool Engine::InitialiseGraphics()
 		m_Renderer = nullptr;
 	}
 
+	//Create renderer and initialise.
 	m_Renderer = new OriginalRenderer();
 	m_Renderer->Startup(*m_Window);
 
+	//if failed, cleanup
 	if (m_Renderer->IsInitialised() == false)
 	{
 		m_Renderer->Shutdown();
@@ -241,6 +252,7 @@ bool Engine::InitialiseApplicationControls()
 
 bool Engine::InitialiseWindow(const WindowDetails& details)
 {
+	//Cleanup any existing window.
 	if (m_Window)
 	{
 		if (m_Window->IsInitialised())
@@ -251,6 +263,7 @@ bool Engine::InitialiseWindow(const WindowDetails& details)
 		}
 	}
 
+	//Create a new window and initialise.
 	m_Window = new OriginalWindow();
 	m_Window->Startup(details);
 
@@ -259,6 +272,7 @@ bool Engine::InitialiseWindow(const WindowDetails& details)
 
 bool Engine::InitialiseSystems(const WindowDetails& details, int argc, char* argv[])
 {
+	//Initialise the essential systems, can exit early if they fail.
 	if (SDL_Init(SDL_INIT_EVERYTHING) == 0)
 	{
 		if (TTF_Init() < 0)
@@ -275,6 +289,7 @@ bool Engine::InitialiseSystems(const WindowDetails& details, int argc, char* arg
 		if (InitialiseGraphics() == false)
 			return false;
 	
+		//Get a potential exe location from the first command line argument.
 		if (argv != nullptr)
 		{
 			m_EngineEXELocation = argv[0];
