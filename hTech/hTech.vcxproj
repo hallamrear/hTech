@@ -419,6 +419,7 @@ xcopy /Y /H /E /I "$(ProjectDir)rapidjson\*.h" "$(OutputPath)Engine_Includes\rap
     <ClInclude Include="Entity.h" />
     <ClInclude Include="Engine.h" />
     <ClInclude Include="GJKCollisionSolver.h" />
+    <ClInclude Include="SpritebatchRenderer.h" />
     <ClInclude Include="OriginalRenderer.h" />
     <ClInclude Include="IRenderer.h" />
     <ClInclude Include="OriginalWindow.h" />
@@ -529,6 +530,7 @@ xcopy /Y /H /E /I "$(ProjectDir)rapidjson\*.h" "$(OutputPath)Engine_Includes\rap
     <ClInclude Include="UI_TextPanel.h" />
     <ClInclude Include="UI_VariableTracker.h" />
     <ClInclude Include="Vector2.h" />
+    <ClInclude Include="Vertex.h" />
     <ClInclude Include="WindowDetails.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>
@@ -558,6 +560,7 @@ xcopy /Y /H /E /I "$(ProjectDir)rapidjson\*.h" "$(OutputPath)Engine_Includes\rap
     <ClCompile Include="Entity.cpp" />
     <ClCompile Include="Engine.cpp" />
     <ClCompile Include="GJKCollisionSolver.cpp" />
+    <ClCompile Include="SpritebatchRenderer.cpp" />
     <ClCompile Include="OriginalRenderer.cpp" />
     <ClCompile Include="IRenderer.cpp" />
     <ClCompile Include="OriginalWindow.cpp" />
@@ -666,6 +669,7 @@ xcopy /Y /H /E /I "$(ProjectDir)rapidjson\*.h" "$(OutputPath)Engine_Includes\rap
     <ClCompile Include="UI_TextPanel.cpp" />
     <ClCompile Include="UI_VariableTracker.cpp" />
     <ClCompile Include="Vector2.cpp" />
+    <ClCompile Include="Vertex.cpp" />
     <ClCompile Include="WindowDetails.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>

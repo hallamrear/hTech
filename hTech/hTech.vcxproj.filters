@@ -194,6 +194,10 @@
     <ClCompile Include="ScriptObject.cpp">
       <Filter>Data Types</Filter>
     </ClCompile>
+    <ClCompile Include="SpritebatchRenderer.cpp">
+      <Filter>Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="Vertex.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="imstb_truetype.h">
@@ -398,6 +402,10 @@
     <ClInclude Include="ScriptObject.h">
       <Filter>Data Types</Filter>
     </ClInclude>
+    <ClInclude Include="SpritebatchRenderer.h">
+      <Filter>Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="Vertex.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="External">

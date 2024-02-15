@@ -8,9 +8,12 @@ class Texture;
 class IWindow;
 class RenderTexture;
 
+const size_t c_MaxSpritebatchQuads = 1024;
+const size_t c_MaxSpritebatchVertices = c_MaxSpritebatchQuads * 4;
+const size_t c_MaxSpritebatchIndices = c_MaxSpritebatchQuads * 6;
+
 class IRenderer
 {
-
 private:
 
 protected:
@@ -20,6 +23,10 @@ protected:
 
 	virtual void CreateRenderTargetTexture(const Vector2& size) = 0;
 	virtual void InitialiseDearIMGUI(IWindow& window) = 0;
+
+	virtual void StartBatch() = 0;
+	virtual void EndBatch() = 0;
+	virtual void FlushBatch() = 0;
 
 public:
 	IRenderer();
