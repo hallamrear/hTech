@@ -4,7 +4,7 @@
 #include "Entity/Components/Component.h"
 
 struct SDL_Renderer;
-class HTECH_FUNCTION_EXPORT Texture;
+class HTECH_FUNCTION_EXPORT ITexture;
 
 class HTECH_FUNCTION_EXPORT AnimationComponent
 	: public Component
@@ -15,7 +15,7 @@ private:
 	float			m_TimeElapsed;
 	float			m_Duration;
 	int m_CurrentFrame;
-	Texture* m_AnimationSheet;
+	ITexture* m_AnimationSheet;
 	int m_CurrentAnimation;
 	int m_TotalFrames;
 	Vector2 m_FrameSize;

@@ -1,7 +1,7 @@
 #pragma once
  #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
-#include "Rendering/Texture.h"
+#include "Rendering/ITexture.h"
 #include "DataTypes/Transform.h"
 
 class HTECH_FUNCTION_EXPORT AnimationController
@@ -10,7 +10,7 @@ class HTECH_FUNCTION_EXPORT AnimationController
 	float m_TimeElapsed;
 	float m_Duration;
 	unsigned int m_CurrentFrame;
-	Texture* m_AnimationSheet;
+	ITexture* m_AnimationSheet;
 	bool m_IsLooping;
 	unsigned int m_CurrentAnimation;
 	unsigned int m_TotalFrames;

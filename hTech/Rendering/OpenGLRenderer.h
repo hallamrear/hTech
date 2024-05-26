@@ -20,6 +20,8 @@ private:
 	} m_BatchData;
 
 	GLuint m_IndexBuffer;
+	GLuint m_VertexBuffer;
+	GLuint m_VertexAttribs;
 
 	bool m_InBatch = false;
 	const unsigned int c_QuadIndices[6] = {0, 1, 2, 2, 3, 0};
@@ -41,12 +43,12 @@ public:
 	OpenGLRenderer();
 	~OpenGLRenderer();
 
-
 	void Startup(const IWindow& window);
 	void Shutdown();
 	void SetPrimativeDrawColour(const Colour& colour);
 	void SetClearColour(const Colour& colour);
 	void TakeScreenshot(const std::string& name);
+	void SetViewport(const int& x, const int& y, const int& w, const int& h);
 
 	void EndFrame();
 	void StartFrame();
@@ -57,6 +59,6 @@ public:
 
 	void Render_WorldSpaceRectangle(const WorldRectangle& rectangle, bool filled = true);
 	void Render_ScreenSpaceRectangle(const ScreenRectangle& rectangle, bool filled = true);
-	void Render_Texture(const Texture& texture, const Transform& transform, const bool& flipped = false);
-	void Render_Texture(const Texture& texture, const Transform& transform, const Vector2* center = nullptr, const WorldRectangle* srcRect = nullptr, const WorldRectangle* dstRect = nullptr, const bool& flipped = false);
+	void Render_Texture(const ITexture& texture, const Transform& transform, const bool& flipped = false);
+	void Render_Texture(const ITexture& texture, const Transform& transform, const Vector2* center = nullptr, const WorldRectangle* srcRect = nullptr, const WorldRectangle* dstRect = nullptr, const bool& flipped = false);
 };

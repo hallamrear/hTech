@@ -27,7 +27,7 @@
     <ClCompile Include="Rendering\Rectangle.cpp" />
     <ClCompile Include="Rendering\RenderLayer.cpp" />
     <ClCompile Include="Rendering\Text.cpp" />
-    <ClCompile Include="Rendering\Texture.cpp" />
+    <ClCompile Include="Rendering\ITexture.cpp" />
     <ClCompile Include="Rendering\Vertex.cpp" />
     <ClCompile Include="System\Console.cpp" />
     <ClCompile Include="System\Editor.cpp" />
@@ -64,6 +64,8 @@
     <ClCompile Include="External\imgui\imgui_stdlib.cpp" />
     <ClCompile Include="External\imgui\imgui_tables.cpp" />
     <ClCompile Include="External\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Rendering\GLTexture.cpp" />
+    <ClCompile Include="Rendering\OriginalTexture.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -94,7 +96,7 @@
     <ClInclude Include="Rendering\Rectangle.h" />
     <ClInclude Include="Rendering\RenderLayer.h" />
     <ClInclude Include="Rendering\Text.h" />
-    <ClInclude Include="Rendering\Texture.h" />
+    <ClInclude Include="Rendering\ITexture.h" />
     <ClInclude Include="Rendering\Vertex.h" />
     <ClInclude Include="BUILD_NUMBER.h" />
     <ClInclude Include="System\Console.h" />
@@ -173,6 +175,8 @@
     <ClInclude Include="External\imgui\imstb_rectpack.h" />
     <ClInclude Include="External\imgui\imstb_textedit.h" />
     <ClInclude Include="External\imgui\imstb_truetype.h" />
+    <ClInclude Include="Rendering\GLTexture.h" />
+    <ClInclude Include="Rendering\OriginalTexture.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="External">

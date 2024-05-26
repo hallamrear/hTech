@@ -20,8 +20,8 @@ void SpriteComponent::RenderProperties()
 	{
 		ImGui::Text("Texture Location: %s", m_Texture->GetLocation().c_str());
 		ImGui::Text("Texture Name: %s", m_Texture->GetName().c_str());
-		ImGui::Text("Height: %i", m_Texture->Height);
-		ImGui::Text("Width: %i", m_Texture->Width);
+		ImGui::Text("Height: %i", m_Texture->GetHeight());
+		ImGui::Text("Width: %i", m_Texture->GetWidth());
 		ImGui::Checkbox("Flip texture", &m_IsFlipped);
 	}
 	else

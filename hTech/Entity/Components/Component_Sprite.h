@@ -2,13 +2,13 @@
  #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
 
 #include "Entity/Components/Component.h"
-#include "Rendering/Texture.h"
+#include "Rendering/ITexture.h"
 
 class HTECH_FUNCTION_EXPORT SpriteComponent :
     public Component
 {
 private:
-    Texture* m_Texture;
+    ITexture* m_Texture;
     bool     m_IsFlipped;
 
 protected:

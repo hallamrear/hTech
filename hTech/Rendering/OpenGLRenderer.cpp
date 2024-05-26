@@ -23,7 +23,6 @@ OpenGLRenderer::~OpenGLRenderer()
 
 bool OpenGLRenderer::InitialiseOpenGL(const IWindow& window)
 {
-
 	//Use OpenGL 3.1 core
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
@@ -59,13 +58,15 @@ void OpenGLRenderer::ShutdownOpenGL()
 
 bool OpenGLRenderer::SetupSpritebatch()
 {
-
 	//Create the Vertex data array.
 	m_BatchData.VertexData = new Vertex[c_MaxSpritebatchVertices];
 	m_BatchData.CurrentVertexPointer = m_BatchData.VertexData;
 
 	//Create an empty dynamic GPU vertex buffer.
-	//todo : implement
+	//
+	glGenBuffers(1, &m_VertexBuffer);
+	glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex), m_BatchData.VertexData, GL_DYNAMIC_DRAW);
 
 	//Populate index array
 	int indexOffset = 0;
@@ -91,6 +92,20 @@ bool OpenGLRenderer::SetupSpritebatch()
 	//Cleanup array
 	delete[] indices;
 	indices = nullptr;
+
+	glGenVertexArrays(1, &m_VertexAttribs);
+	glBindVertexArray(m_VertexAttribs);
+	glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
+	size_t stride = sizeof(Vertex);
+	/* Position  */ glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)(0));
+	/* Colours   */ glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
+	/* TexCoords */ glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride, (void*)(6 * sizeof(float)));
+	/* TextureID */ glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, stride, (void*)(9 * sizeof(float)));
+
+	glEnableVertexArrayAttrib(m_VertexAttribs, 0);
+	glEnableVertexArrayAttrib(m_VertexAttribs, 1);
+	glEnableVertexArrayAttrib(m_VertexAttribs, 2);
+	glEnableVertexArrayAttrib(m_VertexAttribs, 3);
 
 	return true;
 }
@@ -140,6 +155,9 @@ void OpenGLRenderer::EndBatch()
 
 	//Map m_BatchData.Vertices to VertexBuffer using dynamic map function
 	//e.g. MapMemory/UnmapMemory or glBufferSubData
+	size_t offset = 0;
+	glBufferSubData(m_VertexBuffer, offset, batchDataSize, m_BatchData.VertexData);
+
 	m_InBatch = false;
 }
 
@@ -152,15 +170,18 @@ void OpenGLRenderer::FlushBatch()
 
 	//Draw existing batch data to the screen
 	//Bind texture slots using texture ids.
+	//glBindTexture(GL_TEXTURE_2D, texture);
 
 	if (m_BatchData.IndexCount > 0)
 	{
 		//Draw batch data using index count.
+		glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
+		glBindVertexArray(m_VertexAttribs);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_IndexBuffer);
+
 		glDrawElements(GL_TRIANGLES, m_BatchData.IndexCount, GL_UNSIGNED_INT, 0);
 		m_BatchData.DrawCount++;
 	}
-
 }
 
 void OpenGLRenderer::CreateRenderTargetTexture(const Vector2& size)
@@ -217,6 +238,11 @@ void OpenGLRenderer::TakeScreenshot(const std::string& name)
 	return;
 }
 
+void OpenGLRenderer::SetViewport(const int& x, const int& y, const int& w, const int& h)
+{
+	glViewport(x, y, w, h);
+}
+
 void OpenGLRenderer::EndFrame()
 {
 	ImGui::Begin("Renderer data");
@@ -232,8 +258,7 @@ void OpenGLRenderer::EndFrame()
 
 
 	//Swap frame buffers
-
-
+	//SDL_GL_SwapWindow(m_Window);
 
 	Console::LogMessage(LogLevel::LOG_ERROR, "Function not implemented.");
 	return;
@@ -279,13 +304,13 @@ void OpenGLRenderer::Render_ScreenSpaceRectangle(const ScreenRectangle& rectangl
 	return;
 }
 
-void OpenGLRenderer::Render_Texture(const Texture& texture, const Transform& transform, const bool& flipped)
+void OpenGLRenderer::Render_Texture(const ITexture& texture, const Transform& transform, const bool& flipped)
 {
 	Console::LogMessage(LogLevel::LOG_ERROR, "Function not implemented.");
 	return;
 }
 
-void OpenGLRenderer::Render_Texture(const Texture& texture, const Transform& transform, const Vector2* center, const WorldRectangle* srcRect, const WorldRectangle* dstRect, const bool& flipped)
+void OpenGLRenderer::Render_Texture(const ITexture& texture, const Transform& transform, const Vector2* center, const WorldRectangle* srcRect, const WorldRectangle* dstRect, const bool& flipped)
 {
 	Console::LogMessage(LogLevel::LOG_ERROR, "Function not implemented.");
 	return;

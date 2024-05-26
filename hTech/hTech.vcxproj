@@ -181,7 +181,7 @@
 xcopy /Y "$(ProjectDir)External\SDL\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutputPath)"
 xcopy /Y "$(ProjectDir)External\GLEW\lib\Release\$(PlatformTarget)\glew32.dll" "$(OutputPath)"
 xcopy /Y /E /H /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
-xcopy /Y /H /I "$(ProjectDir)*.h" "$(OutputPath)Engine_Includes\Core\"</Command>
+xcopy /Y /H /I /E /S "$(ProjectDir)*.h" "$(OutputPath)Engine_Includes\Core\"</Command>
     </PostBuildEvent>
     <Lib>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_gfx.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -218,7 +218,7 @@ xcopy /Y /H /I "$(ProjectDir)*.h" "$(OutputPath)Engine_Includes\Core\"</Command>
 xcopy /Y "$(ProjectDir)External\SDL\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutputPath)"
 xcopy /Y "$(ProjectDir)External\GLEW\lib\Release\$(PlatformTarget)\glew32.dll" "$(OutputPath)"
 xcopy /Y /E /H /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
-xcopy /Y /H /I "$(ProjectDir)*.h" "$(OutputPath)Engine_Includes\Core\"</Command>
+xcopy /Y /H /I /E /S "$(ProjectDir)*.h" "$(OutputPath)Engine_Includes\Core\"</Command>
     </PostBuildEvent>
     <Lib>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_gfx.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -259,7 +259,7 @@ xcopy /Y /H /I "$(ProjectDir)*.h" "$(OutputPath)Engine_Includes\Core\"</Command>
 xcopy /Y "$(ProjectDir)External\SDL\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutputPath)"
 xcopy /Y "$(ProjectDir)External\GLEW\lib\Release\$(PlatformTarget)\glew32.dll" "$(OutputPath)"
 xcopy /Y /E /H /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
-xcopy /Y /H /I "$(ProjectDir)*.h" "$(OutputPath)Engine_Includes\Core\"</Command>
+xcopy /Y /H /I /E /S "$(ProjectDir)*.h" "$(OutputPath)Engine_Includes\Core\"</Command>
     </PostBuildEvent>
     <Lib>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_gfx.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -296,7 +296,7 @@ xcopy /Y /H /I "$(ProjectDir)*.h" "$(OutputPath)Engine_Includes\Core\"</Command>
 xcopy /Y "$(ProjectDir)External\SDL\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutputPath)"
 xcopy /Y "$(ProjectDir)External\GLEW\lib\Release\$(PlatformTarget)\glew32.dll" "$(OutputPath)"
 xcopy /Y /E /H /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
-xcopy /Y /H /I "$(ProjectDir)*.h" "$(OutputPath)Engine_Includes\Core\"</Command>
+xcopy /Y /H /I /E /S "$(ProjectDir)*.h" "$(OutputPath)Engine_Includes\Core\"</Command>
     </PostBuildEvent>
     <Lib>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_gfx.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -333,7 +333,7 @@ xcopy /Y /H /I "$(ProjectDir)*.h" "$(OutputPath)Engine_Includes\Core\"</Command>
 xcopy /Y "$(ProjectDir)External\SDL\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutputPath)"
 xcopy /Y "$(ProjectDir)External\GLEW\lib\Release\$(PlatformTarget)\glew32.dll" "$(OutputPath)"
 xcopy /Y /E /H /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
-xcopy /Y /H /I "$(ProjectDir)*.h" "$(OutputPath)Engine_Includes\Core\"</Command>
+xcopy /Y /H /I /E /S "$(ProjectDir)*.h" "$(OutputPath)Engine_Includes\Core\"</Command>
     </PostBuildEvent>
     <Lib>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_gfx.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -374,7 +374,7 @@ xcopy /Y /H /I "$(ProjectDir)*.h" "$(OutputPath)Engine_Includes\Core\"</Command>
 xcopy /Y "$(ProjectDir)External\SDL\lib\$(PlatformTarget)\SDL2_ttf.dll" "$(OutputPath)"
 xcopy /Y "$(ProjectDir)External\GLEW\lib\Release\$(PlatformTarget)\glew32.dll" "$(OutputPath)"
 xcopy /Y /E /H /I "$(ProjectDir)Assets" "$(OutputPath)Assets"
-xcopy /Y /H /I "$(ProjectDir)*.h" "$(OutputPath)Engine_Includes\Core\"</Command>
+xcopy /Y /H /I /E /S "$(ProjectDir)*.h" "$(OutputPath)Engine_Includes\Core\"</Command>
     </PostBuildEvent>
     <Lib>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_gfx.lib;SDL2_ttf.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -452,6 +452,8 @@ xcopy /Y /H /I "$(ProjectDir)*.h" "$(OutputPath)Engine_Includes\Core\"</Command>
     <ClInclude Include="External\rapidjson\stream.h" />
     <ClInclude Include="External\rapidjson\stringbuffer.h" />
     <ClInclude Include="External\rapidjson\writer.h" />
+    <ClInclude Include="Rendering\OriginalTexture.h" />
+    <ClInclude Include="Rendering\GLTexture.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Physics\BoundingBox.h" />
     <ClInclude Include="Physics\BoundingPolygon.h" />
@@ -477,7 +479,7 @@ xcopy /Y /H /I "$(ProjectDir)*.h" "$(OutputPath)Engine_Includes\Core\"</Command>
     <ClInclude Include="Rendering\Rectangle.h" />
     <ClInclude Include="Rendering\RenderLayer.h" />
     <ClInclude Include="Rendering\Text.h" />
-    <ClInclude Include="Rendering\Texture.h" />
+    <ClInclude Include="Rendering\ITexture.h" />
     <ClInclude Include="Rendering\Vertex.h" />
     <ClInclude Include="External\SDL.h" />
     <ClInclude Include="BUILD_NUMBER.h" />
@@ -518,6 +520,8 @@ xcopy /Y /H /I "$(ProjectDir)*.h" "$(OutputPath)Engine_Includes\Core\"</Command>
     <ClCompile Include="External\imgui\imgui_stdlib.cpp" />
     <ClCompile Include="External\imgui\imgui_tables.cpp" />
     <ClCompile Include="External\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Rendering\OriginalTexture.cpp" />
+    <ClCompile Include="Rendering\GLTexture.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug-Player|Win32'">Create</PrecompiledHeader>
@@ -549,7 +553,7 @@ xcopy /Y /H /I "$(ProjectDir)*.h" "$(OutputPath)Engine_Includes\Core\"</Command>
     <ClCompile Include="Rendering\Rectangle.cpp" />
     <ClCompile Include="Rendering\RenderLayer.cpp" />
     <ClCompile Include="Rendering\Text.cpp" />
-    <ClCompile Include="Rendering\Texture.cpp" />
+    <ClCompile Include="Rendering\ITexture.cpp" />
     <ClCompile Include="Rendering\Vertex.cpp" />
     <ClCompile Include="System\Console.cpp" />
     <ClCompile Include="System\Editor.cpp" />

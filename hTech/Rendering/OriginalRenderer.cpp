@@ -2,7 +2,8 @@
 #include "System/Console.h"
 #include "System/Console.h"
 #include "Rendering/Colour.h"
-#include "Rendering/Texture.h"
+#include "Rendering/ITexture.h"
+#include "Rendering/OriginalTexture.h"
 #include "Rendering/Camera.h"
 #include "Rendering/OriginalWindow.h"
 #include "Rendering/OriginalRenderer.h"
@@ -170,6 +171,16 @@ void OriginalRenderer::SetPrimativeDrawColour(const Colour& colour)
 	SDL_SetRenderDrawColor(m_SDLRenderer, colour.R, colour.G, colour.B, colour.A);
 }
 
+void OriginalRenderer::SetViewport(const int& x, const int& y, const int& w, const int& h)
+{
+	SDL_Rect rect;
+	rect.x = x;
+	rect.y = y;
+	rect.w = w;
+	rect.h = h;
+	SDL_RenderSetViewport(m_SDLRenderer, &rect);
+}
+
 void OriginalRenderer::InitialiseDearIMGUI(IWindow& window)
 {
 	OriginalWindow* sdlWindow = dynamic_cast<OriginalWindow*>(&window);
@@ -251,7 +262,7 @@ void OriginalRenderer::SettingDearIMGUIColourScheme()
 }
 
 void OriginalRenderer::Render_Texture(
-	const Texture& texture, const Transform& transform,
+	const ITexture& texture, const Transform& transform,
 	const bool& isFlipped)
 {
 	Render_Texture(texture, transform, nullptr, nullptr, nullptr, isFlipped);
@@ -268,14 +279,14 @@ SDL_Texture* OriginalRenderer::GetRenderTexture()
 }
 
 void OriginalRenderer::Render_Texture(
-	const Texture& texture, const Transform& transform,
+	const ITexture& texture, const Transform& transform,
 	const Vector2* center,
 	const WorldRectangle* srcRect, const WorldRectangle* dstRect,
 	const bool& isFlipped)
 {
 	Vector2 renderPosition = transform.Position;
-	renderPosition.X -= (texture.Width  / 2);
-	renderPosition.Y += (texture.Height / 2);
+	renderPosition.X -= (texture.GetWidth()  / 2);
+	renderPosition.Y += (texture.GetHeight() / 2);
 	renderPosition = Camera::WorldToScreen(renderPosition);
 
 	SDL_RendererFlip flip = (SDL_RendererFlip)isFlipped;
@@ -295,8 +306,8 @@ void OriginalRenderer::Render_Texture(
 	{
 		dst.x = renderPosition.X;
 		dst.y = renderPosition.Y;
-		dst.w = texture.Width;
-		dst.h = texture.Height;
+		dst.w = texture.GetWidth();
+		dst.h = texture.GetHeight();
 	}
 
 	if (center)
@@ -315,7 +326,15 @@ void OriginalRenderer::Render_Texture(
 		src->h = srcRect->H;
 	}
 	
-	SDL_RenderCopyEx(m_SDLRenderer, &texture.GetSDLTexture(), src, &dst, transform.Rotation, centerPoint, flip);
+	const OriginalTexture* sdlTexture = dynamic_cast<const OriginalTexture*>(&texture);
+
+	if (sdlTexture == nullptr)
+	{
+		Console::LogMessage(LogLevel::LOG_ERROR, "Failed to case SDL_Texture in OR::Render_Texture.\n");
+		return;
+	}
+
+	SDL_RenderCopyEx(m_SDLRenderer, &sdlTexture->GetSDLTexture(), src, &dst, transform.Rotation, centerPoint, flip);
 
 	if (centerPoint)
 	{

@@ -12,7 +12,7 @@ AnimationController::AnimationController(std::string sheetPath, unsigned int ani
 	m_Duration = duration;
 	m_TotalFrames = frameCountPerAnimation;
 	m_TimeBetweenFrames = m_Duration / (float)(m_TotalFrames);
-	m_FrameSize = Vector2(m_AnimationSheet->Width / (float)m_TotalFrames, m_AnimationSheet->Height / (float)animationCount);
+	m_FrameSize = Vector2(m_AnimationSheet->GetWidth() / (float)m_TotalFrames, m_AnimationSheet->GetHeight() / (float)animationCount);
 	m_HasFinished = false;
 }
 

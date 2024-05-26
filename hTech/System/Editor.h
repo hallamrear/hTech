@@ -11,7 +11,7 @@ enum class EDITOR_STATE
 };
 
 class Entity;
-class Texture;
+class ITexture;
 
 class Editor
 {

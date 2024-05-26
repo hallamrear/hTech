@@ -19,9 +19,12 @@ protected:
 	virtual void EndBatch()   { };
 	virtual void FlushBatch() { };
 
+
 public:
 	OriginalRenderer();
 	~OriginalRenderer();
+
+	SDL_Renderer* GetAPIRenderer() const;
 
 	void Startup(const IWindow& window) override;
 	void Shutdown() override;
@@ -32,21 +35,20 @@ public:
 	/// <param name="name">Name of the output file.</param>
 	void TakeScreenshot(const std::string& name);
 
-	SDL_Renderer* GetAPIRenderer() const;
-
 	void EndFrame();
 	void StartFrame();
 
 	void SetClearColour(const Colour& colour);
 	void SetPrimativeDrawColour(const Colour& colour);
-	
+	void SetViewport(const int& x, const int& y, const int& w, const int& h);
+
 	void Render_Point(const Vector2& worldSpacePoint);
 	void Render_WorldSpaceLine(const Vector2&  pointA, const Vector2& pointB);
 	void Render_ScreenSpaceLine(const Vector2& pointA, const Vector2& pointB);
 	void Render_WorldSpaceRectangle(const WorldRectangle& rectangle,  bool filled = true);
 	void Render_ScreenSpaceRectangle(const ScreenRectangle& rectangle, bool filled = true);
-	void Render_Texture(const Texture& texture, const Transform& transform, const bool& flipped = false);	
-	void Render_Texture(const Texture& texture, const Transform& transform, const Vector2* center = nullptr, const WorldRectangle* srcRect = nullptr, const WorldRectangle* dstRect = nullptr, const bool& flipped = false);
+	void Render_Texture(const ITexture& texture, const Transform& transform, const bool& flipped = false);	
+	void Render_Texture(const ITexture& texture, const Transform& transform, const Vector2* center = nullptr, const WorldRectangle* srcRect = nullptr, const WorldRectangle* dstRect = nullptr, const bool& flipped = false);
 
 	/// <summary>
 	/// 

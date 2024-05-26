@@ -1,10 +1,11 @@
 #include "pch.h"
 #include <assert.h>
-#include "Rendering/Texture.h"
+#include "Rendering/ITexture.h"
 #include "System/Engine.h"
 #include "System/Console.h"
 #include "System/TextureCache.h"
 #include "System/ProjectLoader.h"
+#include <Rendering/OriginalTexture.h>
 
 TextureCache* TextureCache::m_Instance = nullptr;
 
@@ -24,10 +25,10 @@ TextureCache::~TextureCache()
 
 TextureCache::TextureCache()
 {
-	m_TextureMap = std::unordered_map<std::string, Texture*>();
+	m_TextureMap = std::unordered_map<std::string, ITexture*>();
 }
 
-Texture* TextureCache::GetTexture_Internal(const std::string& texture_path)
+ITexture* TextureCache::GetTexture_Internal(const std::string& texture_path)
 {
 	if (texture_path == "")
 		return nullptr;
@@ -49,7 +50,8 @@ Texture* TextureCache::GetTexture_Internal(const std::string& texture_path)
 
 		if (std::filesystem::exists(fullPath))
 		{
-			m_TextureMap.insert(std::make_pair(texturePathStandardised, new Texture(fullPath, texture_path)));
+			//todo : unhardcore it.
+			m_TextureMap.insert(std::make_pair(texturePathStandardised, new OriginalTexture(fullPath, texture_path)));
 			itr = m_TextureMap.find(texturePathStandardised);
 		}
 		else
@@ -85,7 +87,7 @@ TextureCache* TextureCache::Get()
 	return m_Instance;
 }
 
-Texture* TextureCache::GetTexture(const std::string& texture_path)
+ITexture* TextureCache::GetTexture(const std::string& texture_path)
 {
 	return Get()->GetTexture_Internal(texture_path);
 }
@@ -106,7 +108,15 @@ void TextureCache::RenderProperties_Impl()
 	
 	for (auto& itr : m_TextureMap)
 	{
-		SDL_Texture* texture = &itr.second->GetSDLTexture();
+		const OriginalTexture* sdlTexture = dynamic_cast<const OriginalTexture*>(itr.second);
+
+		if (sdlTexture == nullptr)
+		{
+			Console::LogMessage(LogLevel::LOG_ERROR, "Failed to case SDL_Texture in OR::Render_Texture.\n");
+			return;
+		}
+
+		SDL_Texture* texture = &sdlTexture->GetSDLTexture();
 		IMtexture = (void*)texture;
 		ImGui::Image(IMtexture, Vector2(64.0f, 64.0f));
 		ImGui::Text(itr.first.c_str());

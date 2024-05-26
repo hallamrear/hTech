@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Entity/Components/Component_Animation.h"
 #include "System/TextureCache.h"
-#include "Rendering/Texture.h"
+#include "Rendering/ITexture.h"
 #include "Entity/Entity.h"
 #include "System/Engine.h"
 #include "Rendering/IRenderer.h"
@@ -156,7 +156,7 @@ void AnimationComponent::RecalculateFrameAndAnimationData()
 	if (m_AnimationSheet)
 	{
 		m_TimeBetweenFrames = m_Duration / (float)(m_TotalFrames);
-		m_FrameSize = Vector2(m_AnimationSheet->Width / (float)m_TotalFrames, m_AnimationSheet->Height / (float)m_AnimationCount);
+		m_FrameSize = Vector2(m_AnimationSheet->GetWidth() / (float)m_TotalFrames, m_AnimationSheet->GetHeight() / (float)m_AnimationCount);
 	}
 }
 

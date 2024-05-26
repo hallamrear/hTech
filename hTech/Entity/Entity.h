@@ -6,7 +6,7 @@
 
 enum class ENUM_COMPONENT_LIST;
 class HTECH_FUNCTION_EXPORT Collider;
-class HTECH_FUNCTION_EXPORT Texture;
+class HTECH_FUNCTION_EXPORT ITexture;
 class HTECH_FUNCTION_EXPORT TransformComponent;
 
 class HTECH_FUNCTION_EXPORT Entity

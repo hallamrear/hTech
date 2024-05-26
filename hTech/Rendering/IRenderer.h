@@ -5,7 +5,7 @@
 #include <DataTypes/Transform.h>
 #include <External/IMGUI.h>
 
-class Texture;
+class ITexture;
 class IWindow;
 class RenderTexture;
 
@@ -35,6 +35,8 @@ public:
 
 	RenderLayer& GetRenderLayer(const RENDER_LAYER& layer);
 
+	virtual void SetViewport(const int& x, const int& y, const int& w, const int& h) = 0;
+
 	virtual void SetPrimativeDrawColour(const Colour& colour) = 0;
 	virtual void SetClearColour(const Colour& colour) = 0;
 	virtual void TakeScreenshot(const std::string& name) = 0;
@@ -52,7 +54,7 @@ public:
 
 	virtual void Render_WorldSpaceRectangle(const WorldRectangle& rectangle,   bool filled = true) = 0;
 	virtual void Render_ScreenSpaceRectangle(const ScreenRectangle& rectangle, bool filled = true) = 0;
-	virtual void Render_Texture(const Texture& texture, const Transform& transform, const bool& flipped = false) = 0;
-	virtual void Render_Texture(const Texture& texture, const Transform& transform, const Vector2* center = nullptr, const WorldRectangle* srcRect = nullptr, const WorldRectangle* dstRect = nullptr, const bool& flipped = false) = 0;
+	virtual void Render_Texture(const ITexture& texture, const Transform& transform, const bool& flipped = false) = 0;
+	virtual void Render_Texture(const ITexture& texture, const Transform& transform, const Vector2* center = nullptr, const WorldRectangle* srcRect = nullptr, const WorldRectangle* dstRect = nullptr, const bool& flipped = false) = 0;
 };
 

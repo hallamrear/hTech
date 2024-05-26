@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Entity.h"
 #include "System/Engine.h"
-#include "Rendering/Texture.h"
+#include "Rendering/ITexture.h"
 #include "System/TextureCache.h"
 #include "Entity/Components/Component.h"
 #include "Rendering/Camera.h" //Included for WorldToScreen when rendering an entity with no components.
