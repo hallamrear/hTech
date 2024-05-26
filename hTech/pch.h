@@ -11,10 +11,10 @@
 #define _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING
 
 //SDL
-#include <SDL.h>
-#include <SDL_audio.h>
-#include <SDL2_gfxPrimitives.h>
-#include <SDL_ttf.h>
+#include <External/SDL.h>
+
+//ImGui
+#include <External/IMGUI.h>
 
 //C++ Libaries
 #include <Windows.h>
@@ -28,8 +28,10 @@
 #include <algorithm>
 #include <cassert>
 #include <memory>
+#include <vector>
+#include <filesystem>
 
-#include "Utility.h"
+#include <System/Utility.h>
 
 static unsigned short UI_TILE_SIZE = 16;
 

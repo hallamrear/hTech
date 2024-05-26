@@ -1,0 +1,70 @@
+#pragma once
+ #define HTECH_FUNCTION_EXPORT __declspec(dllexport)
+
+#include "Physics/SpatialDivisionMethod.h"
+#include "DataTypes/Transform.h"
+#include "Entity/Entity.h"
+
+#define WORLD_TILE_SIZE 256
+#define WORLD_TILE_COUNT_X 16
+#define WORLD_TILE_COUNT_Y 16
+
+struct SDL_Renderer;
+class HTECH_FUNCTION_EXPORT Entity;
+class HTECH_FUNCTION_EXPORT Text;
+
+#include "Rendering/Rectangle.h"
+#include "External/JSON.h"
+
+class HTECH_FUNCTION_EXPORT World
+{
+private:
+	static World*								m_Instance;
+	std::unordered_map<std::string, Entity*>	m_EntityMap;
+	SpatialHash*								m_WorldHashMap;
+
+	void	Update_Impl(float DeltaTime);
+	void	Render_Impl(IRenderer& renderer);
+	void	Serialize_Impl(Serializer& writer) const;
+	void	Deserialize_Impl(Deserializer& reader);
+	void	RenderPropertiesForEntity(Entity* entity);
+
+	Entity* CreateEntity_Impl(std::string Name = "unnamed", Transform SpawnTransform = Transform(), Entity* Parent = nullptr);
+	void	DestroyEntity_Impl(Entity* entity);
+	void	ClearupDeadEntities();
+
+	void	CallStartFunctionOnAllEntites_Impl();
+	void	ClearAllEntities();
+	void	ResetWorldEntities_Impl();
+	void	UpdateHashmapNames_Impl();
+	Entity* GetEntityByName_Impl(const std::string& name);
+	Entity* GetEntityByName_Impl(const char* name);
+	void	QuerySpaceForEntities_Impl(WorldRectangle rect, std::vector<Entity*>& entities);
+	Entity* FindNearestEntityToPosition_Impl(Vector2 WorldPosition);
+
+
+protected:
+							World();
+							~World();
+	static World*			Get();
+
+public:
+	static void 			UpdateHashmapNames();
+	static Entity*			FindNearestEntityToPosition(Vector2 WorldPosition);
+	static void				QuerySpaceForEntities(WorldRectangle rect, std::vector<Entity*>& entities);
+	static Entity*			CreateEntity(std::string Name = "unnamed", Transform SpawnTransform = Transform(), Entity* Parent = nullptr);
+	static void				DestroyEntity(Entity* entity);
+	static Entity*			GetEntityByName(const std::string& name);
+	static Entity*			GetEntityByName(const char* name);
+
+	static void				Serialize(Serializer& writer);
+	static void				Deserialize(Deserializer& reader);
+
+	static void				Update(float DeltaTime);
+	static void				Render(IRenderer& renderer);
+
+	static void				ResetWorldEntities();
+	static void				CallStartFunctionOnAllEntites();
+
+	static void				UnloadAll();
+};

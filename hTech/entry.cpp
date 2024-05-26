@@ -1,8 +1,8 @@
 #include "pch.h"
-#include "Engine.h"
+#include "System/Engine.h"
 #include "BUILD_NUMBER.h"
-#include "WindowDetails.h"
-#include <string>
+#include "System/WindowDetails.h"
+#include <shellapi.h>
 
 int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine, int nCmdShow)
 {
@@ -27,7 +27,7 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 
 	WindowDetails details;
 	details.Dimensions = Vector2(1280.0f, 720.0f);
-	details.Title = "hTech | Build Number : TEMPORARILY DISABLED"; // +std::to_string(BUILD_NUMBER);
+	details.Title = "hTech | Build Number " + std::to_string(BUILD_NUMBER);
 	details.Position = Vector2(200.0f, 200.0f);
 
 	Engine* game = new Engine();

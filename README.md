@@ -67,3 +67,21 @@ I used [nothke](https://twitter.com/Nothke/)'s build increment scripts in my pre
 
 [Engine_Preview]: ./README_Images/Engine_Preview.png "Preview screenshot of the Engine"
 [ECS_Example_GIF]: ./README_Images/ECS_Example.gif
+
+### Future bits
+
+- pure ecs
+- Rewrite front end
+- split engine from the front end
+- build projects into seperate .exes on final build (still be able to run project in editor)
+	- hard bit
+	- should be easier if engine is split.
+- rework input system
+	- cannot unbind keys
+	- keys cannot be bound to specifc modes (in editor keys still run)
+- Scenes
+- Prefabs
+- reflection
+- GUIDs
+- Bake engine assets into Engine exe.
+- fix text component, theres some nasty bits going on in there.

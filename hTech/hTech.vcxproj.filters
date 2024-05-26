@@ -2,410 +2,177 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
-    <ClCompile Include="Component.cpp">
-      <Filter>Entity\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Component_Animation.cpp">
-      <Filter>Entity\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Component_Script.cpp">
-      <Filter>Entity\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Component_Sprite.cpp">
-      <Filter>Entity\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Component_Transform.cpp">
-      <Filter>Entity\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Entity.cpp">
-      <Filter>Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="UI.cpp">
-      <Filter>Legacy</Filter>
-    </ClCompile>
-    <ClCompile Include="UI_Button.cpp">
-      <Filter>Legacy</Filter>
-    </ClCompile>
-    <ClCompile Include="UI_Element.cpp">
-      <Filter>Legacy</Filter>
-    </ClCompile>
-    <ClCompile Include="UI_Panel.cpp">
-      <Filter>Legacy</Filter>
-    </ClCompile>
-    <ClCompile Include="UI_TextPanel.cpp">
-      <Filter>Legacy</Filter>
-    </ClCompile>
-    <ClCompile Include="UI_VariableTracker.cpp">
-      <Filter>Legacy</Filter>
-    </ClCompile>
-    <ClCompile Include="BoundingBox.cpp">
-      <Filter>Physics and Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="BoundingPolygon.cpp">
-      <Filter>Physics and Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="BoundingSphere.cpp">
-      <Filter>Physics and Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="Collider.cpp">
-      <Filter>Physics and Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="Collision.cpp">
-      <Filter>Physics and Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="CollisionManifold.cpp">
-      <Filter>Physics and Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="CollisionSolver.cpp">
-      <Filter>Physics and Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="GJKCollisionSolver.cpp">
-      <Filter>Physics and Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="PhysicsWorld.cpp">
-      <Filter>Physics and Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui.cpp">
-      <Filter>External</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_demo.cpp">
-      <Filter>External</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_draw.cpp">
-      <Filter>External</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_impl_sdl.cpp">
-      <Filter>External</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_impl_sdlrenderer.cpp">
-      <Filter>External</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_stdlib.cpp">
-      <Filter>External</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_tables.cpp">
-      <Filter>External</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_widgets.cpp">
-      <Filter>External</Filter>
-    </ClCompile>
-    <ClCompile Include="OrientedBoundingBox.cpp">
-      <Filter>Physics and Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="Console.cpp">
-      <Filter>System</Filter>
-    </ClCompile>
-    <ClCompile Include="Editor.cpp">
-      <Filter>System</Filter>
-    </ClCompile>
-    <ClCompile Include="ProjectLoader.cpp">
-      <Filter>System</Filter>
-    </ClCompile>
-    <ClCompile Include="ScriptLoader.cpp">
-      <Filter>System</Filter>
-    </ClCompile>
-    <ClCompile Include="TextureCache.cpp">
-      <Filter>System</Filter>
-    </ClCompile>
-    <ClCompile Include="JSON.cpp">
-      <Filter>External</Filter>
-    </ClCompile>
-    <ClCompile Include="InputManager.cpp">
-      <Filter>System</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Animation.cpp">
-      <Filter>Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Texture.cpp">
-      <Filter>Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Rectangle.cpp">
-      <Filter>Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Line.cpp">
-      <Filter>Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Colour.cpp">
-      <Filter>Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Text.cpp">
-      <Filter>Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Utility.cpp">
-      <Filter>System</Filter>
-    </ClCompile>
-    <ClCompile Include="IRenderer.cpp">
-      <Filter>Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="RenderLayer.cpp">
-      <Filter>Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="OriginalRenderer.cpp">
-      <Filter>Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="IWindow.cpp">
-      <Filter>Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="OriginalWindow.cpp">
-      <Filter>Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Engine.cpp">
-      <Filter>System</Filter>
-    </ClCompile>
     <ClCompile Include="entry.cpp">
       <Filter>System</Filter>
     </ClCompile>
-    <ClCompile Include="WindowDetails.cpp">
-      <Filter>System</Filter>
-    </ClCompile>
-    <ClCompile Include="Component_Rigidbody.cpp">
-      <Filter>Entity\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="Component_TextElement.cpp">
-      <Filter>Entity\Components</Filter>
-    </ClCompile>
-    <ClCompile Include="FontLoader.cpp">
-      <Filter>System</Filter>
-    </ClCompile>
-    <ClCompile Include="SpatialDivisionMethod.cpp">
-      <Filter>Physics and Collision</Filter>
-    </ClCompile>
-    <ClCompile Include="World.cpp">
-      <Filter>Entity</Filter>
-    </ClCompile>
-    <ClCompile Include="Transform.cpp">
-      <Filter>Data Types</Filter>
-    </ClCompile>
-    <ClCompile Include="Vector2.cpp">
-      <Filter>Data Types</Filter>
-    </ClCompile>
-    <ClCompile Include="Time.cpp">
-      <Filter>System</Filter>
-    </ClCompile>
-    <ClCompile Include="Observer.cpp">
-      <Filter>System</Filter>
-    </ClCompile>
-    <ClCompile Include="ObserverSubject.cpp">
-      <Filter>System</Filter>
-    </ClCompile>
-    <ClCompile Include="ScriptObject.cpp">
-      <Filter>Data Types</Filter>
-    </ClCompile>
-    <ClCompile Include="SpritebatchRenderer.cpp">
-      <Filter>Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="Vertex.cpp" />
+    <ClCompile Include="Physics\BoundingBox.cpp" />
+    <ClCompile Include="Physics\BoundingPolygon.cpp" />
+    <ClCompile Include="Physics\BoundingSphere.cpp" />
+    <ClCompile Include="Physics\Collider.cpp" />
+    <ClCompile Include="Physics\Collision.cpp" />
+    <ClCompile Include="Physics\CollisionManifold.cpp" />
+    <ClCompile Include="Physics\CollisionSolver.cpp" />
+    <ClCompile Include="Physics\GJKCollisionSolver.cpp" />
+    <ClCompile Include="Physics\OrientedBoundingBox.cpp" />
+    <ClCompile Include="Physics\PhysicsWorld.cpp" />
+    <ClCompile Include="Physics\SpatialDivisionMethod.cpp" />
+    <ClCompile Include="Rendering\Camera.cpp" />
+    <ClCompile Include="Rendering\Colour.cpp" />
+    <ClCompile Include="Rendering\IRenderer.cpp" />
+    <ClCompile Include="Rendering\IWindow.cpp" />
+    <ClCompile Include="Rendering\Line.cpp" />
+    <ClCompile Include="Rendering\OpenGLRenderer.cpp" />
+    <ClCompile Include="Rendering\OriginalRenderer.cpp" />
+    <ClCompile Include="Rendering\OriginalWindow.cpp" />
+    <ClCompile Include="Rendering\Rectangle.cpp" />
+    <ClCompile Include="Rendering\RenderLayer.cpp" />
+    <ClCompile Include="Rendering\Text.cpp" />
+    <ClCompile Include="Rendering\Texture.cpp" />
+    <ClCompile Include="Rendering\Vertex.cpp" />
+    <ClCompile Include="System\Console.cpp" />
+    <ClCompile Include="System\Editor.cpp" />
+    <ClCompile Include="System\Engine.cpp" />
+    <ClCompile Include="System\FontLoader.cpp" />
+    <ClCompile Include="System\InputManager.cpp" />
+    <ClCompile Include="System\Observer.cpp" />
+    <ClCompile Include="System\ObserverSubject.cpp" />
+    <ClCompile Include="System\ProjectLoader.cpp" />
+    <ClCompile Include="System\ScriptLoader.cpp" />
+    <ClCompile Include="System\TextureCache.cpp" />
+    <ClCompile Include="System\Time.cpp" />
+    <ClCompile Include="System\Utility.cpp" />
+    <ClCompile Include="System\WindowDetails.cpp" />
+    <ClCompile Include="Rendering\Animation.cpp" />
+    <ClCompile Include="Entity\Components\Component.cpp" />
+    <ClCompile Include="Entity\Components\Component_Animation.cpp" />
+    <ClCompile Include="Entity\Components\Component_Rigidbody.cpp" />
+    <ClCompile Include="Entity\Components\Component_Script.cpp" />
+    <ClCompile Include="Entity\Components\Component_Sprite.cpp" />
+    <ClCompile Include="Entity\Components\Component_TextElement.cpp" />
+    <ClCompile Include="Entity\Components\Component_Transform.cpp" />
+    <ClCompile Include="Entity\Entity.cpp" />
+    <ClCompile Include="Entity\World.cpp" />
+    <ClCompile Include="DataTypes\ScriptObject.cpp" />
+    <ClCompile Include="DataTypes\Transform.cpp" />
+    <ClCompile Include="DataTypes\Vector2.cpp" />
+    <ClCompile Include="External\imgui\imgui.cpp" />
+    <ClCompile Include="External\imgui\imgui_demo.cpp" />
+    <ClCompile Include="External\imgui\imgui_draw.cpp" />
+    <ClCompile Include="External\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="External\imgui\imgui_impl_sdl.cpp" />
+    <ClCompile Include="External\imgui\imgui_impl_sdlrenderer.cpp" />
+    <ClCompile Include="External\imgui\imgui_stdlib.cpp" />
+    <ClCompile Include="External\imgui\imgui_tables.cpp" />
+    <ClCompile Include="External\imgui\imgui_widgets.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="imstb_truetype.h">
-      <Filter>External</Filter>
-    </ClInclude>
-    <ClInclude Include="imconfig.h">
-      <Filter>External</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui.h">
-      <Filter>External</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui_impl_sdl.h">
-      <Filter>External</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui_impl_sdlrenderer.h">
-      <Filter>External</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui_internal.h">
-      <Filter>External</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui_stdlib.h">
-      <Filter>External</Filter>
-    </ClInclude>
-    <ClInclude Include="imstb_rectpack.h">
-      <Filter>External</Filter>
-    </ClInclude>
-    <ClInclude Include="imstb_textedit.h">
-      <Filter>External</Filter>
-    </ClInclude>
-    <ClInclude Include="Component.h">
-      <Filter>Entity\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Component_Animation.h">
-      <Filter>Entity\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Component_Rigidbody.h">
-      <Filter>Entity\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Component_Script.h">
-      <Filter>Entity\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Component_Sprite.h">
-      <Filter>Entity\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Component_Transform.h">
-      <Filter>Entity\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="Entity.h">
-      <Filter>Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="UI.h">
-      <Filter>Legacy</Filter>
-    </ClInclude>
-    <ClInclude Include="UI_Button.h">
-      <Filter>Legacy</Filter>
-    </ClInclude>
-    <ClInclude Include="UI_Element.h">
-      <Filter>Legacy</Filter>
-    </ClInclude>
-    <ClInclude Include="UI_Panel.h">
-      <Filter>Legacy</Filter>
-    </ClInclude>
-    <ClInclude Include="UI_TextPanel.h">
-      <Filter>Legacy</Filter>
-    </ClInclude>
-    <ClInclude Include="UI_VariableTracker.h">
-      <Filter>Legacy</Filter>
-    </ClInclude>
     <ClInclude Include="pch.h" />
-    <ClInclude Include="BoundingBox.h">
-      <Filter>Physics and Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="BoundingPolygon.h">
-      <Filter>Physics and Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="BoundingSphere.h">
-      <Filter>Physics and Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="Collider.h">
-      <Filter>Physics and Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="Collision.h">
-      <Filter>Physics and Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="CollisionManifold.h">
-      <Filter>Physics and Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="CollisionSolver.h">
-      <Filter>Physics and Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="GJKCollisionSolver.h">
-      <Filter>Physics and Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="PhysicsWorld.h">
-      <Filter>Physics and Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="PhysicsProperties.h">
-      <Filter>Physics and Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="OrientedBoundingBox.h">
-      <Filter>Physics and Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="Console.h">
-      <Filter>System</Filter>
-    </ClInclude>
-    <ClInclude Include="Editor.h">
-      <Filter>System</Filter>
-    </ClInclude>
-    <ClInclude Include="ProjectLoader.h">
-      <Filter>System</Filter>
-    </ClInclude>
-    <ClInclude Include="ScriptLoader.h">
-      <Filter>System</Filter>
-    </ClInclude>
-    <ClInclude Include="TextureCache.h">
-      <Filter>System</Filter>
-    </ClInclude>
-    <ClInclude Include="JSON.h">
-      <Filter>External</Filter>
-    </ClInclude>
-    <ClInclude Include="InputManager.h">
-      <Filter>System</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Animation.h">
-      <Filter>Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Texture.h">
-      <Filter>Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Rectangle.h">
-      <Filter>Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Line.h">
-      <Filter>Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Colour.h">
-      <Filter>Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Text.h">
-      <Filter>Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Utility.h">
-      <Filter>System</Filter>
-    </ClInclude>
-    <ClInclude Include="IRenderer.h">
-      <Filter>Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="RenderLayer.h">
-      <Filter>Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="OriginalRenderer.h">
-      <Filter>Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="IWindow.h">
-      <Filter>Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="OriginalWindow.h">
-      <Filter>Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="ImGuiIncludes.h">
-      <Filter>External</Filter>
-    </ClInclude>
-    <ClInclude Include="Engine.h">
-      <Filter>System</Filter>
-    </ClInclude>
-    <ClInclude Include="WindowDetails.h">
-      <Filter>System</Filter>
-    </ClInclude>
-    <ClInclude Include="BUILD_NUMBER.h">
-      <Filter>System</Filter>
-    </ClInclude>
-    <ClInclude Include="Component_TextElement.h">
-      <Filter>Entity\Components</Filter>
-    </ClInclude>
-    <ClInclude Include="FontLoader.h">
-      <Filter>System</Filter>
-    </ClInclude>
-    <ClInclude Include="SpatialDivisionMethod.h">
-      <Filter>Physics and Collision</Filter>
-    </ClInclude>
-    <ClInclude Include="World.h">
-      <Filter>Entity</Filter>
-    </ClInclude>
-    <ClInclude Include="Transform.h">
-      <Filter>Data Types</Filter>
-    </ClInclude>
-    <ClInclude Include="Vector2.h">
-      <Filter>Data Types</Filter>
-    </ClInclude>
-    <ClInclude Include="Time.h">
-      <Filter>System</Filter>
-    </ClInclude>
-    <ClInclude Include="Observer.h">
-      <Filter>System</Filter>
-    </ClInclude>
-    <ClInclude Include="ObserverSubject.h">
-      <Filter>System</Filter>
-    </ClInclude>
-    <ClInclude Include="ScriptObject.h">
-      <Filter>Data Types</Filter>
-    </ClInclude>
-    <ClInclude Include="SpritebatchRenderer.h">
-      <Filter>Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="Vertex.h" />
+    <ClInclude Include="External\IMGUI.h" />
+    <ClInclude Include="External\JSON.h" />
+    <ClInclude Include="System\WindowDetails.h" />
+    <ClInclude Include="Physics\BoundingBox.h" />
+    <ClInclude Include="Physics\BoundingPolygon.h" />
+    <ClInclude Include="Physics\BoundingSphere.h" />
+    <ClInclude Include="Physics\Collider.h" />
+    <ClInclude Include="Physics\Collision.h" />
+    <ClInclude Include="Physics\CollisionManifold.h" />
+    <ClInclude Include="Physics\CollisionSolver.h" />
+    <ClInclude Include="Physics\GJKCollisionSolver.h" />
+    <ClInclude Include="Physics\OrientedBoundingBox.h" />
+    <ClInclude Include="Physics\PhysicsProperties.h" />
+    <ClInclude Include="Physics\PhysicsWorld.h" />
+    <ClInclude Include="Physics\SpatialDivisionMethod.h" />
+    <ClInclude Include="Rendering\Animation.h" />
+    <ClInclude Include="Rendering\Camera.h" />
+    <ClInclude Include="Rendering\Colour.h" />
+    <ClInclude Include="Rendering\IRenderer.h" />
+    <ClInclude Include="Rendering\IWindow.h" />
+    <ClInclude Include="Rendering\Line.h" />
+    <ClInclude Include="Rendering\OpenGLRenderer.h" />
+    <ClInclude Include="Rendering\OriginalRenderer.h" />
+    <ClInclude Include="Rendering\OriginalWindow.h" />
+    <ClInclude Include="Rendering\Rectangle.h" />
+    <ClInclude Include="Rendering\RenderLayer.h" />
+    <ClInclude Include="Rendering\Text.h" />
+    <ClInclude Include="Rendering\Texture.h" />
+    <ClInclude Include="Rendering\Vertex.h" />
+    <ClInclude Include="BUILD_NUMBER.h" />
+    <ClInclude Include="System\Console.h" />
+    <ClInclude Include="System\Editor.h" />
+    <ClInclude Include="System\Engine.h" />
+    <ClInclude Include="System\FontLoader.h" />
+    <ClInclude Include="System\InputManager.h" />
+    <ClInclude Include="System\Observer.h" />
+    <ClInclude Include="System\ObserverSubject.h" />
+    <ClInclude Include="System\ProjectLoader.h" />
+    <ClInclude Include="System\ScriptLoader.h" />
+    <ClInclude Include="System\TextureCache.h" />
+    <ClInclude Include="System\Time.h" />
+    <ClInclude Include="System\Utility.h" />
+    <ClInclude Include="Entity\World.h" />
+    <ClInclude Include="Entity\Components\Component.h" />
+    <ClInclude Include="Entity\Components\Component_Animation.h" />
+    <ClInclude Include="Entity\Components\Component_Rigidbody.h" />
+    <ClInclude Include="Entity\Components\Component_Script.h" />
+    <ClInclude Include="Entity\Components\Component_Sprite.h" />
+    <ClInclude Include="Entity\Components\Component_TextElement.h" />
+    <ClInclude Include="Entity\Components\Component_Transform.h" />
+    <ClInclude Include="Entity\Entity.h" />
+    <ClInclude Include="External\SDL.h" />
+    <ClInclude Include="External\OPENGL.h" />
+    <ClInclude Include="DataTypes\ScriptObject.h" />
+    <ClInclude Include="DataTypes\Transform.h" />
+    <ClInclude Include="DataTypes\Vector2.h" />
+    <ClInclude Include="External\GLEW\include\GL\eglew.h" />
+    <ClInclude Include="External\GLEW\include\GL\glew.h" />
+    <ClInclude Include="External\GLEW\include\GL\glxew.h" />
+    <ClInclude Include="External\GLEW\include\GL\wglew.h" />
+    <ClInclude Include="External\rapidjson\error\en.h" />
+    <ClInclude Include="External\rapidjson\error\error.h" />
+    <ClInclude Include="External\rapidjson\internal\biginteger.h" />
+    <ClInclude Include="External\rapidjson\internal\diyfp.h" />
+    <ClInclude Include="External\rapidjson\internal\dtoa.h" />
+    <ClInclude Include="External\rapidjson\internal\ieee754.h" />
+    <ClInclude Include="External\rapidjson\internal\itoa.h" />
+    <ClInclude Include="External\rapidjson\internal\meta.h" />
+    <ClInclude Include="External\rapidjson\internal\pow10.h" />
+    <ClInclude Include="External\rapidjson\internal\regex.h" />
+    <ClInclude Include="External\rapidjson\internal\stack.h" />
+    <ClInclude Include="External\rapidjson\internal\strfunc.h" />
+    <ClInclude Include="External\rapidjson\internal\strtod.h" />
+    <ClInclude Include="External\rapidjson\internal\swap.h" />
+    <ClInclude Include="External\rapidjson\msinttypes\inttypes.h" />
+    <ClInclude Include="External\rapidjson\msinttypes\stdint.h" />
+    <ClInclude Include="External\rapidjson\allocators.h" />
+    <ClInclude Include="External\rapidjson\document.h" />
+    <ClInclude Include="External\rapidjson\encodedstream.h" />
+    <ClInclude Include="External\rapidjson\encodings.h" />
+    <ClInclude Include="External\rapidjson\filereadstream.h" />
+    <ClInclude Include="External\rapidjson\filewritestream.h" />
+    <ClInclude Include="External\rapidjson\fwd.h" />
+    <ClInclude Include="External\rapidjson\istreamwrapper.h" />
+    <ClInclude Include="External\rapidjson\memorybuffer.h" />
+    <ClInclude Include="External\rapidjson\memorystream.h" />
+    <ClInclude Include="External\rapidjson\ostreamwrapper.h" />
+    <ClInclude Include="External\rapidjson\pointer.h" />
+    <ClInclude Include="External\rapidjson\prettywriter.h" />
+    <ClInclude Include="External\rapidjson\rapidjson.h" />
+    <ClInclude Include="External\rapidjson\reader.h" />
+    <ClInclude Include="External\rapidjson\schema.h" />
+    <ClInclude Include="External\rapidjson\stream.h" />
+    <ClInclude Include="External\rapidjson\stringbuffer.h" />
+    <ClInclude Include="External\rapidjson\writer.h" />
+    <ClInclude Include="External\imgui\imconfig.h" />
+    <ClInclude Include="External\imgui\imgui.h" />
+    <ClInclude Include="External\imgui\imgui_impl_opengl3.h" />
+    <ClInclude Include="External\imgui\imgui_impl_opengl3_loader.h" />
+    <ClInclude Include="External\imgui\imgui_impl_sdl.h" />
+    <ClInclude Include="External\imgui\imgui_impl_sdlrenderer.h" />
+    <ClInclude Include="External\imgui\imgui_internal.h" />
+    <ClInclude Include="External\imgui\imgui_stdlib.h" />
+    <ClInclude Include="External\imgui\imstb_rectpack.h" />
+    <ClInclude Include="External\imgui\imstb_textedit.h" />
+    <ClInclude Include="External\imgui\imstb_truetype.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="External">
@@ -432,5 +199,9 @@
     <Filter Include="Physics and Collision">
       <UniqueIdentifier>{d36de7a5-f933-4efc-86ca-9252c8177a96}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\HTECH_SCRIPT.zip" />
+    <None Include="increment_build.py" />
   </ItemGroup>
 </Project>
