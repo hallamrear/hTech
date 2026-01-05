@@ -1,6 +1,6 @@
 #include "pch.h"
-#include "System/Engine.h"
 #include "BUILD_NUMBER.h"
+#include "System/Engine.h"
 #include "System/WindowDetails.h"
 #include <shellapi.h>
 
@@ -30,18 +30,18 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, PWSTR pCmdLine
 	details.Title = "hTech | Build Number " + std::to_string(BUILD_NUMBER);
 	details.Position = Vector2(200.0f, 200.0f);
 
-	Engine* game = new Engine();
+	Engine game;
 
 	//If the game has more than 1 argument,
 	//it assumes that it is a project folder location and goes into editor mode.
 	ENGINE_MODE mode;
 	argc > 1 ? mode = ENGINE_MODE::PLAYER : mode = ENGINE_MODE::EDITOR;
 
-	game->Initialise(argc, __argv, details, mode);
+	game.Initialise(argc, __argv, details, mode);
 
-	if (game->GetIsInitialised())
+	if (game.GetIsInitialised())
 	{
-		game->Start(projectLocation);
+		game.Start(projectLocation);
 	}
 
 	return 0;

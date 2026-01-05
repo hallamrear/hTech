@@ -223,86 +223,86 @@ void Editor::Render(IRenderer& renderer)
 
 void Editor::Render_Impl(IRenderer& renderer)
 {
-    Camera::RenderProperties();
+	Camera::RenderProperties();
 
-    if (ImGui::Begin("Properties", 0, ImGuiWindowFlags_AlwaysAutoResize))
-    {
-        if (m_Selected)
-        {
-            m_Selected->RenderProperties();
-        }
-    }
-    ImGui::End();
+	if (ImGui::Begin("Properties", 0, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		if (m_Selected)
+		{
+			m_Selected->RenderProperties();
+		}
+	}
+	ImGui::End();
 
-    if (ImGui::Begin("Assets", 0, ImGuiWindowFlags_AlwaysAutoResize))
-    {
-        TextureCache::RenderProperties();
-    }
-    ImGui::End();
+	if (ImGui::Begin("Assets", 0, ImGuiWindowFlags_AlwaysAutoResize))
+	{
+		TextureCache::RenderProperties();
+	}
+	ImGui::End();
 
-    for (size_t i = 0; i < m_SelectedEntities.size(); i++)
-    {
-        Vector2 pos = Camera::WorldToScreen(m_SelectedEntities[i]->GetTransform().Position);
-        WorldRectangle rect = WorldRectangle(pos.X, pos.Y, 64, 64);
-        renderer.Render_ScreenSpaceRectangle(rect, false);
-    }
+	for (size_t i = 0; i < m_SelectedEntities.size(); i++)
+	{
+		Vector2 pos = Camera::WorldToScreen(m_SelectedEntities[i]->GetTransform().Position);
+		WorldRectangle rect = WorldRectangle(pos.X, pos.Y, 64, 64);
+		renderer.Render_ScreenSpaceRectangle(rect, false);
+	}
 
-    if (m_IsDraggingRect)
-    {
-        int halfW = m_SelectionRect.W / 2;
-        int halfH = m_SelectionRect.H / 2;
+	if (m_IsDraggingRect)
+	{
+		int halfW = m_SelectionRect.W / 2;
+		int halfH = m_SelectionRect.H / 2;
 
-        Vector2 points[4] =
-        {
-            {(float)m_SelectionRect.X,				       (float)m_SelectionRect.Y},
-            {(float)m_SelectionRect.X + m_SelectionRect.W, (float)m_SelectionRect.Y},
-            {(float)m_SelectionRect.X,				       (float)m_SelectionRect.Y - m_SelectionRect.H},
-            {(float)m_SelectionRect.X + m_SelectionRect.W, (float)m_SelectionRect.Y - m_SelectionRect.H}
-        };
+		Vector2 points[4] =
+		{
+			{(float)m_SelectionRect.X,				       (float)m_SelectionRect.Y},
+			{(float)m_SelectionRect.X + m_SelectionRect.W, (float)m_SelectionRect.Y},
+			{(float)m_SelectionRect.X,				       (float)m_SelectionRect.Y - m_SelectionRect.H},
+			{(float)m_SelectionRect.X + m_SelectionRect.W, (float)m_SelectionRect.Y - m_SelectionRect.H}
+		};
 
-        Vector2 r;
-        WorldRectangle corner = WorldRectangle(0, 0, 0, 0);
-        Vector2 p;
-        for (size_t i = 0; i < 4; i++)
-        {
-            p = Camera::WorldToScreen(points[i]);
+		Vector2 r;
+		WorldRectangle corner = WorldRectangle(0, 0, 0, 0);
+		Vector2 p;
+		for (size_t i = 0; i < 4; i++)
+		{
+			p = Camera::WorldToScreen(points[i]);
 
-            corner.W = 4;
-            corner.H = 4;
-            corner.X = p.X;
-            corner.Y = p.Y;
-            renderer.Render_ScreenSpaceRectangle(corner);
-        }
+			corner.W = 4;
+			corner.H = 4;
+			corner.X = p.X;
+			corner.Y = p.Y;
+			renderer.Render_ScreenSpaceRectangle(corner);
+		}
 
-        renderer.SetPrimativeDrawColour(Colour::White);
-        WorldRectangle outline = m_SelectionRect;
-        outline.X += (m_SelectionRect.W / 2);
-        outline.Y -= (m_SelectionRect.H / 2);
-        renderer.Render_WorldSpaceRectangle(outline, false);
-    }
+		renderer.SetPrimativeDrawColour(Colour::White);
+		WorldRectangle outline = m_SelectionRect;
+		outline.X += (m_SelectionRect.W / 2);
+		outline.Y -= (m_SelectionRect.H / 2);
+		renderer.Render_WorldSpaceRectangle(outline, false);
+	}
 
-    if (m_Selected)
-    {
-        WorldRectangle selectedRect = WorldRectangle(0, 0, 256, 256);
-        Vector2 Position = Camera::WorldToScreen(m_Selected->GetTransform().Position);
-        selectedRect.X = (int)Position.X;
-        selectedRect.Y = (int)Position.Y;
+	if (m_Selected)
+	{
+		WorldRectangle selectedRect = WorldRectangle(0, 0, 256, 256);
+		Vector2 Position = Camera::WorldToScreen(m_Selected->GetTransform().Position);
+		selectedRect.X = (int)Position.X;
+		selectedRect.Y = (int)Position.Y;
 
-        renderer.SetPrimativeDrawColour(Colour(255, 255, 0, 255));
-        renderer.Render_ScreenSpaceRectangle(selectedRect, false);
+		renderer.SetPrimativeDrawColour(Colour(255, 255, 0, 255));
+		renderer.Render_ScreenSpaceRectangle(selectedRect, false);
 
-        int halfWidth = selectedRect.W / 2;
-        int halfHeight = selectedRect.H / 2;
-        renderer.Render_ScreenSpaceLine(
-            Vector2(selectedRect.X - halfWidth, selectedRect.Y - halfHeight), 
-            Vector2(selectedRect.X + halfWidth, selectedRect.Y + halfHeight));
+		int halfWidth = selectedRect.W / 2;
+		int halfHeight = selectedRect.H / 2;
+		renderer.Render_ScreenSpaceLine(
+			Vector2(selectedRect.X - halfWidth, selectedRect.Y - halfHeight),
+			Vector2(selectedRect.X + halfWidth, selectedRect.Y + halfHeight));
 
-        renderer.Render_ScreenSpaceLine(
-            Vector2(selectedRect.X + halfWidth, selectedRect.Y - halfHeight),
-            Vector2(selectedRect.X - halfWidth, selectedRect.Y + halfHeight));
-    }
-      
-    static bool showNewProjectModal = false,
+		renderer.Render_ScreenSpaceLine(
+			Vector2(selectedRect.X + halfWidth, selectedRect.Y - halfHeight),
+			Vector2(selectedRect.X - halfWidth, selectedRect.Y + halfHeight));
+	}
+
+	static bool showNewProjectModal = false,
 		showOpenProjectModal = false;
 	if (ImGui::BeginMainMenuBar())
 	{
@@ -356,7 +356,7 @@ void Editor::Render_Impl(IRenderer& renderer)
 			ImGui::EndMenu();
 		}
 
-		
+
 		if (ProjectLoader::HasProjectLoaded())
 		{
 			if (ImGui::BeginMenu(ProjectLoader::GetLoadedProjectName().c_str()))
@@ -435,7 +435,7 @@ void Editor::Render_Impl(IRenderer& renderer)
 				static std::string projectName = "";
 				ImGui::Text("Create a new project?\n");
 				ImGui::Text("Project Name: ");
-				ImGui::SameLine(); 
+				ImGui::SameLine();
 				ImGui::InputText("##ProjectNameInput", &projectName);
 				ImGui::Separator();
 
@@ -614,11 +614,8 @@ void Editor::Render_Impl(IRenderer& renderer)
 		}
 	}
 
-	
-	//todo : this needs sorting out later on.
-	OriginalRenderer& castedRenderer = (OriginalRenderer&)renderer;
+	Engine::GetRenderer().SetRenderTarget(nullptr);
 
-	SDL_SetRenderTarget(castedRenderer.GetAPIRenderer(), NULL);
 	Vector2 size;
 	size.X = ImGui::GetWindowWidth();
 	size.Y = ImGui::GetWindowHeight();
@@ -628,22 +625,24 @@ void Editor::Render_Impl(IRenderer& renderer)
 	ImVec2 vMin = ImGui::GetWindowContentRegionMin();
 	ImVec2 vMax = ImGui::GetWindowContentRegionMax();
 
-	SDL_Rect renderDstQuad = { (int)(pos.X + vMin.x), (int)(pos.Y + vMin.y), (int)(vMax.x - vMin.x), (int)(vMax.y - vMin.y) };
-	SDL_Rect renderSrcQuad = renderDstQuad;
-	renderSrcQuad.w /= (int)Camera::ZoomLevel;
-	renderSrcQuad.h /= (int)Camera::ZoomLevel;
-
-	SDL_RenderSetClipRect(castedRenderer.GetAPIRenderer(), &renderDstQuad);
+	ScreenRectangle renderDstQuad = { (int)(pos.X + vMin.x), (int)(pos.Y + vMin.y), (int)(vMax.x - vMin.x), (int)(vMax.y - vMin.y) };
+	ScreenRectangle renderSrcQuad = renderDstQuad;
+	renderSrcQuad.W /= (int)Camera::ZoomLevel;
+	renderSrcQuad.H /= (int)Camera::ZoomLevel;
+	renderer.SetScissorRect(renderDstQuad);
 	ImGui::End();
 
-	ImGui::Render();
-	ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
 
 	//Render to screen
 	if (showNewProjectModal || showDeletionConfirmation || showOpenProjectModal)
 		return;
 
-	SDL_RenderCopyEx(castedRenderer.GetAPIRenderer(), castedRenderer.GetRenderTexture(), &renderSrcQuad, &renderDstQuad, 0.0F, nullptr, SDL_RendererFlip::SDL_FLIP_NONE);
+	ScreenRectangle sR{ renderDstQuad.W, renderDstQuad.H, renderDstQuad.X, renderDstQuad.Y };
+	ScreenRectangle dR{ renderDstQuad.W, renderDstQuad.H, renderDstQuad.X, renderDstQuad.Y };
+
+	//todo : fix
+	ITexture* TargetTexture = nullptr;
+	Engine::GetRenderer().CopyTextureToRenderTarget(nullptr, TargetTexture, &sR, &dR);
 }
 
 // callback function

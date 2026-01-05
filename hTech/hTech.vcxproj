@@ -452,6 +452,8 @@ xcopy /Y /H /I /E /S "$(ProjectDir)*.h" "$(OutputPath)Engine_Includes\Core\"</Co
     <ClInclude Include="External\rapidjson\stream.h" />
     <ClInclude Include="External\rapidjson\stringbuffer.h" />
     <ClInclude Include="External\rapidjson\writer.h" />
+    <ClInclude Include="Rendering\GLShader.h" />
+    <ClInclude Include="Rendering\IShader.h" />
     <ClInclude Include="Rendering\OriginalTexture.h" />
     <ClInclude Include="Rendering\GLTexture.h" />
     <ClInclude Include="pch.h" />
@@ -520,6 +522,8 @@ xcopy /Y /H /I /E /S "$(ProjectDir)*.h" "$(OutputPath)Engine_Includes\Core\"</Co
     <ClCompile Include="External\imgui\imgui_stdlib.cpp" />
     <ClCompile Include="External\imgui\imgui_tables.cpp" />
     <ClCompile Include="External\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Rendering\GLShader.cpp" />
+    <ClCompile Include="Rendering\IShader.cpp" />
     <ClCompile Include="Rendering\OriginalTexture.cpp" />
     <ClCompile Include="Rendering\GLTexture.cpp" />
     <ClCompile Include="pch.cpp">

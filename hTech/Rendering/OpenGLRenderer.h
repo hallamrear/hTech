@@ -38,6 +38,8 @@ private:
 	void ShutdownOpenGL();
 	bool SetupSpritebatch();
 
+	bool CreateDefaultShaders();
+	void DestroyDefaultShaders();
 
 public:
 	OpenGLRenderer();
@@ -49,10 +51,18 @@ public:
 	void SetClearColour(const Colour& colour);
 	void TakeScreenshot(const std::string& name);
 	void SetViewport(const int& x, const int& y, const int& w, const int& h);
+	void SetScissorRect(const ScreenRectangle& scissorRect);
+	void SetRenderTarget(ITexture* texture);
 
 	void EndFrame();
 	void StartFrame();
 
+	ITexture* CreateTexture(const int& width, const int& height) override;
+	ITexture* LoadTexture(const std::string& texture_path, const std::string& name) override;
+	bool UpdateTexture(ITexture* texture, const int& width, const int& height, const void* data, const size_t& dataSize) override;
+	bool DestroyTexture(ITexture* texture) override;
+
+	void CopyTextureToRenderTarget(ITexture* renderTarget, ITexture* texture, ScreenRectangle* srcRect, ScreenRectangle* dstRect);
 	void Render_Point(const Vector2& point);
 	void Render_WorldSpaceLine(const Vector2& pointA, const Vector2& pointB);
 	void Render_ScreenSpaceLine(const Vector2& pointA, const Vector2& pointB);

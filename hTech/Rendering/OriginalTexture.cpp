@@ -7,19 +7,25 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <External/STB/include/stb_image.h>
 
-OriginalTexture::OriginalTexture(const std::string& texture_path, const std::string& name)
-	: ITexture(texture_path, name)
+OriginalTexture::OriginalTexture()
+	: ITexture()
 {
 	m_SDLTexture = nullptr;
-	Create(texture_path, name);
 }
 
 OriginalTexture::~OriginalTexture()
 {
-
+	Destroy();
 }
 
-bool OriginalTexture::Create(const std::string& texture_path, const std::string& name)
+bool OriginalTexture::Create(const unsigned int& width, const unsigned int& height)
+{
+	//todo : implement
+	assert_func_not_implemented;
+	return false;
+}
+
+bool OriginalTexture::Load(const std::string& texture_path, const std::string& name)
 {
 	assert(m_SDLTexture == nullptr);
 
@@ -55,6 +61,7 @@ bool OriginalTexture::Create(const std::string& texture_path, const std::string&
 
 		m_Path = texture_path;
 		m_Name = name;
+		m_Exists = true;
 
 		return true;
 	}
@@ -68,6 +75,9 @@ bool OriginalTexture::Destroy()
 		m_SDLTexture = nullptr;
 	}
 
+	m_Path = "";
+	m_Name = "";
+	m_Exists = false;
 	return true;
 }
 

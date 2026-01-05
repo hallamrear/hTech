@@ -1,20 +1,18 @@
 #include "pch.h"
 #include "Rendering/GLTexture.h"
 #include <External/GLEW/include/GL/glew.h>
+#include <External/STB/include/stb_image.h>
 #include <System/Console.h>
 
-#include <External/STB/include/stb_image.h>
-
-GLTexture::GLTexture(const std::string& texture_path, const std::string& name)
-	: ITexture(texture_path, name)
+GLTexture::GLTexture()
+	: ITexture()
 {
-	m_TextureID = 0;
-	Create(texture_path, name);
+	m_TextureID = GL_INVALID_VALUE;
 }
 
 GLTexture::~GLTexture()
 {
-
+	Destroy();
 }
 
 const unsigned int& GLTexture::GetID() const
@@ -22,7 +20,14 @@ const unsigned int& GLTexture::GetID() const
 	return m_TextureID;
 }
 
-bool GLTexture::Create(const std::string& texture_path, const std::string& name)
+bool GLTexture::Create(const unsigned int& width, const unsigned int& height)
+{
+	//todo : implement
+	assert_func_not_implemented;
+	return false;
+}
+
+bool GLTexture::Load(const std::string& texture_path, const std::string& name)
 {
 	if (texture_path == "")
 	{
@@ -58,11 +63,22 @@ bool GLTexture::Create(const std::string& texture_path, const std::string& name)
 
 	stbi_image_free(data);
 
+	m_Path = texture_path;
+	m_Name = name;
+	m_Exists = true;
 	return true;
 }
 
 bool GLTexture::Destroy()
 {
 	glDeleteTextures(1, &m_TextureID);
+
+	m_TextureID = GL_INVALID_VALUE;
+	m_Width = NULL;
+	m_Height = NULL;
+	m_Name = "";
+	m_Path = "";
+	m_Exists = false;
+
 	return true;
 }

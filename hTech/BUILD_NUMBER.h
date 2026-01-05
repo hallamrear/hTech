@@ -1,2 +1,2 @@
 #pragma once
-constexpr int BUILD_NUMBER = 637;
+constexpr int BUILD_NUMBER = 678;

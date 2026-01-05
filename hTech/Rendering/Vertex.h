@@ -1,5 +1,6 @@
 #pragma once
-class Vertex
+
+struct Vertex
 {
 	float Position[3];
 	float Colour[3];

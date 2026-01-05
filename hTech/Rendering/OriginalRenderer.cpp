@@ -151,6 +151,10 @@ SDL_Renderer* OriginalRenderer::GetAPIRenderer() const
 
 void OriginalRenderer::StartFrame()
 {
+	ImGui_ImplSDLRenderer_NewFrame();
+	ImGui_ImplSDL2_NewFrame();
+	ImGui::NewFrame();
+
 	SDL_SetRenderTarget(m_SDLRenderer, m_RenderToTextureTarget);
 	SDL_SetRenderDrawColor(m_SDLRenderer, m_ClearColour.R, m_ClearColour.G, m_ClearColour.B, m_ClearColour.A);
 	SDL_RenderClear(m_SDLRenderer);
@@ -158,6 +162,8 @@ void OriginalRenderer::StartFrame()
 
 void OriginalRenderer::EndFrame()
 {
+	ImGui::Render();
+	ImGui_ImplSDLRenderer_RenderDrawData(ImGui::GetDrawData());
 	SDL_RenderPresent(m_SDLRenderer);
 }
 
@@ -179,6 +185,73 @@ void OriginalRenderer::SetViewport(const int& x, const int& y, const int& w, con
 	rect.w = w;
 	rect.h = h;
 	SDL_RenderSetViewport(m_SDLRenderer, &rect);
+}
+
+void OriginalRenderer::SetScissorRect(const ScreenRectangle& scissorRect)
+{
+	SDL_Rect rect;
+	rect.w = scissorRect.W;
+	rect.h = scissorRect.H;
+	rect.x = scissorRect.X;
+	rect.y = scissorRect.Y;
+	SDL_RenderSetClipRect(m_SDLRenderer, &rect);
+}
+
+void OriginalRenderer::CopyTextureToRenderTarget(ITexture* renderTarget, ITexture* texture, ScreenRectangle* srcRect, ScreenRectangle* dstRect)
+{
+	if (renderTarget != nullptr)
+	{
+		OriginalTexture* castedTexture = dynamic_cast<OriginalTexture*>(texture);
+
+		if (castedTexture == nullptr)
+		{
+			return;
+		}
+
+		SDL_Rect* srcPtr = nullptr;
+		SDL_Rect* dstPtr = nullptr;
+		SDL_Rect src = {};
+		SDL_Rect dst = {};
+
+		if (srcRect)
+		{
+			src.w = srcRect->W;
+			src.h = srcRect->H;
+			src.x = srcRect->X;
+			src.y = srcRect->Y;
+			srcPtr = &src;
+		}	
+		
+		if (dstRect)
+		{
+			dst.w = dstRect->W;
+			dst.h = dstRect->H;
+			dst.x = dstRect->X;
+			dst.y = dstRect->Y;
+			dstPtr = &dst;
+		}
+
+		SDL_RenderCopy(m_SDLRenderer, &castedTexture->GetSDLTexture(), srcPtr, dstPtr);
+
+		srcPtr = nullptr;
+		dstPtr = nullptr;
+	}
+}
+
+void OriginalRenderer::SetRenderTarget(ITexture* texture)
+{
+	if (texture == nullptr)
+	{
+		SDL_SetRenderTarget(m_SDLRenderer, nullptr);
+		return;
+	}
+
+	OriginalTexture* castedTexture = dynamic_cast<OriginalTexture*>(texture);
+
+	if (castedTexture != nullptr)
+	{
+		SDL_SetRenderTarget(m_SDLRenderer, &castedTexture->GetSDLTexture());
+	}
 }
 
 void OriginalRenderer::InitialiseDearIMGUI(IWindow& window)
@@ -204,7 +277,6 @@ void OriginalRenderer::InitialiseDearIMGUI(IWindow& window)
 
 	// Setup Dear ImGui style
 	SettingDearIMGUIColourScheme();
-
 
 	// Setup Platform/Renderer backends
 	ImGui_ImplSDL2_InitForSDLRenderer(sdlWindow->GetAPIWindow(), m_SDLRenderer);
@@ -349,7 +421,77 @@ void OriginalRenderer::Render_Texture(
 	}
 }
 
+ITexture* OriginalRenderer::CreateTexture(const int& width, const int& height)
+{
+	if (width <= 0 || height <= 0)
+		return nullptr;
 
+	OriginalTexture* texture = new OriginalTexture();
+
+	bool success = texture->Create(width, height);
+
+	if (!success && texture->Exists())
+	{
+		delete texture;
+		texture = nullptr;
+	}
+
+	return texture;
+}
+
+ITexture* OriginalRenderer::LoadTexture(const std::string& texture_path, const std::string& name)
+{
+	if (texture_path == "" || name == "")
+		return nullptr;
+
+	OriginalTexture* texture = new OriginalTexture();
+
+	bool success = texture->Load(texture_path, name);
+
+	if (!success && texture->Exists())
+	{
+		delete texture;
+		texture = nullptr;
+	}
+
+	return texture;
+}
+
+bool OriginalRenderer::UpdateTexture(ITexture* texture, const int& width, const int& height, const void* data, const size_t& dataSize)
+{
+	if (width <= 0 || height <= 0)
+		return false;
+
+	if (texture == nullptr)
+		return false;
+	
+	OriginalTexture* oTexture = dynamic_cast<OriginalTexture*>(texture);
+
+	if (oTexture)
+	{
+		const size_t pixelSize = (sizeof(float) * 4);
+		const size_t pitch = width * pixelSize;
+		SDL_UpdateTexture(&oTexture->GetSDLTexture(), NULL, data, pitch);
+		return true;
+	}
+
+	return false;
+}
+
+bool OriginalRenderer::DestroyTexture(ITexture* texture)
+{
+	if (texture == nullptr)
+		return false;
+
+	OriginalTexture* oTexture = dynamic_cast<OriginalTexture*>(texture);
+
+	if (oTexture)
+	{
+		return oTexture->Destroy();
+	}
+
+	return false;
+}
 
 void OriginalRenderer::Render_Point(const Vector2& worldSpacePoint)
 {

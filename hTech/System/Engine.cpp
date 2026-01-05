@@ -14,6 +14,7 @@
 #include "System/ScriptLoader.h"
 #include "System/Time.h"
 #include "System/WindowDetails.h"
+#include "System/TextureCache.h"
 
 IWindow* Engine::m_Window = nullptr;
 IRenderer* Engine::m_Renderer = nullptr;
@@ -21,6 +22,8 @@ GAME_STATE Engine::m_GameState = GAME_STATE::STOPPED;
 std::string Engine::m_EngineEXELocation = "";
 ENGINE_MODE Engine::m_EngineMode = ENGINE_MODE::PLAYER;
 bool Engine::m_IsRunning = false;
+
+#define OPENGL_RENDERER
 
 ENGINE_MODE Engine::GetEngineMode()
 {
@@ -177,8 +180,11 @@ bool Engine::InitialiseGraphics()
 	}
 
 	//Create renderer and initialise.
+#ifdef OPENGL_RENDERER
+	m_Renderer = new OpenGLRenderer();
+#else
 	m_Renderer = new OriginalRenderer();
-	//m_Renderer = new OpenGLRenderer();
+#endif
 
 	m_Renderer->Startup(*m_Window);
 
@@ -306,6 +312,9 @@ bool Engine::InitialiseSystems(const WindowDetails& details, int argc, char* arg
 void Engine::Shutdown()
 {
 	// Cleanup
+
+	TextureCache::UnloadAll();
+
 	if(m_Renderer) m_Renderer->Shutdown();
 	if(m_Window) m_Window->Shutdown();
 
@@ -406,13 +415,11 @@ void Engine::Update(float DeltaTime)
 
 void Engine::Render()
 {
-	ImGui_ImplSDLRenderer_NewFrame();
-	ImGui_ImplSDL2_NewFrame();
-	ImGui::NewFrame();
+	m_Renderer->StartFrame();
+
 
 	ImGui::DockSpaceOverViewport(0, ImGuiDockNodeFlags_PassthruCentralNode);
 
-	m_Renderer->StartFrame();
 
 	World::Render(*m_Renderer);
 

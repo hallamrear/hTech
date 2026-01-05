@@ -5,32 +5,24 @@
 #include "System/Console.h"
 #include "System/ProjectLoader.h"
 #include "DataTypes/Transform.h"
-#include "Rendering/OriginalRenderer.h"
 
-bool ITexture::Create(const std::string& texture_path, const std::string& name)
+ITexture::ITexture()
 {
-	return false;
-}
-
-bool ITexture::Destroy()
-{
-	return false;
-}
-
-ITexture::ITexture(const std::string& texture_path, const std::string& name)
-{
+	m_Exists = false;
 	m_Width = NULL;
 	m_Height = NULL;
 	m_Name = "";
 	m_Path = "";
-	Create(texture_path, name);
 }
 
 ITexture::~ITexture()
 {
-	m_Width = NULL;
-	m_Height = NULL;
-	Destroy();
+	
+}
+
+const bool& ITexture::Exists() const
+{
+	return m_Exists;
 }
 
 const std::string& ITexture::GetLocation() const

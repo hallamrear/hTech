@@ -19,7 +19,6 @@ protected:
 	virtual void EndBatch()   { };
 	virtual void FlushBatch() { };
 
-
 public:
 	OriginalRenderer();
 	~OriginalRenderer();
@@ -41,6 +40,10 @@ public:
 	void SetClearColour(const Colour& colour);
 	void SetPrimativeDrawColour(const Colour& colour);
 	void SetViewport(const int& x, const int& y, const int& w, const int& h);
+	void SetScissorRect(const ScreenRectangle& scissorRect);
+	void CopyTextureToRenderTarget(ITexture* renderTarget, ITexture* texture, ScreenRectangle* srcRect, ScreenRectangle* dstRect);
+	void SetRenderTarget(ITexture* texture);
+
 
 	void Render_Point(const Vector2& worldSpacePoint);
 	void Render_WorldSpaceLine(const Vector2&  pointA, const Vector2& pointB);
@@ -50,10 +53,11 @@ public:
 	void Render_Texture(const ITexture& texture, const Transform& transform, const bool& flipped = false);	
 	void Render_Texture(const ITexture& texture, const Transform& transform, const Vector2* center = nullptr, const WorldRectangle* srcRect = nullptr, const WorldRectangle* dstRect = nullptr, const bool& flipped = false);
 
-	/// <summary>
-	/// 
-	/// </summary>
-	/// <param name="texture"></param>
+	ITexture* CreateTexture(const int& width, const int& height) override;
+	ITexture* LoadTexture(const std::string& texture_path, const std::string& name) override;
+	bool UpdateTexture(ITexture* texture, const int& width, const int& height, const void* data, const size_t& dataSize) override;
+	bool DestroyTexture(ITexture* texture) override;
+
 	void SetRenderTexture(SDL_Texture* texture);
 	SDL_Texture* GetRenderTexture();
 };

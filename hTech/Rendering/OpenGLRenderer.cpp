@@ -1,32 +1,69 @@
 #include "pch.h"
 #include "Rendering/OpenGLRenderer.h"
 #include "System/Console.h"
-
 #include "Rendering/OriginalWindow.h"
-
+#include "Rendering/GlShader.h"
 #include <External/OPENGL.h>
 #include <External/SDL.h>
 #include <External/IMGUI.h>
+#include "Rendering/GLTexture.h"
 
-const char* glsl_version = "#version 130";
+const char* glsl_version = "#version 460 core";
+
+const char* cDefaultVertexShader = " \
+#version 460 core\n \
+layout(location = 0) in vec3  iPosition;\n\
+layout(location = 1) in vec3  iColour;\n\
+layout(location = 2) in vec2  iUV;\n\
+layout(location = 3) in float iTextureID;\n\
+out vec3 oColour;\n\
+out vec2 oUV;\n\
+out float oID;\n\
+uniform mat4 uViewProjection;\n\
+uniform mat4 uTransform;\n\
+\n\
+void main()\n\
+{\n\
+	oUV = iUV;\n\
+	oID = iTextureID;\n\
+	oColour = iColour;\n\
+	gl_Position = uViewProjection * uTransform * vec4(iPosition, 1.0f);\n\
+}\n\
+";
+
+const char* cDefaultPixelShader =
+"\
+#version 460 core\n\
+in vec3 oColour;\n\
+in vec2 oUV;\n\
+in float oID;\n\
+layout(location = 0) out vec4 pColour;\n\
+void main()\n\
+{\n\
+	pColour = vec4(oColour, 1.0f);\n\
+	pColour = vec4(oUV, 0.0f, 1.0f);\n\
+};\n\
+";
 
 OpenGLRenderer::OpenGLRenderer()
 {
 	m_InBatch = false;
 	m_Context = nullptr;
+	m_VertexAttribs = GL_INVALID_VALUE;
+	m_VertexBuffer = GL_INVALID_VALUE;
+	m_IndexBuffer = GL_INVALID_VALUE; 
 }
 
 OpenGLRenderer::~OpenGLRenderer()
 {
-
+	Shutdown();
 }
 
 bool OpenGLRenderer::InitialiseOpenGL(const IWindow& window)
 {
-	//Use OpenGL 3.1 core
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
 	//todo : refactor IWindow and window creation.
 	OriginalWindow* oWindow = dynamic_cast<OriginalWindow*>(const_cast<IWindow*>(&window));
@@ -46,6 +83,13 @@ bool OpenGLRenderer::InitialiseOpenGL(const IWindow& window)
 	//Setup viewport.
 	glViewport(0, 0, windowSize.X, windowSize.Y);
 	
+	bool createdShaders = CreateDefaultShaders();
+	if (!createdShaders)
+	{
+		Console::LogMessage(LogLevel::LOG_ERROR, "Failed to create default shaders.");
+		return false;
+	}
+
 	InitialiseDearIMGUI(*oWindow);
 
 	return true;
@@ -53,6 +97,7 @@ bool OpenGLRenderer::InitialiseOpenGL(const IWindow& window)
 
 void OpenGLRenderer::ShutdownOpenGL()
 {
+	DestroyDefaultShaders();
 	SDL_GL_DeleteContext(m_Context);
 }
 
@@ -66,7 +111,7 @@ bool OpenGLRenderer::SetupSpritebatch()
 	//
 	glGenBuffers(1, &m_VertexBuffer);
 	glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex), m_BatchData.VertexData, GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * c_MaxSpritebatchVertices, nullptr, GL_DYNAMIC_DRAW);
 
 	//Populate index array
 	int indexOffset = 0;
@@ -96,18 +141,48 @@ bool OpenGLRenderer::SetupSpritebatch()
 	glGenVertexArrays(1, &m_VertexAttribs);
 	glBindVertexArray(m_VertexAttribs);
 	glBindBuffer(GL_ARRAY_BUFFER, m_VertexBuffer);
-	size_t stride = sizeof(Vertex);
-	/* Position  */ glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)(0));
-	/* Colours   */ glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
-	/* TexCoords */ glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride, (void*)(6 * sizeof(float)));
-	/* TextureID */ glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, stride, (void*)(9 * sizeof(float)));
 
+	/* Position */ 
 	glEnableVertexArrayAttrib(m_VertexAttribs, 0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Position));
+
+	/* Colours */ 
 	glEnableVertexArrayAttrib(m_VertexAttribs, 1);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, Colour));
+
+	/* TexCoords */
 	glEnableVertexArrayAttrib(m_VertexAttribs, 2);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TexCoords));
+
+	/* TextureID */ 
 	glEnableVertexArrayAttrib(m_VertexAttribs, 3);
+	glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, TextureID));
+
 
 	return true;
+}
+
+bool OpenGLRenderer::CreateDefaultShaders()
+{
+	m_Shader = new GLShader();
+	bool success = m_Shader->Create(cDefaultPixelShader, cDefaultVertexShader);
+
+	if (success == false)
+	{
+		DestroyDefaultShaders();
+	}
+
+	return success;
+}
+
+void OpenGLRenderer::DestroyDefaultShaders()
+{
+	if (m_Shader)
+	{
+		m_Shader->Destroy();
+		delete m_Shader;
+		m_Shader = nullptr;
+	}
 }
 
 void OpenGLRenderer::Startup(const IWindow& window)
@@ -171,6 +246,11 @@ void OpenGLRenderer::FlushBatch()
 	//Draw existing batch data to the screen
 	//Bind texture slots using texture ids.
 	//glBindTexture(GL_TEXTURE_2D, texture);
+	//size_t textureCount = m_ExpectedTextures.size();
+	//for (size_t i = 0; i < m_ExpectedTextures; i++)
+	//{
+	//
+	//}
 
 	if (m_BatchData.IndexCount > 0)
 	{
@@ -212,6 +292,7 @@ void OpenGLRenderer::InitialiseDearIMGUI(IWindow& window)
 	//io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
 
 	// Setup Platform/Renderer backends
+	SDL_GL_MakeCurrent(sdlWindow->GetAPIWindow(), m_Context);
 	ImGui_ImplSDL2_InitForOpenGL(sdlWindow->GetAPIWindow(), m_Context);
 	ImGui_ImplOpenGL3_Init(glsl_version);
 
@@ -243,6 +324,107 @@ void OpenGLRenderer::SetViewport(const int& x, const int& y, const int& w, const
 	glViewport(x, y, w, h);
 }
 
+void OpenGLRenderer::SetScissorRect(const ScreenRectangle& scissorRect)
+{
+	glScissor(scissorRect.X, scissorRect.Y, scissorRect.W, scissorRect.H);
+}
+
+void OpenGLRenderer::SetRenderTarget(ITexture* texture)
+{
+	Console::LogMessage(LogLevel::LOG_ERROR, "Function not implemented.");
+	return;
+}
+
+void OpenGLRenderer::StartFrame()
+{
+	ImGui_ImplSDL2_NewFrame();
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui::NewFrame();
+
+	Console::LogMessage(LogLevel::LOG_ERROR, "Function not implemented.");
+
+	glClear(GL_COLOR_BUFFER_BIT);
+
+
+	//Setup uniform matrices.
+	//Set transform matrix.
+	//Set ViewProj matrix.
+
+	m_Shader->Bind();
+
+	return;
+}
+
+ITexture* OpenGLRenderer::CreateTexture(const int& width, const int& height)
+{
+	if (width <= 0 || height <= 0)
+		return nullptr;
+
+	GLTexture* texture = new GLTexture();
+
+	bool success = texture->Create(width, height);
+
+	if (!success && texture->Exists())
+	{
+		delete texture;
+		texture = nullptr;
+	}
+
+	return texture;
+}
+
+ITexture* OpenGLRenderer::LoadTexture(const std::string& texture_path, const std::string& name)
+{
+	if (texture_path == "" || name == "")
+		return nullptr;
+
+	GLTexture* texture = new GLTexture();
+
+	bool success = texture->Load(texture_path, name);
+
+	if (!success && texture->Exists())
+	{
+		delete texture;
+		texture = nullptr;
+	}
+
+	return texture;
+}
+
+bool OpenGLRenderer::UpdateTexture(ITexture* texture, const int& width, const int& height, const void* data, const size_t& dataSize)
+{
+	if (width <= 0 || height <= 0)
+		return false;
+
+	if (texture == nullptr)
+		return false;
+
+	GLTexture* glTexture = dynamic_cast<GLTexture*>(texture);
+
+	if (glTexture == nullptr)
+		return false;
+
+	glActiveTexture(glTexture->GetID());
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
+
+	return false;
+}
+
+bool OpenGLRenderer::DestroyTexture(ITexture* texture)
+{
+	if (texture == nullptr)
+		return false;
+
+	GLTexture* glTexture = dynamic_cast<GLTexture*>(texture);
+
+	if (glTexture)
+	{
+		return glTexture->Destroy();
+	}
+
+	return false;
+}
+
 void OpenGLRenderer::EndFrame()
 {
 	ImGui::Begin("Renderer data");
@@ -258,19 +440,24 @@ void OpenGLRenderer::EndFrame()
 
 
 	//Swap frame buffers
-	//SDL_GL_SwapWindow(m_Window);
+	SDL_GL_SwapWindow(m_Window);
+
+	
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 	Console::LogMessage(LogLevel::LOG_ERROR, "Function not implemented.");
 	return;
 }
 
-void OpenGLRenderer::StartFrame()
+void OpenGLRenderer::CopyTextureToRenderTarget(ITexture* renderTarget, ITexture* texture, ScreenRectangle* srcRect, ScreenRectangle* dstRect)
 {
+	if (renderTarget == nullptr)
+	{
+		//Use current render target.
+	}
+
 	Console::LogMessage(LogLevel::LOG_ERROR, "Function not implemented.");
-
-	glClear(GL_COLOR_BUFFER_BIT);
-
-
 	return;
 }
 

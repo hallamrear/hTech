@@ -10,28 +10,30 @@
 //Need to turn this off because rapidjson does not like C++ 17... something something std::iterator not existing anymore.
 #define _SILENCE_CXX17_ITERATOR_BASE_CLASS_DEPRECATION_WARNING
 
+#define assert_now assert(false)
+#define FUNC_AND_LINE "[" << __func__ << "][Line " << __LINE__ << "]"
+#define assert_func_not_implemented assert_now; std::cout << FUNC_AND_LINE << "not implemented." << std::endl;
+
 //SDL
 #include <External/SDL.h>
 
 //ImGui
 #include <External/IMGUI.h>
 
-//STB
-
 //C++ Libaries
-#include <Windows.h>
-#include <iostream>
-#include <string>
-#include <functional>
 #include <algorithm>
-#include <random>
-#include <cmath>
-#include <mmsystem.h>
 #include <algorithm>
 #include <cassert>
-#include <memory>
-#include <vector>
+#include <cmath>
 #include <filesystem>
+#include <functional>
+#include <iostream>
+#include <memory>
+#include <mmsystem.h>
+#include <random>
+#include <string>
+#include <vector>
+#include <Windows.h>
 
 #include <System/Utility.h>
 

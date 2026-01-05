@@ -66,6 +66,8 @@
     <ClCompile Include="External\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Rendering\GLTexture.cpp" />
     <ClCompile Include="Rendering\OriginalTexture.cpp" />
+    <ClCompile Include="Rendering\IShader.cpp" />
+    <ClCompile Include="Rendering\GLShader.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -177,6 +179,8 @@
     <ClInclude Include="External\imgui\imstb_truetype.h" />
     <ClInclude Include="Rendering\GLTexture.h" />
     <ClInclude Include="Rendering\OriginalTexture.h" />
+    <ClInclude Include="Rendering\IShader.h" />
+    <ClInclude Include="Rendering\GLShader.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="External">

@@ -6,6 +6,7 @@
 #include "System/TextureCache.h"
 #include "System/ProjectLoader.h"
 #include <Rendering/OriginalTexture.h>
+#include <Rendering/IRenderer.h>
 
 TextureCache* TextureCache::m_Instance = nullptr;
 
@@ -50,9 +51,18 @@ ITexture* TextureCache::GetTexture_Internal(const std::string& texture_path)
 
 		if (std::filesystem::exists(fullPath))
 		{
-			//todo : unhardcore it.
-			m_TextureMap.insert(std::make_pair(texturePathStandardised, new OriginalTexture(fullPath, texture_path)));
-			itr = m_TextureMap.find(texturePathStandardised);
+			ITexture* texture = Engine::GetRenderer().LoadTexture(fullPath, texture_path);
+
+			if (texture != nullptr)
+			{
+				m_TextureMap.insert(std::make_pair(texturePathStandardised, texture));
+				itr = m_TextureMap.find(texturePathStandardised);
+			}
+			else
+			{
+				Console::LogMessage(LogLevel::LOG_ERROR, "TextureCache -> Error loading texture file at [" + fullPath + "]");
+				return nullptr;
+			}
 		}
 		else
 		{

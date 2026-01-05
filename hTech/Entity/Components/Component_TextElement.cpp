@@ -4,9 +4,10 @@
 #include "Entity/Entity.h"
 #include "System/FontLoader.h"
 #include "System/Console.h"
-#include <External/SDL.h>
-#include "Rendering/OriginalRenderer.h"
+#include "Rendering/IRenderer.h"
 #include "Rendering/Camera.h"
+#include "Rendering/ITexture.h"
+#include <Rendering/OriginalRenderer.h>
 
 void TextComponent::CreateTextTexture()
 {
@@ -14,7 +15,8 @@ void TextComponent::CreateTextTexture()
 	{
 		if (m_TextTexture)
 		{
-			SDL_DestroyTexture(m_TextTexture);
+			delete m_TextTexture;
+			m_TextTexture = nullptr;
 		}
 
 		TTF_Font* font = FontLoader::GetFont(m_FontSize);
@@ -22,11 +24,8 @@ void TextComponent::CreateTextTexture()
 		if (font == nullptr || m_Data == "")
 			return;
 
-		//todo : wth is this.
-		OriginalRenderer& ref = (OriginalRenderer&)Engine::GetRenderer();
-		SDL_Renderer* renderer = ref.GetAPIRenderer();
-		if (!renderer)
-			return;
+		//todo : Reimplement text textures for OpenGL.
+		OriginalRenderer& renderer = (OriginalRenderer&)Engine::GetRenderer();
 
 		SDL_Surface* textSurface = nullptr;
 		SDL_Color color = { m_Colour.R, m_Colour.G, m_Colour.B, m_Colour.A };
@@ -40,7 +39,7 @@ void TextComponent::CreateTextTexture()
 			return;
 		}
 
-		m_TextTexture = SDL_CreateTextureFromSurface(renderer, textSurface);
+		m_TextTexture = SDL_CreateTextureFromSurface(renderer.GetAPIRenderer(), textSurface);
 
 		int w, h;
 		SDL_QueryTexture(m_TextTexture, NULL, NULL, &w, &h);
@@ -64,7 +63,7 @@ TextComponent::TextComponent(Entity& entity) : Component("Text Component", entit
 
 TextComponent::~TextComponent()
 {
-	SDL_DestroyTexture(m_TextTexture);
+
 }
 
 void TextComponent::Update(float DeltaTime)
@@ -86,17 +85,16 @@ void TextComponent::Render(IRenderer& renderer)
 	{
 		Vector2 position = Vector2(m_ParentEntity.GetTransform().Position.X + m_Offset.X, m_ParentEntity.GetTransform().Position.Y + m_Offset.Y);
 		position = Camera::WorldToScreen(position);
-		SDL_Rect destRect =
+		ScreenRectangle destRect = 
 		{
-			position.X,
-			position.Y,
-			m_Size.X,
-			m_Size.Y
+			(int)position.X,
+			(int)position.Y,
+			(int)m_Size.X,
+			(int)m_Size.Y
 		};
 
-		OriginalRenderer& ref = (OriginalRenderer&)Engine::GetRenderer();
-		SDL_Renderer* r = ref.GetAPIRenderer();
-		SDL_RenderCopy(r, m_TextTexture, nullptr, &destRect);
+		ITexture* renderTarget = nullptr;
+		//Engine::GetRenderer().CopyTextureToRenderTarget(renderTarget, m_TextTexture, nullptr, &destRect);
 	}
 }
 
